@@ -1,6 +1,17 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* Custom Neuropol Font */
+@font-face {
+  font-family: 'Neuropol';
+  src: url('/fonts/Neuropol.otf') format('opentype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
 
 @layer base {
   :root {
@@ -10,20 +21,28 @@
     --card-foreground: 222.2 84% 4.9%;
     --popover: 0 0% 100%;
     --popover-foreground: 222.2 84% 4.9%;
-    --primary: 221.2 83.2% 53.3%;
+    --primary: 224 76% 41%; /* IPOS Steel primary blue */
     --primary-foreground: 210 40% 98%;
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
-    --muted: 210 40% 96.1%;
+    --secondary: 222 84% 5%; /* IPOS Steel navy */
+    --secondary-foreground: 210 40% 98%;
+    --muted: 0 0% 86%; /* IPOS Steel gray */
     --muted-foreground: 215.4 16.3% 46.9%;
     --accent: 210 40% 96.1%;
     --accent-foreground: 222.2 47.4% 11.2%;
-    --destructive: 0 84.2% 60.2%;
+    --destructive: 0 84% 60%; /* IPOS Steel error red */
     --destructive-foreground: 210 40% 98%;
     --border: 214.3 31.8% 91.4%;
     --input: 214.3 31.8% 91.4%;
-    --ring: 221.2 83.2% 53.3%;
+    --ring: 224 76% 41%;
     --radius: 0.5rem;
+    
+    /* IPOS Steel Custom Variables */
+    --ipos-primary-blue: 30 58% 200; /* #1e40af */
+    --ipos-secondary-navy: 15 23% 30; /* #0f172a */
+    --ipos-success-green: 160 84% 39; /* #059669 */
+    --ipos-warning-orange: 32 95% 44; /* #d97706 */
+    --ipos-error-red: 0 84% 60; /* #dc2626 */
+    --ipos-gray: 0 0% 86; /* #DCDCDC */
   }
 
   .dark {
@@ -54,7 +73,11 @@
     @apply border-border;
   }
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground font-inter;
+  }
+  
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-neuropol;
   }
 }
 
@@ -69,4 +92,90 @@
   color: #fff;
   background: white !important;
   scale: 1 !important ;
+}
+
+/* IPOS Steel Component Styles */
+@layer components {
+  /* Button Styles */
+  .btn-primary {
+    @apply bg-gradient-to-r from-blue-600 to-blue-800 text-white px-6 py-3 rounded-lg font-medium transition-all duration-300 hover:shadow-lg hover:scale-105;
+  }
+  
+  .btn-outline {
+    @apply border-2 border-primary-blue text-primary-blue bg-transparent px-6 py-3 rounded-lg font-medium transition-all duration-300 hover:bg-primary-blue hover:text-white hover:shadow-lg;
+  }
+  
+  .btn-secondary {
+    @apply bg-gray-200 text-gray-800 px-6 py-3 rounded-lg font-medium transition-all duration-300 hover:bg-gray-300 hover:shadow-md;
+  }
+  
+  /* Card Styles */
+  .card-glass {
+    @apply backdrop-filter backdrop-blur-lg bg-white/10 border border-white/20 rounded-xl shadow-xl;
+  }
+  
+  .card-modern {
+    @apply bg-white rounded-xl shadow-lg border border-gray-100 transition-all duration-300 hover:shadow-xl hover:scale-102;
+  }
+  
+  /* Gradient Backgrounds */
+  .bg-primary-gradient {
+    background: linear-gradient(135deg, #1e40af 0%, #3b82f6 100%);
+  }
+  
+  .bg-secondary-gradient {
+    background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+  }
+  
+  .bg-accent-gradient {
+    background: linear-gradient(135deg, #d97706 0%, #dc2626 100%);
+  }
+  
+  /* Typography Utilities */
+  .text-fluid-xl {
+    font-size: clamp(1.5rem, 4vw, 3rem);
+  }
+  
+  .text-fluid-2xl {
+    font-size: clamp(2rem, 5vw, 4rem);
+  }
+  
+  .text-fluid-3xl {
+    font-size: clamp(2.5rem, 6vw, 5rem);
+  }
+  
+  /* Shimmer Animation */
+  .shimmer {
+    @apply relative overflow-hidden;
+  }
+  
+  .shimmer::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+    animation: shimmer 2s infinite;
+  }
+  
+  @keyframes shimmer {
+    0% { left: -100%; }
+    100% { left: 100%; }
+  }
+  
+  /* Glassmorphism Effects */
+  .glass-effect {
+    @apply backdrop-filter backdrop-blur-md bg-white/10 border border-white/20;
+  }
+  
+  /* Scroll-based transparency */
+  .scroll-transparent {
+    transition: background-color 0.3s ease, backdrop-filter 0.3s ease;
+  }
+  
+  .scroll-transparent.scrolled {
+    @apply bg-white/90 backdrop-blur-md shadow-lg;
+  }
 }

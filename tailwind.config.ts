@@ -16,6 +16,16 @@ module.exports = {
       },
     },
     extend: {
+      fontFamily: {
+        'inter': ['Inter', 'sans-serif'],
+        'neuropol': ['Neuropol', 'Inter', 'sans-serif'],
+        'sans': ['Inter', 'system-ui', 'sans-serif'],
+      },
+      fontSize: {
+        'fluid-xl': 'clamp(1.5rem, 4vw, 3rem)',
+        'fluid-2xl': 'clamp(2rem, 5vw, 4rem)',
+        'fluid-3xl': 'clamp(2.5rem, 6vw, 5rem)',
+      },
       colors: {
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
@@ -23,19 +33,21 @@ module.exports = {
         background: "hsl(var(--background))",
         foreground: "hsl(var(--foreground))",
         primary: {
-          DEFAULT: "hsl(var(--primary))",
+          DEFAULT: "#1e40af", // IPOS Steel primary blue
           foreground: "hsl(var(--primary-foreground))",
+          blue: "#1e40af",
         },
         secondary: {
-          DEFAULT: "hsl(var(--secondary))",
+          DEFAULT: "#0f172a", // IPOS Steel navy
           foreground: "hsl(var(--secondary-foreground))",
+          navy: "#0f172a",
         },
         destructive: {
-          DEFAULT: "hsl(var(--destructive))",
+          DEFAULT: "#dc2626", // IPOS Steel error red
           foreground: "hsl(var(--destructive-foreground))",
         },
         muted: {
-          DEFAULT: "hsl(var(--muted))",
+          DEFAULT: "#DCDCDC", // IPOS Steel gray
           foreground: "hsl(var(--muted-foreground))",
         },
         accent: {
@@ -50,6 +62,8 @@ module.exports = {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
+        success: "#059669", // IPOS Steel success green
+        warning: "#d97706", // IPOS Steel warning orange
       },
       borderRadius: {
         lg: "var(--radius)",

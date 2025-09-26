@@ -217,6 +217,35 @@ export default function Home() {
           </div>
         </MaxWidthWrapper>
       </section>
+
+      {/* Contact CTA Section */}
+      <section className='py-16 bg-primary-gradient'>
+        <MaxWidthWrapper>
+          <div className='text-center text-white'>
+            <h2 className='font-neuropol text-3xl font-bold mb-4'>
+              Projeleriniz İçin Bizimle İletişime Geçin
+            </h2>
+            <p className='text-xl mb-8 max-w-2xl mx-auto opacity-90'>
+              Uzman ekibimiz size en uygun çözümleri sunmak için hazır. 
+              Ücretsiz danışmanlık ve fiyat teklifi alın.
+            </p>
+            <div className='flex flex-col sm:flex-row gap-4 justify-center'>
+              <Link 
+                href='/contact'
+                className='btn-outline bg-white text-primary-blue border-white hover:bg-gray-100'
+              >
+                İletişime Geç
+              </Link>
+              <Link 
+                href='tel:+902323281500'
+                className='btn-secondary bg-white/10 text-white border-white/20 hover:bg-white/20'
+              >
+                📞 (232) 328 15 00
+              </Link>
+            </div>
+          </div>
+        </MaxWidthWrapper>
+      </section>
     </>
   )
 }

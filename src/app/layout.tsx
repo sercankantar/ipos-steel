@@ -6,7 +6,12 @@ import { Toaster } from 'sonner'
 import './globals.css'
 import Footer from '@/components/Footer'
 
-const inter = Inter({ subsets: ['latin'] })
+const inter = Inter({ 
+  subsets: ['latin'],
+  weight: ['300', '400', '500', '600', '700', '800'],
+  variable: '--font-inter',
+  display: 'swap'
+})
 
 export const metadata = constructMetadata()
 
@@ -19,8 +24,9 @@ export default function RootLayout({
     <html lang='en' className='h-full'>
       <body
         className={cn(
-          'relative h-full font-sans antialiased',
-          inter.className
+          'relative h-full font-inter antialiased',
+          inter.className,
+          inter.variable
         )}>
         <main className='relative flex flex-col min-h-screen'>
          
