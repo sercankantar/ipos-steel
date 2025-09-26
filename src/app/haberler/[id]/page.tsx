@@ -315,52 +315,73 @@ export default function HaberDetayPage() {
               </p>
             </header>
 
-            {/* Ana Görsel ve Galeri */}
+            {/* Ana Görsel Carousel */}
             <div className="mb-10">
-              {/* Ana Görsel */}
-              <div className="aspect-video rounded-lg overflow-hidden mb-4 cursor-pointer relative group" onClick={() => openGallery(0)}>
-                <img 
-                  src={haber.gallery?.[0] || haber.image} 
-                  alt={haber.title}
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                />
-                <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors duration-300"></div>
-                <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                  <div className="bg-white rounded-full p-3 shadow-lg">
-                    <Eye className="h-6 w-6 text-gray-700" />
-                  </div>
+              <div className="relative aspect-video rounded-lg overflow-hidden bg-gray-100">
+                {/* Carousel İçeriği */}
+                <div className="relative w-full h-full">
+                  <img 
+                    src={haber.gallery?.[currentImageIndex] || haber.image} 
+                    alt={`${haber.title} - Görsel ${currentImageIndex + 1}`}
+                    className="w-full h-full object-cover transition-all duration-500"
+                  />
+                  
+                  {/* Overlay için gradient */}
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                 </div>
+
+                {/* Sol Navigation */}
                 {haber.gallery && haber.gallery.length > 1 && (
-                  <div className="absolute bottom-4 right-4 bg-black/70 text-white px-3 py-1 rounded-full text-sm">
-                    1 / {haber.gallery.length}
+                  <button
+                    onClick={goToPrevious}
+                    className="absolute left-4 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white rounded-full p-2 transition-all duration-300 opacity-0 group-hover:opacity-100"
+                  >
+                    <ChevronLeft className="h-6 w-6" />
+                  </button>
+                )}
+
+                {/* Sağ Navigation */}
+                {haber.gallery && haber.gallery.length > 1 && (
+                  <button
+                    onClick={goToNext}
+                    className="absolute right-4 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white rounded-full p-2 transition-all duration-300 opacity-0 group-hover:opacity-100"
+                  >
+                    <ChevronRight className="h-6 w-6" />
+                  </button>
+                )}
+
+                {/* Dots Navigation */}
+                {haber.gallery && haber.gallery.length > 1 && (
+                  <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2">
+                    {haber.gallery.map((_, index) => (
+                      <button
+                        key={index}
+                        onClick={() => goToSlide(index)}
+                        className={`w-2 h-2 rounded-full transition-all duration-300 ${
+                          index === currentImageIndex 
+                            ? 'bg-white scale-125' 
+                            : 'bg-white/50 hover:bg-white/80'
+                        }`}
+                      />
+                    ))}
                   </div>
                 )}
-              </div>
 
-              {/* Galeri Thumbnail'ları */}
-              {haber.gallery && haber.gallery.length > 1 && (
-                <div className="grid grid-cols-4 gap-2">
-                  {haber.gallery.slice(1).map((image, index) => (
-                    <div 
-                      key={index + 1}
-                      className="aspect-video rounded overflow-hidden cursor-pointer relative group"
-                      onClick={() => openGallery(index + 1)}
-                    >
-                      <img 
-                        src={image} 
-                        alt={`${haber.title} - Görsel ${index + 2}`}
-                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                      />
-                      <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors duration-300"></div>
-                      <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                        <div className="bg-white rounded-full p-2 shadow-lg">
-                          <Eye className="h-4 w-4 text-gray-700" />
-                        </div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              )}
+                {/* Görsel Sayacı */}
+                {haber.gallery && haber.gallery.length > 1 && (
+                  <div className="absolute top-4 right-4 bg-black/70 text-white px-3 py-1 rounded-full text-sm">
+                    {currentImageIndex + 1} / {haber.gallery.length}
+                  </div>
+                )}
+
+                {/* Büyütme İkonu */}
+                <button 
+                  onClick={() => openGallery(currentImageIndex)}
+                  className="absolute top-4 left-4 bg-black/50 hover:bg-black/70 text-white rounded-full p-2 transition-all duration-300 opacity-0 group-hover:opacity-100"
+                >
+                  <Eye className="h-5 w-5" />
+                </button>
+              </div>
             </div>
 
             {/* Haber İçeriği */}
