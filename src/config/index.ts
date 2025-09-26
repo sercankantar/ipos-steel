@@ -4,18 +4,18 @@ export const PRODUCT_CATEGORIES = [
     value: 'ui_kits' as const,
     featured: [
       {
-        name: 'Editor picks',
-        href: `/products?category=ui_kits`,
+        name: 'Busbar Sistemleri',
+        href: `/products?category=busbar`,
         imageSrc: '/nav/ui-kits/mixed.jpg',
       },
       {
-        name: 'New Arrivals',
-        href: '/products?category=ui_kits&sort=desc',
+        name: 'Askı Sistemleri',
+        href: '/products?category=aski',
         imageSrc: '/nav/ui-kits/blue.jpg',
       },
       {
-        name: 'Bestsellers',
-        href: '/products?category=ui_kits',
+        name: 'Kablo Kanalı Sistemleri',
+        href: '/products?category=kablo',
         imageSrc: '/nav/ui-kits/purple.jpg',
       },
     ],
@@ -25,60 +25,39 @@ export const PRODUCT_CATEGORIES = [
     value: 'icons' as const,
     featured: [
       {
-        name: 'Favorite Icon Picks',
-        href: `/products?category=icons`,
+        name: 'Hakkımızda',
+        href: `/about`,
         imageSrc: '/nav/icons/picks.jpg',
       },
       {
-        name: 'New Arrivals',
-        href: '/products?category=icons&sort=desc',
+        name: 'Vizyonumuz',
+        href: '/about#vision',
         imageSrc: '/nav/icons/new.jpg',
       },
       {
-        name: 'Bestselling Icons',
-        href: '/products?category=icons',
+        name: 'Referanslar',
+        href: '/references',
         imageSrc: '/nav/icons/bestsellers.jpg',
       },
     ],
   },
   {
-    label: 'Basın',
-    value: 'icons' as const,
+    label: 'Medya',
+    value: 'media' as const,
     featured: [
       {
-        name: 'Favorite Icon Picks',
-        href: `/products?category=icons`,
+        name: 'Haberler',
+        href: `/news`,
         imageSrc: '/nav/icons/picks.jpg',
       },
       {
-        name: 'New Arrivals',
-        href: '/products?category=icons&sort=desc',
+        name: 'Basın Bültenleri',
+        href: '/press',
         imageSrc: '/nav/icons/new.jpg',
       },
       {
-        name: 'Bestselling Icons',
-        href: '/products?category=icons',
-        imageSrc: '/nav/icons/bestsellers.jpg',
-      },
-    ],
-  },
-  {
-    label: 'İletişim',
-    value: 'icons' as const,
-    featured: [
-      {
-        name: 'Favorite Icon Picks',
-        href: `/products?category=icons`,
-        imageSrc: '/nav/icons/picks.jpg',
-      },
-      {
-        name: 'New Arrivals',
-        href: '/products?category=icons&sort=desc',
-        imageSrc: '/nav/icons/new.jpg',
-      },
-      {
-        name: 'Bestselling Icons',
-        href: '/products?category=icons',
+        name: 'Galeri',
+        href: '/gallery',
         imageSrc: '/nav/icons/bestsellers.jpg',
       },
     ],

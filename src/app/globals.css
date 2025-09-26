@@ -8,9 +8,16 @@
 @font-face {
   font-family: 'Neuropol';
   src: url('/fonts/Neuropol.otf') format('opentype');
-  font-weight: normal;
+  font-weight: 100 900;
   font-style: normal;
   font-display: swap;
+}
+
+/* Fallback font stack for Neuropol */
+.font-neuropol-fallback {
+  font-family: 'Neuropol', 'Arial Black', 'Helvetica', 'Arial', sans-serif;
+  font-weight: bold;
+  letter-spacing: -0.025em;
 }
 
 @layer base {
@@ -73,11 +80,36 @@
     @apply border-border;
   }
   body {
-    @apply bg-background text-foreground font-inter;
+    @apply bg-background text-foreground font-neuropol;
   }
   
   h1, h2, h3, h4, h5, h6 {
+    @apply font-neuropol font-bold;
+  }
+  
+  /* Ana metin için */
+  p, span, div, li, td, th {
     @apply font-neuropol;
+  }
+  
+  /* Form elementleri için */
+  input, textarea, select, button {
+    @apply font-neuropol;
+  }
+  
+  /* Neuropol kullanımını artır */
+  .font-neuropol {
+    font-family: 'Neuropol', 'Inter', sans-serif !important;
+  }
+  
+  /* Logo ve marka metinleri için */
+  .brand-text {
+    @apply font-neuropol font-bold;
+  }
+  
+  /* Buton metinleri için */
+  .btn-text {
+    @apply font-neuropol font-semibold;
   }
 }
 
@@ -98,15 +130,15 @@
 @layer components {
   /* Button Styles */
   .btn-primary {
-    @apply bg-gradient-to-r from-blue-600 to-blue-800 text-white px-6 py-3 rounded-lg font-medium transition-all duration-300 hover:shadow-lg hover:scale-105;
+    @apply bg-gradient-to-r from-blue-600 to-blue-800 text-white px-6 py-3 rounded-lg font-neuropol font-semibold transition-all duration-300 hover:shadow-lg hover:scale-105;
   }
   
   .btn-outline {
-    @apply border-2 border-primary-blue text-primary-blue bg-transparent px-6 py-3 rounded-lg font-medium transition-all duration-300 hover:bg-primary-blue hover:text-white hover:shadow-lg;
+    @apply border-2 border-primary-blue text-primary-blue bg-transparent px-6 py-3 rounded-lg font-neuropol font-semibold transition-all duration-300 hover:bg-primary-blue hover:text-white hover:shadow-lg;
   }
   
   .btn-secondary {
-    @apply bg-gray-200 text-gray-800 px-6 py-3 rounded-lg font-medium transition-all duration-300 hover:bg-gray-300 hover:shadow-md;
+    @apply bg-gray-200 text-gray-800 px-6 py-3 rounded-lg font-neuropol font-semibold transition-all duration-300 hover:bg-gray-300 hover:shadow-md;
   }
   
   /* Card Styles */

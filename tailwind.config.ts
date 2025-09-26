@@ -17,9 +17,10 @@ module.exports = {
     },
     extend: {
       fontFamily: {
-        'inter': ['Inter', 'sans-serif'],
-        'neuropol': ['Neuropol', 'Inter', 'sans-serif'],
-        'sans': ['Inter', 'system-ui', 'sans-serif'],
+        'inter': ['Inter', 'system-ui', 'sans-serif'],
+        'neuropol': ['Neuropol', 'Inter', 'Arial Black', 'sans-serif'],
+        'sans': ['Neuropol', 'Inter', 'Arial Black', 'system-ui', 'sans-serif'],
+        'display': ['Neuropol', 'Inter', 'Arial Black', 'sans-serif'],
       },
       fontSize: {
         'fluid-xl': 'clamp(1.5rem, 4vw, 3rem)',
@@ -83,6 +84,9 @@ module.exports = {
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
+      },
+      scale: {
+        '102': '1.02',
       },
     },
   },

@@ -78,15 +78,15 @@ export default function Home() {
                   />
                 </div>
                 <div className='p-6 flex flex-col justify-center'>
-                  <h3 className='text-xl font-semibold text-gray-900'>Busbar Sistemleri</h3>
-                  <p className='mt-3 text-sm text-muted-foreground'>
-                    Busbar kanal sistemi; yüksek katlı binaların ve fabrikalarda değişen üretim teknolojilerinin bir ihtiyacı olarak ortaya çıkmıştır. Türkiye’de ise busbar kanal sistemi imalatı 1970’li yıllarda başlamıştır.
+                  <h3 className='text-xl font-neuropol font-bold text-gray-900'>Busbar Sistemleri</h3>
+                  <p className='mt-3 text-sm text-muted-foreground font-neuropol'>
+                    Busbar kanal sistemi; yüksek katlı binaların ve fabrikalarda değişen üretim teknolojilerinin bir ihtiyacı olarak ortaya çıkmıştır. Türkiye'de ise busbar kanal sistemi imalatı 1970'li yıllarda başlamıştır.
                   </p>
                   <div className='mt-5 flex items-center gap-6'>
-                    <Link href='/products' className='text-sm font-medium text-blue-600 hover:text-blue-700'>
+                    <Link href='/products' className='text-sm font-neuropol font-semibold text-blue-600 hover:text-blue-700'>
                       Daha Fazlası →
                     </Link>
-                    <Link href='/products' className='text-sm font-medium text-red-500 hover:text-red-600'>
+                    <Link href='/products' className='text-sm font-neuropol font-semibold text-red-500 hover:text-red-600'>
                       Ürünleri İncele →
                     </Link>
                   </div>
@@ -125,13 +125,13 @@ export default function Home() {
                     <img src={item.img} alt={item.title} className='h-full w-full object-cover' />
                   </div>
                   <div className='sm:col-span-2 p-5 flex flex-col justify-center'>
-                    <h4 className='text-lg font-semibold text-gray-900'>{item.title}</h4>
-                    <p className='mt-2 text-sm text-muted-foreground'>{item.desc}</p>
+                    <h4 className='text-lg font-neuropol font-bold text-gray-900'>{item.title}</h4>
+                    <p className='mt-2 text-sm text-muted-foreground font-neuropol'>{item.desc}</p>
                     <div className='mt-4 flex items-center gap-6'>
-                      <Link href='/products' className='text-sm font-medium text-blue-600 hover:text-blue-700'>
+                      <Link href='/products' className='text-sm font-neuropol font-semibold text-blue-600 hover:text-blue-700'>
                         Daha Fazlası →
                       </Link>
-                      <Link href='/products' className='text-sm font-medium text-red-500 hover:text-red-600'>
+                      <Link href='/products' className='text-sm font-neuropol font-semibold text-red-500 hover:text-red-600'>
                         Ürünleri İncele →
                       </Link>
                     </div>
@@ -148,15 +148,15 @@ export default function Home() {
           <div className='flex items-start justify-between gap-4'>
             <div>
               <p className='text-xs uppercase tracking-wider text-red-500'>Blog</p>
-              <h2 className='mt-2 text-3xl font-bold text-gray-900'>IPOS-STEEL Blog</h2>
-              <p className='mt-3 text-sm text-muted-foreground max-w-3xl'>
+              <h2 className='mt-2 text-3xl font-neuropol font-bold text-gray-900'>IPOS-STEEL Blog</h2>
+              <p className='mt-3 text-sm text-muted-foreground max-w-3xl font-neuropol'>
                 Şirketimizin katıldığı etkinlikler, yer aldığı projeler ve sektörden gelişmeler gibi
                 güncel bilgilere EAE Blog platformumuz üzerinden ulaşabilirsiniz.
               </p>
             </div>
             <Link
               href='/products'
-              className='inline-flex items-center gap-2 rounded-md bg-red-500 px-4 py-2 text-white text-sm font-medium shadow hover:bg-red-600 transition'>
+              className='inline-flex items-center gap-2 rounded-md bg-red-500 px-4 py-2 text-white text-sm font-neuropol font-semibold shadow hover:bg-red-600 transition'>
               Tümünü Görüntüle
               <span className='background-red-500' aria-hidden>→</span>
             </Link>
@@ -204,11 +204,11 @@ export default function Home() {
                   />
                 </div>
                 <div className='p-4'>
-                  <p className='text-xs font-semibold text-red-500'>{post.tag}</p>
-                  <h3 className='mt-2 text-base font-semibold text-gray-900 leading-snug'>
+                  <p className='text-xs font-neuropol font-bold text-red-500'>{post.tag}</p>
+                  <h3 className='mt-2 text-base font-neuropol font-bold text-gray-900 leading-snug'>
                     {post.title}
                   </h3>
-                  <p className='mt-2 text-sm text-muted-foreground line-clamp-3'>
+                  <p className='mt-2 text-sm text-muted-foreground font-neuropol line-clamp-3'>
                     {post.excerpt}
                   </p>
                 </div>
@@ -222,16 +222,16 @@ export default function Home() {
       <section className='py-16 bg-primary-gradient'>
         <MaxWidthWrapper>
           <div className='text-center text-white'>
-            <h2 className='font-neuropol text-3xl font-bold mb-4'>
+            <h2 className='font-neuropol text-4xl font-bold mb-4'>
               Projeleriniz İçin Bizimle İletişime Geçin
             </h2>
-            <p className='text-xl mb-8 max-w-2xl mx-auto opacity-90'>
+            <p className='text-xl mb-8 max-w-2xl mx-auto opacity-90 font-neuropol'>
               Uzman ekibimiz size en uygun çözümleri sunmak için hazır. 
               Ücretsiz danışmanlık ve fiyat teklifi alın.
             </p>
             <div className='flex flex-col sm:flex-row gap-4 justify-center'>
               <Link 
-                href='/contact'
+                href='/iletisim'
                 className='btn-outline bg-white text-primary-blue border-white hover:bg-gray-100'
               >
                 İletişime Geç

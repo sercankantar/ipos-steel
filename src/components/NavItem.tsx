@@ -28,7 +28,7 @@ const NavItem = ({
     <div className='flex'>
       <div className='relative flex items-center'>
         <Button
-          className='gap-1.5'
+          className='gap-1.5 font-neuropol font-semibold'
           onClick={handleOpen}
           variant={isOpen ? 'secondary' : 'ghost'}>
           {category.label}
@@ -78,13 +78,13 @@ const NavItem = ({
 
                       <Link
                         href={item.href}
-                        className='mt-6 block font-medium text-gray-900'>
+                        className='mt-6 block font-neuropol font-bold text-gray-900'>
                         {item.name}
                       </Link>
                       <p
-                        className='mt-1'
+                        className='mt-1 font-neuropol text-sm text-muted-foreground'
                         aria-hidden='true'>
-                        Shop now
+                        Daha Fazla
                       </p>
                     </div>
                   ))}
