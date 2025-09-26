@@ -67,9 +67,10 @@ const MobileNav = () => {
                   <li
                     key={category.label}
                     className='space-y-10 px-4 pb-8 pt-10'>
-                    <div className='border-b border-gray-200'>
-                      <div className='-mb-px flex'>
-                        <p className='border-transparent text-gray-900 flex-1 whitespace-nowrap border-b-2 py-4 text-base font-medium'>
+                    <div className='border-b border-blue-100 bg-blue-50 rounded-lg p-4 mb-4'>
+                      <div className='flex items-center gap-3'>
+                        <div className='w-2 h-2 bg-blue-600 rounded-full'></div>
+                        <p className='text-blue-900 flex-1 whitespace-nowrap text-base font-bold font-neuropol'>
                           {category.label}
                         </p>
                       </div>
@@ -101,17 +102,26 @@ const MobileNav = () => {
               </ul>
             </div>
 
-            <div className='space-y-6 border-t border-gray-200 px-4 py-6'>
+            <div className='space-y-4 border-t border-gray-200 px-4 py-6 bg-gray-50'>
+              {/* İletişim Linki */}
+              <div className='flow-root'>
+                <Link
+                  onClick={() => closeOnCurrent('/iletisim')}
+                  href='/iletisim'
+                  className='bg-blue-600 hover:bg-blue-700 text-white font-semibold px-4 py-3 rounded-lg transition-all duration-200 block text-center font-neuropol shadow-sm'>
+                  İletişim
+                </Link>
+              </div>
               <div className='flow-root'>
                 <Link
                   onClick={() => closeOnCurrent('/sign-in')}
                   href='/sign-in'
-                  className='-m-2 block p-2 font-medium text-gray-900'>
+                  className='border-2 border-gray-300 hover:border-gray-400 text-gray-700 hover:text-gray-900 font-semibold px-4 py-3 rounded-lg transition-all duration-200 block text-center font-neuropol bg-white'>
                   Yönetici Girişi
                 </Link>
               </div>
               <div className='flow-root'>
-                <div className='-m-2 block p-2 font-medium text-gray-900'>
+                <div className='border-2 border-gray-300 text-gray-700 font-medium px-4 py-3 rounded-lg bg-white text-center font-neuropol'>
                   Dil: <LanguageSwitcher />
                 </div>
               </div>

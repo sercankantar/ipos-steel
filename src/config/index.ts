@@ -26,18 +26,23 @@ export const PRODUCT_CATEGORIES = [
     featured: [
       {
         name: 'Hakkımızda',
-        href: `/about`,
+        href: '/hakkimizda',
         imageSrc: '/nav/icons/picks.jpg',
       },
       {
-        name: 'Vizyonumuz',
-        href: '/about#vision',
+        name: 'Misyonumuz ve Vizyonumuz',
+        href: '/misyon-vizyon',
         imageSrc: '/nav/icons/new.jpg',
       },
       {
-        name: 'Referanslar',
-        href: '/references',
+        name: 'Sertifikalar',
+        href: '/sertifikalar',
         imageSrc: '/nav/icons/bestsellers.jpg',
+      },
+      {
+        name: 'Referanslar',
+        href: '/referanslar',
+        imageSrc: '/nav/ui-kits/blue.jpg',
       },
     ],
   },
@@ -47,18 +52,18 @@ export const PRODUCT_CATEGORIES = [
     featured: [
       {
         name: 'Haberler',
-        href: `/news`,
-        imageSrc: '/nav/icons/picks.jpg',
-      },
-      {
-        name: 'Basın Bültenleri',
-        href: '/press',
+        href: '/haberler',
         imageSrc: '/nav/icons/new.jpg',
       },
       {
+        name: 'Basın Açıklamaları',
+        href: '/basin-aciklamalari',
+        imageSrc: '/nav/icons/picks.jpg',
+      },
+      {
         name: 'Galeri',
-        href: '/gallery',
-        imageSrc: '/nav/icons/bestsellers.jpg',
+        href: '/galeri',
+        imageSrc: '/nav/ui-kits/mixed.jpg',
       },
     ],
   },

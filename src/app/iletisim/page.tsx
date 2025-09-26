@@ -185,10 +185,10 @@ export default function IletisimPage() {
                         Yol Tarifi Al
                       </a>
                     </div>
+                    </div>
+                    </div>
                   </div>
-                </div>
-              </div>
-
+                  
             </div>
 
           </div>
@@ -255,11 +255,11 @@ export default function IletisimPage() {
                     <div className="flex">
                       <span className="w-16 text-gray-500 text-xs">E-posta:</span>
                       <a href="mailto:kazakhstan@ipos-steel.com" className="text-gray-700 hover:text-slate-900">kazakhstan@ipos-steel.com</a>
-                    </div>
+                </div>
                     <div className="flex">
                       <span className="w-16 text-gray-500 text-xs">Telefon:</span>
                       <a href="tel:+77029927545" className="text-gray-700 hover:text-slate-900">+7 702 992 7545</a>
-                    </div>
+                  </div>
                     <div className="flex">
                       <span className="w-16 text-gray-500 text-xs">Adres:</span>
                       <span className="text-gray-700">Tolemetova 69/17, Kv 57, Turkestan bölgesi, Şımkent, Kazakistan</span>
@@ -325,7 +325,7 @@ export default function IletisimPage() {
                     <div className="flex">
                       <span className="w-16 text-gray-500 text-xs">Telefon:</span>
                       <a href="tel:+31611090910" className="text-gray-700 hover:text-slate-900">+31 6 11090910</a>
-                    </div>
+                  </div>
                     <div className="flex">
                       <span className="w-16 text-gray-500 text-xs">Adres:</span>
                       <span className="text-gray-700">Hoogwerfsingel 1A, 3202 SM, Spijkenisse, Hollanda</span>

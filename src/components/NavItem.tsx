@@ -25,18 +25,24 @@ const NavItem = ({
   isOpen,
 }: NavItemProps) => {
   return (
-    <div className='flex'>
+    <div className='flex' onMouseEnter={handleOpen} onMouseLeave={close}>
       <div className='relative flex items-center'>
         <Button
-          className='gap-1.5 font-neuropol font-semibold'
+          className={cn(
+            'gap-1.5 font-neuropol font-semibold text-gray-700 hover:text-blue-600 hover:bg-blue-50 border-transparent hover:border-blue-200 transition-all duration-200 px-4 py-2',
+            {
+              'text-blue-600 bg-blue-50 border-blue-200': isOpen,
+            }
+          )}
           onClick={handleOpen}
-          variant={isOpen ? 'secondary' : 'ghost'}>
+          variant='ghost'>
           {category.label}
           <ChevronDown
             className={cn(
-              'h-4 w-4 transition-all text-muted-foreground',
+              'h-4 w-4 transition-all duration-200',
               {
-                '-rotate-180': isOpen,
+                '-rotate-180 text-blue-600': isOpen,
+                'text-gray-500': !isOpen,
               }
             )}
           />
@@ -54,39 +60,36 @@ const NavItem = ({
             }
           )}>
           <div
-            className='absolute inset-0 top-1/2 bg-white shadow'
+            className='absolute inset-0 top-1/2 bg-white shadow-xl border-t border-gray-100'
             aria-hidden='true'
           />
 
-          <div className='relative bg-white'>
-            <div className='mx-auto max-w-7xl px-8'>
-              <div className='grid grid-cols-4 gap-x-8 gap-y-10 py-16'>
-                <div className='col-span-4 col-start-1 grid grid-cols-3 gap-x-8'>
+          <div className='relative bg-white border-t border-gray-100 shadow-lg'>
+            <div className='mx-auto max-w-6xl px-6'>
+              <div className='py-8'>
+                <div className='grid grid-cols-3 gap-6'>
                   {category.featured.map((item) => (
-                    <div
-                      onClick={() => close}
+                    <Link
+                      href={item.href}
+                      onClick={() => close()}
                       key={item.name}
-                      className='group relative text-base sm:text-sm'>
-                      <div className='relative aspect-video overflow-hidden rounded-lg bg-gray-100 group-hover:opacity-75'>
+                      className='group relative block p-4 rounded-lg hover:bg-gray-50 transition-all duration-200 border border-transparent hover:border-gray-200'>
+                      <div className='relative aspect-[4/3] overflow-hidden rounded-lg bg-gray-100 mb-3'>
                         <Image
                           src={item.imageSrc}
-                          alt='product category image'
+                          alt={item.name}
                           fill
-                          className='object-cover object-center'
+                          className='object-cover object-center rounded-lg group-hover:scale-105 transition-transform duration-300'
                         />
+                        <div className='absolute inset-0 bg-gradient-to-t from-black/10 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-lg'></div>
                       </div>
 
-                      <Link
-                        href={item.href}
-                        className='mt-6 block font-neuropol font-bold text-gray-900'>
-                        {item.name}
-                      </Link>
-                      <p
-                        className='mt-1 font-neuropol text-sm text-muted-foreground'
-                        aria-hidden='true'>
-                        Daha Fazla
-                      </p>
-                    </div>
+                      <div className='text-center'>
+                        <h3 className='font-neuropol font-semibold text-gray-900 group-hover:text-blue-600 transition-colors duration-200 text-sm'>
+                          {item.name}
+                        </h3>
+                      </div>
+                    </Link>
                   ))}
                 </div>
               </div>

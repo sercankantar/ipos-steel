@@ -10,6 +10,14 @@ const nextConfig = {
 				protocol: "https",
 				hostname: "digitalhippo-production.up.railway.app",
 			},
+			{
+				protocol: "https",
+				hostname: "images.unsplash.com",
+			},
+			{
+				protocol: "https",
+				hostname: "logo.clearbit.com",
+			},
 		],
 	},
 };
