@@ -280,7 +280,7 @@ export default function Home() {
                      <img 
                        src="https://img.freepik.com/premium-vector/basic-earth-map-continents_78370-2988.jpg?semt=ais_hybrid&w=740&q=80"
                        alt="Dünya Haritası"
-                       className="w-full h-full object-cover opacity-90"
+                       className="w-full h-full object-cover opacity-80"
                      />
                      
                      {/* Pin'ler */}
