@@ -1,3 +1,5 @@
+'use client'
+
 import MaxWidthWrapper from '@/components/MaxWidthWrapper'
 import {
   Button,
@@ -8,8 +10,13 @@ import {
   ArrowDownToLine,
   CheckCircle,
   Leaf,
+  Phone,
+  Mail,
+  MapPin,
+  X,
 } from 'lucide-react'
 import Link from 'next/link'
+import { useState } from 'react'
 
 const perks = [
   {
@@ -32,7 +39,48 @@ const perks = [
   },
 ]
 
+// Ülke bilgileri
+const countryData = {
+  germany: {
+    name: 'ALMANYA',
+    company: 'IPOS-Steel Deutschland GmbH',
+    address: 'Musterstraße 123, 12345 Berlin, Deutschland',
+    phone: '+49 30 12345678',
+    email: 'info@ipos-steel.de'
+  },
+  uk: {
+    name: 'İNGİLTERE',
+    company: 'IPOS-Steel UK Ltd',
+    address: 'Durham Business Centre, Abbey Road, Durham, DH1 5J',
+    phone: '+44 (0) 191 3753986 / +44 (0) 7394 399988',
+    email: 'ukinfo@ipos-steel.com'
+  },
+  usa: {
+    name: 'AMERİKA BİRLEŞİK DEVLETLERİ',
+    company: 'IPOS-Steel USA Inc.',
+    address: '123 Business Ave, New York, NY 10001, USA',
+    phone: '+1 555 123 4567',
+    email: 'info@ipos-steel.com'
+  },
+  turkey: {
+    name: 'TÜRKİYE',
+    company: 'IPOS-Steel Dış. Tic. A.Ş.',
+    address: 'Merkez Ofis, İstanbul, Türkiye',
+    phone: '+90 212 123 45 67',
+    email: 'info@ipos-steel.com'
+  },
+  australia: {
+    name: 'AVUSTRALYA',
+    company: 'IPOS-Steel Australia Pty Ltd',
+    address: '123 Business Street, Sydney, NSW 2000, Australia',
+    phone: '+61 2 1234 5678',
+    email: 'info@ipos-steel.com.au'
+  }
+}
+
 export default function Home() {
+  const [selectedCountry, setSelectedCountry] = useState<string | null>(null)
+
   return (
     <>
       
@@ -142,6 +190,250 @@ export default function Home() {
           </div>
         </MaxWidthWrapper>
       </section>
+      <section className='py-16'>
+        <MaxWidthWrapper>
+          <div className='grid grid-cols-1 lg:grid-cols-2 gap-12 items-center'>
+            {/* Sol taraf - Metin içeriği */}
+            <div className='space-y-6'>
+              <div>
+                <p className='text-sm font-neuropol font-semibold text-red-500 uppercase tracking-wider'>
+                  Uzman Çözümleri
+                </p>
+                <h2 className='mt-2 text-2xl lg:text-3xl font-neuropol font-bold text-gray-900 leading-tight'>
+                  Hakkımızda
+                </h2>
+              </div>
+              
+              <div className='space-y-4 text-gray-600 font-neuropol leading-relaxed'>
+                <p className='text-lg'>
+                  35 yılı aşkın tecrübeye sahip, alanında uzman mühendis ve imalat personelinin vermiş olduğu güven sayesinde kuruluşundan bu yana onlarca projeye imza atan IPOS-Steel Dış. Tic. A.Ş. bünyesinde, yenilenen kimliğimiz ile faaliyetlerimizi geliştirip büyütmeye devam etmekteyiz.
+                </p>
+                <p className='text-lg'>
+                  Kablo kanalı üreticisi olmanın yanında elektrik ve endüstriyel malzeme ihtiyaçlarınız için "Hepsi tek bir noktadan" çözümler sunmaktayız. Ana amacımız müşterilerimize rekabetçi fiyatlarla yüksek hizmet standartını en kaliteli ürünlerle sunmaktır.
+                </p>
+              </div>
+              
+              <div className='pt-4'>
+                <Link 
+                  href='/hakkimizda'
+                  className='inline-flex items-center px-8 py-3 border-2 border-red-500 text-red-500 font-neuropol font-semibold rounded-lg hover:bg-red-500 hover:text-white transition-all duration-300'
+                >
+                  Kurumsal
+                </Link>
+              </div>
+            </div>
+            
+            {/* Sağ taraf - Görsel içerik */}
+            <div className='relative'>
+              <div className=''>
+                <div className='relative h-96 bg-gradient-to-br from-gray-100 to-gray-200 rounded-xl overflow-hidden'>
+                  {/* 3D Kablo Kanalı Sistemi Görseli */}
+                  <img src='https://www.ipos-steel.com/wp-content/uploads/2022/02/homepage-about.png' alt='Kablo Kanalı Sistemi' className='h-full w-full object-cover' />
+                </div>
+              </div>
+            </div>
+          </div>
+        </MaxWidthWrapper>
+      </section>
+      <section className='py-16'>
+        <MaxWidthWrapper>
+          {/* Header */}
+          <div className='text-center mb-12'>
+            <p className='text-sm font-neuropol font-semibold text-red-500 uppercase tracking-wider mb-2'>
+              İletişim
+            </p>
+            <h2 className='text-3xl lg:text-4xl font-neuropol font-bold text-gray-900 mb-4'>
+              Yurt Dışı Şirketlerimiz
+            </h2>
+            <p className='text-lg text-gray-600 font-neuropol max-w-3xl mx-auto'>
+              Farklı ülkelerde bulunan şirketlerimizle çeşitli ürün ve hizmet seçeneklerimizden yararlanabilirsiniz.
+            </p>
+          </div>
+
+          {/* Ülke Seçici Dropdown */}
+          <div className='mb-8 flex justify-center'>
+            <div className='relative'>
+              <select 
+                className='appearance-none bg-white border border-gray-300 rounded-lg px-6 py-3 pr-10 text-gray-700 font-neuropol focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent shadow-sm'
+                value={selectedCountry || ''}
+                onChange={(e) => setSelectedCountry(e.target.value || null)}
+              >
+                <option value=''>Ülke Seçiniz</option>
+                <option value='germany'>ALMANYA</option>
+                <option value='uk'>İNGİLTERE</option>
+                <option value='usa'>AMERİKA BİRLEŞİK DEVLETLERİ</option>
+                <option value='australia'>AVUSTRALYA</option>
+                <option value='turkey'>TÜRKİYE</option>
+              </select>
+              <div className='absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none'>
+                <svg className='w-5 h-5 text-gray-400' fill='none' stroke='currentColor' viewBox='0 0 24 24'>
+                  <path strokeLinecap='round' strokeLinejoin='round' strokeWidth={2} d='M19 9l-7 7-7-7' />
+                </svg>
+              </div>
+            </div>
+          </div>
+
+                 {/* Interaktif Dünya Haritası */}
+                 <div className='relative  p-8'>
+                   <div className='relative  overflow-hidden rounded-xl'>
+                     {/* Dünya Haritası Resmi */}
+                     <img 
+                       src="https://img.freepik.com/premium-vector/basic-earth-map-continents_78370-2988.jpg?semt=ais_hybrid&w=740&q=80"
+                       alt="Dünya Haritası"
+                       className="w-full h-full object-cover opacity-90"
+                     />
+                     
+                     {/* Pin'ler */}
+                     {/* Amerika - New York */}
+                     <div 
+                       className="absolute cursor-pointer group"
+                       style={{ top: '25%', left: '15%' }}
+                       onClick={() => setSelectedCountry('usa')}
+                     >
+                       <div className="relative">
+                         <div className="w-6 h-6 bg-red-500 rounded-full border-2 border-white shadow-lg flex items-center justify-center group-hover:scale-110 transition-transform">
+                           <div className="w-2 h-2 bg-white rounded-full"></div>
+                         </div>
+                         <div className="absolute -top-8 left-1/2 transform -translate-x-1/2 bg-gray-900 text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
+                           Amerika
+                         </div>
+                       </div>
+                     </div>
+
+                     {/* Almanya - Berlin */}
+                     <div 
+                       className="absolute cursor-pointer group"
+                       style={{ top: '25%', left: '52%' }}
+                       onClick={() => setSelectedCountry('germany')}
+                     >
+                       <div className="relative">
+                         <div className="w-6 h-6 bg-red-500 rounded-full border-2 border-white shadow-lg flex items-center justify-center group-hover:scale-110 transition-transform">
+                           <div className="w-2 h-2 bg-white rounded-full"></div>
+                         </div>
+                         <div className="absolute -top-8 left-1/2 transform -translate-x-1/2 bg-gray-900 text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
+                           Almanya
+                         </div>
+                       </div>
+                     </div>
+
+                     {/* İngiltere - London */}
+                     <div 
+                       className="absolute cursor-pointer group"
+                       style={{ top: '22%', left: '45%' }}
+                       onClick={() => setSelectedCountry('uk')}
+                     >
+                       <div className="relative">
+                         <div className="w-6 h-6 bg-red-500 rounded-full border-2 border-white shadow-lg flex items-center justify-center group-hover:scale-110 transition-transform">
+                           <div className="w-2 h-2 bg-white rounded-full"></div>
+                         </div>
+                         <div className="absolute -top-8 left-1/2 transform -translate-x-1/2 bg-gray-900 text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
+                           İngiltere
+                         </div>
+                       </div>
+                     </div>
+
+                     {/* Türkiye - İstanbul */}
+                     <div 
+                       className="absolute cursor-pointer group"
+                       style={{ top: '32%', left: '56%' }}
+                       onClick={() => setSelectedCountry('turkey')}
+                     >
+                       <div className="relative">
+                         <div className="w-6 h-6 bg-red-500 rounded-full border-2 border-white shadow-lg flex items-center justify-center group-hover:scale-110 transition-transform">
+                           <div className="w-2 h-2 bg-white rounded-full"></div>
+                         </div>
+                         <div className="absolute -top-8 left-1/2 transform -translate-x-1/2 bg-gray-900 text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
+                           Türkiye
+                         </div>
+                       </div>
+                     </div>
+
+                     {/* Avustralya - Sydney */}
+                     <div 
+                       className="absolute cursor-pointer group"
+                       style={{ top: '70%', left: '88%' }}
+                       onClick={() => setSelectedCountry('australia')}
+                     >
+                       <div className="relative">
+                         <div className="w-6 h-6 bg-red-500 rounded-full border-2 border-white shadow-lg flex items-center justify-center group-hover:scale-110 transition-transform">
+                           <div className="w-2 h-2 bg-white rounded-full"></div>
+                         </div>
+                         <div className="absolute -top-8 left-1/2 transform -translate-x-1/2 bg-gray-900 text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
+                           Avustralya
+                         </div>
+                       </div>
+                     </div>
+                   </div>
+                 </div>
+        </MaxWidthWrapper>
+      </section>
+
+      {/* Bilgi Kartı Modal */}
+      {selectedCountry && (
+        <div className='fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4'>
+          <div className='bg-white rounded-2xl shadow-2xl max-w-md w-full p-6 relative'>
+            <button
+              onClick={() => setSelectedCountry(null)}
+              className='absolute top-4 right-4 text-gray-400 hover:text-gray-600 transition-colors'
+            >
+              <X className='w-6 h-6' />
+            </button>
+            
+            <div className='space-y-4'>
+              <div>
+                <h3 className='text-xl font-neuropol font-bold text-gray-900 mb-2'>
+                  {countryData[selectedCountry as keyof typeof countryData].name}
+                </h3>
+                <p className='text-lg font-neuropol font-semibold text-gray-700'>
+                  {countryData[selectedCountry as keyof typeof countryData].company}
+                </p>
+              </div>
+              
+              <div className='space-y-3'>
+                <div className='flex items-start gap-3'>
+                  <MapPin className='w-5 h-5 text-red-500 mt-0.5 flex-shrink-0' />
+                  <p className='text-gray-600 font-neuropol'>
+                    {countryData[selectedCountry as keyof typeof countryData].address}
+                  </p>
+                </div>
+                
+                <div className='flex items-center gap-3'>
+                  <Phone className='w-5 h-5 text-red-500 flex-shrink-0' />
+                  <p className='text-gray-600 font-neuropol'>
+                    {countryData[selectedCountry as keyof typeof countryData].phone}
+                  </p>
+                </div>
+                
+                <div className='flex items-center gap-3'>
+                  <Mail className='w-5 h-5 text-red-500 flex-shrink-0' />
+                  <p className='text-gray-600 font-neuropol'>
+                    {countryData[selectedCountry as keyof typeof countryData].email}
+                  </p>
+                </div>
+              </div>
+              
+              <div className='pt-4 flex gap-3'>
+                <button
+                  onClick={() => setSelectedCountry(null)}
+                  className='flex-1 bg-gray-100 hover:bg-gray-200 text-gray-700 font-neuropol font-semibold py-2 px-4 rounded-lg transition-colors'
+                >
+                  Kapat
+                </button>
+                <button
+                  onClick={() => {
+                    // İletişim sayfasına yönlendirme
+                    window.location.href = '/iletisim'
+                  }}
+                  className='flex-1 bg-red-500 hover:bg-red-600 text-white font-neuropol font-semibold py-2 px-4 rounded-lg transition-colors'
+                >
+                  İletişime Geç
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
       <section className='py-16 bg-gray-50'>
         <MaxWidthWrapper>
           {/* Header row */}
@@ -217,6 +509,9 @@ export default function Home() {
           </div>
         </MaxWidthWrapper>
       </section>
+
+     
+
 
       {/* Contact CTA Section */}
       <section className='py-20 bg-gradient-to-br from-slate-900 via-blue-900 to-slate-800 relative overflow-hidden'>

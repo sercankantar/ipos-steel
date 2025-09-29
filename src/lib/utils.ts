@@ -27,8 +27,8 @@ export function formatPrice(
 }
 
 export function constructMetadata({
-  title = 'DigitalHippo - the marketplace for digital assets',
-  description = 'DigitalHippo is an open-source marketplace for high-quality digital goods.',
+  title = 'IPOS-Steel Dış Ticaret A.Ş.',
+  description = 'Kablo kanalı üreticisi olmanın yanında Ipos-Steel, elektrik ve endüstriyel malzeme ihtiyaçlarınız için “Hepsi tek bir noktadan” çözümler sunmaktayız..',
   image = '/thumbnail.png',
   icons = '/favicon.ico',
   noIndex = false,
