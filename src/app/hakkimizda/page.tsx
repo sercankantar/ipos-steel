@@ -11,10 +11,19 @@ import {
   Factory,
   TrendingUp
 } from 'lucide-react'
+import { headers } from 'next/headers'
+
+function getBaseUrl() {
+  const h = headers()
+  const proto = h.get('x-forwarded-proto') || 'https'
+  const host = h.get('host')
+  return `${proto}://${host}`
+}
 
 async function getAbout() {
   try {
-    const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/api/about`, { cache: 'no-store' })
+    const base = process.env.NEXT_PUBLIC_SERVER_URL || getBaseUrl()
+    const res = await fetch(`${base}/api/about`, { cache: 'no-store' })
     if (!res.ok) return null
     return await res.json()
   } catch (e) {
