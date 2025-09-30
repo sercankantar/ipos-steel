@@ -8,7 +8,13 @@ export async function GET() {
       orderBy: { createdAt: 'desc' },
       select: { id: true, name: true, slug: true, imageUrl: true },
     })
-    return NextResponse.json(categories)
+    return NextResponse.json(categories, {
+      headers: {
+        'Cache-Control': 'no-store, max-age=0',
+        'Pragma': 'no-cache',
+        'Expires': '0',
+      },
+    })
   } catch (error) {
     return NextResponse.json({ error: 'Sunucu hatası' }, { status: 500 })
   }

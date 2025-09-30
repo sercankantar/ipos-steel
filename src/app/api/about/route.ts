@@ -7,7 +7,13 @@ export async function GET() {
       where: { isActive: true },
       orderBy: { updatedAt: 'desc' }
     })
-    return NextResponse.json(about)
+    return NextResponse.json(about, {
+      headers: {
+        'Cache-Control': 'no-store, max-age=0',
+        'Pragma': 'no-cache',
+        'Expires': '0',
+      },
+    })
   } catch (error) {
     return NextResponse.json({ error: 'Sunucu hatası' }, { status: 500 })
   }

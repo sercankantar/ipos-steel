@@ -8,7 +8,13 @@ export async function GET(_req: NextRequest, { params }: { params: { id: string 
       include: { category: true },
     })
     if (!product) return NextResponse.json({ error: 'Ürün bulunamadı' }, { status: 404 })
-    return NextResponse.json(product)
+    return NextResponse.json(product, {
+      headers: {
+        'Cache-Control': 'no-store, max-age=0',
+        'Pragma': 'no-cache',
+        'Expires': '0',
+      },
+    })
   } catch (e) {
     return NextResponse.json({ error: 'Sunucu hatası' }, { status: 500 })
   }

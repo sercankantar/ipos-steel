@@ -15,7 +15,13 @@ export async function GET(req: NextRequest) {
       include: { category: true },
     })
 
-    return NextResponse.json(products)
+    return NextResponse.json(products, {
+      headers: {
+        'Cache-Control': 'no-store, max-age=0',
+        'Pragma': 'no-cache',
+        'Expires': '0',
+      },
+    })
   } catch (e) {
     return NextResponse.json({ error: 'Sunucu hatası' }, { status: 500 })
   }

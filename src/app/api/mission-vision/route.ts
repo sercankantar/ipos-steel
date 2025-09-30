@@ -8,7 +8,13 @@ export async function GET() {
       orderBy: { updatedAt: 'desc' }
     })
 
-    return NextResponse.json(missionVision)
+    return NextResponse.json(missionVision, {
+      headers: {
+        'Cache-Control': 'no-store, max-age=0',
+        'Pragma': 'no-cache',
+        'Expires': '0',
+      },
+    })
   } catch (error) {
     console.error('Misyon-vizyon getirilirken hata:', error)
     return NextResponse.json(
