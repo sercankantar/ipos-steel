@@ -1,6 +1,7 @@
 'use client'
 
 import { PRODUCT_CATEGORIES } from '@/config'
+import { useEffect, useState } from 'react'
 import { Button } from './ui/button'
 import { ChevronDown } from 'lucide-react'
 import { cn } from '@/lib/utils'
@@ -24,6 +25,26 @@ const NavItem = ({
   close,
   isOpen,
 }: NavItemProps) => {
+  const [dynamicFeatured, setDynamicFeatured] = useState(category.featured)
+
+  useEffect(() => {
+    const load = async () => {
+      if (category.label !== 'Ürünler') return
+      try {
+        const res = await fetch('/api/product-categories', { cache: 'no-store' })
+        if (!res.ok) return
+        const data: { name: string; slug: string; imageUrl?: string }[] = await res.json()
+        setDynamicFeatured(
+          data.map((c) => ({
+            name: c.name,
+            href: `/products?category=${encodeURIComponent(c.slug)}`,
+            imageSrc: c.imageUrl || '/nav/ui-kits/mixed.jpg',
+          }))
+        )
+      } catch {}
+    }
+    load()
+  }, [category.label])
   return (
     <div className='flex' onMouseEnter={handleOpen} onMouseLeave={close}>
       <div className='relative flex items-center'>
@@ -68,7 +89,7 @@ const NavItem = ({
             <div className='mx-auto max-w-6xl px-6'>
               <div className='py-8'>
                 <div className='grid grid-cols-3 gap-6'>
-                  {category.featured.map((item) => (
+                  {(category.label === 'Ürünler' ? dynamicFeatured : category.featured).map((item) => (
                     <Link
                       href={item.href}
                       onClick={() => close()}

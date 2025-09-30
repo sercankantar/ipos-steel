@@ -3,21 +3,7 @@ export const PRODUCT_CATEGORIES = [
     label: 'Ürünler',
     value: 'ui_kits' as const,
     featured: [
-      {
-        name: 'Busbar Sistemleri',
-        href: `/products?category=busbar`,
-        imageSrc: '/nav/ui-kits/mixed.jpg',
-      },
-      {
-        name: 'Askı Sistemleri',
-        href: '/products?category=aski',
-        imageSrc: '/nav/ui-kits/blue.jpg',
-      },
-      {
-        name: 'Kablo Kanalı Sistemleri',
-        href: '/products?category=kablo',
-        imageSrc: '/nav/ui-kits/purple.jpg',
-      },
+      // Artık dinamik kategorilerden besleyeceğiz; bu statik liste fallback olarak kalabilir
     ],
   },
   {

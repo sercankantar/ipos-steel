@@ -18,6 +18,10 @@ const nextConfig = {
 				protocol: "https",
 				hostname: "logo.clearbit.com",
 			},
+			{
+				protocol: "https",
+				hostname: "res.cloudinary.com",
+			},
 		],
 	},
 };

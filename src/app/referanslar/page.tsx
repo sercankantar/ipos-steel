@@ -1,45 +1,31 @@
 'use client'
 
 import MaxWidthWrapper from '@/components/MaxWidthWrapper'
+import { useEffect, useState } from 'react'
 
-const referanslar = [
-  // Metal ve İnşaat Şirketleri
-  { name: 'Eczacıbaşı Holding', logo: 'https://logo.clearbit.com/eczacibasi.com', category: 'Holding' },
-  { name: 'Arçelik', logo: 'https://logo.clearbit.com/arcelik.com', category: 'Beyaz Eşya' },
-  { name: 'Ford Otomotiv', logo: 'https://logo.clearbit.com/ford.com', category: 'Otomotiv' },
-  { name: 'Bosch', logo: 'https://logo.clearbit.com/bosch.com', category: 'Teknoloji' },
-  { name: 'Siemens', logo: 'https://logo.clearbit.com/siemens.com', category: 'Teknoloji' },
-  
-  // Metal İşleme ve Çelik Şirketleri
-  { name: 'Erdemir Çelik', logo: 'https://logo.clearbit.com/erdemir.com.tr', category: 'Çelik' },
-  { name: 'Kardemir', logo: 'https://logo.clearbit.com/kardemir.com', category: 'Çelik' },
-  { name: 'Assan Alüminyum', logo: 'https://logo.clearbit.com/assan.com.tr', category: 'Alüminyum' },
-  { name: 'Tekfen Holding', logo: 'https://logo.clearbit.com/tekfen.com', category: 'Holding' },
-  { name: 'OYAK Çimento', logo: 'https://logo.clearbit.com/oyak.com.tr', category: 'Çimento' },
-  
-  // İnşaat ve Altyapı
-  { name: 'Enka İnşaat', logo: 'https://logo.clearbit.com/enka.com', category: 'İnşaat' },
-  { name: 'Rönesans Holding', logo: 'https://logo.clearbit.com/ronesans.com', category: 'İnşaat' },
-  { name: 'Limak Holding', logo: 'https://logo.clearbit.com/limak.com.tr', category: 'İnşaat' },
-  { name: 'Gama Holding', logo: 'https://logo.clearbit.com/gama.com.tr', category: 'İnşaat' },
-  { name: 'TAV Havalimanları', logo: 'https://logo.clearbit.com/tav.aero', category: 'Havacılık' },
-  
-  // Enerji ve Elektrik
-  { name: 'TEDAŞ', logo: 'https://logo.clearbit.com/tedas.gov.tr', category: 'Enerji' },
-  { name: 'Enerjisa', logo: 'https://logo.clearbit.com/enerjisa.com.tr', category: 'Enerji' },
-  { name: 'Aksa Enerji', logo: 'https://logo.clearbit.com/aksa.com.tr', category: 'Enerji' },
-  { name: 'Zorlu Enerji', logo: 'https://logo.clearbit.com/zorluenerji.com.tr', category: 'Enerji' },
-  { name: 'Kalyon Enerji', logo: 'https://logo.clearbit.com/kalyon.com.tr', category: 'Enerji' },
-  
-  // Maden ve Metal
-  { name: 'Eti Maden', logo: 'https://logo.clearbit.com/etimaden.gov.tr', category: 'Maden' },
-  { name: 'Tüpraş', logo: 'https://logo.clearbit.com/tupras.com.tr', category: 'Petrol' },
-  { name: 'SASA Polyester', logo: 'https://logo.clearbit.com/sasa.com.tr', category: 'Kimya' },
-  { name: 'Akçansa Çimento', logo: 'https://logo.clearbit.com/akcansa.com.tr', category: 'Çimento' },
-  { name: 'İçdaş Çelik', logo: 'https://logo.clearbit.com/icdas.com.tr', category: 'Çelik' }
-]
+interface Reference {
+  id: string
+  name: string
+  sector: string
+  logoUrl?: string
+  isActive: boolean
+}
 
 export default function ReferanslarPage() {
+  const [items, setItems] = useState<Reference[]>([])
+
+  useEffect(() => {
+    const load = async () => {
+      try {
+        const res = await fetch('/api/references', { cache: 'no-store' })
+        if (!res.ok) return
+        const data = await res.json()
+        setItems(data)
+      } catch (e) {}
+    }
+    load()
+  }, [])
+
   return (
     <div className="min-h-screen bg-white">
       {/* Hero Section */}
@@ -60,15 +46,15 @@ export default function ReferanslarPage() {
       <section className="py-20">
         <MaxWidthWrapper>
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-8">
-            {referanslar.map((referans, index) => (
+            {items.map((referans) => (
               <div
-                key={index}
+                key={referans.id}
                 className="group bg-white border border-gray-200 rounded-lg p-6 hover:shadow-lg transition-all duration-300 hover:border-gray-300"
               >
                 {/* Logo */}
                 <div className="aspect-square bg-gray-50 rounded-lg mb-4 flex items-center justify-center border border-gray-100 group-hover:bg-gray-100 transition-colors p-4">
                   <img
-                    src={referans.logo}
+                    src={referans.logoUrl || ''}
                     alt={`${referans.name} Logo`}
                     className="max-w-full max-h-full object-contain filter grayscale group-hover:grayscale-0 transition-all duration-300"
                     onError={(e) => {
@@ -98,7 +84,7 @@ export default function ReferanslarPage() {
                     {referans.name}
                   </h3>
                   <span className="text-xs bg-gray-100 text-gray-600 px-2 py-1 rounded-full">
-                    {referans.category}
+                    {referans.sector}
                   </span>
                 </div>
               </div>

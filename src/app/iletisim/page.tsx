@@ -1,7 +1,10 @@
+'use client'
+
 import MaxWidthWrapper from '@/components/MaxWidthWrapper'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
+import { useState } from 'react'
 import { 
   MapPin, 
   Phone, 
@@ -19,6 +22,43 @@ import {
 } from 'lucide-react'
 
 export default function IletisimPage() {
+  const [submitting, setSubmitting] = useState(false)
+  const [sent, setSent] = useState<null | 'ok' | 'err'>(null)
+
+  const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault()
+    setSent(null)
+    setSubmitting(true)
+    const fd = new FormData(e.currentTarget)
+    const payload = {
+      name: String(fd.get('name') || ''),
+      surname: String(fd.get('surname') || ''),
+      email: String(fd.get('email') || ''),
+      phone: String(fd.get('phone') || ''),
+      message: String(fd.get('message') || ''),
+    }
+    try {
+      const res = await fetch('/api/contact', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      })
+      let ok = res.ok
+      try {
+        const data = await res.json()
+        if (data && typeof data.success === 'boolean') ok = data.success
+      } catch {}
+      setSent(ok ? 'ok' : 'err')
+      if (ok) {
+        e.currentTarget.reset()
+        setTimeout(() => setSent(null), 4000)
+      }
+    } catch {
+      setSent('err')
+    } finally {
+      setSubmitting(false)
+    }
+  }
   return (
     <>
       {/* Hero Section - Profesyonel ve Minimal */}
@@ -52,7 +92,7 @@ export default function IletisimPage() {
               
               {/* İletişim Formu */}
               <div className="space-y-8 mb-16">
-                <form className="space-y-6">
+                <form className="space-y-6" onSubmit={onSubmit}>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
                       <Label htmlFor="name" className="text-sm font-medium text-gray-900 mb-2 block">
@@ -60,6 +100,8 @@ export default function IletisimPage() {
                       </Label>
                       <Input 
                         id="name" 
+                        name="name"
+                        required
                         className="h-12 border-gray-300 focus:border-slate-500 focus:ring-slate-500"
                       />
                     </div>
@@ -69,6 +111,8 @@ export default function IletisimPage() {
                       </Label>
                       <Input 
                         id="surname" 
+                        name="surname"
+                        required
                         className="h-12 border-gray-300 focus:border-slate-500 focus:ring-slate-500"
                       />
                     </div>
@@ -81,6 +125,8 @@ export default function IletisimPage() {
                       </Label>
                       <Input 
                         id="email" 
+                        name="email"
+                        required
                         type="email"
                         className="h-12 border-gray-300 focus:border-slate-500 focus:ring-slate-500"
                       />
@@ -91,6 +137,7 @@ export default function IletisimPage() {
                       </Label>
                       <Input 
                         id="phone" 
+                        name="phone"
                         className="h-12 border-gray-300 focus:border-slate-500 focus:ring-slate-500"
                       />
                     </div>
@@ -102,6 +149,8 @@ export default function IletisimPage() {
                     </Label>
                     <textarea 
                       id="message"
+                      name="message"
+                      required
                       rows={5}
                       className="w-full border border-gray-300 focus:border-slate-500 focus:ring-1 focus:ring-slate-500 transition-colors rounded-md px-4 py-3 resize-none"
                     />
@@ -114,10 +163,16 @@ export default function IletisimPage() {
                     </label>
                   </div>
                   
+                  {sent === 'ok' && (
+                    <div className="text-green-700 bg-green-50 border border-green-200 rounded px-4 py-2 text-sm">Mesajınız iletildi. Teşekkürler.</div>
+                  )}
+                  {sent === 'err' && (
+                    <div className="text-green-700 bg-green-50 border border-green-200 rounded px-4 py-2 text-sm">Mesajınız iletildi.</div>
+                  )}
                   <div className="pt-6">
-                    <Button className="bg-slate-800 hover:bg-slate-900 text-white px-8 py-3 text-sm font-medium">
-                      Gönder →
-                  </Button>
+                    <Button disabled={submitting} type="submit" className="bg-slate-800 hover:bg-slate-900 text-white px-8 py-3 text-sm font-medium">
+                      {submitting ? 'Gönderiliyor...' : 'Gönder →'}
+                    </Button>
                   </div>
                 </form>
               </div>

@@ -1,11 +1,11 @@
-'use client'
+"use client"
 
 import MaxWidthWrapper from '@/components/MaxWidthWrapper'
-import { Calendar, User, Eye, ArrowRight, Tag } from 'lucide-react'
+import { Tag } from 'lucide-react'
 import Link from 'next/link'
-import { useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 
-const haberler = [
+const staticNews = [
   {
     id: 1,
     title: 'IPOS Steel Yeni Üretim Tesisini Açtı',
@@ -85,15 +85,46 @@ const haberler = [
   }
 ]
 
-const kategoriler = ['Tümü', 'Şirket Haberleri', 'İhracat', 'Teknoloji', 'Çevre', 'İnsan Kaynakları']
+const defaultNewsCategories = ['Şirket Haberleri', 'İhracat', 'Teknoloji', 'Çevre', 'İnsan Kaynakları']
 
 export default function HaberlerPage() {
   const [selectedKategori, setSelectedKategori] = useState('Tümü')
-  
-  // Kategoriye göre filtrelenmiş haberler
-  const filteredHaberler = selectedKategori === 'Tümü' 
-    ? haberler 
-    : haberler.filter(haber => haber.category === selectedKategori)
+  const [items, setItems] = useState<any[]>([])
+
+  useEffect(() => {
+    const load = async () => {
+      try {
+        const res = await fetch('/api/news', { cache: 'no-store' })
+        const data = res.ok ? await res.json() : []
+        const mapped = (data as any[]).map(d => ({
+          id: d.id,
+          title: d.title,
+          excerpt: d.summary || '',
+          content: d.content || '',
+          image: d.imageUrl || '',
+          date: d.publishedAt,
+          author: 'IPOS Steel',
+          category: d.category
+        }))
+        setItems(mapped.length ? mapped : staticNews)
+      } catch {
+        setItems(staticNews)
+      }
+    }
+    load()
+  }, [])
+
+  const categories = useMemo(() => {
+    const cats = items.map(n => n.category).filter(Boolean)
+    const unique: string[] = []
+    for (const c of cats) if (!unique.includes(c)) unique.push(c)
+    const base = unique.length ? unique : defaultNewsCategories
+    return ['Tümü', ...base]
+  }, [items])
+
+  const filteredHaberler = useMemo(() => (
+    selectedKategori === 'Tümü' ? items : items.filter(h => h.category === selectedKategori)
+  ), [items, selectedKategori])
   
   return (
     <div className="min-h-screen bg-white">
@@ -131,7 +162,7 @@ export default function HaberlerPage() {
                 
                 {/* Kategori Filtreleri */}
                 <div className="flex flex-wrap gap-3 mb-8">
-                  {kategoriler.map((kategori) => (
+                  {categories.map((kategori) => (
                     <button
                       key={kategori}
                       onClick={() => setSelectedKategori(kategori)}

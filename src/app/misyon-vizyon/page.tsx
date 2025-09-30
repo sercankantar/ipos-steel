@@ -1,7 +1,34 @@
 import MaxWidthWrapper from '@/components/MaxWidthWrapper'
 import { Target, Eye } from 'lucide-react'
 
-export default function MisyonVizyonPage() {
+async function getMissionVision() {
+  try {
+    const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/api/mission-vision`, {
+      cache: 'no-store'
+    })
+    
+    if (!response.ok) {
+      return null
+    }
+    
+    return await response.json()
+  } catch (error) {
+    console.error('Misyon-vizyon verisi alınırken hata:', error)
+    return null
+  }
+}
+
+export default async function MisyonVizyonPage() {
+  const missionVision = await getMissionVision()
+  
+  // Varsayılan değerler
+  const defaultMission = "Sektöründe lider olmak, rekabetçi ve sürdürülebilir büyüme potansiyelini paydaslarına değer yaratacak şekilde yönetmek, işletme kaynaklarını sermayesini en üst seviyelere çıkarmak, şeffaflık, üstün iş ahlâkı ve dürüst çalışma ilkelerine uymak."
+  const defaultVision = "IPOS-Steel, uluslararası kalite ve standartlarda müşterilerine kaliteli ürün ve hizmetler sunarak tecrübeli kadrosuyla birlikte sürekli gelişmektedir. Kablo kanalı üretim makineleri imalatından gelen tecrübeyi elektrik sektöründeki iş çevresi ile katlayarak Asya, Avrupa ve Afrika pazarlarında en çok tercih edilen markalar arasında yer almayı hedeflemektedir."
+  
+  const mission = missionVision?.mission || defaultMission
+  const vision = missionVision?.vision || defaultVision
+  const missionImageUrl = missionVision?.missionImageUrl || null
+  const visionImageUrl = missionVision?.visionImageUrl || null
   return (
     <>
       {/* Hero Section */}
@@ -33,21 +60,23 @@ export default function MisyonVizyonPage() {
               
               <div className="bg-gray-50 p-8 rounded-lg border-l-4 border-slate-700">
                 <p className="text-gray-700 leading-relaxed text-lg">
-                  Sektöründe lider olmak, rekabetçi ve sürdürülebilir büyüme potansiyelini paydaslarına 
-                  değer yaratacak şekilde yönetmek, işletme kaynaklarını sermayesini en üst seviyelere 
-                  çıkarmak, şeffaflık, üstün iş ahlâkı ve dürüst çalışma ilkelerine uymak.
+                  {mission}
                 </p>
               </div>
             </div>
             
             <div className="relative">
-              <div className="bg-gradient-to-br from-gray-100 to-gray-200 rounded-lg h-80 flex items-center justify-center border border-gray-200">
-                <div className="text-center">
-                  <Target className="h-20 w-20 text-gray-400 mx-auto mb-4" />
-                  <p className="text-gray-500 text-sm font-medium">Misyon Fotoğrafı</p>
-                  <p className="text-gray-400 text-xs mt-1">(Güncellenecek)</p>
+              {missionImageUrl ? (
+                <img src={missionImageUrl} alt="Misyon" className="rounded-lg h-80 w-full object-cover border border-gray-200" />
+              ) : (
+                <div className="bg-gradient-to-br from-gray-100 to-gray-200 rounded-lg h-80 flex items-center justify-center border border-gray-200">
+                  <div className="text-center">
+                    <Target className="h-20 w-20 text-gray-400 mx-auto mb-4" />
+                    <p className="text-gray-500 text-sm font-medium">Misyon Fotoğrafı</p>
+                    <p className="text-gray-400 text-xs mt-1">(Güncellenecek)</p>
+                  </div>
                 </div>
-              </div>
+              )}
             </div>
           </div>
         </MaxWidthWrapper>
@@ -67,23 +96,23 @@ export default function MisyonVizyonPage() {
               
               <div className="bg-white p-8 rounded-lg border-l-4 border-slate-700">
                 <p className="text-gray-700 leading-relaxed text-lg">
-                  IPOS-Steel, uluslararası kalite ve standartlarda müşterilerine kaliteli ürün ve 
-                  hizmetler sunarak tecrübeli kadrosuyla birlikte sürekli gelişmektedir. Kablo kanalı 
-                  üretim makineleri imalatından gelen tecrübeyi elektrik sektöründeki iş çevresi ile 
-                  katlayarak Asya, Avrupa ve Afrika pazarlarında en çok tercih edilen markalar arasında 
-                  yer almayı hedeflemektedir.
+                  {vision}
                 </p>
               </div>
             </div>
             
             <div className="lg:order-1 relative">
-              <div className="bg-gradient-to-br from-gray-100 to-gray-200 rounded-lg h-80 flex items-center justify-center border border-gray-200">
-                <div className="text-center">
-                  <Eye className="h-20 w-20 text-gray-400 mx-auto mb-4" />
-                  <p className="text-gray-500 text-sm font-medium">Vizyon Fotoğrafı</p>
-                  <p className="text-gray-400 text-xs mt-1">(Güncellenecek)</p>
+              {visionImageUrl ? (
+                <img src={visionImageUrl} alt="Vizyon" className="rounded-lg h-80 w-full object-cover border border-gray-200" />
+              ) : (
+                <div className="bg-gradient-to-br from-gray-100 to-gray-200 rounded-lg h-80 flex items-center justify-center border border-gray-200">
+                  <div className="text-center">
+                    <Eye className="h-20 w-20 text-gray-400 mx-auto mb-4" />
+                    <p className="text-gray-500 text-sm font-medium">Vizyon Fotoğrafı</p>
+                    <p className="text-gray-400 text-xs mt-1">(Güncellenecek)</p>
+                  </div>
                 </div>
-              </div>
+              )}
             </div>
           </div>
         </MaxWidthWrapper>

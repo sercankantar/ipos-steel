@@ -1,4 +1,4 @@
-'use client'
+"use client"
 
 import MaxWidthWrapper from '@/components/MaxWidthWrapper'
 import { Calendar, User, Eye, ArrowLeft, Share2, BookOpen, ChevronLeft, ChevronRight, X } from 'lucide-react'
@@ -7,8 +7,8 @@ import { useParams } from 'next/navigation'
 import { useState, useEffect } from 'react'
 import Image from 'next/image'
 
-// Haber verilerini buradan alacağız (normalde API'den gelir)
-const haberler = [
+// Fallback statik içerik (API başarısız olursa)
+const staticNews = [
   {
     id: 1,
     title: 'IPOS Steel Yeni Üretim Tesisini Açtı',
@@ -180,11 +180,60 @@ const haberler = [
 
 export default function HaberDetayPage() {
   const params = useParams()
-  const haberId = parseInt(params.id as string)
-  const [selectedImageIndex, setSelectedImageIndex] = useState<number | null>(null)
+  const [selectedImageIndex, setSelectedImageIndex] = useState<number | null>(0)
   const [isGalleryOpen, setIsGalleryOpen] = useState(false)
-  
-  const haber = haberler.find(h => h.id === haberId)
+  const [haber, setHaber] = useState<any | null>(null)
+
+  useEffect(() => {
+    const load = async () => {
+      const id = params.id as string
+      try {
+        const res = await fetch(`/api/news/${id}`, { cache: 'no-store' })
+        if (res.ok) {
+          const d = await res.json()
+          setHaber({
+            id: d.id,
+            title: d.title,
+            excerpt: d.summary || '',
+            content: d.content || '',
+            image: d.imageUrl || '',
+            gallery: d.imageUrl ? [d.imageUrl] : [],
+            date: d.publishedAt,
+            author: 'IPOS Steel',
+            category: d.category,
+            views: 0,
+            tags: []
+          })
+          return
+        }
+        // Eğer tekil endpoint başarısızsa listeden bulmayı dene
+        const listRes = await fetch('/api/news', { cache: 'no-store' })
+        if (listRes.ok) {
+          const list = await listRes.json()
+          const d = (list as any[]).find((n) => String(n.id) === String(id))
+          if (d) {
+            setHaber({
+              id: d.id,
+              title: d.title,
+              excerpt: d.summary || '',
+              content: d.content || '',
+              image: d.imageUrl || '',
+              gallery: d.imageUrl ? [d.imageUrl] : [],
+              date: d.publishedAt,
+              author: 'IPOS Steel',
+              category: d.category,
+              views: 0,
+              tags: []
+            })
+            return
+          }
+        }
+      } catch {}
+      const fb = staticNews.find(n => String(n.id) === String(params.id))
+      setHaber(fb || null)
+    }
+    load()
+  }, [params.id])
   
   // Galeri fonksiyonları
   const openGallery = (imageIndex: number) => {
@@ -198,14 +247,14 @@ export default function HaberDetayPage() {
   }
 
   const nextImage = () => {
-    if (selectedImageIndex !== null && haber?.gallery) {
+    if (selectedImageIndex !== null && haber?.gallery && haber.gallery.length > 0) {
       const nextIndex = (selectedImageIndex + 1) % haber.gallery.length
       setSelectedImageIndex(nextIndex)
     }
   }
 
   const prevImage = () => {
-    if (selectedImageIndex !== null && haber?.gallery) {
+    if (selectedImageIndex !== null && haber?.gallery && haber.gallery.length > 0) {
       const prevIndex = selectedImageIndex === 0 ? haber.gallery.length - 1 : selectedImageIndex - 1
       setSelectedImageIndex(prevIndex)
     }
@@ -301,7 +350,7 @@ export default function HaberDetayPage() {
                   </div>
                   <div className="flex items-center gap-1">
                     <Eye className="h-4 w-4" />
-                    <span>{haber.views} görüntülenme</span>
+                    <span>{haber.views || 0} görüntülenme</span>
                   </div>
                 </div>
               </div>
@@ -321,8 +370,8 @@ export default function HaberDetayPage() {
                 {/* Carousel İçeriği */}
                 <div className="relative w-full h-full">
                   <img 
-                    src={haber.gallery?.[currentImageIndex] || haber.image} 
-                    alt={`${haber.title} - Görsel ${currentImageIndex + 1}`}
+                    src={(haber.gallery && haber.gallery.length > 0 && selectedImageIndex !== null) ? haber.gallery[selectedImageIndex] : haber.image} 
+                    alt={`${haber.title}`}
                     className="w-full h-full object-cover transition-all duration-500"
                   />
                   
@@ -333,7 +382,7 @@ export default function HaberDetayPage() {
                 {/* Sol Navigation */}
                 {haber.gallery && haber.gallery.length > 1 && (
                   <button
-                    onClick={goToPrevious}
+                    onClick={prevImage}
                     className="absolute left-4 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white rounded-full p-2 transition-all duration-300 opacity-0 group-hover:opacity-100"
                   >
                     <ChevronLeft className="h-6 w-6" />
@@ -343,7 +392,7 @@ export default function HaberDetayPage() {
                 {/* Sağ Navigation */}
                 {haber.gallery && haber.gallery.length > 1 && (
                   <button
-                    onClick={goToNext}
+                    onClick={nextImage}
                     className="absolute right-4 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white rounded-full p-2 transition-all duration-300 opacity-0 group-hover:opacity-100"
                   >
                     <ChevronRight className="h-6 w-6" />
@@ -353,12 +402,12 @@ export default function HaberDetayPage() {
                 {/* Dots Navigation */}
                 {haber.gallery && haber.gallery.length > 1 && (
                   <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2">
-                    {haber.gallery.map((_, index) => (
+                    {haber.gallery.map((_: string, index: number) => (
                       <button
                         key={index}
-                        onClick={() => goToSlide(index)}
+                        onClick={() => setSelectedImageIndex(index)}
                         className={`w-2 h-2 rounded-full transition-all duration-300 ${
-                          index === currentImageIndex 
+                          index === selectedImageIndex 
                             ? 'bg-white scale-125' 
                             : 'bg-white/50 hover:bg-white/80'
                         }`}
@@ -370,13 +419,13 @@ export default function HaberDetayPage() {
                 {/* Görsel Sayacı */}
                 {haber.gallery && haber.gallery.length > 1 && (
                   <div className="absolute top-4 right-4 bg-black/70 text-white px-3 py-1 rounded-full text-sm">
-                    {currentImageIndex + 1} / {haber.gallery.length}
+                    {(selectedImageIndex ?? 0) + 1} / {haber.gallery.length}
                   </div>
                 )}
 
                 {/* Büyütme İkonu */}
                 <button 
-                  onClick={() => openGallery(currentImageIndex)}
+                  onClick={() => setIsGalleryOpen(true)}
                   className="absolute top-4 left-4 bg-black/50 hover:bg-black/70 text-white rounded-full p-2 transition-all duration-300 opacity-0 group-hover:opacity-100"
                 >
                   <Eye className="h-5 w-5" />
@@ -393,11 +442,11 @@ export default function HaberDetayPage() {
             </article>
 
             {/* Etiketler */}
-            {haber.tags && (
+            {haber.tags && Array.isArray(haber.tags) && haber.tags.length > 0 && (
               <div className="mt-10 pt-8 border-t border-gray-200">
                 <h3 className="text-sm font-medium text-gray-900 mb-3">Etiketler:</h3>
                 <div className="flex flex-wrap gap-2">
-                  {haber.tags.map((tag, index) => (
+                  {haber.tags.map((tag: string, index: number) => (
                     <span
                       key={index}
                       className="bg-gray-100 text-gray-700 px-3 py-1 rounded-full text-sm hover:bg-gray-200 transition-colors cursor-pointer"
@@ -444,10 +493,10 @@ export default function HaberDetayPage() {
                 İlgili Haberler
               </h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {haberler
-                  .filter(h => h.id !== haber.id && h.category === haber.category)
+                {(staticNews as any[])
+                  .filter((h: any) => h.id !== haber.id && h.category === haber.category)
                   .slice(0, 2)
-                  .map((ilgiliHaber) => (
+                  .map((ilgiliHaber: any) => (
                     <Link key={ilgiliHaber.id} href={`/haberler/${ilgiliHaber.id}`}>
                       <article className="bg-gray-50 rounded-lg p-4 hover:bg-gray-100 transition-colors">
                         <div className="aspect-video rounded mb-3 overflow-hidden">
@@ -530,9 +579,9 @@ export default function HaberDetayPage() {
                     Görsel {selectedImageIndex + 1} / {haber.gallery.length}
                   </p>
                 </div>
-                {haber.gallery.length > 1 && (
+                {haber.gallery && haber.gallery.length > 1 && (
                   <div className="flex items-center gap-2">
-                    {haber.gallery.map((_, index) => (
+                    {haber.gallery.map((_: string, index: number) => (
                       <button
                         key={index}
                         onClick={() => setSelectedImageIndex(index)}

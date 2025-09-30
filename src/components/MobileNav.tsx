@@ -114,8 +114,8 @@ const MobileNav = () => {
               </div>
               <div className='flow-root'>
                 <Link
-                  onClick={() => closeOnCurrent('/sign-in')}
-                  href='/sign-in'
+                  onClick={() => closeOnCurrent('/admin')}
+                  href='/admin'
                   className='border-2 border-gray-300 hover:border-gray-400 text-gray-700 hover:text-gray-900 font-semibold px-4 py-3 rounded-lg transition-all duration-200 block text-center font-neuropol bg-white'>
                   Yönetici Girişi
                 </Link>

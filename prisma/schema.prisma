@@ -1,0 +1,163 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+model AdminUser {
+  id        String   @id @default(cuid())
+  username  String   @unique
+  password  String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model ContactMessage {
+  id        String   @id @default(cuid())
+  name      String
+  surname   String
+  email     String
+  phone     String?
+  message   String
+  isRead    Boolean  @default(false)
+  createdAt DateTime @default(now())
+}
+
+model ProductCategory {
+  id            String   @id @default(cuid())
+  name          String
+  slug          String   @unique
+  imageUrl      String?
+  imagePublicId String?
+  isActive      Boolean  @default(true)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  products      Product[]
+}
+
+model CorporateMediaProduct {
+  id          String   @id @default(cuid())
+  title       String
+  description String?
+  imageUrl    String?
+  category    String   // "kurumsal", "medya", "urunler"
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model MissionVision {
+  id                   String   @id @default(cuid())
+  mission              String
+  vision               String
+  missionImageUrl      String?
+  missionImagePublicId String?
+  visionImageUrl       String?
+  visionImagePublicId  String?
+  isActive             Boolean  @default(true)
+  createdAt            DateTime @default(now())
+  updatedAt            DateTime @updatedAt
+}
+
+model About {
+  id              String   @id @default(cuid())
+  title           String
+  description     String
+  imageUrl        String?
+  imagePublicId   String?
+  isActive        Boolean  @default(true)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+model Certificate {
+  id            String   @id @default(cuid())
+  title         String
+  category      String
+  description   String
+  details       String?
+  fileUrl       String
+  filePublicId  String?
+  fileType      String
+  isActive      Boolean  @default(true)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
+
+model Reference {
+  id            String   @id @default(cuid())
+  name          String
+  sector        String
+  logoUrl       String?
+  logoPublicId  String?
+  isActive      Boolean  @default(true)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
+
+model PressRelease {
+  id            String   @id @default(cuid())
+  title         String
+  category      String
+  publishedAt   DateTime
+  summary       String?
+  content       String?
+  imageUrl      String?
+  imagePublicId String?
+  isActive      Boolean  @default(true)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
+
+model News {
+  id            String   @id @default(cuid())
+  title         String
+  category      String
+  publishedAt   DateTime
+  summary       String?
+  content       String?
+  imageUrl      String?
+  imagePublicId String?
+  isActive      Boolean  @default(true)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
+
+model GalleryItem {
+  id            String   @id @default(cuid())
+  title         String
+  summary       String?
+  category      String
+  publishedAt   DateTime
+  imageUrl      String?
+  imagePublicId String?
+  isActive      Boolean  @default(true)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
+
+model Product {
+  id             String           @id @default(cuid())
+  name           String
+  description    String?
+  series         String?
+  material       String?
+  coatingType    String?
+  thickness      String?
+  width          String?
+  height         String?
+  imageUrl       String?
+  imagePublicId  String?
+  isActive       Boolean          @default(true)
+  categoryId     String
+  category       ProductCategory  @relation(fields: [categoryId], references: [id])
+  createdAt      DateTime         @default(now())
+  updatedAt      DateTime         @updatedAt
+}

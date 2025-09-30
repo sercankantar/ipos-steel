@@ -5,6 +5,7 @@ import { Inter } from 'next/font/google'
 import { Toaster } from 'sonner'
 import './globals.css'
 import Footer from '@/components/Footer'
+import SiteChrome from '@/components/SiteChrome'
 
 const inter = Inter({ 
   subsets: ['latin'],
@@ -29,12 +30,9 @@ export default function RootLayout({
           inter.variable
         )}>
         <main className='relative flex flex-col min-h-screen'>
-         
-            <Navbar />
-            <div className='flex-grow flex-1'>
-              {children}
-            </div>
-            <Footer />
+          <SiteChrome>
+            {children}
+          </SiteChrome>
         </main>
 
         <Toaster position='top-center' richColors />

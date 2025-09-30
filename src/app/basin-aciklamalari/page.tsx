@@ -1,11 +1,11 @@
-'use client'
+"use client"
 
 import MaxWidthWrapper from '@/components/MaxWidthWrapper'
-import { Calendar, User, Download, FileText, ArrowRight } from 'lucide-react'
+import { Calendar, FileText, ArrowRight } from 'lucide-react'
 import Link from 'next/link'
-import { useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 
-const basinAciklamalari = [
+const staticItems = [
   {
     id: 1,
     title: 'IPOS Steel Kocaeli Tesisini Genişletiyor',
@@ -68,29 +68,60 @@ const basinAciklamalari = [
   }
 ]
 
-const kategoriler = ['Tümü', 'Yatırım', 'İş Birliği', 'Çevre', 'Teknoloji', 'İhracat', 'İnsan Kaynakları']
+const defaultCategories = ['Yatırım', 'İş Birliği', 'Çevre', 'Teknoloji', 'İhracat', 'İnsan Kaynakları']
 
 export default function BasinAciklamalariPage() {
   const [selectedKategori, setSelectedKategori] = useState('Tümü')
   const [selectedYil, setSelectedYil] = useState('Tümü')
-  
-  // Mevcut açıklamalardan yılları çıkar
-  const availableYears = [...new Set(basinAciklamalari.map(aciklama => 
-    new Date(aciklama.date).getFullYear()
-  ))].sort((a, b) => b - a) // En yeni yıl önce
-  
-  // Kategoriye ve yıla göre filtrelenmiş açıklamalar
-  let filteredAciklamalar = basinAciklamalari
-  
-  if (selectedKategori !== 'Tümü') {
-    filteredAciklamalar = filteredAciklamalar.filter(aciklama => aciklama.category === selectedKategori)
-  }
-  
-  if (selectedYil !== 'Tümü') {
-    filteredAciklamalar = filteredAciklamalar.filter(aciklama => 
-      new Date(aciklama.date).getFullYear() === parseInt(selectedYil)
-    )
-  }
+  const [items, setItems] = useState<any[]>([])
+
+  useEffect(() => {
+    const load = async () => {
+      try {
+        const res = await fetch('/api/press-releases', { cache: 'no-store' })
+        const data = res.ok ? await res.json() : []
+        const mapped = (data as any[]).map(d => ({
+          id: d.id,
+          title: d.title,
+          date: d.publishedAt,
+          summary: d.summary || '',
+          content: d.content || '',
+          pdfUrl: '',
+          category: d.category,
+          priority: 'medium',
+          image: d.imageUrl || ''
+        }))
+        setItems(mapped.length ? mapped : staticItems)
+      } catch {
+        setItems(staticItems)
+      }
+    }
+    load()
+  }, [])
+
+  const availableYears = useMemo(() => {
+    const years = items.map(a => new Date(a.date).getFullYear())
+    const unique: number[] = []
+    for (const y of years) if (!unique.includes(y)) unique.push(y)
+    return unique.sort((a, b) => b - a)
+  }, [items])
+
+  const categories = useMemo(() => {
+    const cats = items.map(a => a.category).filter(Boolean)
+    const unique: string[] = []
+    for (const c of cats) {
+      if (!unique.includes(c)) unique.push(c)
+    }
+    const base = unique.length ? unique : defaultCategories
+    return ['Tümü', ...base]
+  }, [items])
+
+  const filteredAciklamalar = useMemo(() => {
+    let list = items
+    if (selectedKategori !== 'Tümü') list = list.filter(a => a.category === selectedKategori)
+    if (selectedYil !== 'Tümü') list = list.filter(a => new Date(a.date).getFullYear() === parseInt(selectedYil))
+    return list
+  }, [items, selectedKategori, selectedYil])
   
   return (
     <div className="min-h-screen bg-white">
@@ -127,7 +158,7 @@ export default function BasinAciklamalariPage() {
                 
                 {/* Kategori Filtreleri */}
                 <div className="flex flex-wrap gap-3 mb-8">
-                  {kategoriler.map((kategori) => (
+                  {categories.map((kategori) => (
                     <button
                       key={kategori}
                       onClick={() => setSelectedKategori(kategori)}
@@ -234,16 +265,15 @@ export default function BasinAciklamalariPage() {
               <div className="sticky top-8 space-y-8">
                 
 
-                {/* Son Açıklamalar */}
+                {/* Öncelikli (son eklenen) Açıklamalar */}
                 <div className="bg-gray-50 border border-gray-200 rounded-lg p-6">
                   <h3 className="font-neuropol font-bold text-lg mb-4 text-slate-900">
                     Öncelikli Açıklamalar
                   </h3>
                   <div className="space-y-4">
-                    {basinAciklamalari
-                      .filter(aciklama => aciklama.priority === 'high')
+                    {items
                       .slice(0, 3)
-                      .map((aciklama, index) => (
+                      .map((aciklama) => (
                         <div key={aciklama.id} className="border-b border-gray-200 pb-3 last:border-b-0">
                           <Link
                             href={`/basin-aciklamalari/${aciklama.id}`}
@@ -265,8 +295,8 @@ export default function BasinAciklamalariPage() {
                     Kategoriler
                   </h3>
                   <div className="space-y-3">
-                    {kategoriler.slice(1).map((kategori) => {
-                      const count = basinAciklamalari.filter(a => a.category === kategori).length
+                    {categories.slice(1).map((kategori) => {
+                      const count = items.filter((a) => a.category === kategori).length
                       return (
                         <button
                           key={kategori}
@@ -311,9 +341,7 @@ export default function BasinAciklamalariPage() {
                       Tüm Açıklamalar
                     </button>
                     {availableYears.map((yil) => {
-                      const count = basinAciklamalari.filter(a => 
-                        new Date(a.date).getFullYear() === yil
-                      ).length
+                      const count = items.filter((a) => new Date(a.date).getFullYear() === yil).length
                       return (
                         <button
                           key={yil}

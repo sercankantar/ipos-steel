@@ -12,7 +12,18 @@ import {
   TrendingUp
 } from 'lucide-react'
 
-export default function HakkimizdaPage() {
+async function getAbout() {
+  try {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/api/about`, { cache: 'no-store' })
+    if (!res.ok) return null
+    return await res.json()
+  } catch (e) {
+    return null
+  }
+}
+
+export default async function HakkimizdaPage() {
+  const about = await getAbout()
   return (
     <>
       {/* Hero Section - Kurumsal */}
@@ -32,52 +43,28 @@ export default function HakkimizdaPage() {
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-16">
             <div className="lg:col-span-2">
               <h2 className="font-neuropol text-3xl font-bold mb-8 text-slate-900">
-                Şirket Profili
+                {about?.title || 'Şirket Profili'}
               </h2>
               <div className="space-y-6 text-gray-700 leading-relaxed text-lg">
-                <p>
-                  <strong>35 yılı aşkın tecrübeye sahip, alanında uzman mühendis ve imalat personelinin 
-                  vermiş olduğu güven sayesinde kuruluşundan bu yana onlarca projeye imza atan 
-                  IPOS-Steel Dış. Tic. A.Ş. bünyesinde, yenilenen kimliğimiz ile faaliyetlerimizi 
-                  geliştirip büyütmeye devam etmekteyiz.</strong>
-                </p>
-                <p>
-                  Kablo kanalı üreticisi olmanın yanında elektrik ve endüstriyel malzeme ihtiyaçlarınız için 
-                  "Hepsi tek bir noktadan" çözümler sunmaktayız. Ana amacımız müşterilerimize rekabetçi 
-                  fiyatlarla yüksek hizmet standardını en kaliteli ürünlerle sunmaktır.
-                </p>
-                <p>
-                  Sizin zamanınız değerli! Tedarikçileri aramak ve her seferinde iş ilişkileri geliştirmek için 
-                  zaman ve para harcamak yerine, tüm elektrik ve yapı malzemelerinizi tek bir kaynaktan 
-                  sağlamanın avantajını sunmaya çalışıyoruz. Müşterilerimizin her zaman ihtiyaç duyduğu 
-                  ve en çok tercih ettiği gerçek bir iş ortağı olma felsefemize bağlıyız.
-                </p>
-                <p>
-                  Avrupa, Orta Doğu, Afrika ve Asya pazarlarındaki ülkeler gibi uluslararası pazarlarda 
-                  deneyim sahibiyiz. IPOS-Steel Dış. Tic. A.Ş. olarak müşteri odaklı bir şirket kültürüne 
-                  sahip ve Toplam Kalite Yönetimi yaklaşımını benimsemekteyiz.
-                </p>
+                <p>{about?.description || 'Şirket açıklaması yakında güncellenecek.'}</p>
               </div>
             </div>
             
             <div className="rounded-lg overflow-hidden border border-gray-200 h-full">
-              {/* Temsili Şirket Fotoğrafı */}
-              <div className="relative h-full bg-gradient-to-br from-gray-100 to-gray-200">
-                <div className="absolute inset-0 flex items-center justify-center">
-                  <div className="text-center">
-                    <Building2 className="h-16 w-16 text-gray-400 mx-auto mb-4" />
-                    <p className="text-gray-500 text-sm font-medium">
-                      Şirket Fotoğrafı
-                    </p>
-                    <p className="text-gray-400 text-xs mt-1">
-                      (Güncellenecek)
-                    </p>
+              {about?.imageUrl ? (
+                <img src={about.imageUrl} alt="Şirket Fotoğrafı" className="h-full w-full object-cover" />
+              ) : (
+                <div className="relative h-full bg-gradient-to-br from-gray-100 to-gray-200">
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <div className="text-center">
+                      <Building2 className="h-16 w-16 text-gray-400 mx-auto mb-4" />
+                      <p className="text-gray-500 text-sm font-medium">Şirket Fotoğrafı</p>
+                      <p className="text-gray-400 text-xs mt-1">(Güncellenecek)</p>
+                    </div>
                   </div>
+                  <div className="absolute inset-0 bg-white/10"></div>
                 </div>
-                
-                {/* Overlay efekti */}
-                <div className="absolute inset-0 bg-white/10"></div>
-              </div>
+              )}
             </div>
           </div>
         </MaxWidthWrapper>

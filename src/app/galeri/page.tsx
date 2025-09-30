@@ -1,11 +1,11 @@
-'use client'
+"use client"
 
 import MaxWidthWrapper from '@/components/MaxWidthWrapper'
 import { Eye, Calendar, X, ChevronLeft, ChevronRight } from 'lucide-react'
 import Image from 'next/image'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 
-// Galeri verileri
+// Varsayılan kategoriler (API yoksa)
 const galeriKategorileri = [
   {
     id: 'fabrika',
@@ -34,6 +34,7 @@ const galeriKategorileri = [
   }
 ]
 
+// Fallback görseller (API yoksa)
 const galeriGorselleri = [
   // Fabrika ve Üretim (6 görsel)
   {
@@ -313,11 +314,34 @@ export default function GaleriPage() {
   const [selectedImageId, setSelectedImageId] = useState<number | null>(null)
   const [selectedImageIndex, setSelectedImageIndex] = useState<number>(0)
   const [isModalOpen, setIsModalOpen] = useState(false)
+  const [items, setItems] = useState<any[]>([])
+
+  useEffect(() => {
+    const load = async () => {
+      try {
+        const res = await fetch('/api/gallery', { cache: 'no-store' })
+        const data = res.ok ? await res.json() : []
+        const mapped = (data as any[]).map(d => ({
+          id: d.id,
+          title: d.title,
+          category: d.category,
+          image: d.imageUrl || '',
+          date: d.publishedAt,
+          description: d.summary || '',
+          gallery: d.imageUrl ? [d.imageUrl] : []
+        }))
+        setItems(mapped.length ? mapped : galeriGorselleri)
+      } catch {
+        setItems(galeriGorselleri)
+      }
+    }
+    load()
+  }, [])
   
   // Kategoriye göre filtrelenmiş görseller
   const filteredGorseller = selectedKategori === 'tumü' 
-    ? galeriGorselleri 
-    : galeriGorselleri.filter(gorsel => gorsel.category === selectedKategori)
+    ? items 
+    : items.filter(gorsel => gorsel.category === selectedKategori)
   
   // Görünür görseller (pagination için)
   const visibleGorseller = filteredGorseller.slice(0, visibleCount)
@@ -349,7 +373,7 @@ export default function GaleriPage() {
     setSelectedImageIndex(0)
   }
 
-  const currentImage = selectedImageId ? galeriGorselleri.find(g => g.id === selectedImageId) : null
+  const currentImage = selectedImageId ? items.find(g => g.id === selectedImageId) : null
   const currentGallery = currentImage?.gallery || [currentImage?.image].filter(Boolean)
 
   const nextImage = () => {
@@ -441,7 +465,7 @@ export default function GaleriPage() {
                         {/* Kategori Badge */}
                         <div className="absolute top-3 left-3">
                           <span className="bg-white/90 text-gray-700 px-2 py-1 rounded text-xs font-medium">
-                            {galeriKategorileri.find(k => k.id === gorsel.category)?.name}
+                        {galeriKategorileri.find(k => k.id === gorsel.category)?.name || gorsel.category}
                           </span>
                         </div>
                       </div>
@@ -519,11 +543,11 @@ export default function GaleriPage() {
                           ? 'bg-blue-100 text-blue-700'
                           : 'bg-white text-gray-500'
                       }`}>
-                        {galeriGorselleri.length}
+                        {items.length}
                       </span>
                     </button>
                     {galeriKategorileri.map((kategori) => {
-                      const count = galeriGorselleri.filter(g => g.category === kategori.id).length
+                      const count = items.filter((g: any) => g.category === kategori.id).length
                       return (
                         <button
                           key={kategori.id}

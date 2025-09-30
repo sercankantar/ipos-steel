@@ -1,12 +1,12 @@
-'use client'
+"use client"
 
 import MaxWidthWrapper from '@/components/MaxWidthWrapper'
-import { Calendar, User, ArrowLeft, Download, Tag, Building2 } from 'lucide-react'
+import { Calendar, ArrowLeft, Building2 } from 'lucide-react'
 import Link from 'next/link'
+import { useEffect, useState } from 'react'
 import { useParams } from 'next/navigation'
 
-// Basın açıklaması verilerini buradan alacağız (normalde API'den gelir)
-const basinAciklamalari = [
+const fallbackItems = [
   {
     id: 1,
     title: 'IPOS Steel Kocaeli Tesisini Genişletiyor',
@@ -92,11 +92,33 @@ const basinAciklamalari = [
 
 export default function BasinAciklamaDetayPage() {
   const params = useParams()
-  const aciklamaId = parseInt(params.id as string)
-  
-  const aciklama = basinAciklamalari.find(a => a.id === aciklamaId)
-  
-  if (!aciklama) {
+  const [item, setItem] = useState<any | null>(null)
+
+  useEffect(() => {
+    const load = async () => {
+      const id = params.id as string
+      try {
+        const res = await fetch(`/api/press-releases/${id}`, { cache: 'no-store' })
+        if (res.ok) {
+          const d = await res.json()
+          setItem({
+            title: d.title,
+            date: d.publishedAt,
+            summary: d.summary || '',
+            content: d.content || '',
+            category: d.category,
+            image: d.imageUrl || ''
+          })
+          return
+        }
+      } catch {}
+      const fallback = fallbackItems.find(a => String(a.id) === String(params.id))
+      setItem(fallback || null)
+    }
+    load()
+  }, [params.id])
+
+  if (!item) {
     return (
       <div className="min-h-screen bg-white">
         <MaxWidthWrapper>
@@ -146,25 +168,14 @@ export default function BasinAciklamaDetayPage() {
             <header className="mb-8">
               <div className="flex items-center gap-3 mb-4">
                 <span className={`px-3 py-1 rounded-full text-xs font-medium ${
-                  aciklama.priority === 'high' 
-                    ? 'bg-red-100 text-red-600' 
-                    : aciklama.priority === 'medium'
-                    ? 'bg-yellow-100 text-yellow-600'
-                    : 'bg-gray-100 text-gray-600'
+                  'bg-gray-100 text-gray-600'
                 }`}>
-                  {aciklama.category}
+                  {item.category}
                 </span>
-                <span className={`w-2 h-2 rounded-full ${
-                  aciklama.priority === 'high' 
-                    ? 'bg-red-500' 
-                    : aciklama.priority === 'medium'
-                    ? 'bg-yellow-500'
-                    : 'bg-gray-400'
-                }`}></span>
                 <div className="flex items-center gap-4 text-sm text-gray-500">
                   <div className="flex items-center gap-1">
                     <Calendar className="h-4 w-4" />
-                    <span>{new Date(aciklama.date).toLocaleDateString('tr-TR', { 
+                    <span>{new Date(item.date).toLocaleDateString('tr-TR', { 
                       year: 'numeric', 
                       month: 'long', 
                       day: 'numeric' 
@@ -178,11 +189,11 @@ export default function BasinAciklamaDetayPage() {
               </div>
               
               <h1 className="font-neuropol text-3xl lg:text-4xl font-bold text-gray-900 leading-tight mb-4">
-                {aciklama.title}
+                {item.title}
               </h1>
               
               <p className="text-xl text-gray-600 leading-relaxed">
-                {aciklama.summary}
+                {item.summary}
               </p>
             </header>
 
@@ -190,8 +201,8 @@ export default function BasinAciklamaDetayPage() {
             <div className="mb-10">
               <div className="aspect-video rounded-lg overflow-hidden">
                 <img 
-                  src={aciklama.image} 
-                  alt={aciklama.title}
+                  src={item.image} 
+                  alt={item.title}
                   className="w-full h-full object-cover"
                 />
               </div>
@@ -201,16 +212,16 @@ export default function BasinAciklamaDetayPage() {
             <article className="prose prose-lg max-w-none mb-10">
               <div 
                 className="text-gray-700 leading-relaxed space-y-6"
-                dangerouslySetInnerHTML={{ __html: aciklama.content }}
+                dangerouslySetInnerHTML={{ __html: item.content }}
               />
             </article>
 
             {/* Etiketler */}
-            {aciklama.tags && (
+            {Array.isArray((item as any).tags) && (
               <div className="mb-8 pb-8 border-b border-gray-200">
                 <h3 className="text-sm font-medium text-gray-900 mb-3">Etiketler:</h3>
                 <div className="flex flex-wrap gap-2">
-                  {aciklama.tags.map((tag, index) => (
+                  {(item as any).tags.map((tag: string, index: number) => (
                     <span
                       key={index}
                       className="bg-gray-100 text-gray-700 px-3 py-1 rounded-full text-sm hover:bg-gray-200 transition-colors cursor-pointer"
