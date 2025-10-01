@@ -131,12 +131,7 @@ const MobileNav = () => {
         </nav>
 
         <div className='mt-10 flex items-center gap-4'>
-          <Link
-            href='/admin'
-            onClick={() => setIsOpen(false)}
-            className='px-6 py-6 rounded-full bg-white text-gray-500 font-semibold flex items-center gap-2'>
-            <User className='h-4 w-4 font-bold' />
-          </Link>
+          
           <div className='px-1 py-2 rounded-full bg-white text-blue-700 font-semibold'>
             <LanguageSwitcher />
           </div>

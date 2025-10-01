@@ -151,19 +151,19 @@ export default function Home() {
           <VideoSlider
             slides={[
               {
-                src: 'https://eae-dokuman.s3.eu-west-1.amazonaws.com/sliders/future-solutions.webm',
+                src: 'https://res.cloudinary.com/dgixrs3gg/video/upload/v1759320544/Generated_File_October_01_2025_-_3_04PM_k66wrd.mp4',
                 title: 'Yaratıcı çözümler için tasarlandı',
                 description: 'Modern ve hızlı arayüzler, kusursuz deneyimler.',
                 href: '/products',
               },
               {
-                src: 'https://storage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4',
+                src: 'https://res.cloudinary.com/dgixrs3gg/video/upload/v1759321153/Generated_File_October_01_2025_-_3_18PM_zltxri.mp4',
                 title: 'Güçlü altyapı ve ölçeklenebilir mimari',
                 description: 'Büyüyen ihtiyaçlarınız için güvenilir temel.',
                 href: '/products',
               },
               {
-                src: 'https://storage.googleapis.com/gtv-videos-bucket/sample/Sintel.mp4',
+                src: 'https://res.cloudinary.com/dgixrs3gg/video/upload/v1759320544/Generated_File_October_01_2025_-_3_04PM_k66wrd.mp4',
                 title: 'Şıklık ve performans bir arada',
                 description: 'Şık tasarım, yüksek performans ile buluşuyor.',
                 href: '/products',
@@ -198,9 +198,7 @@ export default function Home() {
                       <Link href={`/products?category=${encodeURIComponent(categories[0].slug)}`} className='text-sm font-neuropol font-semibold text-blue-600 hover:text-blue-700'>
                         Daha Fazlası →
                       </Link>
-                      <Link href={`/products?category=${encodeURIComponent(categories[0].slug)}`} className='text-sm font-neuropol font-semibold text-red-500 hover:text-red-600'>
-                        Ürünleri İncele →
-                      </Link>
+                      
                     </div>
                   </div>
                 </div>
@@ -245,9 +243,7 @@ export default function Home() {
                         <Link href={`/products?category=${encodeURIComponent(c.slug)}`} className='text-sm font-neuropol font-semibold text-blue-600 hover:text-blue-700'>
                           Daha Fazlası →
                         </Link>
-                        <Link href={`/products?category=${encodeURIComponent(c.slug)}`} className='text-sm font-neuropol font-semibold text-red-500 hover:text-red-600'>
-                          Ürünleri İncele →
-                        </Link>
+                        
                       </div>
                     </div>
                   </div>
