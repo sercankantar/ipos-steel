@@ -16,7 +16,7 @@ import {
   X,
 } from 'lucide-react'
 import Link from 'next/link'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 
 const perks = [
   {
@@ -80,6 +80,69 @@ const countryData = {
 
 export default function Home() {
   const [selectedCountry, setSelectedCountry] = useState<string | null>(null)
+  const [categories, setCategories] = useState<{ name: string; slug: string; imageUrl?: string }[]>([])
+  const [news, setNews] = useState<{ id: string; title: string; summary?: string; imageUrl?: string; category?: string; isActive?: boolean }[]>([])
+  const [about, setAbout] = useState<{ title?: string; summary?: string; content?: string; imageUrl?: string } | null>(null)
+  const desiredCategoryNames = [
+    'Tel Kablo Kanalları',
+    'Kablo Kanalları',
+    'Kablo Merdivenleri',
+    'Destek Sistemleri',
+    'Solar Montaj Sistemleri',
+  ]
+
+  useEffect(() => {
+    const load = async () => {
+      try {
+        const res = await fetch('/api/product-categories', { cache: 'no-store' })
+        if (!res.ok) return
+        const data: { name: string; slug: string; imageUrl?: string }[] = await res.json()
+        const normalize = (s: string) => s.trim().toLocaleLowerCase('tr-TR')
+        const selected: { name: string; slug: string; imageUrl?: string }[] = []
+        for (const name of desiredCategoryNames) {
+          const found = data.find((d) => normalize(d.name) === normalize(name))
+          if (found) selected.push(found)
+        }
+        // fallback: eğer bazıları bulunamazsa kalanları sırayla doldur
+        if (selected.length < 5) {
+          for (const item of data) {
+            if (selected.find((s) => s.slug === item.slug)) continue
+            selected.push(item)
+            if (selected.length === 5) break
+          }
+        }
+        setCategories(selected)
+      } catch {}
+    }
+    load()
+  }, [])
+
+  // Haberleri yükle
+  useEffect(() => {
+    const loadNews = async () => {
+      try {
+        const res = await fetch('/api/news', { cache: 'no-store' })
+        if (!res.ok) return
+        const data: { id: string; title: string; summary?: string; imageUrl?: string; category?: string; isActive?: boolean }[] = await res.json()
+        const active = data.filter((n) => n.isActive !== false)
+        setNews(active)
+      } catch {}
+    }
+    loadNews()
+  }, [])
+
+  // Hakkımızda yükle
+  useEffect(() => {
+    const loadAbout = async () => {
+      try {
+        const res = await fetch('/api/about', { cache: 'no-store' })
+        if (!res.ok) return
+        const data: any = await res.json()
+        setAbout(data)
+      } catch {}
+    }
+    loadAbout()
+  }, [])
 
   return (
     <>
@@ -114,80 +177,105 @@ export default function Home() {
       <section className='py-14'>
         <MaxWidthWrapper>
           {/* Data */}
-          {/* Üstte öne çıkan geniş kart */}
-          <div className='grid grid-cols-1 gap-6'>
-            <div className='rounded-xl bg-white shadow-sm ring-1 ring-black/5 overflow-hidden'>
-              <div className='grid grid-cols-1 md:grid-cols-2'>
-                <div className='relative h-48 md:h-full'>
-                  <img
-                    src='https://www.eae.com.tr/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Fbusbars.af0ee396.webp&w=750&q=75'
-                    alt='Busbar Sistemleri'
-                    className='h-full w-full object-cover'
-                  />
-                </div>
-                <div className='p-6 flex flex-col justify-center'>
-                  <h3 className='text-xl font-neuropol font-bold text-gray-900'>Busbar Sistemleri</h3>
-                  <p className='mt-3 text-sm text-muted-foreground font-neuropol'>
-                    Busbar kanal sistemi; yüksek katlı binaların ve fabrikalarda değişen üretim teknolojilerinin bir ihtiyacı olarak ortaya çıkmıştır. Türkiye'de ise busbar kanal sistemi imalatı 1970'li yıllarda başlamıştır.
-                  </p>
-                  <div className='mt-5 flex items-center gap-6'>
-                    <Link href='/products' className='text-sm font-neuropol font-semibold text-blue-600 hover:text-blue-700'>
-                      Daha Fazlası →
-                    </Link>
-                    <Link href='/products' className='text-sm font-neuropol font-semibold text-red-500 hover:text-red-600'>
-                      Ürünleri İncele →
-                    </Link>
+          {/* Üstte öne çıkan geniş kart (ilk kategori) */}
+          {(categories && categories.length > 0) ? (
+            <div className='grid grid-cols-1 gap-6'>
+              <div className='rounded-xl bg-white shadow-sm ring-1 ring-black/5 overflow-hidden'>
+                <div className='grid grid-cols-1 md:grid-cols-2'>
+                  <div className='relative h-48 md:h-full'>
+                    <img
+                      src={categories[0].imageUrl || '/thumbnail.jpg'}
+                      alt={categories[0].name}
+                      className='h-full w-full object-cover'
+                    />
                   </div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Altta 2 sütun kartlar */}
-          <div className='mt-6 grid grid-cols-1 md:grid-cols-2 gap-6'>
-            {[ 
-              {
-                title: 'Askı Sistemleri',
-                desc: 'E-Line A-A serisi ve E-Line Sismik askı sistemleri binalarda ve fabrikalarda; betonarme veya çelik yapılarda uygun olarak Busbar, Kablo Kanalı, Kablo Merdiveni vb. sistemleri taşımak üzere tasarlanmıştır.',
-                img: 'https://www.eae.com.tr/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Fask%C4%B1.032595b0.webp&w=384&q=75'
-              },
-              {
-                title: 'Kablo Kanalı Sistemleri',
-                desc: "EAE kablo kanalları; otomatik üretim hatlarında 'ROLL FORMING' metoduyla seri olarak imal edilmektedir. Standart kanal boyu 3m'dir.",
-                img: 'https://www.eae.com.tr/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Fask%C4%B1.032595b0.webp&w=384&q=75'
-              },
-              {
-                title: 'İç Tesisat Çözümleri',
-                desc: 'Ofislerde ve işletmelerde aydınlatma ve priz (Şebeke ve UPS) devreleri ile küçük enerji dağıtımı için esnek ve modüler çözümler sağlar.',
-                img: 'https://www.eae.com.tr/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Fask%C4%B1.032595b0.webp&w=384&q=75'
-              },
-              {
-                title: 'Trolley Busbar Sistemleri',
-                desc: 'Trolley Busbar Enerji Dağıtım Sistemlerinden E‑Line TB ve E‑Line URC, hareket eden makinalara enerji vermek üzere tasarlanmıştır.',
-                img: 'https://www.eae.com.tr/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Fask%C4%B1.032595b0.webp&w=384&q=75'
-              },
-            ].map((item, idx) => (
-              <div key={idx} className='rounded-xl bg-white shadow-sm ring-1 ring-black/5 overflow-hidden'>
-                <div className='grid grid-cols-1 sm:grid-cols-3'>
-                  <div className='relative sm:col-span-1 h-40 sm:h-full'>
-                    <img src={item.img} alt={item.title} className='h-full w-full object-cover' />
-                  </div>
-                  <div className='sm:col-span-2 p-5 flex flex-col justify-center'>
-                    <h4 className='text-lg font-neuropol font-bold text-gray-900'>{item.title}</h4>
-                    <p className='mt-2 text-sm text-muted-foreground font-neuropol'>{item.desc}</p>
-                    <div className='mt-4 flex items-center gap-6'>
-                      <Link href='/products' className='text-sm font-neuropol font-semibold text-blue-600 hover:text-blue-700'>
+                  <div className='p-6 flex flex-col justify-center'>
+                    <h3 className='text-xl font-neuropol font-bold text-gray-900'>{categories[0].name}</h3>
+                    <p className='mt-3 text-sm text-muted-foreground font-neuropol'>
+                      {categories[0].name} ürün grubumuz; projelerinizde güvenilirlik ve hızlı montaj avantajı sunan, dayanıklı ve ölçeklenebilir çözümler içerir.
+                    </p>
+                    <div className='mt-5 flex items-center gap-6'>
+                      <Link href={`/products?category=${encodeURIComponent(categories[0].slug)}`} className='text-sm font-neuropol font-semibold text-blue-600 hover:text-blue-700'>
                         Daha Fazlası →
                       </Link>
-                      <Link href='/products' className='text-sm font-neuropol font-semibold text-red-500 hover:text-red-600'>
+                      <Link href={`/products?category=${encodeURIComponent(categories[0].slug)}`} className='text-sm font-neuropol font-semibold text-red-500 hover:text-red-600'>
                         Ürünleri İncele →
                       </Link>
                     </div>
                   </div>
                 </div>
               </div>
-            ))}
-          </div>
+            </div>
+          ) : (
+            <div className='grid grid-cols-1 gap-6'>
+              <div className='rounded-xl bg-white shadow-sm ring-1 ring-black/5 overflow-hidden'>
+                <div className='grid grid-cols-1 md:grid-cols-2'>
+                  <div className='relative h-48 md:h-full'>
+                    <div className='h-full w-full bg-gray-200 animate-pulse' />
+                  </div>
+                  <div className='p-6 flex flex-col justify-center gap-3'>
+                    <div className='h-6 w-48 bg-gray-200 rounded animate-pulse' />
+                    <div className='h-4 w-full bg-gray-200 rounded animate-pulse' />
+                    <div className='h-4 w-2/3 bg-gray-200 rounded animate-pulse' />
+                    <div className='mt-2 flex items-center gap-4'>
+                      <div className='h-4 w-24 bg-gray-200 rounded animate-pulse' />
+                      <div className='h-4 w-28 bg-gray-200 rounded animate-pulse' />
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Altta 2 sütun kartlar (sonraki 4 kategori) */}
+          {(categories && categories.length > 1) ? (
+            <div className='mt-6 grid grid-cols-1 md:grid-cols-2 gap-6'>
+              {categories.slice(1, 5).map((c, idx) => (
+                <div key={`${c.slug}-${idx}`} className='rounded-xl bg-white shadow-sm ring-1 ring-black/5 overflow-hidden'>
+                  <div className='grid grid-cols-1 sm:grid-cols-3'>
+                    <div className='relative sm:col-span-1 h-40 sm:h-full'>
+                      <img src={c.imageUrl || '/thumbnail.jpg'} alt={c.name} className='h-full w-full object-cover' />
+                    </div>
+                    <div className='sm:col-span-2 p-5 flex flex-col justify-center'>
+                      <h4 className='text-lg font-neuropol font-bold text-gray-900'>{c.name}</h4>
+                      <p className='mt-2 text-sm text-muted-foreground font-neuropol'>
+                        {c.name} için yüksek kalite standartlarıyla üretilmiş, montajı kolay ve dayanıklı ürün seçenekleri sunuyoruz.
+                      </p>
+                      <div className='mt-4 flex items-center gap-6'>
+                        <Link href={`/products?category=${encodeURIComponent(c.slug)}`} className='text-sm font-neuropol font-semibold text-blue-600 hover:text-blue-700'>
+                          Daha Fazlası →
+                        </Link>
+                        <Link href={`/products?category=${encodeURIComponent(c.slug)}`} className='text-sm font-neuropol font-semibold text-red-500 hover:text-red-600'>
+                          Ürünleri İncele →
+                        </Link>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className='mt-6 grid grid-cols-1 md:grid-cols-2 gap-6'>
+              {Array.from({ length: 4 }).map((_, idx) => (
+                <div key={idx} className='rounded-xl bg-white shadow-sm ring-1 ring-black/5 overflow-hidden'>
+                  <div className='grid grid-cols-1 sm:grid-cols-3'>
+                    <div className='relative sm:col-span-1 h-40 sm:h-full'>
+                      <div className='h-full w-full bg-gray-200 animate-pulse' />
+                    </div>
+                    <div className='sm:col-span-2 p-5 flex flex-col justify-center gap-3'>
+                      <div className='h-5 w-40 bg-gray-200 rounded animate-pulse' />
+                      <div className='h-4 w-full bg-gray-200 rounded animate-pulse' />
+                      <div className='h-4 w-2/3 bg-gray-200 rounded animate-pulse' />
+                      <div className='mt-2 flex items-center gap-4'>
+                        <div className='h-4 w-24 bg-gray-200 rounded animate-pulse' />
+                        <div className='h-4 w-28 bg-gray-200 rounded animate-pulse' />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
         </MaxWidthWrapper>
       </section>
       <section className='py-16'>
@@ -205,12 +293,18 @@ export default function Home() {
               </div>
               
               <div className='space-y-4 text-gray-600 font-neuropol leading-relaxed'>
-                <p className='text-lg'>
-                  35 yılı aşkın tecrübeye sahip, alanında uzman mühendis ve imalat personelinin vermiş olduğu güven sayesinde kuruluşundan bu yana onlarca projeye imza atan IPOS-Steel Dış. Tic. A.Ş. bünyesinde, yenilenen kimliğimiz ile faaliyetlerimizi geliştirip büyütmeye devam etmekteyiz.
-                </p>
-                <p className='text-lg'>
-                  Kablo kanalı üreticisi olmanın yanında elektrik ve endüstriyel malzeme ihtiyaçlarınız için "Hepsi tek bir noktadan" çözümler sunmaktayız. Ana amacımız müşterilerimize rekabetçi fiyatlarla yüksek hizmet standartını en kaliteli ürünlerle sunmaktır.
-                </p>
+                {about?.summary ? (
+                  <p className='text-lg'>{about.summary}</p>
+                ) : (
+                  <>
+                    <p className='text-lg'>
+                      35 yılı aşkın tecrübeye sahip, alanında uzman mühendis ve imalat personelinin vermiş olduğu güven sayesinde kuruluşundan bu yana onlarca projeye imza atan IPOS-Steel Dış. Tic. A.Ş. bünyesinde, yenilenen kimliğimiz ile faaliyetlerimizi geliştirip büyütmeye devam etmekteyiz.
+                    </p>
+                    <p className='text-lg'>
+                      Kablo kanalı üreticisi olmanın yanında elektrik ve endüstriyel malzeme ihtiyaçlarınız için "Hepsi tek bir noktadan" çözümler sunmaktayız. Ana amacımız müşterilerimize rekabetçi fiyatlarla yüksek hizmet standartını en kaliteli ürünlerle sunmaktır.
+                    </p>
+                  </>
+                )}
               </div>
               
               <div className='pt-4'>
@@ -227,8 +321,7 @@ export default function Home() {
             <div className='relative'>
               <div className=''>
                 <div className='relative h-96 bg-gradient-to-br from-gray-100 to-gray-200 rounded-xl overflow-hidden'>
-                  {/* 3D Kablo Kanalı Sistemi Görseli */}
-                  <img src='https://www.ipos-steel.com/wp-content/uploads/2022/02/homepage-about.png' alt='Kablo Kanalı Sistemi' className='h-full w-full object-cover' />
+                  <img src={about?.imageUrl || 'https://www.ipos-steel.com/wp-content/uploads/2022/02/homepage-about.png'} alt='Hakkımızda' className='h-full w-full object-cover' />
                 </div>
               </div>
             </div>
@@ -439,15 +532,15 @@ export default function Home() {
           {/* Header row */}
           <div className='flex items-start justify-between gap-4'>
             <div>
-              <p className='text-xs uppercase tracking-wider text-red-500'>Blog</p>
-              <h2 className='mt-2 text-3xl font-neuropol font-bold text-gray-900'>IPOS-STEEL Blog</h2>
+              <p className='text-xs uppercase tracking-wider text-red-500'>Haberler</p>
+              <h2 className='mt-2 text-3xl font-neuropol font-bold text-gray-900'>Güncel Haberler</h2>
               <p className='mt-3 text-sm text-muted-foreground max-w-3xl font-neuropol'>
-                Şirketimizin katıldığı etkinlikler, yer aldığı projeler ve sektörden gelişmeler gibi
-                güncel bilgilere EAE Blog platformumuz üzerinden ulaşabilirsiniz.
+                  Şirketimizin katıldığı etkinlikler, yer aldığı projeler ve sektörden gelişmeler gibi
+                  güncel bilgiler haberleri üzerinden ulaşabilirsiniz.
               </p>
             </div>
             <Link
-              href='/products'
+              href='/haberler'
               className='inline-flex items-center gap-2 rounded-md bg-red-500 px-4 py-2 text-white text-sm font-neuropol font-semibold shadow hover:bg-red-600 transition'>
               Tümünü Görüntüle
               <span className='background-red-500' aria-hidden>→</span>
@@ -456,55 +549,41 @@ export default function Home() {
 
           {/* Cards */}
           <div className='mt-8 grid grid-cols-1 gap-8 md:grid-cols-3'>
-            {[
-              {
-                img:
-                  'https://ipos.wscp.net/Upload/Sayfalar/yavuz-1.jpg',
-                tag: 'Haber',
-                title:
-                  'Sürdürülebilirlik Çalışmalarımızla 2025 CDP Supplier Engagement Assessment (SEA) Listesinde Yer Aldık!',
-                excerpt:
-                  'EAE Elektrik, CDP tarafından yürütülen 2025 Supplier Engagement Assessment (SEA) kapsamında yapılan değerlendirmede A- puan alarak tedarik zinciri boyunca iklimle...'
-              },
-              {
-                img:
-                  'https://ipos.wscp.net/Upload/Sayfalar/yavuz-1.jpg',
-                tag: 'Haber',
-                title:
-                  'Pan African Data Centres Fuarı’nda EAE Veri Merkezi Çözümlerimizi Tanıttık!',
-                excerpt:
-                  'Afrika’nın veri merkezi alanındaki en önemli etkinliklerinden biri olan Pan African Data Centres fuarına katıldık!'
-              },
-              {
-                img:
-                  'https://ipos.wscp.net/Upload/Sayfalar/yavuz-1.jpg',
-                tag: 'Haber',
-                title:
-                  'En Prestijli Veri Merkezi Fuarı Data Centre World Frankfurt 2025’te EAE Olarak Yer Aldık!',
-                excerpt:
-                  "EAE olarak teknolojinin fuarı Data Centre World Frankfurt'taydık."
-              }
-            ].map((post, i) => (
-              <article
-                key={i}
-                className='rounded-xl bg-white shadow-sm ring-1 ring-black/5 overflow-hidden'>
+            {news.length === 0 && (
+              <>
+                {Array.from({ length: 3 }).map((_, i) => (
+                  <div key={i} className='rounded-xl bg-white shadow-sm ring-1 ring-black/5 overflow-hidden'>
+                    <div className='relative h-56'>
+                      <div className='h-full w-full bg-gray-200 animate-pulse' />
+                    </div>
+                    <div className='p-4 space-y-3'>
+                      <div className='h-3 w-16 bg-gray-200 rounded animate-pulse' />
+                      <div className='h-5 w-3/4 bg-gray-200 rounded animate-pulse' />
+                      <div className='h-4 w-full bg-gray-200 rounded animate-pulse' />
+                    </div>
+                  </div>
+                ))}
+              </>
+            )}
+            {news.slice(0, 3).map((n) => (
+              <Link key={n.id} href={`/haberler/${n.id}`} className='rounded-xl bg-white shadow-sm ring-1 ring-black/5 overflow-hidden group'>
                 <div className='relative h-56'>
                   <img
-                    src={post.img}
-                    alt={post.title}
-                    className='h-full w-full object-cover'
+                    src={n.imageUrl || '/thumbnail.jpg'}
+                    alt={n.title}
+                    className='h-full w-full object-cover group-hover:scale-[1.02] transition-transform duration-300'
                   />
                 </div>
                 <div className='p-4'>
-                  <p className='text-xs font-neuropol font-bold text-red-500'>{post.tag}</p>
+                  <p className='text-xs font-neuropol font-bold text-red-500'>{n.category || 'Haber'}</p>
                   <h3 className='mt-2 text-base font-neuropol font-bold text-gray-900 leading-snug'>
-                    {post.title}
+                    {n.title}
                   </h3>
                   <p className='mt-2 text-sm text-muted-foreground font-neuropol line-clamp-3'>
-                    {post.excerpt}
+                    {n.summary || 'Detaylar için haberi görüntüleyin.'}
                   </p>
                 </div>
-              </article>
+              </Link>
             ))}
           </div>
         </MaxWidthWrapper>

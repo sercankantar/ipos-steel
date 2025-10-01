@@ -18,6 +18,7 @@ interface Certificate {
 export default function SertifikalarPage() {
   const [openItems, setOpenItems] = useState<string[]>([])
   const [items, setItems] = useState<Certificate[]>([])
+  const [loading, setLoading] = useState(true)
 
   useEffect(() => {
     const load = async () => {
@@ -26,7 +27,11 @@ export default function SertifikalarPage() {
         if (!res.ok) return
         const data = await res.json()
         setItems(data)
-      } catch (e) {}
+      } catch (e) {
+        setItems([])
+      } finally {
+        setLoading(false)
+      }
     }
     load()
   }, [])
@@ -72,7 +77,21 @@ export default function SertifikalarPage() {
 
             {/* Sertifika Listesi */}
             <div className="space-y-4">
-              {items.map((sertifika) => (
+              {loading ? (
+                Array.from({ length: 6 }).map((_, i) => (
+                  <div key={i} className="border border-gray-200 rounded-lg overflow-hidden">
+                    <div className="w-full p-6 flex items-center justify-between">
+                      <div className="flex-1 space-y-2">
+                        <div className="h-5 w-1/3 bg-gray-200 rounded animate-pulse" />
+                        <div className="h-4 w-2/3 bg-gray-200 rounded animate-pulse" />
+                      </div>
+                      <div className="h-5 w-5 bg-gray-200 rounded-full animate-pulse" />
+                    </div>
+                    <div className="px-6 pb-6 border-t border-gray-100 bg-gray-50 hidden" />
+                  </div>
+                ))
+              ) : items.length > 0 ? (
+              items.map((sertifika) => (
                 <div key={sertifika.id} className="border border-gray-200 rounded-lg overflow-hidden">
                   <button
                     onClick={() => toggleItem(sertifika.id)}
@@ -105,7 +124,7 @@ export default function SertifikalarPage() {
                         <p className="text-gray-700 leading-relaxed">
                           {sertifika.details}
                         </p>
-                        <div className="mt-4 flex items-center justify-between">
+                        <div className="mt-4 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
                           <div className="flex items-center gap-4">
                             <div className="text-sm text-gray-500">
                               <strong>Kategori:</strong> {sertifika.category}
@@ -121,7 +140,7 @@ export default function SertifikalarPage() {
                             href={sertifika.fileUrl || '#'}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="inline-flex items-center gap-2 bg-slate-800 text-white px-4 py-2 rounded-md hover:bg-slate-900 transition-colors text-sm"
+                            className="inline-flex items-center justify-center gap-2 bg-slate-800 text-white px-3 py-2 rounded-md hover:bg-slate-900 transition-colors text-xs sm:text-sm w-full sm:w-auto"
                           >
                             <Download className="h-4 w-4" />
                             Sertifikayı Aç ({(sertifika.fileType || '').toUpperCase()})
@@ -131,7 +150,10 @@ export default function SertifikalarPage() {
                     </div>
                   )}
                 </div>
-              ))}
+              ))
+              ) : (
+                <div className="p-8 text-center text-gray-600 border rounded-lg">Sertifika bulunamadı.</div>
+              )}
             </div>
 
             {/* İletişim Bilgisi */}

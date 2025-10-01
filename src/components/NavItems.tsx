@@ -3,6 +3,7 @@
 import { PRODUCT_CATEGORIES } from '@/config'
 import { useOnClickOutside } from '@/hooks/use-on-click-outside'
 import { useEffect, useRef, useState } from 'react'
+import { usePathname } from 'next/navigation'
 import NavItem from './NavItem'
 import Link from 'next/link'
 
@@ -28,14 +29,20 @@ const NavItems = () => {
   const isAnyOpen = activeIndex !== null
 
   const navRef = useRef<HTMLDivElement | null>(null)
+  const pathname = usePathname()
 
   useOnClickOutside(navRef, () => setActiveIndex(null))
+
+  // sayfa değiştiğinde menüyü kapat
+  useEffect(() => {
+    setActiveIndex(null)
+  }, [pathname])
 
   return (
     <div className='flex gap-2 h-full' ref={navRef}>
       {PRODUCT_CATEGORIES.map((category, i) => {
         const handleOpen = () => {
-          setActiveIndex(i)
+          setActiveIndex((prev) => (prev === i ? null : i))
         }
 
         const close = () => setActiveIndex(null)

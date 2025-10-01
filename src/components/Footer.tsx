@@ -4,9 +4,33 @@ import { usePathname } from 'next/navigation'
 import MaxWidthWrapper from './MaxWidthWrapper'
 import Link from 'next/link'
 import { Phone, Mail, MapPin, Globe } from 'lucide-react'
+import { useEffect, useState } from 'react'
 
 const Footer = () => {
   const pathname = usePathname()
+  const [categoryMap, setCategoryMap] = useState<Record<string, string>>({})
+
+  useEffect(() => {
+    const load = async () => {
+      try {
+        const res = await fetch('/api/product-categories', { cache: 'no-store' })
+        if (!res.ok) return
+        const data: { name: string; slug: string }[] = await res.json()
+        const normalize = (s: string) => s.toLocaleLowerCase('tr-TR')
+        const map: Record<string, string> = {}
+        for (const c of data) {
+          const n = normalize(c.name)
+          if (n.includes('busbar')) map['busbar'] = `/products?category=${encodeURIComponent(c.slug)}`
+          if (n.includes('askı') || n.includes('aski')) map['aski'] = `/products?category=${encodeURIComponent(c.slug)}`
+          if (n.includes('kablo kanalı') || n.includes('kablo kanalları')) map['kablo-kanali'] = `/products?category=${encodeURIComponent(c.slug)}`
+          if (n.includes('iç tesisat') || n.includes('ic tesisat')) map['ic-tesisat'] = `/products?category=${encodeURIComponent(c.slug)}`
+          if (n.includes('trolley')) map['trolley'] = `/products?category=${encodeURIComponent(c.slug)}`
+        }
+        setCategoryMap(map)
+      } catch {}
+    }
+    load()
+  }, [])
   const pathsToMinimize = [
     '/verify-email',
     '/sign-up',
@@ -112,27 +136,27 @@ const Footer = () => {
               <h4 className='font-neuropol font-bold mb-4 text-sm'>Ürünlerimiz</h4>
               <ul className='space-y-2'>
                 <li>
-                  <Link href='#' className='text-gray-300 hover:text-white transition-colors text-sm'>
+                  <Link href={categoryMap['busbar'] || '/products'} className='text-gray-300 hover:text-white transition-colors text-sm'>
                     Busbar Sistemleri
                   </Link>
                 </li>
                 <li>
-                  <Link href='#' className='text-gray-300 hover:text-white transition-colors text-sm'>
+                  <Link href={categoryMap['aski'] || '/products'} className='text-gray-300 hover:text-white transition-colors text-sm'>
                     Askı Sistemleri
                   </Link>
                 </li>
                 <li>
-                  <Link href='#' className='text-gray-300 hover:text-white transition-colors text-sm'>
+                  <Link href={categoryMap['kablo-kanali'] || '/products'} className='text-gray-300 hover:text-white transition-colors text-sm'>
                     Kablo Kanalı Sistemleri
                   </Link>
                 </li>
                 <li>
-                  <Link href='#' className='text-gray-300 hover:text-white transition-colors text-sm'>
+                  <Link href={categoryMap['ic-tesisat'] || '/products'} className='text-gray-300 hover:text-white transition-colors text-sm'>
                     İç Tesisat Çözümleri
                   </Link>
                 </li>
                 <li>
-                  <Link href='#' className='text-gray-300 hover:text-white transition-colors text-sm'>
+                  <Link href={categoryMap['trolley'] || '/products'} className='text-gray-300 hover:text-white transition-colors text-sm'>
                     Trolley Busbar
                   </Link>
                 </li>

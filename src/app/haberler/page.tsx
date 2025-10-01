@@ -90,6 +90,7 @@ const defaultNewsCategories = ['Şirket Haberleri', 'İhracat', 'Teknoloji', 'Ç
 export default function HaberlerPage() {
   const [selectedKategori, setSelectedKategori] = useState('Tümü')
   const [items, setItems] = useState<any[]>([])
+  const [loading, setLoading] = useState(true)
 
   useEffect(() => {
     const load = async () => {
@@ -106,9 +107,11 @@ export default function HaberlerPage() {
           author: 'IPOS Steel',
           category: d.category
         }))
-        setItems(mapped.length ? mapped : staticNews)
+        setItems(mapped)
       } catch {
-        setItems(staticNews)
+        setItems([])
+      } finally {
+        setLoading(false)
       }
     }
     load()
@@ -156,30 +159,51 @@ export default function HaberlerPage() {
                     Son Haberler
                   </h2>
                   <span className="text-sm text-gray-500 bg-gray-100 px-3 py-1 rounded-full">
-                    {filteredHaberler.length} haber
+                    {loading ? '...' : `${filteredHaberler.length} haber`}
                   </span>
                 </div>
                 
                 {/* Kategori Filtreleri */}
                 <div className="flex flex-wrap gap-3 mb-8">
-                  {categories.map((kategori) => (
-                    <button
-                      key={kategori}
-                      onClick={() => setSelectedKategori(kategori)}
-                      className={`px-6 py-3 rounded-lg text-sm font-semibold transition-all duration-200 transform hover:scale-105 shadow-sm hover:shadow-md ${
-                        selectedKategori === kategori 
-                          ? 'bg-blue-600 text-white hover:bg-blue-700 border-2 border-blue-600' 
-                          : 'bg-white text-gray-700 hover:text-blue-600 hover:bg-blue-50 border-2 border-gray-200 hover:border-blue-300'
-                      }`}
-                    >
-                      {kategori}
-                    </button>
-                  ))}
+                  {loading ? (
+                    <>
+                      {Array.from({ length: 5 }).map((_, i) => (
+                        <div key={i} className="h-10 w-28 rounded-lg bg-gray-200 animate-pulse" />
+                      ))}
+                    </>
+                  ) : (
+                    categories.map((kategori) => (
+                      <button
+                        key={kategori}
+                        onClick={() => setSelectedKategori(kategori)}
+                        className={`px-6 py-3 rounded-lg text-sm font-semibold transition-all duration-200 transform hover:scale-105 shadow-sm hover:shadow-md ${
+                          selectedKategori === kategori 
+                            ? 'bg-blue-600 text-white hover:bg-blue-700 border-2 border-blue-600' 
+                            : 'bg-white text-gray-700 hover:text-blue-600 hover:bg-blue-50 border-2 border-gray-200 hover:border-blue-300'
+                        }`}
+                      >
+                        {kategori}
+                      </button>
+                    ))
+                  )}
                 </div>
               </div>
 
               {/* Haberler Grid */}
-              {filteredHaberler.length > 0 ? (
+              {loading ? (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  {Array.from({ length: 6 }).map((_, i) => (
+                    <div key={i} className="bg-white rounded-lg overflow-hidden shadow-sm border border-gray-200">
+                      <div className="aspect-[16/10] bg-gray-200 animate-pulse" />
+                      <div className="p-5 space-y-3">
+                        <div className="h-5 w-3/4 bg-gray-200 rounded animate-pulse" />
+                        <div className="h-4 w-full bg-gray-200 rounded animate-pulse" />
+                        <div className="h-4 w-2/3 bg-gray-200 rounded animate-pulse" />
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              ) : filteredHaberler.length > 0 ? (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                   {filteredHaberler.map((haber) => (
                     <Link href={`/haberler/${haber.id}`} key={haber.id}>

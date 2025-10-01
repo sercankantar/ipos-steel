@@ -93,6 +93,7 @@ const fallbackItems = [
 export default function BasinAciklamaDetayPage() {
   const params = useParams()
   const [item, setItem] = useState<any | null>(null)
+  const [loading, setLoading] = useState(true)
 
   useEffect(() => {
     const load = async () => {
@@ -112,11 +113,30 @@ export default function BasinAciklamaDetayPage() {
           return
         }
       } catch {}
+      finally {
+        setLoading(false)
+      }
       const fallback = fallbackItems.find(a => String(a.id) === String(params.id))
       setItem(fallback || null)
     }
     load()
   }, [params.id])
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-white">
+        <MaxWidthWrapper>
+          <div className="py-12 max-w-4xl mx-auto">
+            <div className="h-6 w-40 bg-gray-200 rounded animate-pulse mb-4" />
+            <div className="h-8 w-3/4 bg-gray-200 rounded animate-pulse mb-3" />
+            <div className="h-4 w-full bg-gray-200 rounded animate-pulse mb-2" />
+            <div className="h-4 w-2/3 bg-gray-200 rounded animate-pulse mb-6" />
+            <div className="aspect-video w-full bg-gray-200 rounded animate-pulse" />
+          </div>
+        </MaxWidthWrapper>
+      </div>
+    )
+  }
 
   if (!item) {
     return (

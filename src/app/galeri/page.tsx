@@ -315,6 +315,7 @@ export default function GaleriPage() {
   const [selectedImageIndex, setSelectedImageIndex] = useState<number>(0)
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [items, setItems] = useState<any[]>([])
+  const [loading, setLoading] = useState(true)
 
   useEffect(() => {
     const load = async () => {
@@ -330,9 +331,11 @@ export default function GaleriPage() {
           description: d.summary || '',
           gallery: d.imageUrl ? [d.imageUrl] : []
         }))
-        setItems(mapped.length ? mapped : galeriGorselleri)
+        setItems(mapped)
       } catch {
-        setItems(galeriGorselleri)
+        setItems([])
+      } finally {
+        setLoading(false)
       }
     }
     load()
@@ -438,7 +441,17 @@ export default function GaleriPage() {
             <div className="lg:col-span-3">
               
               {/* Galeri Grid */}
-              {visibleGorseller.length > 0 ? (
+              {loading ? (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  {Array.from({ length: 9 }).map((_, i) => (
+                    <div key={i} className="group">
+                      <div className="relative aspect-[4/3] overflow-hidden rounded-lg bg-gray-200 mb-4 animate-pulse" />
+                      <div className="h-4 w-2/3 bg-gray-200 rounded animate-pulse mb-2" />
+                      <div className="h-3 w-full bg-gray-200 rounded animate-pulse" />
+                    </div>
+                  ))}
+                </div>
+              ) : visibleGorseller.length > 0 ? (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                   {visibleGorseller.map((gorsel) => (
                     <div 
@@ -507,7 +520,7 @@ export default function GaleriPage() {
               )}
 
               {/* Daha Fazla Yükle */}
-              {hasMore && (
+              {!loading && hasMore && (
                 <div className="text-center mt-12">
                   <button 
                     onClick={loadMore}
@@ -543,7 +556,7 @@ export default function GaleriPage() {
                           ? 'bg-blue-100 text-blue-700'
                           : 'bg-white text-gray-500'
                       }`}>
-                        {items.length}
+                        {loading ? '...' : items.length}
                       </span>
                     </button>
                     {galeriKategorileri.map((kategori) => {
@@ -564,7 +577,7 @@ export default function GaleriPage() {
                               ? 'bg-blue-100 text-blue-700'
                               : 'bg-white text-gray-500'
                           }`}>
-                            {count}
+                            {loading ? '...' : count}
                           </span>
                         </button>
                       )

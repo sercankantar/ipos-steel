@@ -74,6 +74,7 @@ export default function BasinAciklamalariPage() {
   const [selectedKategori, setSelectedKategori] = useState('Tümü')
   const [selectedYil, setSelectedYil] = useState('Tümü')
   const [items, setItems] = useState<any[]>([])
+  const [loading, setLoading] = useState(true)
 
   useEffect(() => {
     const load = async () => {
@@ -91,9 +92,11 @@ export default function BasinAciklamalariPage() {
           priority: 'medium',
           image: d.imageUrl || ''
         }))
-        setItems(mapped.length ? mapped : staticItems)
+        setItems(mapped)
       } catch {
-        setItems(staticItems)
+        setItems([])
+      } finally {
+        setLoading(false)
       }
     }
     load()
@@ -152,79 +155,117 @@ export default function BasinAciklamalariPage() {
                     Son Açıklamalar
                   </h2>
                   <span className="text-sm text-gray-500">
-                    {filteredAciklamalar.length} açıklama
+                    {loading ? '...' : `${filteredAciklamalar.length} açıklama`}
                   </span>
                 </div>
                 
                 {/* Kategori Filtreleri */}
                 <div className="flex flex-wrap gap-3 mb-8">
-                  {categories.map((kategori) => (
-                    <button
-                      key={kategori}
-                      onClick={() => setSelectedKategori(kategori)}
-                      className={`px-6 py-3 rounded-lg text-sm font-semibold transition-all duration-200 transform hover:scale-105 shadow-sm hover:shadow-md ${
-                        selectedKategori === kategori
-                          ? 'bg-blue-600 text-white hover:bg-blue-700 border-2 border-blue-600' 
-                          : 'bg-white text-gray-700 hover:text-blue-600 hover:bg-blue-50 border-2 border-gray-200 hover:border-blue-300'
-                      }`}
-                    >
-                      {kategori}
-                    </button>
-                  ))}
+                  {loading ? (
+                    <>
+                      {Array.from({ length: 6 }).map((_, i) => (
+                        <div key={i} className="h-10 w-28 rounded-lg bg-gray-200 animate-pulse" />
+                      ))}
+                    </>
+                  ) : (
+                    categories.map((kategori) => (
+                      <button
+                        key={kategori}
+                        onClick={() => setSelectedKategori(kategori)}
+                        className={`px-6 py-3 rounded-lg text-sm font-semibold transition-all duration-200 transform hover:scale-105 shadow-sm hover:shadow-md ${
+                          selectedKategori === kategori
+                            ? 'bg-blue-600 text-white hover:bg-blue-700 border-2 border-blue-600' 
+                            : 'bg-white text-gray-700 hover:text-blue-600 hover:bg-blue-50 border-2 border-gray-200 hover:border-blue-300'
+                        }`}
+                      >
+                        {kategori}
+                      </button>
+                    ))
+                  )}
                 </div>
               </div>
 
               {/* Basın Açıklamaları Listesi */}
               <div className="space-y-6">
-                {filteredAciklamalar.length > 0 ? (
-                  filteredAciklamalar.map((aciklama) => (
-                  <article
-                    key={aciklama.id}
-                    className="bg-white border border-gray-200 rounded-lg p-6 hover:shadow-lg transition-shadow group"
-                  >
-                    <div className="flex items-start justify-between mb-4">
-                      <div className="flex items-center gap-3">
-                        <span className={`px-3 py-1 rounded-full text-xs font-medium ${
-                          aciklama.priority === 'high' 
-                            ? 'bg-red-100 text-red-600' 
-                            : aciklama.priority === 'medium'
-                            ? 'bg-yellow-100 text-yellow-600'
-                            : 'bg-gray-100 text-gray-600'
-                        }`}>
-                          {aciklama.category}
-                        </span>
-                        <span className={`w-2 h-2 rounded-full ${
-                          aciklama.priority === 'high' 
-                            ? 'bg-red-500' 
-                            : aciklama.priority === 'medium'
-                            ? 'bg-yellow-500'
-                            : 'bg-gray-400'
-                        }`}></span>
-                      </div>
-                      <div className="flex items-center gap-4 text-sm text-gray-500">
-                        <div className="flex items-center gap-1">
-                          <Calendar className="h-4 w-4" />
-                          <span>{new Date(aciklama.date).toLocaleDateString('tr-TR')}</span>
+                {loading ? (
+                  Array.from({ length: 4 }).map((_, i) => (
+                    <div key={i} className="bg-white border border-gray-200 rounded-lg p-4">
+                      <div className="flex gap-4">
+                        <div className="w-32 sm:w-40 aspect-[4/3] bg-gray-200 rounded-md animate-pulse" />
+                        <div className="flex-1">
+                          <div className="flex items-start justify-between mb-3">
+                            <div className="h-5 w-28 bg-gray-200 rounded animate-pulse" />
+                            <div className="h-4 w-24 bg-gray-200 rounded animate-pulse" />
+                          </div>
+                          <div className="h-6 w-3/4 bg-gray-200 rounded animate-pulse mb-2" />
+                          <div className="h-4 w-full bg-gray-200 rounded animate-pulse mb-2" />
+                          <div className="h-4 w-2/3 bg-gray-200 rounded animate-pulse" />
                         </div>
                       </div>
                     </div>
-                    
-                    <h3 className="font-neuropol font-bold text-xl mb-3 text-slate-900 group-hover:text-blue-600 transition-colors">
-                      {aciklama.title}
-                    </h3>
-                    
-                    <p className="text-gray-600 text-sm leading-relaxed mb-4">
-                      {aciklama.summary}
-                    </p>
-                    
-                    <div className="flex items-center justify-start">
-                      <Link
-                        href={`/basin-aciklamalari/${aciklama.id}`}
-                        className="inline-flex items-center gap-2 text-slate-700 hover:text-slate-900 font-medium text-sm transition-all duration-200 border border-slate-300 hover:border-slate-400 px-4 py-2 rounded-md bg-white hover:bg-slate-50"
-                      >
-                        Detayları Oku
-                        <ArrowRight className="h-4 w-4" />
-                      </Link>
+                  ))
+                ) : filteredAciklamalar.length > 0 ? (
+                  filteredAciklamalar.map((aciklama) => (
+                  <article
+                    key={aciklama.id}
+                    className="bg-white border border-gray-200 rounded-lg hover:shadow-lg transition-shadow group overflow-hidden p-4"
+                  >
+                    <div className="flex gap-4">
+                      {/* Küçük Görsel Sol Tarafta */}
+                      <div className="relative w-32 sm:w-40 aspect-[4/3] flex-shrink-0 rounded-md overflow-hidden bg-gray-100">
+                        <img
+                          src={aciklama.image || '/thumbnail.jpg'}
+                          alt={aciklama.title}
+                          className="w-full h-full object-cover group-hover:scale-[1.03] transition-transform duration-300"
+                        />
+                      </div>
+                      {/* Metin İçerik */}
+                      <div className="flex-1">
+                        <div className="flex items-start justify-between mb-2">
+                          <div className="flex items-center gap-3">
+                            <span className={`px-3 py-1 rounded-full text-xs font-medium ${
+                              aciklama.priority === 'high' 
+                                ? 'bg-red-100 text-red-600' 
+                                : aciklama.priority === 'medium'
+                                ? 'bg-yellow-100 text-yellow-600'
+                                : 'bg-gray-100 text-gray-600'
+                            }`}>
+                              {aciklama.category}
+                            </span>
+                            <span className={`w-2 h-2 rounded-full ${
+                              aciklama.priority === 'high' 
+                                ? 'bg-red-500' 
+                                : aciklama.priority === 'medium'
+                                ? 'bg-yellow-500'
+                                : 'bg-gray-400'
+                            }`}></span>
+                          </div>
+                          <div className="flex items-center gap-4 text-sm text-gray-500">
+                            <div className="flex items-center gap-1">
+                              <Calendar className="h-4 w-4" />
+                              <span>{new Date(aciklama.date).toLocaleDateString('tr-TR')}</span>
+                            </div>
+                          </div>
+                        </div>
+                        
+                        <h3 className="font-neuropol font-bold text-lg mb-2 text-slate-900 group-hover:text-blue-600 transition-colors">
+                          {aciklama.title}
+                        </h3>
+                        
+                        <p className="text-gray-600 text-sm leading-relaxed mb-3 line-clamp-3">
+                          {aciklama.summary}
+                        </p>
+                        
+                        <div className="flex items-center justify-start">
+                          <Link
+                            href={`/basin-aciklamalari/${aciklama.id}`}
+                            className="inline-flex items-center gap-2 text-slate-700 hover:text-slate-900 font-medium text-sm transition-all duration-200 border border-slate-300 hover:border-slate-400 px-3 py-1.5 rounded-md bg-white hover:bg-slate-50"
+                          >
+                            Detayları Oku
+                            <ArrowRight className="h-4 w-4" />
+                          </Link>
+                        </div>
+                      </div>
                     </div>
                     </article>
                   ))
@@ -271,9 +312,15 @@ export default function BasinAciklamalariPage() {
                     Öncelikli Açıklamalar
                   </h3>
                   <div className="space-y-4">
-                    {items
-                      .slice(0, 3)
-                      .map((aciklama) => (
+                    {loading ? (
+                      Array.from({ length: 3 }).map((_, i) => (
+                        <div key={i} className="border-b border-gray-200 pb-3 last:border-b-0">
+                          <div className="h-4 w-3/4 bg-gray-200 rounded animate-pulse mb-2" />
+                          <div className="h-3 w-24 bg-gray-200 rounded animate-pulse" />
+                        </div>
+                      ))
+                    ) : (
+                      items.slice(0, 3).map((aciklama) => (
                         <div key={aciklama.id} className="border-b border-gray-200 pb-3 last:border-b-0">
                           <Link
                             href={`/basin-aciklamalari/${aciklama.id}`}
@@ -285,7 +332,8 @@ export default function BasinAciklamalariPage() {
                             {new Date(aciklama.date).toLocaleDateString('tr-TR')}
                           </p>
                         </div>
-                      ))}
+                      ))
+                    )}
                   </div>
                 </div>
 
@@ -295,29 +343,38 @@ export default function BasinAciklamalariPage() {
                     Kategoriler
                   </h3>
                   <div className="space-y-3">
-                    {categories.slice(1).map((kategori) => {
-                      const count = items.filter((a) => a.category === kategori).length
-                      return (
-                        <button
-                          key={kategori}
-                          onClick={() => setSelectedKategori(kategori)}
-                          className={`w-full flex items-center justify-between py-2 px-3 rounded-md transition-colors text-left ${
-                            selectedKategori === kategori
-                              ? 'bg-blue-50 text-blue-700'
-                              : 'hover:bg-white text-slate-700 hover:text-slate-900'
-                          }`}
-                        >
-                          <span className="text-sm font-medium">{kategori}</span>
-                          <span className={`text-xs px-2 py-1 rounded-full ${
-                            selectedKategori === kategori
-                              ? 'bg-blue-100 text-blue-700'
-                              : 'bg-white text-gray-500'
-                          }`}>
-                            {count}
-                          </span>
-                        </button>
-                      )
-                    })}
+                    {loading ? (
+                      Array.from({ length: 6 }).map((_, i) => (
+                        <div key={i} className="w-full flex items-center justify-between py-2 px-3">
+                          <div className="h-4 w-40 bg-gray-200 rounded animate-pulse" />
+                          <div className="h-4 w-10 bg-gray-200 rounded animate-pulse" />
+                        </div>
+                      ))
+                    ) : (
+                      categories.slice(1).map((kategori) => {
+                        const count = items.filter((a) => a.category === kategori).length
+                        return (
+                          <button
+                            key={kategori}
+                            onClick={() => setSelectedKategori(kategori)}
+                            className={`w-full flex items-center justify-between py-2 px-3 rounded-md transition-colors text-left ${
+                              selectedKategori === kategori
+                                ? 'bg-blue-50 text-blue-700'
+                                : 'hover:bg-white text-slate-700 hover:text-slate-900'
+                            }`}
+                          >
+                            <span className="text-sm font-medium">{kategori}</span>
+                            <span className={`text-xs px-2 py-1 rounded-full ${
+                              selectedKategori === kategori
+                                ? 'bg-blue-100 text-blue-700'
+                                : 'bg-white text-gray-500'
+                            }`}>
+                              {count}
+                            </span>
+                          </button>
+                        )
+                      })
+                    )}
                   </div>
                 </div>
 
@@ -327,45 +384,56 @@ export default function BasinAciklamalariPage() {
                     Arşiv
                   </h3>
                   <div className="space-y-2">
-                    <button
-                      onClick={() => {
-                        setSelectedYil('Tümü')
-                        setSelectedKategori('Tümü')
-                      }}
-                      className={`w-full text-left text-sm py-2 px-3 rounded-md transition-colors ${
-                        selectedYil === 'Tümü'
-                          ? 'bg-blue-50 text-blue-700 font-medium'
-                          : 'text-slate-700 hover:text-blue-600 hover:bg-white'
-                      }`}
-                    >
-                      Tüm Açıklamalar
-                    </button>
-                    {availableYears.map((yil) => {
-                      const count = items.filter((a) => new Date(a.date).getFullYear() === yil).length
-                      return (
+                    {loading ? (
+                      <>
+                        <div className="h-8 w-40 bg-gray-200 rounded animate-pulse" />
+                        {Array.from({ length: 4 }).map((_, i) => (
+                          <div key={i} className="h-8 w-full bg-gray-200 rounded animate-pulse" />
+                        ))}
+                      </>
+                    ) : (
+                      <>
                         <button
-                          key={yil}
                           onClick={() => {
-                            setSelectedYil(yil.toString())
+                            setSelectedYil('Tümü')
                             setSelectedKategori('Tümü')
                           }}
-                          className={`w-full flex items-center justify-between text-sm py-2 px-3 rounded-md transition-colors text-left ${
-                            selectedYil === yil.toString()
+                          className={`w-full text-left text-sm py-2 px-3 rounded-md transition-colors ${
+                            selectedYil === 'Tümü'
                               ? 'bg-blue-50 text-blue-700 font-medium'
                               : 'text-slate-700 hover:text-blue-600 hover:bg-white'
                           }`}
                         >
-                          <span>{yil} Açıklamaları</span>
-                          <span className={`text-xs px-2 py-1 rounded-full ${
-                            selectedYil === yil.toString()
-                              ? 'bg-blue-100 text-blue-700'
-                              : 'bg-white text-gray-500'
-                          }`}>
-                            {count}
-                          </span>
+                          Tüm Açıklamalar
                         </button>
-                      )
-                    })}
+                        {availableYears.map((yil) => {
+                          const count = items.filter((a) => new Date(a.date).getFullYear() === yil).length
+                          return (
+                            <button
+                              key={yil}
+                              onClick={() => {
+                                setSelectedYil(yil.toString())
+                                setSelectedKategori('Tümü')
+                              }}
+                              className={`w-full flex items-center justify-between text-sm py-2 px-3 rounded-md transition-colors text-left ${
+                                selectedYil === yil.toString()
+                                  ? 'bg-blue-50 text-blue-700 font-medium'
+                                  : 'text-slate-700 hover:text-blue-600 hover:bg-white'
+                              }`}
+                            >
+                              <span>{yil} Açıklamaları</span>
+                              <span className={`text-xs px-2 py-1 rounded-full ${
+                                selectedYil === yil.toString()
+                                  ? 'bg-blue-100 text-blue-700'
+                                  : 'bg-white text-gray-500'
+                              }`}>
+                                {count}
+                              </span>
+                            </button>
+                          )
+                        })}
+                      </>
+                    )}
                   </div>
                 </div>
               </div>

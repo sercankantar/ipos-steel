@@ -46,7 +46,7 @@ const NavItem = ({
     load()
   }, [category.label])
   return (
-    <div className='flex' onMouseEnter={handleOpen} onMouseLeave={close}>
+    <div className='flex'>
       <div className='relative flex items-center'>
         <Button
           className={cn(
@@ -72,7 +72,6 @@ const NavItem = ({
 
       {isOpen ? (
         <div
-          onClick={() => close()}
           className={cn(
             'absolute inset-x-0 top-full text-sm text-muted-foreground',
             {
@@ -87,8 +86,8 @@ const NavItem = ({
 
           <div className='relative bg-white border-t border-gray-100 shadow-lg'>
             <div className='mx-auto max-w-6xl px-6'>
-              <div className='py-8'>
-                <div className='grid grid-cols-3 gap-6'>
+              <div className='py-8 max-h-[70vh] overflow-y-auto'>
+                <div className='grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6'>
                   {(category.label === 'Ürünler' ? dynamicFeatured : category.featured).map((item) => (
                     <Link
                       href={item.href}
