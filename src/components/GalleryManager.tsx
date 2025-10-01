@@ -112,7 +112,7 @@ export default function GalleryManager() {
     }
   }
 
-  if (loading) return <div className="p-8">Yükleniyor...</div>
+  if (loading) return <div className="p-8"><div className="h-6 w-40 bg-gray-200 rounded animate-pulse mb-4" /><div className="h-4 w-full bg-gray-200 rounded animate-pulse mb-2" /><div className="h-4 w-2/3 bg-gray-200 rounded animate-pulse" /></div>
 
   return (
     <div>

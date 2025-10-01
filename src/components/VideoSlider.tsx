@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Swiper, SwiperSlide } from 'swiper/react'
 import 'swiper/css'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
@@ -23,6 +23,7 @@ interface VideoSliderProps {
 const VideoSlider = ({ slides }: VideoSliderProps) => {
   const [swiper, setSwiper] = useState<null | SwiperType>(null)
   const [activeIndex, setActiveIndex] = useState(0)
+  const videoRefs = useRef<Array<HTMLVideoElement | null>>([])
   const [slideConfig, setSlideConfig] = useState({
     isBeginning: true,
     isEnd: activeIndex === (slides.length ?? 0) - 1,
@@ -35,8 +36,35 @@ const VideoSlider = ({ slides }: VideoSliderProps) => {
         isBeginning: activeIndex === 0,
         isEnd: activeIndex === (slides.length ?? 0) - 1,
       })
+      // oynatma kontrolü
+      requestAnimationFrame(() => playActiveVideo(activeIndex))
     })
   }, [swiper, slides])
+
+  useEffect(() => {
+    // ilk yüklemede aktif videoyu başlat
+    playActiveVideo(activeIndex)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [activeIndex])
+
+  const playActiveVideo = async (index: number) => {
+    videoRefs.current.forEach((v, i) => {
+      if (!v) return
+      if (i === index) return
+      try {
+        v.pause()
+      } catch {}
+    })
+    const activeVideo = videoRefs.current[index]
+    if (activeVideo) {
+      try {
+        activeVideo.muted = true
+        // iOS için zorunlu
+        ;(activeVideo as any).playsInline = true
+        await activeVideo.play().catch(() => {/* ignore */})
+      } catch {}
+    }
+  }
 
   const activeStyles =
     'active:scale-[0.97] grid opacity-100 hover:scale-105 absolute top-1/2 -translate-y-1/2 aspect-square h-10 w-10 z-50 place-items-center rounded-full border bg-white/90 border-zinc-300 shadow'
@@ -72,7 +100,7 @@ const VideoSlider = ({ slides }: VideoSliderProps) => {
         </button>
       </div>
 
-      <Swiper onSwiper={(s) => setSwiper(s)} slidesPerView={1} className='h-[420px] w-full sm:h-[520px]'>
+      <Swiper onSwiper={(s) => { setSwiper(s); requestAnimationFrame(() => playActiveVideo(0)) }} slidesPerView={1} className='h-[420px] w-full sm:h-[520px]'>
         {slides.map((slide, i) => (
           <SwiperSlide key={i} className='relative h-full w-full'>
             {/* Video */}
@@ -83,6 +111,10 @@ const VideoSlider = ({ slides }: VideoSliderProps) => {
               loop
               muted
               playsInline
+              preload='auto'
+              controls={false}
+              controlsList='nodownload noplaybackrate nofullscreen'
+              ref={(el) => (videoRefs.current[i] = el)}
             />
 
             {/* Overlay gradient */}

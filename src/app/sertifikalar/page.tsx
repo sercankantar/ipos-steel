@@ -138,12 +138,11 @@ export default function SertifikalarPage() {
                           </div>
                           <a
                             href={sertifika.fileUrl || '#'}
-                            target="_blank"
-                            rel="noopener noreferrer"
+                            download={`sertifika-${(sertifika.title || 'dosya').replace(/[^a-z0-9-_]+/gi,'-').toLowerCase()}.${(sertifika.fileType || 'pdf').toLowerCase()}`}
                             className="inline-flex items-center justify-center gap-2 bg-slate-800 text-white px-3 py-2 rounded-md hover:bg-slate-900 transition-colors text-xs sm:text-sm w-full sm:w-auto"
                           >
                             <Download className="h-4 w-4" />
-                            Sertifikayı Aç ({(sertifika.fileType || '').toUpperCase()})
+                            Sertifikayı İndir ({(sertifika.fileType || '').toUpperCase()})
                           </a>
                         </div>
                       </div>

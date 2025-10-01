@@ -224,7 +224,7 @@ export default function KurumsalIslemler() {
   }
 
   if (loading) {
-    return <div className="p-8">Yükleniyor...</div>
+    return <div className="p-8"><div className="h-6 w-40 bg-gray-200 rounded animate-pulse mb-4" /><div className="h-4 w-full bg-gray-200 rounded animate-pulse mb-2" /><div className="h-4 w-2/3 bg-gray-200 rounded animate-pulse" /></div>
   }
 
   return (
@@ -238,10 +238,11 @@ export default function KurumsalIslemler() {
         </p>
       </div>
 
-      <div className="mb-6 flex items-center gap-2">
+      <div className="mb-6 flex items-center gap-2 overflow-x-auto scroll-smooth [-ms-overflow-style:none] [scrollbar-width:none]">
+        <div className="flex items-center gap-2 min-w-max [::-webkit-scrollbar]:hidden">
         <button
           onClick={() => setActiveTab('missionVision')}
-          className={`px-4 py-2 rounded-md text-sm font-medium border ${
+          className={`px-4 py-2 rounded-md text-sm font-medium border whitespace-nowrap ${
             activeTab === 'missionVision' ? 'bg-blue-600 text-white border-blue-600' : 'bg-white text-gray-700 border-gray-200'
           }`}
         >
@@ -249,7 +250,7 @@ export default function KurumsalIslemler() {
         </button>
         <button
           onClick={() => setActiveTab('about')}
-          className={`px-4 py-2 rounded-md text-sm font-medium border ${
+          className={`px-4 py-2 rounded-md text-sm font-medium border whitespace-nowrap ${
             activeTab === 'about' ? 'bg-blue-600 text-white border-blue-600' : 'bg-white text-gray-700 border-gray-200'
           }`}
         >
@@ -257,7 +258,7 @@ export default function KurumsalIslemler() {
         </button>
         <button
           onClick={() => setActiveTab('certificates')}
-          className={`px-4 py-2 rounded-md text-sm font-medium border ${
+          className={`px-4 py-2 rounded-md text-sm font-medium border whitespace-nowrap ${
             activeTab === 'certificates' ? 'bg-blue-600 text-white border-blue-600' : 'bg-white text-gray-700 border-gray-200'
           }`}
         >
@@ -265,12 +266,13 @@ export default function KurumsalIslemler() {
         </button>
         <button
           onClick={() => setActiveTab('references')}
-          className={`px-4 py-2 rounded-md text-sm font-medium border ${
+          className={`px-4 py-2 rounded-md text-sm font-medium border whitespace-nowrap ${
             activeTab === 'references' ? 'bg-blue-600 text-white border-blue-600' : 'bg-white text-gray-700 border-gray-200'
           }`}
         >
           Referanslar
         </button>
+        </div>
       </div>
 
       {showForm && (

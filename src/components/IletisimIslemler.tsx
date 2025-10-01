@@ -164,7 +164,7 @@ export default function IletisimIslemler() {
   }
 
   if (loading) {
-    return <div className="p-8">Yükleniyor...</div>
+    return <div className="p-8"><div className="h-6 w-40 bg-gray-200 rounded animate-pulse mb-4" /><div className="h-4 w-full bg-gray-200 rounded animate-pulse mb-2" /><div className="h-4 w-2/3 bg-gray-200 rounded animate-pulse" /></div>
   }
 
   return (
@@ -179,13 +179,15 @@ export default function IletisimIslemler() {
       </div>
 
       {/* Tabs */}
-      <div className="mb-6 flex items-center gap-2">
+      <div className="mb-6 flex items-center gap-2 overflow-x-auto [-ms-overflow-style:none] [scrollbar-width:none]">
+        <div className="flex items-center gap-2 min-w-max [::-webkit-scrollbar]:hidden">
         <button onClick={() => setActiveTab('inbox')} className={`px-4 py-2 rounded-md text-sm font-medium border ${activeTab === 'inbox' ? 'bg-blue-600 text-white border-blue-600' : 'bg-white text-gray-700 border-gray-200'}`}>
           Gelen Kutusu
         </button>
         <button onClick={() => setActiveTab('info')} className={`px-4 py-2 rounded-md text-sm font-medium border ${activeTab === 'info' ? 'bg-blue-600 text-white border-blue-600' : 'bg-white text-gray-700 border-gray-200'}`}>
           İletişim Bilgileri
         </button>
+        </div>
       </div>
 
       {activeTab === 'info' && (
@@ -305,20 +307,22 @@ export default function IletisimIslemler() {
           <div className="divide-y divide-gray-200">
             {messages.map((m) => (
               <div key={m.id} className="px-6 py-4">
-                <div className="flex items-start justify-between gap-4">
-                  <div className="flex-1">
+                <div className="flex items-start justify-between gap-4 flex-col sm:flex-row">
+                  <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2">
                       {!m.isRead && <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] bg-blue-100 text-blue-700">Yeni</span>}
-                      <div className="font-medium text-gray-900">{m.name} {m.surname} • <span className="text-gray-500 text-sm">{m.email}{m.phone ? ` • ${m.phone}` : ''}</span></div>
+                      <div className="font-medium text-gray-900 truncate min-w-0">
+                        {m.name} {m.surname} • <span className="text-gray-500 text-sm break-all">{m.email}{m.phone ? ` • ${m.phone}` : ''}</span>
+                      </div>
                     </div>
-                    <div className="text-sm text-gray-700 mt-1 whitespace-pre-line">{m.message}</div>
+                    <div className="text-sm text-gray-700 mt-1 whitespace-pre-line break-words">{m.message}</div>
                     <div className="text-xs text-gray-500 mt-1">{new Date(m.createdAt).toLocaleString('tr-TR')}</div>
                   </div>
-                  <div className="flex items-center gap-2">
-                    <Button size="sm" variant="outline" onClick={() => markAsRead(m.id, !m.isRead)}>
+                  <div className="flex items-center gap-2 sm:self-start w-full sm:w-auto">
+                    <Button size="sm" variant="outline" onClick={() => markAsRead(m.id, !m.isRead)} className="flex-1 sm:flex-none">
                       <CheckCircle2 className="w-4 h-4" /> {m.isRead ? 'Okunmadı' : 'Okundu'}
                     </Button>
-                    <Button size="sm" variant="outline" onClick={() => deleteMessage(m.id)}>
+                    <Button size="sm" variant="outline" onClick={() => deleteMessage(m.id)} className="flex-1 sm:flex-none">
                       <Trash2 className="w-4 h-4" />
                     </Button>
                   </div>

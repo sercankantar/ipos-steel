@@ -126,7 +126,7 @@ export default function CertificatesManager() {
     }
   }
 
-  if (loading) return <div className="p-8">Yükleniyor...</div>
+  if (loading) return <div className="p-8"><div className="h-6 w-40 bg-gray-200 rounded animate-pulse mb-4" /><div className="h-4 w-full bg-gray-200 rounded animate-pulse mb-2" /><div className="h-4 w-2/3 bg-gray-200 rounded animate-pulse" /></div>
 
   return (
     <div>
@@ -185,7 +185,7 @@ export default function CertificatesManager() {
 
       <div className="bg-white rounded-md border divide-y">
         {items.map((it) => (
-          <div key={it.id} className="p-4 flex items-center gap-4">
+          <div key={it.id} className="p-4 flex items-center gap-4 flex-col sm:flex-row sm:items-center">
             <button
               onClick={() => toggleActive(it)}
               className={`inline-flex items-center px-2.5 py-1 rounded-md text-xs border transition-colors ${
@@ -197,22 +197,28 @@ export default function CertificatesManager() {
             >
               {it.isActive ? 'Aktif' : 'Pasif'}
             </button>
-            <div className="flex-1">
+            <div className="flex-1 w-full">
               <div className="flex items-center gap-2">
                 <div className="font-medium">{it.title}</div>
                 <span className="text-xs bg-gray-100 text-gray-600 px-2 py-0.5 rounded-full">{it.category}</span>
               </div>
               <div className="text-sm text-gray-600">{it.description}</div>
             </div>
-            <a className="text-sm text-blue-600 hover:underline flex items-center gap-1" href={it.fileUrl} download>
-              <Download className="w-4 h-4" /> İndir
-            </a>
-            <Button size="sm" variant="outline" onClick={() => { setEditing(it); setFormOpen(true); setForm({ title: it.title, category: it.category, description: it.description, details: it.details || '', isActive: it.isActive }); setFile(null); setFilePreview(null) }}>
-              <Edit className="w-4 h-4" />
-            </Button>
-            <Button size="sm" variant="outline" onClick={() => onDelete(it.id)}>
-              <Trash2 className="w-4 h-4" />
-            </Button>
+            <div className="flex items-center gap-2 w-full sm:w-auto">
+              <a
+                className="text-sm text-blue-600 hover:underline flex items-center gap-1 flex-1 sm:flex-none"
+                href={it.fileUrl}
+                download={`${it.title.replace(/[^a-z0-9-_]+/gi,'-').toLowerCase()}.${(it.fileType || 'pdf').toLowerCase()}`}
+              >
+                <Download className="w-4 h-4" /> İndir
+              </a>
+              <Button size="sm" variant="outline" onClick={() => { setEditing(it); setFormOpen(true); setForm({ title: it.title, category: it.category, description: it.description, details: it.details || '', isActive: it.isActive }); setFile(null); setFilePreview(null) }} className="flex-1 sm:flex-none">
+                <Edit className="w-4 h-4" />
+              </Button>
+              <Button size="sm" variant="outline" onClick={() => onDelete(it.id)} className="flex-1 sm:flex-none">
+                <Trash2 className="w-4 h-4" />
+              </Button>
+            </div>
           </div>
         ))}
       </div>

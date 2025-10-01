@@ -307,35 +307,7 @@ export default function BasinAciklamalariPage() {
                 
 
                 {/* Öncelikli (son eklenen) Açıklamalar */}
-                <div className="bg-gray-50 border border-gray-200 rounded-lg p-6">
-                  <h3 className="font-neuropol font-bold text-lg mb-4 text-slate-900">
-                    Öncelikli Açıklamalar
-                  </h3>
-                  <div className="space-y-4">
-                    {loading ? (
-                      Array.from({ length: 3 }).map((_, i) => (
-                        <div key={i} className="border-b border-gray-200 pb-3 last:border-b-0">
-                          <div className="h-4 w-3/4 bg-gray-200 rounded animate-pulse mb-2" />
-                          <div className="h-3 w-24 bg-gray-200 rounded animate-pulse" />
-                        </div>
-                      ))
-                    ) : (
-                      items.slice(0, 3).map((aciklama) => (
-                        <div key={aciklama.id} className="border-b border-gray-200 pb-3 last:border-b-0">
-                          <Link
-                            href={`/basin-aciklamalari/${aciklama.id}`}
-                            className="text-sm font-medium text-slate-900 hover:text-blue-600 transition-colors line-clamp-2 block mb-1"
-                          >
-                            {aciklama.title}
-                          </Link>
-                          <p className="text-xs text-gray-500">
-                            {new Date(aciklama.date).toLocaleDateString('tr-TR')}
-                          </p>
-                        </div>
-                      ))
-                    )}
-                  </div>
-                </div>
+               
 
                 {/* Kategori İstatistikleri */}
                 <div className="bg-gray-50 border border-gray-200 rounded-lg p-6">
