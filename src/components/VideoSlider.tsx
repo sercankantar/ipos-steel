@@ -47,6 +47,21 @@ const VideoSlider = ({ slides }: VideoSliderProps) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeIndex])
 
+  // iOS/Safari mobilde kullanıcı etkileşimi sonrası oynatmayı zorla (bir kez)
+  useEffect(() => {
+    const unlock = () => {
+      playActiveVideo(activeIndex)
+      document.removeEventListener('touchstart', unlock)
+      document.removeEventListener('click', unlock)
+    }
+    document.addEventListener('touchstart', unlock, { once: true, passive: true })
+    document.addEventListener('click', unlock, { once: true })
+    return () => {
+      document.removeEventListener('touchstart', unlock)
+      document.removeEventListener('click', unlock)
+    }
+  }, [activeIndex])
+
   const playActiveVideo = async (index: number) => {
     videoRefs.current.forEach((v, i) => {
       if (!v) return
@@ -61,6 +76,8 @@ const VideoSlider = ({ slides }: VideoSliderProps) => {
         activeVideo.muted = true
         // iOS için zorunlu
         ;(activeVideo as any).playsInline = true
+        activeVideo.setAttribute('playsinline', 'true')
+        activeVideo.setAttribute('webkit-playsinline', 'true')
         await activeVideo.play().catch(() => {/* ignore */})
       } catch {}
     }
@@ -114,6 +131,7 @@ const VideoSlider = ({ slides }: VideoSliderProps) => {
               preload='auto'
               controls={false}
               controlsList='nodownload noplaybackrate nofullscreen'
+              onLoadedMetadata={() => playActiveVideo(i)}
               ref={(el) => (videoRefs.current[i] = el)}
             />
 

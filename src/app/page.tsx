@@ -538,7 +538,7 @@ export default function Home() {
             <Link
               href='/haberler'
               className='inline-flex items-center gap-2 rounded-md bg-red-500 px-4 py-2 text-white text-sm font-neuropol font-semibold shadow hover:bg-red-600 transition'>
-              Tümünü Görüntüle
+              Tümü
               <span className='background-red-500' aria-hidden>→</span>
             </Link>
           </div>
