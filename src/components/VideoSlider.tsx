@@ -42,8 +42,11 @@ const VideoSlider = ({ slides }: VideoSliderProps) => {
   }, [swiper, slides])
 
   useEffect(() => {
-    // ilk yüklemede aktif videoyu başlat
-    playActiveVideo(activeIndex)
+    // ilk yüklemede aktif videoyu başlat - video yüklendikten sonra
+    const timer = setTimeout(() => {
+      playActiveVideo(activeIndex)
+    }, 100)
+    return () => clearTimeout(timer)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeIndex])
 
@@ -63,6 +66,7 @@ const VideoSlider = ({ slides }: VideoSliderProps) => {
   }, [activeIndex])
 
   const playActiveVideo = async (index: number) => {
+    // Önce tüm videoları durdur
     videoRefs.current.forEach((v, i) => {
       if (!v) return
       if (i === index) return
@@ -70,16 +74,36 @@ const VideoSlider = ({ slides }: VideoSliderProps) => {
         v.pause()
       } catch {}
     })
+    
     const activeVideo = videoRefs.current[index]
     if (activeVideo) {
       try {
+        // Video ayarlarını yap
         activeVideo.muted = true
-        // iOS için zorunlu
         ;(activeVideo as any).playsInline = true
         activeVideo.setAttribute('playsinline', 'true')
         activeVideo.setAttribute('webkit-playsinline', 'true')
-        await activeVideo.play().catch(() => {/* ignore */})
-      } catch {}
+        
+        // Video hazır değilse bekle
+        if (activeVideo.readyState < 2) {
+          await new Promise((resolve) => {
+            const handleCanPlay = () => {
+              activeVideo.removeEventListener('canplay', handleCanPlay)
+              resolve(void 0)
+            }
+            activeVideo.addEventListener('canplay', handleCanPlay)
+            // Timeout ekle
+            setTimeout(resolve, 1000)
+          })
+        }
+        
+        // Video oynat
+        await activeVideo.play().catch((e) => {
+          console.log('Video play failed:', e)
+        })
+      } catch (error) {
+        console.log('Video setup failed:', error)
+      }
     }
   }
 
@@ -117,7 +141,11 @@ const VideoSlider = ({ slides }: VideoSliderProps) => {
         </button>
       </div>
 
-      <Swiper onSwiper={(s) => { setSwiper(s); requestAnimationFrame(() => playActiveVideo(0)) }} slidesPerView={1} className='h-[420px] w-full sm:h-[520px]'>
+      <Swiper onSwiper={(s) => { 
+        setSwiper(s); 
+        // İlk video için biraz bekle ve başlat
+        setTimeout(() => playActiveVideo(0), 200)
+      }} slidesPerView={1} className='h-[420px] w-full sm:h-[520px]'>
         {slides.map((slide, i) => (
           <SwiperSlide key={i} className='relative h-full w-full'>
             {/* Video */}
@@ -131,7 +159,12 @@ const VideoSlider = ({ slides }: VideoSliderProps) => {
               preload='auto'
               controls={false}
               controlsList='nodownload noplaybackrate nofullscreen'
-              onLoadedMetadata={() => playActiveVideo(i)}
+              onLoadedMetadata={() => {
+                if (i === 0) {
+                  // İlk video yüklendiğinde otomatik başlat
+                  setTimeout(() => playActiveVideo(i), 50)
+                }
+              }}
               ref={(el) => (videoRefs.current[i] = el)}
             />
 
