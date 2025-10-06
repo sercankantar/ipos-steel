@@ -5,7 +5,6 @@ import { useEffect, useState } from 'react'
 import { Button } from './ui/button'
 import { ChevronDown } from 'lucide-react'
 import { cn } from '@/lib/utils'
-import Image from 'next/image'
 import Link from 'next/link'
 
 type Category = (typeof PRODUCT_CATEGORIES)[number]
@@ -46,7 +45,7 @@ const NavItem = ({
     load()
   }, [category.label])
   return (
-    <div className='flex'>
+    <div className='flex relative'>
       <div className='relative flex items-center'>
         <Button
           className={cn(
@@ -73,45 +72,24 @@ const NavItem = ({
       {isOpen ? (
         <div
           className={cn(
-            'absolute inset-x-0 top-full text-sm text-muted-foreground',
+            'absolute top-full left-0 text-sm text-muted-foreground z-50',
             {
               'animate-in fade-in-10 slide-in-from-top-5':
                 !isAnyOpen,
             }
           )}>
-          <div
-            className='absolute inset-0 top-1/2 bg-white shadow-xl border-t border-gray-100'
-            aria-hidden='true'
-          />
-
-          <div className='relative bg-white border-t border-gray-100 shadow-lg'>
-            <div className='mx-auto max-w-6xl px-6'>
-              <div className='py-8 max-h-[70vh] overflow-y-auto'>
-                <div className='grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6'>
-                  {(category.label === 'Ürünler' ? dynamicFeatured : category.featured).map((item) => (
-                    <Link
-                      href={item.href}
-                      onClick={() => close()}
-                      key={item.name}
-                      className='group relative block p-4 rounded-lg hover:bg-gray-50 transition-all duration-200 border border-transparent hover:border-gray-200'>
-                      <div className='relative aspect-[4/3] overflow-hidden rounded-lg bg-gray-100 mb-3'>
-                        <Image
-                          src={item.imageSrc}
-                          alt={item.name}
-                          fill
-                          className='object-cover object-center rounded-lg group-hover:scale-105 transition-transform duration-300'
-                        />
-                        <div className='absolute inset-0 bg-gradient-to-t from-black/10 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-lg'></div>
-                      </div>
-
-                      <div className='text-center'>
-                        <h3 className='font-neuropol font-semibold text-gray-900 group-hover:text-blue-600 transition-colors duration-200 text-sm'>
-                          {item.name}
-                        </h3>
-                      </div>
-                    </Link>
-                  ))}
-                </div>
+          <div className='relative bg-white border border-gray-200 shadow-lg rounded-md'>
+            <div className='py-2 min-w-[200px]'>
+              <div className='flex flex-col'>
+                {(category.label === 'Ürünler' ? dynamicFeatured : category.featured).map((item) => (
+                  <Link
+                    href={item.href}
+                    onClick={() => close()}
+                    key={item.name}
+                    className='block px-4 py-3 text-gray-700 hover:text-blue-600 hover:bg-blue-50 transition-all duration-200 font-neuropol whitespace-nowrap'>
+                    {item.name}
+                  </Link>
+                ))}
               </div>
             </div>
           </div>
