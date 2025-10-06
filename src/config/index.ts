@@ -33,6 +33,42 @@ export const PRODUCT_CATEGORIES = [
     ],
   },
   {
+    label: 'Kariyer',
+    value: 'career' as const,
+    featured: [
+      {
+        name: 'İnsan Kaynakları Politikamız',
+        href: '/insan-kaynaklari-politikamiz',
+        imageSrc: '/nav/career-nav.png',
+      },
+      {
+        name: 'İş Etiği Kurallarımız',
+        href: '/is-etigi-kurallarimiz',
+        imageSrc: '/nav/career-nav.png',
+      },
+      {
+        name: 'Ücret ve Yan Haklar Yönetimimiz',
+        href: '/ucret-ve-yan-haklar-yonetimimiz',
+        imageSrc: '/nav/career-nav.png',
+      },
+      {
+        name: 'İşe Alım Süreci',
+        href: '/ise-alim-sureci',
+        imageSrc: '/nav/career-nav.png',
+      },
+      {
+        name: 'Kariyer Fırsatlarımız',
+        href: '/kariyer-firsatlari',
+        imageSrc: '/nav/career-nav.png',
+      },
+      {
+        name: 'Staj Sürecimiz',
+        href: '/staj-surecimiz',
+        imageSrc: '/nav/career-nav.png',
+      },
+    ],
+  },
+  {
     label: 'Medya',
     value: 'media' as const,
     featured: [
