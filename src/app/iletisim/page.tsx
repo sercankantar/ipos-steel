@@ -172,7 +172,7 @@ export default function IletisimPage() {
                   <div className="pt-6">
                     <Button disabled={submitting} type="submit" className="bg-slate-800 hover:bg-slate-900 text-white px-8 py-3 text-sm font-medium">
                       {submitting ? 'Gönderiliyor...' : 'Gönder →'}
-                  </Button>
+                    </Button>
                   </div>
                 </form>
               </div>
