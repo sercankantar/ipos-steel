@@ -26,8 +26,8 @@ export const PRODUCT_CATEGORIES = [
         imageSrc: '/nav/sertifikalar-nav.png',
       },
       {
-        name: 'Referanslar',
-        href: '/referanslar',
+        name: 'Referanslarımız',
+        href: '/referanslarimiz',
         imageSrc: '/nav/referanslar-nav.png',
       },
     ],
@@ -62,6 +62,11 @@ export const PRODUCT_CATEGORIES = [
         imageSrc: '/nav/career-nav.png',
       },
       {
+        name: 'Açık Pozisyonlar',
+        href: '/acik-pozisyonlar',
+        imageSrc: '/nav/career-nav.png',
+      },
+      {
         name: 'Staj Sürecimiz',
         href: '/staj-surecimiz',
         imageSrc: '/nav/career-nav.png',
@@ -69,23 +74,18 @@ export const PRODUCT_CATEGORIES = [
     ],
   },
   {
-    label: 'Medya',
-    value: 'media' as const,
+    label: 'İndirme Merkezi',
+    value: 'downloads' as const,
     featured: [
       {
-        name: 'Haberler',
-        href: '/haberler',
-        imageSrc: '/nav/haberler-nav.png',
+        name: 'Katalog & Broşürler',
+        href: '/katalog-brosurler',
+        imageSrc: '/nav/katalog-nav.png',
       },
       {
-        name: 'Basın Açıklamaları',
-        href: '/basin-aciklamalari',
-        imageSrc: '/nav/basin-nav.png',
-      },
-      {
-        name: 'Galeri',
-        href: '/galeri',
-        imageSrc: '/nav/galeri-nav.jpg',
+        name: 'El Kitapları & Montaj Kılavuzları',
+        href: '/el-kitaplari-montaj-kilavuzlari',
+        imageSrc: '/nav/elkitabi-nav.png',
       },
     ],
   },

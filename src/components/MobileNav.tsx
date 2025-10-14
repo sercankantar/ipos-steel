@@ -27,12 +27,7 @@ const MobileNav = () => {
     }
   }
 
-  // remove second scrollbar when mobile menu is open
-  useEffect(() => {
-    if (isOpen)
-      document.body.classList.add('overflow-hidden')
-    else document.body.classList.remove('overflow-hidden')
-  }, [isOpen])
+  // Allow background scrolling when mobile menu is open
 
   // load product categories for mobile menu
   useEffect(() => {
@@ -63,16 +58,25 @@ const MobileNav = () => {
     )
 
   return (
-    <div className='fixed inset-0 z-50 lg:hidden bg-[#003054] text-white overflow-y-auto'>
-      <div className='px-6 pt-6 pb-10'>
-        <div className='flex items-center justify-end'>
-          <button
-            type='button'
-            onClick={() => setIsOpen(false)}
-            className='p-2 rounded-md text-white/80 hover:text-white'>
-            <X className='h-6 w-6' aria-hidden='true' />
-          </button>
-        </div>
+    <>
+      {/* Backdrop */}
+      <div 
+        className='fixed inset-0 z-40 lg:hidden bg-black/30 backdrop-blur-sm'
+        onClick={() => setIsOpen(false)}
+      />
+      
+      {/* Slide-out Menu */}
+      <div className='fixed top-0 left-0 z-50 lg:hidden w-80 h-full bg-[#003054] text-white overflow-y-auto shadow-2xl transform transition-transform duration-300 ease-in-out'>
+        <div className='px-6 pt-6 pb-10'>
+          <div className='flex items-center justify-between mb-6'>
+            <h2 className='text-lg font-neuropol font-bold'>Menü</h2>
+            <button
+              type='button'
+              onClick={() => setIsOpen(false)}
+              className='p-2 rounded-md text-white/80 hover:text-white hover:bg-white/10 transition-colors'>
+              <X className='h-6 w-6' aria-hidden='true' />
+            </button>
+          </div>
 
         <nav className='mt-6'>
           <ul className='space-y-4'>
@@ -138,6 +142,7 @@ const MobileNav = () => {
         </div>
       </div>
     </div>
+    </>
   )
 }
 

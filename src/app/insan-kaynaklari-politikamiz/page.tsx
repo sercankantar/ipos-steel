@@ -6,7 +6,7 @@ export default function InsanKaynaklariPolitikamiz() {
     <div className='min-h-screen bg-white'>
       {/* Hero Section */}
       <div className='bg-gray-900 py-16'>
-        <MaxWidthWrapper>
+    <MaxWidthWrapper>
           <div className='text-center text-white'>
             <nav className='text-sm text-gray-300 mb-6'>
               <Link href='/' className='hover:text-white'>Ana Sayfa</Link>
@@ -14,10 +14,10 @@ export default function InsanKaynaklariPolitikamiz() {
               <span>İnsan Kaynakları Politikamız</span>
             </nav>
             <h1 className='font-neuropol text-4xl lg:text-5xl font-bold mb-4'>
-              İnsan Kaynakları Politikamız
-            </h1>
+            İnsan Kaynakları Politikamız
+          </h1>
             <p className='text-lg text-gray-300 max-w-2xl mx-auto'>
-              İnsan odaklı yaklaşımımızla çalışanlarımızın gelişimine yatırım yapar, adil ve güvenli çalışma ortamı sağlarız
+              Güneş enerjisi altyapısı ve elektrik kablo yönetim sistemlerinde uzmanlaşmış ekibimizle, sürdürülebilir enerji geleceğinin inşasında insan kaynaklarımızı en stratejik varlığımız olarak görüyoruz
             </p>
           </div>
         </MaxWidthWrapper>
@@ -34,25 +34,25 @@ export default function InsanKaynaklariPolitikamiz() {
             <div className='grid lg:grid-cols-2 gap-8 items-center mb-8'>
               <div>
                 <p className='text-gray-700 text-base leading-relaxed mb-6'>
-                  IPOS Steel olarak çelik yapı sektöründe öncü konumumuzu korurken, en değerli varlığımız olan insan kaynağımızı geliştirmek için modern yaklaşımlar benimser ve şu hedefleri öncelikli olarak ele alırız:
+                  Güneş enerjisi panelleri için kablo tavası, elektrik altyapı çözümleri ve enerji iletim sistemlerinde öncü konumumuzu korurken, elektrik mühendislerimizden üretim uzmanlarımıza kadar tüm ekibimizin yenilikçi çözümler geliştirmesini destekliyoruz. İnsan kaynakları stratejimizin temel pilleri:
                 </p>
 
                 <ul className='space-y-3'>
                   <li className='flex items-start gap-3'>
                     <span className='w-1.5 h-1.5 bg-blue-600 rounded-full mt-2 flex-shrink-0'></span>
-                    <span className='text-gray-700'>Doğru kişiyi doğru pozisyona yerleştirme</span>
+                    <span className='text-gray-700'>Elektrik altyapısı ve güneş enerjisi sistemleri uzmanlığı gerektiren pozisyonlarda yetkinlik bazlı işe alım</span>
                   </li>
                   <li className='flex items-start gap-3'>
                     <span className='w-1.5 h-1.5 bg-blue-600 rounded-full mt-2 flex-shrink-0'></span>
-                    <span className='text-gray-700'>Çalışanlarımızın teknik ve kişisel becerilerini sürekli geliştirme</span>
+                    <span className='text-gray-700'>Elektrik sistemleri, kablo yönetimi ve güneş paneli montaj teknikleri eğitimleri</span>
                   </li>
                   <li className='flex items-start gap-3'>
                     <span className='w-1.5 h-1.5 bg-blue-600 rounded-full mt-2 flex-shrink-0'></span>
-                    <span className='text-gray-700'>Bireysel kariyer hedeflerini destekleyerek yaşam boyu öğrenme kültürünü teşvik etme</span>
+                    <span className='text-gray-700'>Elektrik güvenlik sertifikaları ve yenilenebilir enerji standartlarına uyum eğitimleri</span>
                   </li>
                   <li className='flex items-start gap-3'>
                     <span className='w-1.5 h-1.5 bg-blue-600 rounded-full mt-2 flex-shrink-0'></span>
-                    <span className='text-gray-700'>Mentorluk ve bilgi aktarımı ile tüm seviyelerde liderlik kapasitesi oluşturma</span>
+                    <span className='text-gray-700'>Elektrik uzmanlarından yeni mezunlara deneyim aktarımı ve teknik liderlik geliştirme</span>
                   </li>
                 </ul>
               </div>
@@ -86,27 +86,27 @@ export default function InsanKaynaklariPolitikamiz() {
               
               <div className='order-1 lg:order-2'>
                 <p className='text-gray-700 text-base leading-relaxed mb-6'>
-                  IPOS Steel olarak, insan kaynağımızın şirketimizin en büyük zenginliği olduğuna inanıyor, şeffaflık, güven ve karşılıklı saygı temelinde, farklılıkları değer olarak gören ve inovasyonu destekleyen bir çalışma ortamı yaratıyoruz.
+                  Güneş enerjisi sistemlerinin hızla yaygınlaşması ve elektrik altyapısının karmaşıklaşması, uzman ekipler gerektirir. IPOS Steel'de her çalışanımızı yenilenebilir enerji geleceğinin mimarları olarak görüyor, kablo tavası ve elektrik altyapı çözümlerinde inovasyon yapmalarını destekliyoruz.
                 </p>
 
                 <div className='bg-gray-50 p-6 border-l-4 border-blue-600'>
-                  <h3 className='font-semibold text-gray-900 mb-4'>IPOS Steel'in sürdürülebilir büyümesini sağlayan insan kaynakları stratejimizin temelleri:</h3>
+                         <h3 className='font-semibold text-gray-900 mb-4'>Güneş enerjisi altyapısında öncü konumumuzu destekleyen insan kaynakları yaklaşımımızın temelleri:</h3>
                   <ul className='space-y-2'>
                     <li className='flex items-start gap-2'>
                       <span className='text-blue-600 font-bold'>•</span>
-                      <span className='text-gray-700'>Kurumsal değerlerimiz ve misyonumuz</span>
+                             <span className='text-gray-700'>Elektrik güvenliği, ürün kalitesi ve müşteri memnuniyeti odaklı çalışma anlayışımız</span>
                     </li>
                     <li className='flex items-start gap-2'>
                       <span className='text-blue-600 font-bold'>•</span>
-                      <span className='text-gray-700'>Güçlü şirket kültürümüz ve takım ruhu</span>
+                             <span className='text-gray-700'>Elektrik teknolojilerinde mükemmellik ve yenilenebilir enerji trendlerini takip etme kültürümüz</span>
                     </li>
                     <li className='flex items-start gap-2'>
                       <span className='text-blue-600 font-bold'>•</span>
-                      <span className='text-gray-700'>Etik iş anlayışımız ve dürüstlük ilkelerimiz</span>
+                             <span className='text-gray-700'>Elektrik güvenlik standartları ve sürdürülebilir enerji bilinci</span>
                     </li>
                     <li className='flex items-start gap-2'>
                       <span className='text-blue-600 font-bold'>•</span>
-                      <span className='text-gray-700'>Yasal mevzuata tam uyum ve sosyal sorumluluk bilincimizdir</span>
+                             <span className='text-gray-700'>Uluslararası elektrik standartlarına uyum ve çevre dostu üretim anlayışımızdır</span>
                     </li>
                   </ul>
                 </div>
@@ -123,12 +123,12 @@ export default function InsanKaynaklariPolitikamiz() {
             <div className='grid lg:grid-cols-2 gap-8 items-center mb-8'>
               <div>
                 <p className='text-gray-700 text-base leading-relaxed mb-6'>
-                  İnsan kaynakları vizyonumuz; şirket amaçlarıyla uyumlu, işbirliği içinde çalışan, sürekli kendini yenileyen, yüksek motivasyon ve bağlılığa sahip, nitelikli bir iş gücü yaratmaktır. Kurumsal değerlerimizi liderlik tarzımıza entegre eder ve bu ilkeleri vazgeçilmez standartlarımız olarak benimseriz.
+                  Güneş enerjisi sistemleri ve elektrik altyapı projelerinin teknik gereklilikleri, multidisipliner yaklaşım gerektirir. Elektrik mühendislerinden üretim uzmanlarına, kalite kontrol elemanlarından saha montaj ekiplerine kadar her seviyede uzmanlaşmış ekipler oluşturuyoruz. Hedefimiz, her çalışanımızın yenilenebilir enerji sektöründe uzman olmasıdır.
                 </p>
                 
                 <div className='bg-blue-50 p-6 border border-blue-200'>
                   <p className='text-gray-700 text-base leading-relaxed font-medium'>
-                    Çalışanlarımızı geleceğe hazırlamak için her seviyede kapsamlı eğitim programları düzenler, insan sermayesine yapılan yatırımı en önemli önceliğimiz olarak görürüz.
+                    Elektrik teknolojilerindeki gelişmeleri yakından takip ederek, AutoCAD Electrical, ETAP analiz yazılımları ve modern kablo yönetim sistemlerinde sürekli eğitim programları düzenliyor, çalışanlarımızın güneş enerjisi sektöründeki yeniliklere uyum sağlamasını destekliyoruz.
                   </p>
                 </div>
               </div>
@@ -150,36 +150,36 @@ export default function InsanKaynaklariPolitikamiz() {
               Temel Değerlerimiz
             </h2>
             
-            <p className='text-gray-700 text-base leading-relaxed mb-8'>
-              Mükemmellik, güvenilirlik ve sürdürülebilirlik değerleriyle tüm iş ortaklarımız için tercih edilen çözüm ortağı olmayı hedefliyoruz.
-            </p>
+                   <p className='text-gray-700 text-base leading-relaxed mb-8'>
+                     Güneş enerjisi altyapısında elektrik güvenliği, ürün kalitesi ve zamanlı teslimat kritik başarı faktörleridir. Bu değerlerle hareket eden, elektrik teknolojilerinde yetkin ve sürekli gelişen bir ekip oluşturmayı hedefliyoruz.
+                   </p>
 
-            <div className='grid md:grid-cols-3 gap-8 mb-8'>
-              <div className='text-center p-6 border border-gray-200'>
-                <h3 className='text-lg font-bold text-gray-900 mb-3'>Mükemmellik</h3>
-                <p className='text-gray-600 text-sm'>Her projede en yüksek standartları hedefleme</p>
-              </div>
-              
-              <div className='text-center p-6 border border-gray-200'>
-                <h3 className='text-lg font-bold text-gray-900 mb-3'>Güvenilirlik</h3>
-                <p className='text-gray-600 text-sm'>Sözümüzde duran, zamanında teslim eden</p>
-              </div>
-              
-              <div className='text-center p-6 border border-gray-200'>
-                <h3 className='text-lg font-bold text-gray-900 mb-3'>Sürdürülebilirlik</h3>
-                <p className='text-gray-600 text-sm'>Çevre ve gelecek nesillere saygılı üretim</p>
-              </div>
-            </div>
+                   <div className='grid md:grid-cols-3 gap-8 mb-8'>
+                     <div className='text-center p-6 border border-gray-200'>
+                       <h3 className='text-lg font-bold text-gray-900 mb-3'>Elektrik Mükemmelligi</h3>
+                       <p className='text-gray-600 text-sm'>Her güneş enerjisi projesinde elektrik mühendisliği hassasiyeti ve kalite</p>
+                     </div>
+                     
+                     <div className='text-center p-6 border border-gray-200'>
+                       <h3 className='text-lg font-bold text-gray-900 mb-3'>Elektrik Güvenliği</h3>
+                       <p className='text-gray-600 text-sm'>Elektrik güvenlik standartlarında öncü yaklaşım ve sıfır kaza hedefi</p>
+                     </div>
+                     
+                     <div className='text-center p-6 border border-gray-200'>
+                       <h3 className='text-lg font-bold text-gray-900 mb-3'>Yenilenebilir Enerji Vizyonu</h3>
+                       <p className='text-gray-600 text-sm'>Güneş enerjisi teknolojilerinde yenilikçi çözümler ve sürdürülebilirlik</p>
+                     </div>
+                   </div>
 
             <div className='bg-gray-50 p-6 border border-gray-200'>
               <p className='text-gray-700 text-base leading-relaxed'>
-                IPOS Steel, ekip arkadaşlarıyla birlikte müşteri memnuniyetini en üst seviyede tutmayı, uluslararası kalite standartlarında ürün ve hizmet sunarak sürdürülebilir büyüme sağlamayı amaçlamaktadır. Müşterilerimiz, tedarikçilerimiz ve iş ortaklarımız dahil tüm paydaşlarımız için güven, süreklilik ve prestij sembolü olmaya odaklanıyoruz.
-              </p>
-            </div>
+                IPOS Steel, güneş enerjisi panelleri için kablo tavaları, elektrik altyapı çözümleri ve enerji iletim sistemlerinde uzmanlaşmış bir ekiple hizmet vermektedir. Güneş enerjisi santralları, endüstriyel tesisler ve ticari binaların elektrik altyapı projelerinde teknik ekibimizin uzmanlığı ve çalışanlarımızın sürekli gelişimi sayesinde sürdürülebilir enerji geleceğine katkı sağlamayı hedefliyoruz.
+            </p>
           </div>
-
         </div>
-      </MaxWidthWrapper>
+
+      </div>
+    </MaxWidthWrapper>
     </div>
   )
 }
