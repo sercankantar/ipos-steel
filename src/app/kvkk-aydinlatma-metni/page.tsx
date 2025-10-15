@@ -63,7 +63,7 @@ export default function KVKKAydinlatmaMetni() {
               Kişisel Verilere İlişkin Aydınlatma Metni
             </h1>
             <p className='text-lg text-gray-300 max-w-4xl mx-auto'>
-              IPOS Steel olarak kişisel verilerinizin işlenmesi konusunda sizi bilgilendiriyoruz
+              IPOS-Steel olarak kişisel verilerinizin işlenmesi konusunda sizi bilgilendiriyoruz
             </p>
           </div>
         </MaxWidthWrapper>
@@ -110,14 +110,14 @@ export default function KVKKAydinlatmaMetni() {
                       Veri Sorumlusu
                     </h2>
                     <p className='text-blue-800 font-medium'>
-                      IPOS Steel Güneş Enerjisi ve Elektrik Altyapı Çözümleri San. ve Tic. A.Ş.<br />
+                      IPOS-Steel Güneş Enerjisi ve Elektrik Altyapı Çözümleri San. ve Tic. A.Ş.<br />
                       (Dilovası Organize Sanayi Bölgesi, Kocaeli, Türkiye)
                     </p>
                   </div>
 
                   <div className='prose prose-gray max-w-none'>
                     <p className='text-gray-700 leading-relaxed mb-4'>
-                      Biz, IPOS Steel Güneş Enerjisi ve Elektrik Altyapı Çözümleri San. ve Tic. A.Ş. olarak; 
+                      Biz, IPOS-Steel Güneş Enerjisi ve Elektrik Altyapı Çözümleri San. ve Tic. A.Ş. olarak; 
                       müşterilerimiz, tedarikçilerimiz ve çalışanlarımız dahil Şirketimiz ile ilişkili şahısların 
                       uhdemizde bulunan kişisel verilerinin Türkiye Cumhuriyeti Anayasası ve insan haklarına ilişkin 
                       ülkemizin tarafı olduğu uluslararası sözleşmeler ile 6698 sayılı Kişisel Verilerin Korunması 

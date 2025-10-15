@@ -75,7 +75,7 @@ export default function KVKKGizlilikPolitikasi() {
               Kişisel Verilerin Korunması, İşlenmesi ve Gizlilik Politikası
             </h1>
             <p className='text-lg text-gray-300 max-w-4xl mx-auto'>
-              IPOS Steel olarak kişisel verilerin korunması konusundaki yaklaşımımız ve uyguladığımız politikalar
+              IPOS-Steel olarak kişisel verilerin korunması konusundaki yaklaşımımız ve uyguladığımız politikalar
             </p>
           </div>
         </MaxWidthWrapper>
@@ -122,7 +122,7 @@ export default function KVKKGizlilikPolitikasi() {
                   </h2>
                   <div className='prose prose-gray max-w-none'>
                     <p className='text-gray-700 leading-relaxed mb-4'>
-                      IPOS Steel Güneş Enerjisi ve Elektrik Altyapı Çözümleri San. ve Tic. A.Ş. (kısaca "IPOS Steel") olarak; 
+                      IPOS-Steel Güneş Enerjisi ve Elektrik Altyapı Çözümleri San. ve Tic. A.Ş. (kısaca "IPOS-Steel") olarak; 
                       müşterilerimiz, tedarikçilerimiz ve çalışanlarımız dahil gerçek kişilerin kişisel verilerinin Türkiye Cumhuriyeti 
                       Anayasası ve insan haklarına ilişkin ülkemizin tarafı olduğu uluslararası sözleşmeler ile 6698 sayılı Kişisel 
                       Verilerin Korunması Kanunu ("KVKK") başta olmak üzere ilgili mevzuata uygun olarak işlenmesi ve verisi işlenen 
@@ -132,7 +132,7 @@ export default function KVKKGizlilikPolitikasi() {
                       Bu nedenle, sayılanlarla sınırlı olmamak üzere; çalışanlarımızın, tedarikçilerimizin, müşterilerimizin, 
                       internet sitemizi ziyaret eden kullanıcılarımızın, kısacası faaliyetlerimiz sırasında edindiğimiz otomatik olan 
                       ya da herhangi bir veri kayıt sisteminin parçası olmak kaydıyla otomatik olmayan yollarla elde edilen tüm kişisel 
-                      verilere ilişkin verinin işlenmesi, saklanması, aktarılmasına ilişkin işlemleri IPOS Steel Kişisel Verilerin 
+                      verilere ilişkin verinin işlenmesi, saklanması, aktarılmasına ilişkin işlemleri IPOS-Steel Kişisel Verilerin 
                       Korunması ve İşlenmesi Politikası'na (kısaca "Politika") göre gerçekleştirmekteyiz.
                     </p>
                     <p className='text-gray-700 leading-relaxed'>
@@ -174,7 +174,7 @@ export default function KVKKGizlilikPolitikasi() {
                     <div className='space-y-4'>
                       <div>
                         <strong className='text-gray-900'>Şirket:</strong>
-                        <span className='text-gray-700 ml-2'>IPOS Steel Güneş Enerjisi ve Elektrik Altyapı Çözümleri San. ve Tic. A.Ş.</span>
+                        <span className='text-gray-700 ml-2'>IPOS-Steel Güneş Enerjisi ve Elektrik Altyapı Çözümleri San. ve Tic. A.Ş.</span>
                       </div>
                       <div>
                         <strong className='text-gray-900'>Açık Rıza:</strong>
@@ -211,7 +211,7 @@ export default function KVKKGizlilikPolitikasi() {
                   </h2>
                   <div className='prose prose-gray max-w-none'>
                     <p className='text-gray-700 leading-relaxed mb-4'>
-                      IPOS Steel, kişisel verilerin işlenmesi konusunda veri sorumlusu sıfatını haizdir. Bu kapsamda, kişisel verilerin 
+                      IPOS-Steel, kişisel verilerin işlenmesi konusunda veri sorumlusu sıfatını haizdir. Bu kapsamda, kişisel verilerin 
                       işleme amaçlarını ve vasıtalarını belirlemek, veri kayıt sisteminin kurulması ve yönetilmesinden sorumlu olmak 
                       gibi yükümlülükleri bulunmaktadır.
                     </p>
@@ -229,7 +229,7 @@ export default function KVKKGizlilikPolitikasi() {
                   </h2>
                   <div className='prose prose-gray max-w-none'>
                     <p className='text-gray-700 leading-relaxed mb-4'>
-                      IPOS Steel, KVKK ve ilgili mevzuat kapsamında aşağıdaki hukuki yükümlülükleri yerine getirmektedir:
+                      IPOS-Steel, KVKK ve ilgili mevzuat kapsamında aşağıdaki hukuki yükümlülükleri yerine getirmektedir:
                     </p>
                     <ul className='list-disc pl-6 space-y-2 text-gray-700'>
                       <li>Kişisel verilerin hukuka uygun işlenmesini sağlamak</li>
@@ -248,7 +248,7 @@ export default function KVKKGizlilikPolitikasi() {
                   </h2>
                   <div className='prose prose-gray max-w-none'>
                     <p className='text-gray-700 leading-relaxed mb-4'>
-                      IPOS Steel tarafından işlenen kişisel veriler aşağıdaki şekilde sınıflandırılmaktadır:
+                      IPOS-Steel tarafından işlenen kişisel veriler aşağıdaki şekilde sınıflandırılmaktadır:
                     </p>
                     <div className='grid md:grid-cols-2 gap-6'>
                       <div className='bg-blue-50 p-4 rounded-lg'>
@@ -278,7 +278,7 @@ export default function KVKKGizlilikPolitikasi() {
                   </h2>
                   <div className='prose prose-gray max-w-none'>
                     <p className='text-gray-700 leading-relaxed mb-4'>
-                      IPOS Steel, kişisel verileri aşağıdaki amaçlarla işlemektedir:
+                      IPOS-Steel, kişisel verileri aşağıdaki amaçlarla işlemektedir:
                     </p>
                     <ul className='list-disc pl-6 space-y-2 text-gray-700 mb-6'>
                       <li>Güneş enerjisi ve elektrik altyapı çözümleri hizmetlerinin sunulması</li>
@@ -302,7 +302,7 @@ export default function KVKKGizlilikPolitikasi() {
                   </h2>
                   <div className='prose prose-gray max-w-none'>
                     <p className='text-gray-700 leading-relaxed mb-4'>
-                      IPOS Steel, kişisel verileri aşağıdaki durumlarda üçüncü kişilerle paylaşabilir:
+                      IPOS-Steel, kişisel verileri aşağıdaki durumlarda üçüncü kişilerle paylaşabilir:
                     </p>
                     <ul className='list-disc pl-6 space-y-2 text-gray-700 mb-6'>
                       <li>Yasal yükümlülüklerin yerine getirilmesi amacıyla kamu kurum ve kuruluşlarıyla</li>
@@ -343,7 +343,7 @@ export default function KVKKGizlilikPolitikasi() {
                   </h2>
                   <div className='prose prose-gray max-w-none'>
                     <p className='text-gray-700 leading-relaxed mb-4'>
-                      IPOS Steel, kişisel verilerin güvenliğini sağlamak amacıyla aşağıdaki teknik ve idari tedbirleri almaktadır:
+                      IPOS-Steel, kişisel verilerin güvenliğini sağlamak amacıyla aşağıdaki teknik ve idari tedbirleri almaktadır:
                     </p>
                     <div className='grid md:grid-cols-2 gap-6'>
                       <div>
@@ -429,7 +429,7 @@ export default function KVKKGizlilikPolitikasi() {
                   </h2>
                   <div className='prose prose-gray max-w-none'>
                     <p className='text-gray-700 leading-relaxed mb-4'>
-                      IPOS Steel, kişisel verilerin gizliliğini korumak amacıyla aşağıdaki ilkeleri benimser:
+                      IPOS-Steel, kişisel verilerin gizliliğini korumak amacıyla aşağıdaki ilkeleri benimser:
                     </p>
                     <ul className='list-disc pl-6 space-y-2 text-gray-700'>
                       <li>Kişisel veriler sadece yetkili personel tarafından erişilebilir</li>

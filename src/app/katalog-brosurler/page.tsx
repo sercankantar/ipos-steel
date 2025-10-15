@@ -10,7 +10,7 @@ import Image from 'next/image'
 const staticCatalogs = [
   {
     id: 1,
-    title: 'IPOS Steel Genel Ürün Kataloğu 2024',
+    title: 'IPOS-Steel Genel Ürün Kataloğu 2024',
     description: 'Tüm ürün gamımızı içeren kapsamlı katalog. Kablo tavaları, destek sistemleri ve montaj aksesuarları hakkında detaylı bilgiler.',
     category: 'Genel Katalog',
     fileSize: '15.2 MB',
@@ -85,7 +85,7 @@ const staticCatalogs = [
   },
   {
     id: 6,
-    title: 'IPOS Steel İngilizce Ürün Kataloğu',
+    title: 'IPOS-Steel İngilizce Ürün Kataloğu',
     description: 'Complete product range catalog in English for international markets.',
     category: 'Genel Katalog',
     fileSize: '16.5 MB',

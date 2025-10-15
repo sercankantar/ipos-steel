@@ -32,7 +32,7 @@ export default function KariyerFirsatlari() {
               <h2 className='text-4xl lg:text-5xl font-bold text-gray-900 mb-6 font-neuropol'>Kariyer Fırsatlarımız</h2>
               <div className='w-24 h-1 bg-blue-600 mx-auto mb-8'></div>
               <p className='text-gray-700 text-xl leading-relaxed max-w-4xl mx-auto'>
-                IPOS Steel'de açılan pozisyonlar için aşağıdaki bağlantılardan bilgi alabilir ve başvuru yapabilirsiniz. 
+                IPOS-Steel'de açılan pozisyonlar için aşağıdaki bağlantılardan bilgi alabilir ve başvuru yapabilirsiniz. 
                 Paylaşılan bağlantılardan kendinize uygun bir iş ilanı mevcut değil ise iş başvurunuzu insan kaynakları 
                 CV veri tabanına eklemek için "Genel Başvuru" üzerinden başvuru yapabilirsiniz.
               </p>
@@ -99,7 +99,7 @@ export default function KariyerFirsatlari() {
                 <div className='bg-white border border-gray-200 rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-shadow duration-300'>
                   <div className='h-64 bg-white flex items-center justify-center p-8'>
                     <img 
-                      src='https://www.elaman.net/images/elaman-logo.png' 
+                      src='https://cdn.eleman.net/banner/haber/9569eleman.net.reklam.filmi.ana.sayfa.jpg' 
                       alt='Elaman.net'
                       className='max-w-full max-h-full object-contain'
                       onError={(e) => {

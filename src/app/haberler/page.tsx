@@ -8,9 +8,9 @@ import { useEffect, useMemo, useState } from 'react'
 const staticNews = [
   {
     id: 1,
-    title: 'IPOS Steel Yeni Üretim Tesisini Açtı',
+    title: 'IPOS-Steel Yeni Üretim Tesisini Açtı',
     excerpt: 'Kocaeli\'deki yeni tesisimizle üretim kapasitemizi %40 artırdık. Modern teknoloji ile donatılmış tesis, busbar sistemleri üretiminde Türkiye\'nin en büyük tesisi olma özelliğini taşıyor.',
-    content: 'IPOS Steel, Kocaeli Dilovası\'nda açtığı yeni üretim tesisiyle elektrik dağıtım sistemleri sektöründe önemli bir adım attı...',
+    content: 'IPOS-Steel, Kocaeli Dilovası\'nda açtığı yeni üretim tesisiyle elektrik dağıtım sistemleri sektöründe önemli bir adım attı...',
     image: 'https://images.unsplash.com/photo-1581094794329-c8112a89af12?w=800&h=600&fit=crop',
     gallery: [
       'https://images.unsplash.com/photo-1581094794329-c8112a89af12?w=1200&h=800&fit=crop',
@@ -18,7 +18,7 @@ const staticNews = [
       'https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?w=1200&h=800&fit=crop'
     ],
     date: '2024-09-15',
-    author: 'IPOS Steel Medya',
+    author: 'IPOS-Steel Medya',
     category: 'Şirket Haberleri',
     views: 1250,
     featured: true
@@ -27,7 +27,7 @@ const staticNews = [
     id: 2,
     title: 'Avrupa Pazarına İhracat Başarısı',
     excerpt: 'Almanya ve Hollanda\'ya gerçekleştirdiğimiz ihracatlarla Avrupa pazarındaki varlığımızı güçlendiriyoruz. UL ve CE sertifikalarımız sayesinde uluslararası standartlarda üretim yapıyoruz.',
-    content: 'IPOS Steel\'in Avrupa pazarındaki başarısı devam ediyor...',
+    content: 'IPOS-Steel\'in Avrupa pazarındaki başarısı devam ediyor...',
     image: 'https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?w=800&h=600&fit=crop',
     date: '2024-09-10',
     author: 'İhracat Departmanı',
@@ -51,7 +51,7 @@ const staticNews = [
     id: 4,
     title: 'Sürdürülebilirlik Projesinde Önemli Adım',
     excerpt: 'Çevre dostu üretim süreçleri ve geri dönüşümlü malzeme kullanımı ile sürdürülebilir üretim hedeflerimize ulaşıyoruz. ISO 14001 çevre yönetim sistemi sertifikamız yenilendi.',
-    content: 'IPOS Steel sürdürülebilirlik alanındaki çalışmalarını sürdürüyor...',
+    content: 'IPOS-Steel sürdürülebilirlik alanındaki çalışmalarını sürdürüyor...',
     image: 'https://images.unsplash.com/photo-1473341304170-971dccb5ac1e?w=800&h=600&fit=crop',
     date: '2024-08-28',
     author: 'Çevre Departmanı',
@@ -104,7 +104,7 @@ export default function HaberlerPage() {
           content: d.content || '',
           image: d.imageUrl || '',
           date: d.publishedAt,
-          author: 'IPOS Steel',
+          author: 'IPOS-Steel',
           category: d.category
         }))
         setItems(mapped)
@@ -139,7 +139,7 @@ export default function HaberlerPage() {
               Haberler
             </h1>
             <p className="text-xl text-gray-600 leading-relaxed">
-              IPOS Steel'den son gelişmeler ve sektör haberleri
+              IPOS-Steel'den son gelişmeler ve sektör haberleri
             </p>
           </div>
         </MaxWidthWrapper>

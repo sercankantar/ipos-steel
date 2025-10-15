@@ -593,7 +593,7 @@ export default function IseAlimSureci() {
                   </h2>
                   <p className='text-gray-600 mb-8 max-w-2xl mx-auto'>
                     Elektrik teknolojilerinde uzmanlaşmak ve sürdürülebilir enerji sektöründe kariyer yapmak istiyorsanız, 
-                    IPOS Steel ailesine katılmak için başvurunuzu yapın.
+                    IPOS-Steel ailesine katılmak için başvurunuzu yapın.
                   </p>
                   <div className='flex flex-col sm:flex-row gap-4 justify-center'>
                     <Link 

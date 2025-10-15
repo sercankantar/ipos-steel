@@ -11,10 +11,10 @@ import Image from 'next/image'
 const staticNews = [
   {
     id: 1,
-    title: 'IPOS Steel Yeni Üretim Tesisini Açtı',
+    title: 'IPOS-Steel Yeni Üretim Tesisini Açtı',
     excerpt: 'Kocaeli\'deki yeni tesisimizle üretim kapasitemizi %40 artırdık. Modern teknoloji ile donatılmış tesis, busbar sistemleri üretiminde Türkiye\'nin en büyük tesisi olma özelliğini taşıyor.',
     content: `
-      <p>IPOS Steel, Kocaeli Dilovası'nda açtığı yeni üretim tesisiyle elektrik dağıtım sistemleri sektöründe önemli bir adım attı. 25 milyon TL yatırımla hayata geçirilen proje, şirketin üretim kapasitesini %40 oranında artırdı.</p>
+      <p>IPOS-Steel, Kocaeli Dilovası'nda açtığı yeni üretim tesisiyle elektrik dağıtım sistemleri sektöründe önemli bir adım attı. 25 milyon TL yatırımla hayata geçirilen proje, şirketin üretim kapasitesini %40 oranında artırdı.</p>
       
       <h3>Modern Teknoloji ve Yüksek Kapasite</h3>
       <p>Yeni tesis, toplam 15.000 m² kapalı alana sahip olup, son teknoloji makinelerle donatıldı. Tesiste busbar sistemleri, kablo kanalları ve askı sistemleri üretimi gerçekleştiriliyor.</p>
@@ -36,7 +36,7 @@ const staticNews = [
       'https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?w=1200&h=800&fit=crop'
     ],
     date: '2024-09-15',
-    author: 'IPOS Steel Medya',
+    author: 'IPOS-Steel Medya',
     category: 'Şirket Haberleri',
     views: 1250,
     featured: true,
@@ -47,7 +47,7 @@ const staticNews = [
     title: 'Avrupa Pazarına İhracat Başarısı',
     excerpt: 'Almanya ve Hollanda\'ya gerçekleştirdiğimiz ihracatlarla Avrupa pazarındaki varlığımızı güçlendiriyoruz. UL ve CE sertifikalarımız sayesinde uluslararası standartlarda üretim yapıyoruz.',
     content: `
-      <p>IPOS Steel, Avrupa pazarındaki büyüme stratejisini hayata geçirmek için önemli adımlar atıyor. Almanya ve Hollanda'daki stratejik ortaklarımızla imzalanan yeni distribütörlük anlaşmaları, şirketin uluslararası varlığını güçlendiriyor.</p>
+      <p>IPOS-Steel, Avrupa pazarındaki büyüme stratejisini hayata geçirmek için önemli adımlar atıyor. Almanya ve Hollanda'daki stratejik ortaklarımızla imzalanan yeni distribütörlük anlaşmaları, şirketin uluslararası varlığını güçlendiriyor.</p>
       
       <h3>Stratejik Ortaklıklar</h3>
       <p>Almanya'nın önde gelen elektrik dağıtım şirketi EuroElektrik ile imzalanan 5 yıllık anlaşma kapsamında, yıllık 2 milyon Euro değerinde ürün tedariki sağlanacak.</p>
@@ -77,7 +77,7 @@ const staticNews = [
     title: 'Yeni Sismik Test Laboratuvarı Açıldı',
     excerpt: 'Ürünlerimizin deprem güvenliği testlerini kendi tesisimizde gerçekleştireceğimiz modern laboratuvar hizmete girdi. IEC 60068 standartlarında test imkanı sunuyor.',
     content: `
-      <p>IPOS Steel, kalite kontrol süreçlerini geliştirmek amacıyla modern sismik test laboratuvarını hizmete aldı. Laboratuvar, ürünlerin deprem güvenliği testlerini IEC 60068 standartlarında gerçekleştiriyor.</p>
+      <p>IPOS-Steel, kalite kontrol süreçlerini geliştirmek amacıyla modern sismik test laboratuvarını hizmete aldı. Laboratuvar, ürünlerin deprem güvenliği testlerini IEC 60068 standartlarında gerçekleştiriyor.</p>
       
       <h3>Test Kapasiteleri</h3>
       <p>Yeni laboratuvarda 8.0 büyüklüğündeki depremleri simüle edebilen test cihazları bulunuyor. Busbar sistemleri ve kablo kanalları için kapsamlı dayanıklılık testleri yapılabiliyor.</p>
@@ -104,7 +104,7 @@ const staticNews = [
     title: 'Sürdürülebilirlik Projesinde Önemli Adım',
     excerpt: 'Çevre dostu üretim süreçleri ve geri dönüşümlü malzeme kullanımı ile sürdürülebilir üretim hedeflerimize ulaşıyoruz. ISO 14001 çevre yönetim sistemi sertifikamız yenilendi.',
     content: `
-      <p>IPOS Steel, sürdürülebilirlik alanındaki çalışmalarını sürdürüyor. ISO 14001 çevre yönetim sistemi sertifikamızın yenilenmesi ile birlikte, çevre dostu üretim süreçlerimizi geliştirmeye devam ediyoruz.</p>
+      <p>IPOS-Steel, sürdürülebilirlik alanındaki çalışmalarını sürdürüyor. ISO 14001 çevre yönetim sistemi sertifikamızın yenilenmesi ile birlikte, çevre dostu üretim süreçlerimizi geliştirmeye devam ediyoruz.</p>
       
       <h3>Geri Dönüşüm Projeleri</h3>
       <p>Üretim süreçlerimizde geri dönüşümlü malzeme kullanım oranını %25 artırdık. Atık yönetimi konusunda da önemli ilerlemeler kaydettik.</p>
@@ -129,7 +129,7 @@ const staticNews = [
     title: 'Dijital Dönüşüm Projesi Tamamlandı',
     excerpt: 'Üretim süreçlerimizde dijitalleşme adımları ile Endüstri 4.0 teknolojilerini entegre ettik. IoT sensörler ve yapay zeka destekli kalite kontrol sistemleri devreye alındı.',
     content: `
-      <p>IPOS Steel, dijital dönüşüm sürecinde önemli bir kilometre taşını geride bıraktı. Endüstri 4.0 teknolojilerinin entegrasyonu ile üretim süreçlerinde önemli gelişmeler sağlandı.</p>
+      <p>IPOS-Steel, dijital dönüşüm sürecinde önemli bir kilometre taşını geride bıraktı. Endüstri 4.0 teknolojilerinin entegrasyonu ile üretim süreçlerinde önemli gelişmeler sağlandı.</p>
       
       <h3>IoT ve Sensör Teknolojileri</h3>
       <p>Üretim hatlarına yerleştirilen IoT sensörler sayesinde gerçek zamanlı veri takibi yapılabiliyor. Bu da üretim verimliliğini %35 artırdı.</p>
@@ -155,7 +155,7 @@ const staticNews = [
     title: 'Genç Mühendis Programa Katılım',
     excerpt: 'Üniversite mezunu genç mühendislere yönelik eğitim ve gelişim programımız başladı. 6 aylık rotasyon programı ile farklı departmanlarda deneyim kazanma imkanı sunuyoruz.',
     content: `
-      <p>IPOS Steel, genç yetenekleri sektöre kazandırmak için yeni bir eğitim programı başlattı. Üniversite mezunu genç mühendislere yönelik 12 aylık rotasyon programı, farklı departmanlarda deneyim kazanma imkanı sunuyor.</p>
+      <p>IPOS-Steel, genç yetenekleri sektöre kazandırmak için yeni bir eğitim programı başlattı. Üniversite mezunu genç mühendislere yönelik 12 aylık rotasyon programı, farklı departmanlarda deneyim kazanma imkanı sunuyor.</p>
       
       <h3>Program İçeriği</h3>
       <p>Program kapsamında katılımcılar, üretim, kalite kontrol, ar-ge ve ihracat departmanlarında rotasyon yaparak sektörel deneyim kazanıyor.</p>
@@ -200,7 +200,7 @@ export default function HaberDetayPage() {
             image: d.imageUrl || '',
             gallery: d.imageUrl ? [d.imageUrl] : [],
             date: d.publishedAt,
-            author: 'IPOS Steel',
+            author: 'IPOS-Steel',
             category: d.category,
             views: 0,
             tags: []
@@ -221,7 +221,7 @@ export default function HaberDetayPage() {
               image: d.imageUrl || '',
               gallery: d.imageUrl ? [d.imageUrl] : [],
               date: d.publishedAt,
-              author: 'IPOS Steel',
+              author: 'IPOS-Steel',
               category: d.category,
               views: 0,
               tags: []

@@ -285,7 +285,7 @@ export default function IletisimPage() {
               {/* Avantajlar */}
               <div className="card-modern p-8">
                 <h3 className="font-neuropol text-2xl font-bold mb-6 text-gray-900">
-                  🎯 Neden IPOS Steel?
+                  🎯 Neden IPOS-Steel?
                 </h3>
                 <div className="space-y-6">
                   <div className="flex items-start gap-4">

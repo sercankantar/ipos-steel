@@ -140,17 +140,17 @@ export default function MusteriMemnuniyetAnketi() {
                   </div>
                 </div>
 
-                {/* IPOS Steel Çalışanları Değerlendirmesi */}
+                {/* IPOS-Steel Çalışanları Değerlendirmesi */}
                 <div>
                   <h3 className='text-lg font-semibold text-gray-900 mb-4'>
-                    5. IPOS Steel çalışanlarının, IPOS Steel markasını/firmayı temsil yeteneği
+                    5. IPOS-Steel çalışanlarının, IPOS-Steel markasını/firmayı temsil yeteneği
                   </h3>
                   <div className='space-y-4'>
                     {[
                       'Kılık Kıyafet',
                       'Konuşma (Telefon / Yüzyüze)',
                       'Teknik Yeterlilik (Ürün ve Standartlara Hakimiyet, Size Özel Çözüm Üretebilme)',
-                      'IPOS Steel Personeline Ulaşım ve Geri Dönüş'
+                      'IPOS-Steel Personeline Ulaşım ve Geri Dönüş'
                     ].map((item, index) => (
                       <div key={index} className='bg-gray-50 p-4 rounded-lg'>
                         <label className='block text-sm font-medium text-gray-900 mb-3'>{item}</label>
@@ -249,9 +249,9 @@ export default function MusteriMemnuniyetAnketi() {
                   />
                 </div>
 
-                {/* Neden IPOS Steel */}
+                {/* Neden IPOS-Steel */}
                 <div>
-                  <label className='block text-sm font-medium text-gray-900 mb-4'>9. Neden IPOS Steel?</label>
+                  <label className='block text-sm font-medium text-gray-900 mb-4'>9. Neden IPOS-Steel?</label>
                   <div className='grid md:grid-cols-2 gap-3'>
                     {[
                       'Ürün çeşidinin fazla olması',
@@ -313,7 +313,7 @@ export default function MusteriMemnuniyetAnketi() {
                 {/* İstenilen Ürünler */}
                 <div>
                   <label htmlFor='istenilenUrunler' className='block text-sm font-medium text-gray-900 mb-3'>
-                    11. IPOS Steel markası altında ürettiklerimizin dışında, IPOS Steel'de görmek istediğiniz ürünler/alanlar nelerdir? *
+                    11. IPOS-Steel markası altında ürettiklerimizin dışında, IPOS-Steel'de görmek istediğiniz ürünler/alanlar nelerdir? *
                   </label>
                   <textarea
                     id='istenilenUrunler'
@@ -354,7 +354,7 @@ export default function MusteriMemnuniyetAnketi() {
                       required
                     />
                     <span className='text-sm text-gray-700 leading-relaxed'>
-                      IPOS Steel Güneş Enerjisi ve Elektrik Altyapı Çözümleri San. ve Tic. A.Ş.'nin web sitesinde yer alan 
+                      IPOS-Steel Güneş Enerjisi ve Elektrik Altyapı Çözümleri San. ve Tic. A.Ş.'nin web sitesinde yer alan 
                       <Link href='/kvkk-aydinlatma-metni' className='text-blue-600 hover:text-blue-800 mx-1'>
                         Aydınlatma Metni'ni
                       </Link>

@@ -110,7 +110,7 @@ export default function AcikPozisyonlar() {
               Açık Pozisyonlar
             </h1>
             <p className='text-lg text-gray-300 max-w-3xl mx-auto'>
-              IPOS Steel'de kariyer fırsatları keşfedin. Güneş enerjisi ve elektrik altyapısı sektöründe 
+              IPOS-Steel'de kariyer fırsatları keşfedin. Güneş enerjisi ve elektrik altyapısı sektöründe 
               yeteneklerinizi geliştirin ve geleceğinizi şekillendirin.
             </p>
           </div>
@@ -152,7 +152,7 @@ export default function AcikPozisyonlar() {
             </div>
           </div>
 
-          {/* Öne Çıkan Pozisyonlar */}
+          {/* 
           {featuredJobs.length > 0 && (
             <div className='mb-12'>
               <h2 className='text-2xl font-bold text-gray-900 mb-6'>Öne Çıkan Pozisyonlar</h2>
@@ -207,6 +207,7 @@ export default function AcikPozisyonlar() {
               </div>
             </div>
           )}
+            Öne Çıkan Pozisyonlar */}
 
           {/* Diğer Pozisyonlar */}
           {regularJobs.length > 0 && (

@@ -66,7 +66,7 @@ export default function StajSurecimiz() {
             Staj Sürecimiz
           </h1>
             <p className='text-lg text-gray-300 max-w-4xl mx-auto'>
-              IPOS Steel olarak geleceğin mühendislerine ve teknik personeline değerli deneyimler sunuyoruz
+              IPOS-Steel olarak geleceğin mühendislerine ve teknik personeline değerli deneyimler sunuyoruz
             </p>
           </div>
         </MaxWidthWrapper>
@@ -113,7 +113,7 @@ export default function StajSurecimiz() {
                   </h2>
                   <div className='prose prose-gray max-w-none'>
                     <p className='text-gray-700 leading-relaxed mb-6'>
-                      IPOS Steel olarak, öğrencilerin mesleki gelişimlerine katkıda bulunmak ve iş hayatına 
+                      IPOS-Steel olarak, öğrencilerin mesleki gelişimlerine katkıda bulunmak ve iş hayatına 
                       hazırlanmalarını desteklemek amacıyla kapsamlı staj programları sunmaktayız. Bu programlar, 
                       şirketimizin gelecekteki potansiyel insan kaynağını belirlemeyi ve sektörümüze nitelikli 
                       elemanlar kazandırmayı hedeflemektedir.
@@ -441,7 +441,7 @@ export default function StajSurecimiz() {
                         <div>
                           <h4 className='font-medium text-gray-800 mb-3'>1. Gün - Şirket Tanıtımı</h4>
                           <ul className='space-y-1 text-sm text-gray-700'>
-                            <li>• IPOS Steel tarihçesi ve vizyonu</li>
+                            <li>• IPOS-Steel tarihçesi ve vizyonu</li>
                             <li>• Organizasyon yapısı</li>
                             <li>• Ürün ve hizmet portföyü</li>
                             <li>• Sektördeki konumumuz</li>

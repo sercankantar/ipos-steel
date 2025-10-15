@@ -13,18 +13,18 @@ const staticReferences = [
     title: 'Güneş Enerjisi Santrali Kablo Altyapısı',
     excerpt: 'Ankara\'da kurulu 50 MW güneş enerjisi santrali için kapsamlı kablo tavaları ve elektrik altyapı çözümleri sağladık.',
     content: `
-      <p>IPOS Steel olarak, Ankara'nın en büyük güneş enerjisi santrallerinden biri olan 50 MW kapasiteli projeye kapsamlı elektrik altyapı çözümleri sağladık.</p>
+      <p>IPOS-Steel olarak, Ankara'nın en büyük güneş enerjisi santrallerinden biri olan 50 MW kapasiteli projeye kapsamlı elektrik altyapı çözümleri sağladık.</p>
       
       <h3>Proje Detayları</h3>
       <p>Proje kapsamında toplam 15 km kablo tavaları, 200 adet destek sistemi ve özel tasarım montaj aksesuarları tedarik edildi. Tüm ürünler IP65 koruma sınıfında ve UV dayanımlı malzemelerden üretildi.</p>
       
-      <p>Proje Müdürü Mehmet Yılmaz: "IPOS Steel'in sağladığı çözümler sayesinde montaj süremizi %30 kısalttık ve maliyet tasarrufu sağladık."</p>
+      <p>Proje Müdürü Mehmet Yılmaz: "IPOS-Steel'in sağladığı çözümler sayesinde montaj süremizi %30 kısalttık ve maliyet tasarrufu sağladık."</p>
       
       <h3>Teknik Özellikler</h3>
       <p>Kullanılan kablo tavaları 600V gerilim seviyesine uygun, galvanizli çelik malzemeden üretildi. Özel anti-korozyon kaplama ile 25 yıl garanti verildi.</p>
       
       <h3>Çevresel Etki</h3>
-      <p>Proje ile yılda 75.000 ton CO2 emisyon tasarrufu sağlanacak. Sürdürülebilir enerji üretiminde IPOS Steel çözümleri kritik rol oynuyor.</p>
+      <p>Proje ile yılda 75.000 ton CO2 emisyon tasarrufu sağlanacak. Sürdürülebilir enerji üretiminde IPOS-Steel çözümleri kritik rol oynuyor.</p>
     `,
     image: 'https://images.unsplash.com/photo-1509391366360-2e959784a276?w=800&h=600&fit=crop',
     gallery: [

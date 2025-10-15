@@ -9,11 +9,11 @@ import { useParams } from 'next/navigation'
 const fallbackItems = [
   {
     id: 1,
-    title: 'IPOS Steel Kocaeli Tesisini Genişletiyor',
+    title: 'IPOS-Steel Kocaeli Tesisini Genişletiyor',
     date: '2024-09-20',
-    summary: 'IPOS Steel, Kocaeli Dilovası\'ndaki üretim tesisini genişletme kararı aldığını açıkladı. 25 milyon TL yatırımla kapasite %50 artırılacak.',
+    summary: 'IPOS-Steel, Kocaeli Dilovası\'ndaki üretim tesisini genişletme kararı aldığını açıkladı. 25 milyon TL yatırımla kapasite %50 artırılacak.',
     content: `
-      <p>IPOS Steel Dış Ticaret A.Ş., elektrik dağıtım sistemleri sektöründeki büyümesini sürdürmek amacıyla Kocaeli Dilovası'ndaki ana üretim tesisini genişletme kararı aldığını açıkladı.</p>
+      <p>IPOS-Steel Dış Ticaret A.Ş., elektrik dağıtım sistemleri sektöründeki büyümesini sürdürmek amacıyla Kocaeli Dilovası'ndaki ana üretim tesisini genişletme kararı aldığını açıkladı.</p>
       
       <h3>Yatırım Detayları</h3>
       <p>25 milyon TL tutarındaki yatırım kapsamında, mevcut üretim tesisine 8.000 m² kapalı alan eklenecek. Bu genişleme ile toplam üretim kapasitesi %50 oranında artırılacak.</p>
@@ -44,7 +44,7 @@ const fallbackItems = [
     date: '2024-09-12',
     summary: 'Almanya ve Hollanda\'daki stratejik ortaklarımızla yeni distribütörlük anlaşmaları imzalandı. 2025 hedefi Avrupa\'da %30 büyüme.',
     content: `
-      <p>IPOS Steel, Avrupa pazarındaki büyüme stratejisini hayata geçirmek için önemli adımlar atıyor. Almanya ve Hollanda'daki stratejik ortaklarımızla imzalanan yeni distribütörlük anlaşmaları, şirketin uluslararası varlığını güçlendiriyor.</p>
+      <p>IPOS-Steel, Avrupa pazarındaki büyüme stratejisini hayata geçirmek için önemli adımlar atıyor. Almanya ve Hollanda'daki stratejik ortaklarımızla imzalanan yeni distribütörlük anlaşmaları, şirketin uluslararası varlığını güçlendiriyor.</p>
       
       <h3>Almanya Pazarı</h3>
       <p>Almanya'nın önde gelen elektrik dağıtım şirketi EuroElektrik ile 5 yıllık distribütörlük anlaşması imzalandı. Bu anlaşma kapsamında yıllık 3 milyon Euro değerinde ürün satışı öngörülüyor.</p>
@@ -70,7 +70,7 @@ const fallbackItems = [
     date: '2024-09-05',
     summary: 'ISO 14001 Çevre Yönetim Sistemi sertifikası yenilendi. Sürdürülebilir üretim süreçleriyle karbon ayak izini %25 azalttık.',
     content: `
-      <p>IPOS Steel, çevre dostu üretim yaklaşımıyla sektörde öncü olmaya devam ediyor. ISO 14001 Çevre Yönetim Sistemi sertifikamızın yenilenmesi ile birlikte, sürdürülebilirlik hedeflerimizde önemli ilerlemeler kaydettik.</p>
+      <p>IPOS-Steel, çevre dostu üretim yaklaşımıyla sektörde öncü olmaya devam ediyor. ISO 14001 Çevre Yönetim Sistemi sertifikamızın yenilenmesi ile birlikte, sürdürülebilirlik hedeflerimizde önemli ilerlemeler kaydettik.</p>
       
       <h3>Çevresel Performans</h3>
       <p>Son 2 yılda karbon ayak izimizi %25 azalttık. Enerji verimliliği projelerimiz ile elektrik tüketimini %20 düşürdük.</p>
@@ -203,7 +203,7 @@ export default function BasinAciklamaDetayPage() {
                   </div>
                   <div className="flex items-center gap-1">
                     <Building2 className="h-4 w-4" />
-                    <span>IPOS Steel</span>
+                    <span>IPOS-Steel</span>
                   </div>
                 </div>
               </div>

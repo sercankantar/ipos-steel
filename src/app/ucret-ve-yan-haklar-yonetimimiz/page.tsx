@@ -120,7 +120,7 @@ export default function UcretVeYanHaklarYonetimimiz() {
                     </h3>
                   </div>
                   <p className='text-gray-300 text-sm leading-relaxed'>
-                    Tüm IPOS Steel çalışanlarının yararlandığı temel haklar ve sosyal olanaklar
+                    Tüm IPOS-Steel çalışanlarının yararlandığı temel haklar ve sosyal olanaklar
                   </p>
                 </div>
                 

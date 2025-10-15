@@ -86,7 +86,7 @@ export default function InsanKaynaklariPolitikamiz() {
               
               <div className='order-1 lg:order-2'>
                 <p className='text-gray-700 text-base leading-relaxed mb-6'>
-                  Güneş enerjisi sistemlerinin hızla yaygınlaşması ve elektrik altyapısının karmaşıklaşması, uzman ekipler gerektirir. IPOS Steel'de her çalışanımızı yenilenebilir enerji geleceğinin mimarları olarak görüyor, kablo tavası ve elektrik altyapı çözümlerinde inovasyon yapmalarını destekliyoruz.
+                  Güneş enerjisi sistemlerinin hızla yaygınlaşması ve elektrik altyapısının karmaşıklaşması, uzman ekipler gerektirir. IPOS-Steel'de her çalışanımızı yenilenebilir enerji geleceğinin mimarları olarak görüyor, kablo tavası ve elektrik altyapı çözümlerinde inovasyon yapmalarını destekliyoruz.
                 </p>
 
                 <div className='bg-gray-50 p-6 border-l-4 border-blue-600'>
@@ -173,7 +173,7 @@ export default function InsanKaynaklariPolitikamiz() {
 
             <div className='bg-gray-50 p-6 border border-gray-200'>
               <p className='text-gray-700 text-base leading-relaxed'>
-                IPOS Steel, güneş enerjisi panelleri için kablo tavaları, elektrik altyapı çözümleri ve enerji iletim sistemlerinde uzmanlaşmış bir ekiple hizmet vermektedir. Güneş enerjisi santralları, endüstriyel tesisler ve ticari binaların elektrik altyapı projelerinde teknik ekibimizin uzmanlığı ve çalışanlarımızın sürekli gelişimi sayesinde sürdürülebilir enerji geleceğine katkı sağlamayı hedefliyoruz.
+                IPOS-Steel, güneş enerjisi panelleri için kablo tavaları, elektrik altyapı çözümleri ve enerji iletim sistemlerinde uzmanlaşmış bir ekiple hizmet vermektedir. Güneş enerjisi santralları, endüstriyel tesisler ve ticari binaların elektrik altyapı projelerinde teknik ekibimizin uzmanlığı ve çalışanlarımızın sürekli gelişimi sayesinde sürdürülebilir enerji geleceğine katkı sağlamayı hedefliyoruz.
             </p>
           </div>
         </div>

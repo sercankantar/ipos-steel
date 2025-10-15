@@ -8,10 +8,10 @@ import { useEffect, useMemo, useState } from 'react'
 const staticItems = [
   {
     id: 1,
-    title: 'IPOS Steel Kocaeli Tesisini Genişletiyor',
+    title: 'IPOS-Steel Kocaeli Tesisini Genişletiyor',
     date: '2024-09-20',
-    summary: 'IPOS Steel, Kocaeli Dilovası\'ndaki üretim tesisini genişletme kararı aldığını açıkladı. 25 milyon TL yatırımla kapasite %50 artırılacak.',
-    content: 'IPOS Steel Dış Ticaret A.Ş., elektrik dağıtım sistemleri sektöründeki büyümesini sürdürmek amacıyla Kocaeli Dilovası\'ndaki ana üretim tesisini genişletme kararı aldığını açıkladı...',
+    summary: 'IPOS-Steel, Kocaeli Dilovası\'ndaki üretim tesisini genişletme kararı aldığını açıkladı. 25 milyon TL yatırımla kapasite %50 artırılacak.',
+    content: 'IPOS-Steel Dış Ticaret A.Ş., elektrik dağıtım sistemleri sektöründeki büyümesini sürdürmek amacıyla Kocaeli Dilovası\'ndaki ana üretim tesisini genişletme kararı aldığını açıkladı...',
     pdfUrl: '/basin-aciklamalari/2024-09-20-tesis-genisletme.pdf',
     category: 'Yatırım',
     priority: 'high'
@@ -21,7 +21,7 @@ const staticItems = [
     title: 'Avrupa Pazarında Yeni İş Birlikleri',
     date: '2024-09-12',
     summary: 'Almanya ve Hollanda\'daki stratejik ortaklarımızla yeni distribütörlük anlaşmaları imzalandı. 2025 hedefi Avrupa\'da %30 büyüme.',
-    content: 'IPOS Steel, Avrupa pazarındaki büyüme stratejisini hayata geçirmek için önemli adımlar atıyor...',
+    content: 'IPOS-Steel, Avrupa pazarındaki büyüme stratejisini hayata geçirmek için önemli adımlar atıyor...',
     pdfUrl: '/basin-aciklamalari/2024-09-12-avrupa-ortaklik.pdf',
     category: 'İş Birliği',
     priority: 'high'
@@ -31,7 +31,7 @@ const staticItems = [
     title: 'Çevre Dostu Üretim Sertifikası Aldı',
     date: '2024-09-05',
     summary: 'ISO 14001 Çevre Yönetim Sistemi sertifikası yenilendi. Sürdürülebilir üretim süreçleriyle karbon ayak izini %25 azalttık.',
-    content: 'IPOS Steel, çevre dostu üretim yaklaşımıyla sektörde öncü olmaya devam ediyor...',
+    content: 'IPOS-Steel, çevre dostu üretim yaklaşımıyla sektörde öncü olmaya devam ediyor...',
     pdfUrl: '/basin-aciklamalari/2024-09-05-cevre-sertifika.pdf',
     category: 'Çevre',
     priority: 'medium'
@@ -41,7 +41,7 @@ const staticItems = [
     title: 'Dijital Dönüşüm Projesi Tamamlandı',
     date: '2024-08-28',
     summary: 'Endüstri 4.0 teknolojileriyle donatılan akıllı üretim hatları devreye alındı. Üretim verimliliğinde %35 artış sağlandı.',
-    content: 'IPOS Steel, dijital dönüşüm sürecinde önemli bir kilometre taşını geride bıraktı...',
+    content: 'IPOS-Steel, dijital dönüşüm sürecinde önemli bir kilometre taşını geride bıraktı...',
     pdfUrl: '/basin-aciklamalari/2024-08-28-dijital-donusum.pdf',
     category: 'Teknoloji',
     priority: 'medium'
@@ -51,7 +51,7 @@ const staticItems = [
     title: 'İhracat Hedeflerinde Rekor Artış',
     date: '2024-08-15',
     summary: '2024 ilk yarısında ihracat %120 arttı. Yıl sonu hedefi 15 milyon dolar ihracat cirosu olarak belirlendi.',
-    content: 'IPOS Steel\'in ihracat performansı sektörde dikkat çekiyor...',
+    content: 'IPOS-Steel\'in ihracat performansı sektörde dikkat çekiyor...',
     pdfUrl: '/basin-aciklamalari/2024-08-15-ihracat-rekor.pdf',
     category: 'İhracat',
     priority: 'high'
@@ -61,7 +61,7 @@ const staticItems = [
     title: 'Genç Mühendis Geliştirme Programı',
     date: '2024-08-01',
     summary: 'Üniversite mezunu genç mühendislere yönelik 12 aylık rotasyon programı başlatıldı. İlk dönemde 8 genç mühendis programa katıldı.',
-    content: 'IPOS Steel, genç yetenekleri sektöre kazandırmak için yeni bir eğitim programı başlattı...',
+    content: 'IPOS-Steel, genç yetenekleri sektöre kazandırmak için yeni bir eğitim programı başlattı...',
     pdfUrl: '/basin-aciklamalari/2024-08-01-genc-muhendis.pdf',
     category: 'İnsan Kaynakları',
     priority: 'low'
@@ -136,7 +136,7 @@ export default function BasinAciklamalariPage() {
               Basın Açıklamaları
             </h1>
             <p className="text-xl text-gray-600 leading-relaxed">
-              IPOS Steel'in kurumsal gelişmeleri ve önemli duyuruları
+              IPOS-Steel'in kurumsal gelişmeleri ve önemli duyuruları
             </p>
           </div>
         </MaxWidthWrapper>

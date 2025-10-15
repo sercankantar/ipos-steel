@@ -108,12 +108,18 @@ const MobileNav = () => {
                         : category.featured
                       ).map((item) => (
                         <li key={item.name}>
-                          <Link
-                            href={item.href}
-                            onClick={() => setIsOpen(false)}
-                            className='block py-1.5 text-white/90 hover:text-white'>
-                            {item.name}
-                          </Link>
+                          {item.isHeader ? (
+                            <div className='text-sm font-bold text-white uppercase tracking-wider py-3 px-2 bg-white/10 rounded-md border border-white/30 mb-2 mt-3'>
+                              {item.name}
+                            </div>
+                          ) : (
+                            <Link
+                              href={item.href}
+                              onClick={() => setIsOpen(false)}
+                              className='block py-1.5 text-white/90 hover:text-white transition-colors'>
+                              {item.name}
+                            </Link>
+                          )}
                         </li>
                       ))}
                     </ul>
@@ -122,14 +128,16 @@ const MobileNav = () => {
               )
             })}
 
-           
+            {/* İletişim - Düz link */}
             <li>
-              <Link
-                href='/iletisim'
-                onClick={() => setIsOpen(false)}
-                className='block py-3 text-base font-neuropol font-semibold'>
-                İletişim
-              </Link>
+              <div className='border-t border-white/20 pt-4'>
+                <Link
+                  href='/iletisim'
+                  onClick={() => setIsOpen(false)}
+                  className='block py-3 text-base font-neuropol font-semibold text-white hover:text-white/80 transition-colors'>
+                  İletişim
+                </Link>
+              </div>
             </li>
           </ul>
         </nav>

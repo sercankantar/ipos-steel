@@ -15,7 +15,7 @@ const Navbar = () => {
 
               <div className='ml-4 flex lg:ml-0'>
                 <Link href='/'>
-                  <img src="/logoipos.svg" alt="IPOS Steel" className='h-10 w-auto' />
+                  <img src="/logoipos.svg" alt="IPOS-Steel" className='h-10 w-auto' />
                 </Link>
               </div>
 

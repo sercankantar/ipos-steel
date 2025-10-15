@@ -162,7 +162,7 @@ export default function IsEtigiKurallarimiz() {
                 </h2>
                 <div className='space-y-4 text-gray-700'>
                   <p>
-                    IPOS Steel, güneş enerjisi altyapısı ve elektrik kablo yönetim sistemlerinde kazandığı güven ve itibarı korumak için, tüm çalışanlarından yüksek etik standartlarda davranmalarını bekler. Güneş enerjisi projelerinde elektrik güvenliği, kalite kontrol ve çevresel duyarlılık süreçlerinin kritik önemi nedeniyle, etik davranış kurallarımız sadece iç işleyişimizi değil, müşteri güveni ve yenilenebilir enerji sektöründeki itibarımızı da doğrudan etkiler.
+                    IPOS-Steel, güneş enerjisi altyapısı ve elektrik kablo yönetim sistemlerinde kazandığı güven ve itibarı korumak için, tüm çalışanlarından yüksek etik standartlarda davranmalarını bekler. Güneş enerjisi projelerinde elektrik güvenliği, kalite kontrol ve çevresel duyarlılık süreçlerinin kritik önemi nedeniyle, etik davranış kurallarımız sadece iç işleyişimizi değil, müşteri güveni ve yenilenebilir enerji sektöründeki itibarımızı da doğrudan etkiler.
                   </p>
                   <p>
                     Güneş enerjisi kablo tavaları üretimi ve elektrik altyapı projelerinde teknik hassasiyet, elektrik güvenliği ve çevresel sorumluluk gibi kritik konularda etik yaklaşımımız, hem çalışanlarımızın hem de iş ortaklarımızın rehberi olmalıdır. Yönetici pozisyonundaki çalışanlarımız, bu etik standartların uygulanmasında örnek olma ve liderlik etme sorumluluğunu taşır.
@@ -177,7 +177,7 @@ export default function IsEtigiKurallarimiz() {
                 </h2>
                 <div className='space-y-4 text-gray-700'>
                   <p>
-                    Çelik yapı sektörünün teknik karmaşıklığı ve güvenlik gereklilikleri, nitelikli ve motive çalışanlar gerektirir. IPOS Steel olarak, mühendislerden sahada çalışan teknisyenlere kadar tüm ekibimizin haklarını korur ve mesleki gelişimlerini destekleriz. Çalışan ilişkilerimizin temel prensipleri;
+                    Çelik yapı sektörünün teknik karmaşıklığı ve güvenlik gereklilikleri, nitelikli ve motive çalışanlar gerektirir. IPOS-Steel olarak, mühendislerden sahada çalışan teknisyenlere kadar tüm ekibimizin haklarını korur ve mesleki gelişimlerini destekleriz. Çalışan ilişkilerimizin temel prensipleri;
                   </p>
                   <ul className='space-y-2 ml-6'>
                     <li className='flex items-start gap-2'>
@@ -243,7 +243,7 @@ export default function IsEtigiKurallarimiz() {
                 </h2>
                 <div className='space-y-6 text-gray-700'>
                   <p>
-                    IPOS Steel'in paydaşları ile ilişkilerini yönlendiren temel prensipler aşağıdaki gibidir;
+                    IPOS-Steel'in paydaşları ile ilişkilerini yönlendiren temel prensipler aşağıdaki gibidir;
                   </p>
 
                   <div>
@@ -377,7 +377,7 @@ export default function IsEtigiKurallarimiz() {
                 </h2>
                 <div className='space-y-4 text-gray-700'>
                   <p>
-                    IPOS Steel çalışanları, şirketin itibarını korumak ve güçlendirmek amacıyla aşağıdaki etik davranış kurallarına uymakla yükümlüdürler:
+                    IPOS-Steel çalışanları, şirketin itibarını korumak ve güçlendirmek amacıyla aşağıdaki etik davranış kurallarına uymakla yükümlüdürler:
                   </p>
                   <ul className='space-y-2 ml-6'>
                     <li className='flex items-start gap-2'>
@@ -411,7 +411,7 @@ export default function IsEtigiKurallarimiz() {
                 </h2>
                 <div className='space-y-4 text-gray-700'>
                   <p>
-                    IPOS Steel, çalışanlarının sağlığı ve güvenliği konusunda en yüksek standartları benimser:
+                    IPOS-Steel, çalışanlarının sağlığı ve güvenliği konusunda en yüksek standartları benimser:
                   </p>
                   <ul className='space-y-2 ml-6'>
                     <li className='flex items-start gap-2'>
@@ -441,7 +441,7 @@ export default function IsEtigiKurallarimiz() {
                 </h2>
                 <div className='space-y-4 text-gray-700'>
                   <p>
-                    IPOS Steel çalışanları, şirket bünyesinde siyasi faaliyet yürütemezler:
+                    IPOS-Steel çalışanları, şirket bünyesinde siyasi faaliyet yürütemezler:
                   </p>
                   <ul className='space-y-2 ml-6'>
                     <li className='flex items-start gap-2'>
@@ -468,7 +468,7 @@ export default function IsEtigiKurallarimiz() {
                 <div className='space-y-6 text-gray-700'>
                   <div>
                     <h3 className='text-lg font-semibold text-gray-900 mb-3'>7.1. Etik Kuralların Uygulanması</h3>
-                    <p>Bu etik kurallar tüm IPOS Steel çalışanları için bağlayıcıdır ve ihlal durumunda disiplin işlemleri uygulanır.</p>
+                    <p>Bu etik kurallar tüm IPOS-Steel çalışanları için bağlayıcıdır ve ihlal durumunda disiplin işlemleri uygulanır.</p>
                   </div>
                   
                   <div>

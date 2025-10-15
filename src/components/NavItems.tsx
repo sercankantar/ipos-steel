@@ -42,7 +42,7 @@ const NavItems = () => {
     <div className='flex gap-2 h-full' ref={navRef}>
       {PRODUCT_CATEGORIES.map((category, i) => {
         const handleOpen = () => {
-          setActiveIndex((prev) => (prev === i ? null : i))
+          setActiveIndex(i)
         }
 
         const close = () => setActiveIndex(null)

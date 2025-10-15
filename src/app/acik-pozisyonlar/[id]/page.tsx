@@ -427,7 +427,7 @@ export default function JobDetailPage({ params }: PageProps) {
                     <div>
                       <p className='text-sm text-gray-600'>Adres</p>
                       <p className='text-gray-900 text-sm'>
-                        IPOS Steel Güneş Enerjisi ve Elektrik Altyapı Çözümleri<br />
+                        IPOS-Steel Güneş Enerjisi ve Elektrik Altyapı Çözümleri<br />
                         Dilovası Organize Sanayi Bölgesi<br />
                         Kocaeli, Türkiye
                       </p>

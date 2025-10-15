@@ -6,6 +6,7 @@ import { Toaster } from 'sonner'
 import './globals.css'
 import Footer from '@/components/Footer'
 import SiteChrome from '@/components/SiteChrome'
+import ScrollToTopButton from '@/components/ScrollToTopButton'
 
 const inter = Inter({ 
   subsets: ['latin'],
@@ -35,6 +36,7 @@ export default function RootLayout({
           </SiteChrome>
         </main>
 
+        <ScrollToTopButton />
         <Toaster position='top-center' richColors />
       </body>
     </html>
