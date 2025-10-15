@@ -127,10 +127,11 @@ const NavItem = ({
                         )}
                       >
                         <div className='w-8 h-8 mr-3 flex items-center justify-center'>
-                          <div className={cn(
-                            'w-6 h-6 bg-gray-300 rounded',
-                            selectedProductCategory === 'kablo-kanal-sistemleri' ? 'bg-white' : 'bg-gray-400'
-                          )}>📦</div>
+                          <img 
+                            src="https://res.cloudinary.com/dgixrs3gg/image/upload/v1760505076/ChatGPT_Image_15_Eki_2025_08_09_37-removebg-preview_bvgdyn.png"
+                            alt="Kablo Kanal Sistemleri"
+                            className="w-6 h-6 object-contain"
+                          />
                         </div>
                         <div>
                           <div className='font-semibold text-sm'>Kablo Kanal Sistemleri</div>
@@ -149,10 +150,11 @@ const NavItem = ({
                         )}
                       >
                         <div className='w-8 h-8 mr-3 flex items-center justify-center'>
-                          <div className={cn(
-                            'w-6 h-6 bg-gray-300 rounded',
-                            selectedProductCategory === 'aski-sistemleri' ? 'bg-white' : 'bg-gray-400'
-                          )}>🔗</div>
+                          <img 
+                            src="https://res.cloudinary.com/dgixrs3gg/image/upload/v1760505076/ChatGPT_Image_15_Eki_2025_08_09_37-removebg-preview_bvgdyn.png"
+                            alt="Askı Sistemleri"
+                            className="w-6 h-6 object-contain"
+                          />
                         </div>
                         <div>
                           <div className='font-semibold text-sm'>Askı Sistemleri</div>
@@ -171,10 +173,11 @@ const NavItem = ({
                         )}
                       >
                         <div className='w-8 h-8 mr-3 flex items-center justify-center'>
-                          <div className={cn(
-                            'w-6 h-6 bg-gray-300 rounded',
-                            selectedProductCategory === 'solar-montaj-sistemleri' ? 'bg-white' : 'bg-gray-400'
-                          )}>☀️</div>
+                          <img 
+                            src="https://res.cloudinary.com/dgixrs3gg/image/upload/v1760505076/ChatGPT_Image_15_Eki_2025_08_09_37-removebg-preview_bvgdyn.png"
+                            alt="Solar Montaj Sistemleri"
+                            className="w-6 h-6 object-contain"
+                          />
                         </div>
                         <div>
                           <div className='font-semibold text-sm'>Solar Montaj Sistemleri</div>
@@ -226,100 +229,136 @@ const NavItem = ({
                         <div>
                           <h4 className='text-base font-bold text-gray-900 mb-3'>Kablo Kanal Sistemleri Kategorileri</h4>
                           <div className='grid grid-cols-3 gap-3'>
-                            <div className='bg-white border border-gray-200 rounded-lg p-3 hover:shadow-md transition-shadow'>
-                              <div className='w-full h-24 bg-gradient-to-br from-blue-100 to-blue-200 rounded-md mb-2 flex items-center justify-center'>
-                                <div className='text-blue-600 text-xl'>📦</div>
+                            <div className='bg-white border border-gray-200 rounded-lg p-3 hover:shadow-md transition-shadow flex items-start gap-3'>
+                              <div className='flex-1'>
+                                <h5 className='font-semibold text-gray-900 mb-1 text-sm'>Kablo Kanalları</h5>
+                                <Link
+                                  href='/products?category=kablo-kanallari'
+                                  onClick={() => {
+                                    setIsClicked(false)
+                                    close()
+                                  }}
+                                  className='text-blue-600 hover:text-blue-800 text-sm font-medium'>
+                                  Hakkında daha fazlası →
+                                </Link>
                               </div>
-                              <h5 className='font-semibold text-gray-900 mb-1 text-sm'>Kablo Kanalları</h5>
-                              <Link
-                                href='/products?category=kablo-kanallari'
-                                onClick={() => {
-                                  setIsClicked(false)
-                                  close()
-                                }}
-                                className='text-blue-600 hover:text-blue-800 text-sm font-medium'>
-                                Hakkında daha fazlası →
-                              </Link>
+                              <div className='w-16 h-16 bg-gradient-to-br from-blue-100 to-blue-200 rounded-md flex items-center justify-center flex-shrink-0 overflow-hidden'>
+                                <img 
+                                  src="https://res.cloudinary.com/dgixrs3gg/image/upload/v1759309035/ipos-steel/product-categories/h0zcbatsj6yzjb5lz9sa.webp"
+                                  alt="Kablo Kanalları"
+                                  className="w-full h-full object-cover"
+                                />
+                              </div>
                             </div>
 
-                            <div className='bg-white border border-gray-200 rounded-lg p-3 hover:shadow-md transition-shadow'>
-                              <div className='w-full h-24 bg-gradient-to-br from-green-100 to-green-200 rounded-md mb-2 flex items-center justify-center'>
-                                <div className='text-green-600 text-xl'>🪜</div>
+                            <div className='bg-white border border-gray-200 rounded-lg p-3 hover:shadow-md transition-shadow flex items-start gap-3'>
+                              <div className='flex-1'>
+                                <h5 className='font-semibold text-gray-900 mb-1 text-sm'>Kablo Merdivenleri</h5>
+                                <Link
+                                  href='/products?category=kablo-merdivenleri'
+                                  onClick={() => {
+                                    setIsClicked(false)
+                                    close()
+                                  }}
+                                  className='text-blue-600 hover:text-blue-800 text-sm font-medium'>
+                                  Hakkında daha fazlası →
+                                </Link>
                               </div>
-                              <h5 className='font-semibold text-gray-900 mb-1 text-sm'>Kablo Merdivenleri</h5>
-                              <Link
-                                href='/products?category=kablo-merdivenleri'
-                                onClick={() => {
-                                  setIsClicked(false)
-                                  close()
-                                }}
-                                className='text-blue-600 hover:text-blue-800 text-sm font-medium'>
-                                Hakkında daha fazlası →
-                              </Link>
+                              <div className='w-16 h-16 bg-gradient-to-br from-green-100 to-green-200 rounded-md flex items-center justify-center flex-shrink-0 overflow-hidden'>
+                                <img 
+                                  src="https://res.cloudinary.com/dgixrs3gg/image/upload/v1759309035/ipos-steel/product-categories/h0zcbatsj6yzjb5lz9sa.webp"
+                                  alt="Kablo Merdivenleri"
+                                  className="w-full h-full object-cover"
+                                />
+                              </div>
                             </div>
 
-                            <div className='bg-white border border-gray-200 rounded-lg p-3 hover:shadow-md transition-shadow'>
-                              <div className='w-full h-24 bg-gradient-to-br from-purple-100 to-purple-200 rounded-md mb-3 flex items-center justify-center'>
-                                <div className='text-purple-600 text-xl'>🔗</div>
+                            <div className='bg-white border border-gray-200 rounded-lg p-3 hover:shadow-md transition-shadow flex items-start gap-3'>
+                              <div className='flex-1'>
+                                <h5 className='font-semibold text-gray-900 mb-1 text-sm'>Tel Kablo Kanalları</h5>
+                                <Link
+                                  href='/products?category=tel-kablo-kanallari'
+                                  onClick={() => {
+                                    setIsClicked(false)
+                                    close()
+                                  }}
+                                  className='text-blue-600 hover:text-blue-800 text-sm font-medium'>
+                                  Hakkında daha fazlası →
+                                </Link>
                               </div>
-                              <h5 className='font-semibold text-gray-900 mb-1 text-sm'>Tel Kablo Kanalları</h5>
-                              <Link
-                                href='/products?category=tel-kablo-kanallari'
-                                onClick={() => {
-                                  setIsClicked(false)
-                                  close()
-                                }}
-                                className='text-blue-600 hover:text-blue-800 text-sm font-medium'>
-                                Hakkında daha fazlası →
-                              </Link>
+                              <div className='w-16 h-16 bg-gradient-to-br from-purple-100 to-purple-200 rounded-md flex items-center justify-center flex-shrink-0 overflow-hidden'>
+                                <img 
+                                  src="https://res.cloudinary.com/dgixrs3gg/image/upload/v1759309035/ipos-steel/product-categories/h0zcbatsj6yzjb5lz9sa.webp"
+                                  alt="Tel Kablo Kanalları"
+                                  className="w-full h-full object-cover"
+                                />
+                              </div>
                             </div>
 
-                            <div className='bg-white border border-gray-200 rounded-lg p-3 hover:shadow-md transition-shadow'>
-                              <div className='w-full h-24 bg-gradient-to-br from-orange-100 to-orange-200 rounded-md mb-3 flex items-center justify-center'>
-                                <div className='text-orange-600 text-xl'>🛡️</div>
+                            <div className='bg-white border border-gray-200 rounded-lg p-3 hover:shadow-md transition-shadow flex items-start gap-3'>
+                              <div className='flex-1'>
+                                <h5 className='font-semibold text-gray-900 mb-1 text-sm'>GRP Kablo Kanalı</h5>
+                                <Link
+                                  href='/products?category=grp-kablo-kanali'
+                                  onClick={() => {
+                                    setIsClicked(false)
+                                    close()
+                                  }}
+                                  className='text-blue-600 hover:text-blue-800 text-sm font-medium'>
+                                  Hakkında daha fazlası →
+                                </Link>
                               </div>
-                              <h5 className='font-semibold text-gray-900 mb-1 text-sm'>GRP Kablo Kanalı</h5>
-                              <Link
-                                href='/products?category=grp-kablo-kanali'
-                                onClick={() => {
-                                  setIsClicked(false)
-                                  close()
-                                }}
-                                className='text-blue-600 hover:text-blue-800 text-sm font-medium'>
-                                Hakkında daha fazlası →
-                              </Link>
+                              <div className='w-16 h-16 bg-gradient-to-br from-orange-100 to-orange-200 rounded-md flex items-center justify-center flex-shrink-0 overflow-hidden'>
+                                <img 
+                                  src="https://res.cloudinary.com/dgixrs3gg/image/upload/v1759309035/ipos-steel/product-categories/h0zcbatsj6yzjb5lz9sa.webp"
+                                  alt="GRP Kablo Kanalı"
+                                  className="w-full h-full object-cover"
+                                />
+                              </div>
                             </div>
 
-                            <div className='bg-white border border-gray-200 rounded-lg p-3 hover:shadow-md transition-shadow'>
-                              <div className='w-full h-24 bg-gradient-to-br from-red-100 to-red-200 rounded-md mb-3 flex items-center justify-center'>
-                                <div className='text-red-600 text-xl'>📋</div>
+                            <div className='bg-white border border-gray-200 rounded-lg p-3 hover:shadow-md transition-shadow flex items-start gap-3'>
+                              <div className='flex-1'>
+                                <h5 className='font-semibold text-gray-900 mb-1 text-sm'>TKS Kablo Kanalları</h5>
+                                <Link
+                                  href='/products?category=tks-kablo-kanallari'
+                                  onClick={() => {
+                                    setIsClicked(false)
+                                    close()
+                                  }}
+                                  className='text-blue-600 hover:text-blue-800 text-sm font-medium'>
+                                  Hakkında daha fazlası →
+                                </Link>
                               </div>
-                              <h5 className='font-semibold text-gray-900 mb-1 text-sm'>TKS Kablo Kanalları</h5>
-                              <Link
-                                href='/products?category=tks-kablo-kanallari'
-                                onClick={() => {
-                                  setIsClicked(false)
-                                  close()
-                                }}
-                                className='text-blue-600 hover:text-blue-800 text-sm font-medium'>
-                                Hakkında daha fazlası →
-                              </Link>
+                              <div className='w-16 h-16 bg-gradient-to-br from-red-100 to-red-200 rounded-md flex items-center justify-center flex-shrink-0 overflow-hidden'>
+                                <img 
+                                  src="https://res.cloudinary.com/dgixrs3gg/image/upload/v1759309035/ipos-steel/product-categories/h0zcbatsj6yzjb5lz9sa.webp"
+                                  alt="TKS Kablo Kanalları"
+                                  className="w-full h-full object-cover"
+                                />
+                              </div>
                             </div>
 
-                            <div className='bg-white border border-gray-200 rounded-lg p-3 hover:shadow-md transition-shadow'>
-                              <div className='w-full h-24 bg-gradient-to-br from-indigo-100 to-indigo-200 rounded-md mb-3 flex items-center justify-center'>
-                                <div className='text-indigo-600 text-xl'>⚡</div>
+                            <div className='bg-white border border-gray-200 rounded-lg p-3 hover:shadow-md transition-shadow flex items-start gap-3'>
+                              <div className='flex-1'>
+                                <h5 className='font-semibold text-gray-900 mb-1 text-sm'>Alüminyum Kablo Kanalları</h5>
+                                <Link
+                                  href='/products?category=aluminyum-kablo-kanallari'
+                                  onClick={() => {
+                                    setIsClicked(false)
+                                    close()
+                                  }}
+                                  className='text-blue-600 hover:text-blue-800 text-sm font-medium'>
+                                  Hakkında daha fazlası →
+                                </Link>
                               </div>
-                              <h5 className='font-semibold text-gray-900 mb-1 text-sm'>Alüminyum Kablo Kanalları</h5>
-                              <Link
-                                href='/products?category=aluminyum-kablo-kanallari'
-                                onClick={() => {
-                                  setIsClicked(false)
-                                  close()
-                                }}
-                                className='text-blue-600 hover:text-blue-800 text-sm font-medium'>
-                                Hakkında daha fazlası →
-                              </Link>
+                              <div className='w-16 h-16 bg-gradient-to-br from-indigo-100 to-indigo-200 rounded-md flex items-center justify-center flex-shrink-0 overflow-hidden'>
+                                <img 
+                                  src="https://res.cloudinary.com/dgixrs3gg/image/upload/v1759309035/ipos-steel/product-categories/h0zcbatsj6yzjb5lz9sa.webp"
+                                  alt="Alüminyum Kablo Kanalları"
+                                  className="w-full h-full object-cover"
+                                />
+                              </div>
                             </div>
                           </div>
                         </div>
@@ -366,52 +405,70 @@ const NavItem = ({
                         <div>
                           <h4 className='text-base font-bold text-gray-900 mb-3'>Askı Sistemleri Kategorileri</h4>
                           <div className='grid grid-cols-3 gap-3'>
-                            <div className='bg-white border border-gray-200 rounded-lg p-3 hover:shadow-md transition-shadow'>
-                              <div className='w-full h-24 bg-gradient-to-br from-blue-100 to-blue-200 rounded-md mb-3 flex items-center justify-center'>
-                                <div className='text-blue-600 text-xl'>🔗</div>
+                            <div className='bg-white border border-gray-200 rounded-lg p-3 hover:shadow-md transition-shadow flex items-start gap-3'>
+                              <div className='flex-1'>
+                                <h5 className='font-semibold text-gray-900 mb-1 text-sm'>Dübel Askı Sistemleri</h5>
+                                <Link
+                                  href='/products?category=dubel-aski-sistemleri'
+                                  onClick={() => {
+                                    setIsClicked(false)
+                                    close()
+                                  }}
+                                  className='text-blue-600 hover:text-blue-800 text-sm font-medium'>
+                                  Hakkında daha fazlası →
+                                </Link>
                               </div>
-                              <h5 className='font-semibold text-gray-900 mb-1 text-sm'>Dübel Askı Sistemleri</h5>
-                              <Link
-                                href='/products?category=dubel-aski-sistemleri'
-                                onClick={() => {
-                                  setIsClicked(false)
-                                  close()
-                                }}
-                                className='text-blue-600 hover:text-blue-800 text-sm font-medium'>
-                                Hakkında daha fazlası →
-                              </Link>
+                              <div className='w-16 h-16 bg-gradient-to-br from-blue-100 to-blue-200 rounded-md flex items-center justify-center flex-shrink-0 overflow-hidden'>
+                                <img 
+                                  src="https://res.cloudinary.com/dgixrs3gg/image/upload/v1759309138/ipos-steel/product-categories/zrgnrwrlitykkjpql7ut.png"
+                                  alt="Dübel Askı Sistemleri"
+                                  className="w-full h-full object-cover"
+                                />
+                              </div>
                             </div>
 
-                            <div className='bg-white border border-gray-200 rounded-lg p-3 hover:shadow-md transition-shadow'>
-                              <div className='w-full h-24 bg-gradient-to-br from-green-100 to-green-200 rounded-md mb-3 flex items-center justify-center'>
-                                <div className='text-green-600 text-xl'>🏗️</div>
+                            <div className='bg-white border border-gray-200 rounded-lg p-3 hover:shadow-md transition-shadow flex items-start gap-3'>
+                              <div className='flex-1'>
+                                <h5 className='font-semibold text-gray-900 mb-1 text-sm'>Konstrüksiyon Askı Sistemleri</h5>
+                                <Link
+                                  href='/products?category=konstruksiyon-aski-sistemleri'
+                                  onClick={() => {
+                                    setIsClicked(false)
+                                    close()
+                                  }}
+                                  className='text-blue-600 hover:text-blue-800 text-sm font-medium'>
+                                  Hakkında daha fazlası →
+                                </Link>
                               </div>
-                              <h5 className='font-semibold text-gray-900 mb-1 text-sm'>Konstrüksiyon Askı Sistemleri</h5>
-                              <Link
-                                href='/products?category=konstruksiyon-aski-sistemleri'
-                                onClick={() => {
-                                  setIsClicked(false)
-                                  close()
-                                }}
-                                className='text-blue-600 hover:text-blue-800 text-sm font-medium'>
-                                Hakkında daha fazlası →
-                              </Link>
+                              <div className='w-16 h-16 bg-gradient-to-br from-green-100 to-green-200 rounded-md flex items-center justify-center flex-shrink-0 overflow-hidden'>
+                                <img 
+                                  src="https://res.cloudinary.com/dgixrs3gg/image/upload/v1759309138/ipos-steel/product-categories/zrgnrwrlitykkjpql7ut.png"
+                                  alt="Konstrüksiyon Askı Sistemleri"
+                                  className="w-full h-full object-cover"
+                                />
+                              </div>
                             </div>
 
-                            <div className='bg-white border border-gray-200 rounded-lg p-3 hover:shadow-md transition-shadow'>
-                              <div className='w-full h-24 bg-gradient-to-br from-purple-100 to-purple-200 rounded-md mb-3 flex items-center justify-center'>
-                                <div className='text-purple-600 text-xl'>⚓</div>
+                            <div className='bg-white border border-gray-200 rounded-lg p-3 hover:shadow-md transition-shadow flex items-start gap-3'>
+                              <div className='flex-1'>
+                                <h5 className='font-semibold text-gray-900 mb-1 text-sm'>Ankraj Askı Sistemleri</h5>
+                                <Link
+                                  href='/products?category=ankraj-aski-sistemleri'
+                                  onClick={() => {
+                                    setIsClicked(false)
+                                    close()
+                                  }}
+                                  className='text-blue-600 hover:text-blue-800 text-sm font-medium'>
+                                  Hakkında daha fazlası →
+                                </Link>
                               </div>
-                              <h5 className='font-semibold text-gray-900 mb-1 text-sm'>Ankraj Askı Sistemleri</h5>
-                              <Link
-                                href='/products?category=ankraj-aski-sistemleri'
-                                onClick={() => {
-                                  setIsClicked(false)
-                                  close()
-                                }}
-                                className='text-blue-600 hover:text-blue-800 text-sm font-medium'>
-                                Hakkında daha fazlası →
-                              </Link>
+                              <div className='w-16 h-16 bg-gradient-to-br from-purple-100 to-purple-200 rounded-md flex items-center justify-center flex-shrink-0 overflow-hidden'>
+                                <img 
+                                  src="https://res.cloudinary.com/dgixrs3gg/image/upload/v1759309138/ipos-steel/product-categories/zrgnrwrlitykkjpql7ut.png"
+                                  alt="Ankraj Askı Sistemleri"
+                                  className="w-full h-full object-cover"
+                                />
+                              </div>
                             </div>
                           </div>
                         </div>
@@ -458,52 +515,70 @@ const NavItem = ({
                         <div>
                           <h4 className='text-base font-bold text-gray-900 mb-3'>Solar Montaj Sistemleri Kategorileri</h4>
                           <div className='grid grid-cols-3 gap-3'>
-                            <div className='bg-white border border-gray-200 rounded-lg p-3 hover:shadow-md transition-shadow'>
-                              <div className='w-full h-24 bg-gradient-to-br from-yellow-100 to-yellow-200 rounded-md mb-3 flex items-center justify-center'>
-                                <div className='text-yellow-600 text-xl'>🏠</div>
+                            <div className='bg-white border border-gray-200 rounded-lg p-3 hover:shadow-md transition-shadow flex items-start gap-3'>
+                              <div className='flex-1'>
+                                <h5 className='font-semibold text-gray-900 mb-1 text-sm'>Çatı Montaj Sistemleri</h5>
+                                <Link
+                                  href='/products?category=cati-montaj-sistemleri'
+                                  onClick={() => {
+                                    setIsClicked(false)
+                                    close()
+                                  }}
+                                  className='text-blue-600 hover:text-blue-800 text-sm font-medium'>
+                                  Hakkında daha fazlası →
+                                </Link>
                               </div>
-                              <h5 className='font-semibold text-gray-900 mb-1 text-sm'>Çatı Montaj Sistemleri</h5>
-                              <Link
-                                href='/products?category=cati-montaj-sistemleri'
-                                onClick={() => {
-                                  setIsClicked(false)
-                                  close()
-                                }}
-                                className='text-blue-600 hover:text-blue-800 text-sm font-medium'>
-                                Hakkında daha fazlası →
-                              </Link>
+                              <div className='w-16 h-16 bg-gradient-to-br from-yellow-100 to-yellow-200 rounded-md flex items-center justify-center flex-shrink-0 overflow-hidden'>
+                                <img 
+                                  src="https://res.cloudinary.com/dgixrs3gg/image/upload/v1759309222/ipos-steel/product-categories/fr4qhk3qtu59gne1cqgb.jpg"
+                                  alt="Çatı Montaj Sistemleri"
+                                  className="w-full h-full object-cover"
+                                />
+                              </div>
                             </div>
 
-                            <div className='bg-white border border-gray-200 rounded-lg p-3 hover:shadow-md transition-shadow'>
-                              <div className='w-full h-24 bg-gradient-to-br from-orange-100 to-orange-200 rounded-md mb-3 flex items-center justify-center'>
-                                <div className='text-orange-600 text-xl'>🏗️</div>
+                            <div className='bg-white border border-gray-200 rounded-lg p-3 hover:shadow-md transition-shadow flex items-start gap-3'>
+                              <div className='flex-1'>
+                                <h5 className='font-semibold text-gray-900 mb-1 text-sm'>Karakol Montaj Sistemleri</h5>
+                                <Link
+                                  href='/products?category=karakol-montaj-sistemleri'
+                                  onClick={() => {
+                                    setIsClicked(false)
+                                    close()
+                                  }}
+                                  className='text-blue-600 hover:text-blue-800 text-sm font-medium'>
+                                  Hakkında daha fazlası →
+                                </Link>
                               </div>
-                              <h5 className='font-semibold text-gray-900 mb-1 text-sm'>Karakol Montaj Sistemleri</h5>
-                              <Link
-                                href='/products?category=karakol-montaj-sistemleri'
-                                onClick={() => {
-                                  setIsClicked(false)
-                                  close()
-                                }}
-                                className='text-blue-600 hover:text-blue-800 text-sm font-medium'>
-                                Hakkında daha fazlası →
-                              </Link>
+                              <div className='w-16 h-16 bg-gradient-to-br from-orange-100 to-orange-200 rounded-md flex items-center justify-center flex-shrink-0 overflow-hidden'>
+                                <img 
+                                  src="https://res.cloudinary.com/dgixrs3gg/image/upload/v1759309222/ipos-steel/product-categories/fr4qhk3qtu59gne1cqgb.jpg"
+                                  alt="Karakol Montaj Sistemleri"
+                                  className="w-full h-full object-cover"
+                                />
+                              </div>
                             </div>
 
-                            <div className='bg-white border border-gray-200 rounded-lg p-3 hover:shadow-md transition-shadow'>
-                              <div className='w-full h-24 bg-gradient-to-br from-red-100 to-red-200 rounded-md mb-3 flex items-center justify-center'>
-                                <div className='text-red-600 text-xl'>⚡</div>
+                            <div className='bg-white border border-gray-200 rounded-lg p-3 hover:shadow-md transition-shadow flex items-start gap-3'>
+                              <div className='flex-1'>
+                                <h5 className='font-semibold text-gray-900 mb-1 text-sm'>Toprak Montaj Sistemleri</h5>
+                                <Link
+                                  href='/products?category=toprak-montaj-sistemleri'
+                                  onClick={() => {
+                                    setIsClicked(false)
+                                    close()
+                                  }}
+                                  className='text-blue-600 hover:text-blue-800 text-sm font-medium'>
+                                  Hakkında daha fazlası →
+                                </Link>
                               </div>
-                              <h5 className='font-semibold text-gray-900 mb-1 text-sm'>Toprak Montaj Sistemleri</h5>
-                              <Link
-                                href='/products?category=toprak-montaj-sistemleri'
-                                onClick={() => {
-                                  setIsClicked(false)
-                                  close()
-                                }}
-                                className='text-blue-600 hover:text-blue-800 text-sm font-medium'>
-                                Hakkında daha fazlası →
-                              </Link>
+                              <div className='w-16 h-16 bg-gradient-to-br from-red-100 to-red-200 rounded-md flex items-center justify-center flex-shrink-0 overflow-hidden'>
+                                <img 
+                                  src="https://res.cloudinary.com/dgixrs3gg/image/upload/v1759309222/ipos-steel/product-categories/fr4qhk3qtu59gne1cqgb.jpg"
+                                  alt="Toprak Montaj Sistemleri"
+                                  className="w-full h-full object-cover"
+                                />
+                              </div>
                             </div>
                           </div>
                         </div>
@@ -647,8 +722,12 @@ const NavItem = ({
                     <div className='col-span-1'>
                       {/* IPOS Blog */}
                       <div className='bg-gradient-to-br from-blue-50 to-indigo-100 p-6 rounded-lg border border-blue-200 h-full'>
-                        <div className='w-full h-24 bg-gradient-to-r from-blue-400 to-indigo-500 rounded-md mb-4 flex items-center justify-center'>
-                          <div className='text-white text-3xl'>📱</div>
+                        <div className='w-full h-24 bg-gradient-to-r from-blue-400 to-indigo-500 rounded-md mb-4 flex items-center justify-center overflow-hidden'>
+                          <img 
+                            src="https://res.cloudinary.com/dgixrs3gg/image/upload/v1759228374/ipos-steel/news/jktirjyw6u2fstf0ikaw.jpg"
+                            alt="IPOS Gündem"
+                            className="w-full h-full object-cover"
+                          />
                         </div>
                         <h4 className='font-bold text-gray-900 text-base mb-3'>IPOS Gündem</h4>
                         <p className='text-sm text-gray-600 mb-4 leading-relaxed'>

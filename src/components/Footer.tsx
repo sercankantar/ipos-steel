@@ -55,10 +55,10 @@ const Footer = () => {
     <footer className='bg-slate-900 text-white'>
       <MaxWidthWrapper>
         <div className='py-12'>
-          <div className='grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6'>
+          <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6'>
             
             {/* Şirket Bilgileri */}
-            <div className='lg:col-span-2'>
+            <div className='md:col-span-2 lg:col-span-2'>
               <div className='mb-4'>
                 <img src="/logoipos.svg" alt="IPOS Steel" className='h-10 w-auto mb-3 filter brightness-0 invert' />
                 <h3 className='font-neuropol text-lg font-bold mb-3'>IPOS Steel</h3>
@@ -89,78 +89,81 @@ const Footer = () => {
               </div>
             </div>
 
-            {/* Hızlı Linkler */}
-            <div>
-              <h4 className='font-neuropol font-bold mb-4 text-sm'>Hızlı Linkler</h4>
-              <ul className='space-y-2'>
-                <li>
-                  <Link href='/' className='text-gray-300 hover:text-white transition-colors text-sm'>
-                    Ana Sayfa
-                  </Link>
-                </li>
-                <li>
-                  <Link href='/products' className='text-gray-300 hover:text-white transition-colors text-sm'>
-                    Ürünler
-                  </Link>
-                </li>
-                <li>
-                  <Link href='/iletisim' className='text-gray-300 hover:text-white transition-colors text-sm'>
-                    İletişim
-                  </Link>
-                </li>
-                <li>
-                  <Link href='/hakkimizda' className='text-gray-300 hover:text-white transition-colors text-sm'>
-                    Hakkımızda
-                  </Link>
-                </li>
-                <li>
-                  <Link href='/referanslar' className='text-gray-300 hover:text-white transition-colors text-sm'>
-                    Referanslar
-                  </Link>
-                </li>
-                <li>
-                  <Link href='/haberler' className='text-gray-300 hover:text-white transition-colors text-sm'>
-                    Haberler
-                  </Link>
-                </li>
-                <li>
-                  <Link href='/basin-aciklamalari' className='text-gray-300 hover:text-white transition-colors text-sm'>
-                    Basın Açıklamaları
-                  </Link>
-                </li>
-              </ul>
-            </div>
+            {/* Hızlı Linkler ve Ürünler - Mobilde yan yana */}
+            <div className='grid grid-cols-2 gap-6 md:col-span-2 lg:col-span-2'>
+              {/* Hızlı Linkler */}
+              <div>
+                <h4 className='font-neuropol font-bold mb-4 text-sm'>Hızlı Linkler</h4>
+                <ul className='space-y-2'>
+                  <li>
+                    <Link href='/' className='text-gray-300 hover:text-white transition-colors text-sm'>
+                      Ana Sayfa
+                    </Link>
+                  </li>
+                  <li>
+                    <Link href='/products' className='text-gray-300 hover:text-white transition-colors text-sm'>
+                      Ürünler
+                    </Link>
+                  </li>
+                  <li>
+                    <Link href='/iletisim' className='text-gray-300 hover:text-white transition-colors text-sm'>
+                      İletişim
+                    </Link>
+                  </li>
+                  <li>
+                    <Link href='/hakkimizda' className='text-gray-300 hover:text-white transition-colors text-sm'>
+                      Hakkımızda
+                    </Link>
+                  </li>
+                  <li>
+                    <Link href='/referanslar' className='text-gray-300 hover:text-white transition-colors text-sm'>
+                      Referanslar
+                    </Link>
+                  </li>
+                  <li>
+                    <Link href='/haberler' className='text-gray-300 hover:text-white transition-colors text-sm'>
+                      Haberler
+                    </Link>
+                  </li>
+                  <li>
+                    <Link href='/basin-aciklamalari' className='text-gray-300 hover:text-white transition-colors text-sm'>
+                      Basın Açıklamaları
+                    </Link>
+                  </li>
+                </ul>
+              </div>
 
-            {/* Ürünler */}
-            <div>
-              <h4 className='font-neuropol font-bold mb-4 text-sm'>Ürünlerimiz</h4>
-              <ul className='space-y-2'>
-                <li>
-                  <Link href={categoryMap['busbar'] || '/products'} className='text-gray-300 hover:text-white transition-colors text-sm'>
-                    Busbar Sistemleri
-                  </Link>
-                </li>
-                <li>
-                  <Link href={categoryMap['aski'] || '/products'} className='text-gray-300 hover:text-white transition-colors text-sm'>
-                    Askı Sistemleri
-                  </Link>
-                </li>
-                <li>
-                  <Link href={categoryMap['kablo-kanali'] || '/products'} className='text-gray-300 hover:text-white transition-colors text-sm'>
-                    Kablo Kanalı Sistemleri
-                  </Link>
-                </li>
-                <li>
-                  <Link href={categoryMap['ic-tesisat'] || '/products'} className='text-gray-300 hover:text-white transition-colors text-sm'>
-                    İç Tesisat Çözümleri
-                  </Link>
-                </li>
-                <li>
-                  <Link href={categoryMap['trolley'] || '/products'} className='text-gray-300 hover:text-white transition-colors text-sm'>
-                    Trolley Busbar
-                  </Link>
-                </li>
-              </ul>
+              {/* Ürünler */}
+              <div>
+                <h4 className='font-neuropol font-bold mb-4 text-sm'>Ürünlerimiz</h4>
+                <ul className='space-y-2'>
+                  <li>
+                    <Link href={categoryMap['busbar'] || '/products'} className='text-gray-300 hover:text-white transition-colors text-sm'>
+                      Busbar Sistemleri
+                    </Link>
+                  </li>
+                  <li>
+                    <Link href={categoryMap['aski'] || '/products'} className='text-gray-300 hover:text-white transition-colors text-sm'>
+                      Askı Sistemleri
+                    </Link>
+                  </li>
+                  <li>
+                    <Link href={categoryMap['kablo-kanali'] || '/products'} className='text-gray-300 hover:text-white transition-colors text-sm'>
+                      Kablo Kanalı Sistemleri
+                    </Link>
+                  </li>
+                  <li>
+                    <Link href={categoryMap['ic-tesisat'] || '/products'} className='text-gray-300 hover:text-white transition-colors text-sm'>
+                      İç Tesisat Çözümleri
+                    </Link>
+                  </li>
+                  <li>
+                    <Link href={categoryMap['trolley'] || '/products'} className='text-gray-300 hover:text-white transition-colors text-sm'>
+                      Trolley Busbar
+                    </Link>
+                  </li>
+                </ul>
+              </div>
             </div>
           </div>
         </div>
