@@ -6,6 +6,8 @@ import { useEffect, useRef, useState } from 'react'
 import { usePathname } from 'next/navigation'
 import NavItem from './NavItem'
 import Link from 'next/link'
+import { Button } from './ui/button'
+import { cn } from '@/lib/utils'
 
 const NavItems = () => {
   const [activeIndex, setActiveIndex] = useState<
@@ -61,15 +63,17 @@ const NavItems = () => {
         )
       })}
       
-      {/* İletişim - düz link olarak */}
+      {/* İletişim - diğer menü öğeleriyle aynı stil */}
       <div className='flex items-center'>
-        <Link
-          href='/iletisim'
-          className='font-neuropol font-semibold text-gray-700 hover:text-primary-blue transition-colors duration-200 px-3 py-2 rounded-md relative group'
+        <Button
+          asChild
+          variant='ghost'
+          className='gap-1.5 font-neuropol font-semibold text-gray-700 hover:text-blue-600 hover:bg-blue-50 border-transparent hover:border-blue-200 transition-all duration-200 px-4 py-2'
         >
-          İletişim
-          <span className='absolute -bottom-1 left-3 w-0 h-0.5 bg-primary-blue transition-all duration-300 group-hover:w-[calc(100%-24px)]'></span>
-        </Link>
+          <Link href='/iletisim'>
+            İletişim
+          </Link>
+        </Button>
       </div>
     </div>
   )

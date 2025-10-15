@@ -176,17 +176,17 @@ const Footer = () => {
 
             <div className='flex items-center justify-center md:justify-end space-x-6'>
               <Link
-                href='#'
+                href='/kvkk-gizlilik-politikasi'
                 className='text-gray-400 hover:text-white text-sm transition-colors'>
                 Gizlilik Politikası
               </Link>
               <Link
-                href='#'
+                href='/kvkk-gizlilik-politikasi'
                 className='text-gray-400 hover:text-white text-sm transition-colors'>
                 KVKK
               </Link>
               <Link
-                href='#'
+                href='/is-etigi-kurallarimiz'
                 className='text-gray-400 hover:text-white text-sm transition-colors'>
                 Şartlar
               </Link>

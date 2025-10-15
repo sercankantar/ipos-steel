@@ -191,8 +191,19 @@ const NavItem = ({
                         <div className='mb-6'>
                           <h3 className='text-lg font-bold text-gray-900 mb-3'>Kablo Kanalı Genel Bilgi</h3>
                           <div className='flex items-start space-x-4'>
-                            <div className='w-48 h-32 bg-gradient-to-br from-gray-100 to-gray-200 rounded-lg flex items-center justify-center'>
-                              <div className='text-gray-400 text-3xl'>📦</div>
+                            <div className='w-48 h-32 rounded-lg overflow-hidden'>
+                              <video 
+                                autoPlay 
+                                loop 
+                                muted 
+                                playsInline
+                                className='w-full h-full object-cover'
+                              >
+                                <source src="https://eae-dokuman.s3.eu-west-1.amazonaws.com/menu/e-line-ccr-busbar.mp4" type="video/mp4" />
+                                <div className='w-full h-full bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center'>
+                                  <div className='text-gray-400 text-3xl'>📦</div>
+                                </div>
+                              </video>
                             </div>
                             <div className='flex-1'>
                               <p className='text-gray-600 leading-relaxed mb-3 text-sm'>
@@ -320,8 +331,19 @@ const NavItem = ({
                         <div className='mb-6'>
                           <h3 className='text-lg font-bold text-gray-900 mb-3'>Askı Sistemleri Genel Bilgi</h3>
                           <div className='flex items-start space-x-4'>
-                            <div className='w-48 h-32 bg-gradient-to-br from-gray-100 to-gray-200 rounded-lg flex items-center justify-center'>
-                              <div className='text-gray-400 text-3xl'>🔗</div>
+                            <div className='w-48 h-32 rounded-lg overflow-hidden'>
+                              <video 
+                                autoPlay 
+                                loop 
+                                muted 
+                                playsInline
+                                className='w-full h-full object-cover'
+                              >
+                                <source src="https://eae-dokuman.s3.eu-west-1.amazonaws.com/menu/e-line-ccr-busbar.mp4" type="video/mp4" />
+                                <div className='w-full h-full bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center'>
+                                  <div className='text-gray-400 text-3xl'>🔗</div>
+                                </div>
+                              </video>
                             </div>
                             <div className='flex-1'>
                               <p className='text-gray-600 leading-relaxed mb-3 text-sm'>
@@ -401,8 +423,19 @@ const NavItem = ({
                         <div className='mb-6'>
                           <h3 className='text-lg font-bold text-gray-900 mb-3'>Solar Montaj Sistemleri Genel Bilgi</h3>
                           <div className='flex items-start space-x-4'>
-                            <div className='w-48 h-32 bg-gradient-to-br from-yellow-100 to-orange-200 rounded-lg flex items-center justify-center'>
-                              <div className='text-yellow-500 text-3xl'>☀️</div>
+                            <div className='w-48 h-32 rounded-lg overflow-hidden'>
+                              <video 
+                                autoPlay 
+                                loop 
+                                muted 
+                                playsInline
+                                className='w-full h-full object-cover'
+                              >
+                                <source src="https://eae-dokuman.s3.eu-west-1.amazonaws.com/menu/e-line-ccr-busbar.mp4" type="video/mp4" />
+                                <div className='w-full h-full bg-gradient-to-br from-yellow-100 to-orange-200 flex items-center justify-center'>
+                                  <div className='text-yellow-500 text-3xl'>☀️</div>
+                                </div>
+                              </video>
                             </div>
                             <div className='flex-1'>
                               <p className='text-gray-600 leading-relaxed mb-3 text-sm'>
