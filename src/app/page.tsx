@@ -177,25 +177,25 @@ export default function Home() {
       <section className='py-14'>
         <MaxWidthWrapper>
           {/* Data */}
-          {/* Üstte öne çıkan geniş kart (ilk kategori) */}
+          {/* Üstte öne çıkan geniş kart (ilk kategori) - X ekseninde geniş */}
           {(categories && categories.length > 0) ? (
             <div className='grid grid-cols-1 gap-6'>
-              <div className='rounded-xl bg-white shadow-sm ring-1 ring-black/5 overflow-hidden'>
-                <div className='grid grid-cols-1 md:grid-cols-2'>
-                  <div className='relative h-48 md:h-full'>
+              <div className='lg:col-span-2 rounded-xl bg-white shadow-sm ring-1 ring-black/5 overflow-hidden'>
+                <div className='grid grid-cols-1 sm:grid-cols-3 h-32'>
+                  <div className='relative sm:col-span-1 h-32'>
                     <img
                       src={categories[0].imageUrl || '/thumbnail.jpg'}
                       alt={categories[0].name}
                       className='h-full w-full object-cover'
                     />
                   </div>
-                  <div className='p-6 flex flex-col justify-center'>
-                    <h3 className='text-xl font-neuropol font-bold text-gray-900'>{categories[0].name}</h3>
-                    <p className='mt-3 text-sm text-muted-foreground font-neuropol'>
+                  <div className='sm:col-span-2 p-4 flex flex-col justify-center'>
+                    <h4 className='text-base font-neuropol font-bold text-gray-900'>{categories[0].name}</h4>
+                    <p className='mt-2 text-xs text-muted-foreground font-neuropol line-clamp-2'>
                       {categories[0].name} ürün grubumuz; projelerinizde güvenilirlik ve hızlı montaj avantajı sunan, dayanıklı ve ölçeklenebilir çözümler içerir.
                     </p>
-                    <div className='mt-5 flex items-center gap-6'>
-                      <Link href={`/products?category=${encodeURIComponent(categories[0].slug)}`} className='text-sm font-neuropol font-semibold text-blue-600 hover:text-blue-700'>
+                    <div className='mt-3 flex items-center gap-4'>
+                      <Link href={`/products?category=${encodeURIComponent(categories[0].slug)}`} className='text-xs font-neuropol font-semibold text-blue-600 hover:text-blue-700'>
                         Daha Fazlası →
                       </Link>
                       
@@ -459,8 +459,14 @@ export default function Home() {
 
       {/* Bilgi Kartı Modal */}
       {selectedCountry && (
-        <div className='fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4'>
-          <div className='bg-white rounded-2xl shadow-2xl max-w-md w-full p-6 relative'>
+        <div 
+          className='fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4'
+          onClick={() => setSelectedCountry(null)}
+        >
+          <div 
+            className='bg-white rounded-2xl shadow-2xl max-w-md w-full p-6 relative'
+            onClick={(e) => e.stopPropagation()}
+          >
             <button
               onClick={() => setSelectedCountry(null)}
               className='absolute top-4 right-4 text-gray-400 hover:text-gray-600 transition-colors'

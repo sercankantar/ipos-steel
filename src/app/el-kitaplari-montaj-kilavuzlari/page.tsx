@@ -1,9 +1,10 @@
 "use client"
 
 import MaxWidthWrapper from '@/components/MaxWidthWrapper'
-import { Download, FileText, Calendar, Eye, Tag } from 'lucide-react'
+import { Download, FileText, Calendar, Eye, Tag, ChevronDown, ExternalLink, Monitor, Printer, Share2 } from 'lucide-react'
 import Link from 'next/link'
-import { useState, useMemo, useEffect } from 'react'
+import { useState, useMemo, useEffect, useRef } from 'react'
+import Image from 'next/image'
 
 // Statik el kitapları ve kullanım kılavuzları verileri
 const staticElKitaplari = [
@@ -105,6 +106,8 @@ export default function ElKitaplariMontajKilavuzlariPage() {
   const [selectedCategory, setSelectedCategory] = useState('Tümü')
   const [items, setItems] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
+  const [openDropdown, setOpenDropdown] = useState<number | null>(null)
+  const dropdownRefs = useRef<{ [key: number]: HTMLDivElement | null }>({})
 
   useEffect(() => {
     const load = async () => {
@@ -147,6 +150,62 @@ export default function ElKitaplariMontajKilavuzlariPage() {
     // Yeni sekmede PDF açma
     window.open(elKitabi.fileUrl, '_blank')
   }
+
+  // Açılır menü fonksiyonları
+  const toggleDropdown = (id: number) => {
+    setOpenDropdown(openDropdown === id ? null : id)
+  }
+
+  const handleViewOption = (elKitabi: any, option: string) => {
+    setOpenDropdown(null)
+    switch (option) {
+      case 'browser':
+        window.open(elKitabi.fileUrl, '_blank')
+        break
+      case 'fullscreen':
+        // Tam ekran görüntüleme
+        window.open(elKitabi.fileUrl, '_blank', 'fullscreen=yes')
+        break
+      case 'print':
+        // Yazdırma önizleme
+        const printWindow = window.open(elKitabi.fileUrl, '_blank')
+        printWindow?.addEventListener('load', () => {
+          printWindow.print()
+        })
+        break
+      case 'share':
+        // Paylaşım
+        if (navigator.share) {
+          navigator.share({
+            title: elKitabi.title,
+            text: elKitabi.description,
+            url: window.location.href
+          })
+        } else {
+          // Fallback: URL'yi kopyala
+          navigator.clipboard.writeText(window.location.href)
+          alert('Link kopyalandı!')
+        }
+        break
+    }
+  }
+
+  // Dışarı tıklama ile menüyü kapat
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (openDropdown !== null) {
+        const dropdownElement = dropdownRefs.current[openDropdown]
+        if (dropdownElement && !dropdownElement.contains(event.target as Node)) {
+          setOpenDropdown(null)
+        }
+      }
+    }
+
+    document.addEventListener('mousedown', handleClickOutside)
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside)
+    }
+  }, [openDropdown])
   
   return (
     <div className="min-h-screen bg-white">
@@ -261,13 +320,77 @@ export default function ElKitaplariMontajKilavuzlariPage() {
                             <Download className="w-4 h-4" />
                             İndir
                           </button>
-                          <button
-                            onClick={() => handleView(elKitabi)}
-                            className="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-700 py-2 px-3 rounded-lg text-sm font-medium transition-colors duration-200 flex items-center justify-center gap-2"
+                          {/* Görüntüle Dropdown */}
+                          <div 
+                            className="relative flex-1"
+                            ref={(el) => {
+                              dropdownRefs.current[elKitabi.id] = el
+                            }}
                           >
-                            <Eye className="w-4 h-4" />
-                            Görüntüle
-                          </button>
+                            <button
+                              onClick={() => toggleDropdown(elKitabi.id)}
+                              className="w-full bg-gray-100 hover:bg-gray-200 text-gray-700 py-2 px-3 rounded-lg text-sm font-medium transition-colors duration-200 flex items-center justify-center gap-2"
+                            >
+                              <Eye className="w-4 h-4" />
+                              Görüntüle
+                              <ChevronDown className={`w-4 h-4 transition-transform duration-200 ${
+                                openDropdown === elKitabi.id ? 'rotate-180' : ''
+                              }`} />
+                            </button>
+
+                            {/* Dropdown Menu */}
+                            {openDropdown === elKitabi.id && (
+                              <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-gray-200 rounded-lg shadow-lg z-50 overflow-hidden">
+                                <div className="py-1">
+                                  <button
+                                    onClick={() => handleViewOption(elKitabi, 'browser')}
+                                    className="w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-blue-50 hover:text-blue-600 flex items-center gap-3 transition-colors duration-150"
+                                  >
+                                    <ExternalLink className="w-4 h-4" />
+                                    <div>
+                                      <div className="font-medium">Tarayıcıda Aç</div>
+                                      <div className="text-xs text-gray-500">Yeni sekmede görüntüle</div>
+                                    </div>
+                                  </button>
+                                  
+                                  <button
+                                    onClick={() => handleViewOption(elKitabi, 'fullscreen')}
+                                    className="w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-blue-50 hover:text-blue-600 flex items-center gap-3 transition-colors duration-150"
+                                  >
+                                    <Monitor className="w-4 h-4" />
+                                    <div>
+                                      <div className="font-medium">Tam Ekran</div>
+                                      <div className="text-xs text-gray-500">Tam ekran modunda aç</div>
+                                    </div>
+                                  </button>
+
+                                  <div className="border-t border-gray-100 my-1"></div>
+
+                                  <button
+                                    onClick={() => handleViewOption(elKitabi, 'print')}
+                                    className="w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-green-50 hover:text-green-600 flex items-center gap-3 transition-colors duration-150"
+                                  >
+                                    <Printer className="w-4 h-4" />
+                                    <div>
+                                      <div className="font-medium">Yazdır</div>
+                                      <div className="text-xs text-gray-500">Dokümanı yazdır</div>
+                                    </div>
+                                  </button>
+
+                                  <button
+                                    onClick={() => handleViewOption(elKitabi, 'share')}
+                                    className="w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-purple-50 hover:text-purple-600 flex items-center gap-3 transition-colors duration-150"
+                                  >
+                                    <Share2 className="w-4 h-4" />
+                                    <div>
+                                      <div className="font-medium">Paylaş</div>
+                                      <div className="text-xs text-gray-500">Linki paylaş</div>
+                                    </div>
+                                  </button>
+                                </div>
+                              </div>
+                            )}
+                          </div>
                         </div>
                       </div>
                     </article>

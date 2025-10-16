@@ -6,7 +6,32 @@ import Link from 'next/link'
 import { useState, useEffect, useMemo } from 'react'
 import Image from 'next/image'
 
-// Statik referanslar (API olmadığı için)
+// Referans interface'i
+interface Reference {
+  id: string
+  name: string
+  sector: string
+  logoUrl?: string
+  title?: string
+  excerpt?: string
+  content?: string
+  category?: string
+  location?: string
+  client?: string
+  projectValue?: string
+  duration?: string
+  slug?: string
+  mainImage?: string
+  gallery?: string[]
+  tags?: string[]
+  featured?: boolean
+  views?: number
+  isActive: boolean
+  createdAt: string
+  updatedAt: string
+}
+
+// Fallback statik referanslar
 const staticReferences = [
   {
     id: 1,
@@ -170,8 +195,17 @@ const staticReferences = [
 
 const defaultReferenceCategories = ['Güneş Enerjisi', 'Endüstriyel', 'Ticari', 'Sağlık', 'Teknoloji', 'Eğitim']
 
-// Kategori renk haritası
-const getCategoryColor = (category: string) => {
+// Kategori renk haritası - database'den gelen kategorileri kullan
+const getCategoryColor = (category: string, dbCategories: {name: string, color: string}[]) => {
+  // Önce database'den gelen kategorileri kontrol et
+  if (dbCategories && Array.isArray(dbCategories)) {
+    const dbCategory = dbCategories.find(cat => cat.name === category)
+    if (dbCategory) {
+      return dbCategory.color
+    }
+  }
+  
+  // Fallback statik renkler
   const colors: Record<string, string> = {
     'Güneş Enerjisi': 'bg-yellow-100 text-yellow-800',
     'Endüstriyel': 'bg-blue-100 text-blue-800',
@@ -189,8 +223,43 @@ const getCategoryColor = (category: string) => {
 
 export default function ReferanslarimizPage() {
   const [selectedKategori, setSelectedKategori] = useState('Tümü')
-  const [items, setItems] = useState<any[]>(staticReferences)
-  const [loading, setLoading] = useState(false)
+  const [items, setItems] = useState<Reference[]>([])
+  const [loading, setLoading] = useState(true)
+  const [dbCategories, setDbCategories] = useState<{name: string, color: string}[]>([])
+
+  // API'den referansları ve kategorileri çek
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        setLoading(true)
+        
+        // Referansları çek
+        const referencesResponse = await fetch('/api/references')
+        if (referencesResponse.ok) {
+          const referencesData = await referencesResponse.json()
+          setItems(referencesData.length > 0 ? referencesData : staticReferences)
+        } else {
+          setItems(staticReferences)
+        }
+
+        // Kategorileri çek
+        const categoriesResponse = await fetch('/api/reference-categories')
+        if (categoriesResponse.ok) {
+          const categoriesData = await categoriesResponse.json()
+          setDbCategories(Array.isArray(categoriesData) ? categoriesData : [])
+        } else {
+          setDbCategories([])
+        }
+      } catch (error) {
+        console.error('Veri yüklenirken hata:', error)
+        setItems(staticReferences)
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    fetchData()
+  }, [])
 
   const categories = useMemo(() => {
     const cats = items.map(r => r.category).filter(Boolean)
@@ -204,8 +273,6 @@ export default function ReferanslarimizPage() {
     selectedKategori === 'Tümü' ? items : items.filter(r => r.category === selectedKategori)
   ), [items, selectedKategori])
 
-  const featuredReferanslar = filteredReferanslar.filter(r => r.featured)
-  const regularReferanslar = filteredReferanslar.filter(r => !r.featured)
   
   return (
     <div className='min-h-screen bg-gray-50'>
@@ -295,43 +362,40 @@ export default function ReferanslarimizPage() {
                     <article
                       key={referans.id}
                       className="bg-white border border-gray-200 rounded-lg hover:shadow-lg transition-shadow group overflow-hidden p-4 cursor-pointer"
-                      onClick={() => window.location.href = `/referanslarimiz/${referans.id}`}
+                      onClick={() => window.location.href = `/referanslarimiz/${referans.slug || referans.id}`}
                     >
                       <div className="flex gap-4">
-                        {/* Küçük Görsel Sol Tarafta */}
-                        <div className="relative w-32 sm:w-40 aspect-[4/3] flex-shrink-0 rounded-md overflow-hidden bg-gray-100">
+                        {/* Şirket Logosu Sol Tarafta */}
+                        <div className="relative w-32 sm:w-40 aspect-[4/3] flex-shrink-0 rounded-md overflow-hidden bg-gray-100 border border-gray-200">
                           <Image
-                            src={referans.image}
-                            alt={referans.title}
+                            src={referans.logoUrl || referans.gallery?.[0] || referans.mainImage || referans.image || 'https://images.unsplash.com/photo-1509391366360-2e959784a276?w=800&h=600&fit=crop'}
+                            alt={`${referans.client || referans.name} logosu`}
                             fill
-                            className="object-cover group-hover:scale-[1.03] transition-transform duration-300"
+                            className={`${referans.logoUrl ? 'object-contain p-4' : 'object-cover'} group-hover:scale-[1.03] transition-transform duration-300`}
                           />
                         </div>
                         {/* Metin İçerik */}
                         <div className="flex-1">
                           <div className="flex items-start justify-between mb-2">
                             <div className="flex items-center gap-3">
-                              <span className={`px-3 py-1 rounded-full text-xs font-medium ${getCategoryColor(referans.category)}`}>
-                                {referans.category}
+                              <span className={`px-3 py-1 rounded-full text-xs font-medium ${getCategoryColor(referans.category || referans.sector, dbCategories)}`}>
+                                {referans.category || referans.sector}
                               </span>
-                              {referans.featured && (
-                                <span className="w-2 h-2 rounded-full bg-red-500"></span>
-                              )}
                             </div>
                             <div className="flex items-center gap-4 text-sm text-gray-500">
                               <div className="flex items-center gap-1">
                                 <Calendar className="h-4 w-4" />
-                                <span>{new Date(referans.date).toLocaleDateString('tr-TR')}</span>
+                                <span>{new Date(referans.createdAt).toLocaleDateString('tr-TR')}</span>
                               </div>
                             </div>
                           </div>
                           
                           <h3 className="font-neuropol font-bold text-lg mb-2 text-slate-900 group-hover:text-blue-600 transition-colors">
-                            {referans.title}
+                            {referans.title || referans.name}
                           </h3>
                           
                           <p className="text-gray-600 text-sm leading-relaxed mb-3 line-clamp-3">
-                            {referans.excerpt}
+                            {referans.excerpt || `${referans.sector} sektöründe gerçekleştirdiğimiz ${referans.name} projesi.`}
                           </p>
                           
                           <div className="flex items-center justify-between text-xs text-gray-500 mb-3">
@@ -342,7 +406,7 @@ export default function ReferanslarimizPage() {
                               </div>
                               <div className="flex items-center gap-1">
                                 <Building className="w-3 h-3" />
-                                <span>{referans.client}</span>
+                                <span>{referans.client || referans.name}</span>
                               </div>
                             </div>
                             <div className="flex items-center gap-1">
@@ -431,43 +495,6 @@ export default function ReferanslarimizPage() {
                   </div>
                 </div>
 
-                {/* Öne Çıkan Projeler */}
-                <div className="bg-gray-50 border border-gray-200 rounded-lg p-6">
-                  <h3 className="font-neuropol font-bold text-lg mb-4 text-slate-900">
-                    Öne Çıkan Projeler
-                  </h3>
-                  <div className="space-y-4">
-                    {featuredReferanslar.slice(0, 3).map((referans) => (
-                      <Link
-                        key={referans.id}
-                        href={`/referanslarimiz/${referans.id}`}
-                        className="block group"
-                      >
-                        <div className="flex gap-3">
-                          <div className="relative w-16 h-12 flex-shrink-0 rounded overflow-hidden bg-gray-100">
-                            <Image
-                              src={referans.image}
-                              alt={referans.title}
-                              fill
-                              className="object-cover group-hover:scale-105 transition-transform duration-300"
-                            />
-                          </div>
-                          <div className="flex-1 min-w-0">
-                            <h4 className="text-sm font-medium text-slate-900 group-hover:text-blue-600 transition-colors line-clamp-2 mb-1">
-                              {referans.title}
-                            </h4>
-                            <div className="flex items-center gap-2 text-xs text-gray-500">
-                              <span className={`px-2 py-0.5 rounded-full ${getCategoryColor(referans.category)}`}>
-                                {referans.category}
-                              </span>
-                              <span>{new Date(referans.date).toLocaleDateString('tr-TR')}</span>
-                            </div>
-                          </div>
-                        </div>
-                      </Link>
-                    ))}
-                  </div>
-                </div>
 
               </div>
             </div>

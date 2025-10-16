@@ -3,13 +3,13 @@ import { prisma } from '@/lib/prisma'
 
 export async function GET() {
   try {
-    const references = await prisma.reference.findMany({
+    const categories = await prisma.referenceCategory.findMany({
       where: { isActive: true },
-      orderBy: { createdAt: 'desc' }
+      orderBy: { name: 'asc' }
     })
-    return NextResponse.json(references)
+    return NextResponse.json(categories)
   } catch (error) {
-    console.error('References fetch error:', error)
+    console.error('Reference categories fetch error:', error)
     return NextResponse.json({ error: 'Sunucu hatası' }, { status: 500 })
   }
 }

@@ -42,6 +42,15 @@ model ProductCategory {
   products      Product[]
 }
 
+model ReferenceCategory {
+  id        String   @id @default(cuid())
+  name      String   @unique
+  color     String   @default("bg-gray-100 text-gray-800")
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
 model CorporateMediaProduct {
   id          String   @id @default(cuid())
   title       String
@@ -97,6 +106,31 @@ model Reference {
   sector        String
   logoUrl       String?
   logoPublicId  String?
+  
+  // Proje detayları
+  title         String?
+  excerpt       String?
+  content       String?
+  category      String?
+  location      String?
+  client        String?
+  projectValue  String?
+  duration      String?
+  
+  // SEO
+  slug          String?  @unique
+  
+  // Görsel içerik
+  mainImage     String?
+  mainImagePublicId String?
+  gallery       String[] // JSON array of image URLs
+  galleryPublicIds String[] // JSON array of Cloudinary public IDs
+  
+  // Metadata
+  tags          String[] // JSON array of tags
+  featured      Boolean  @default(false)
+  views         Int      @default(0)
+
   isActive      Boolean  @default(true)
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt

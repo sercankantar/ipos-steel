@@ -1,13 +1,38 @@
 "use client"
 
 import MaxWidthWrapper from '@/components/MaxWidthWrapper'
-import { Calendar, User, Eye, ArrowLeft, Share2, MapPin, Building, DollarSign, Clock, ChevronLeft, ChevronRight, X } from 'lucide-react'
+import { Calendar, User, Eye, ArrowLeft, Share2, MapPin, Building, DollarSign, Clock, ChevronLeft, ChevronRight, X, Copy, Facebook, Twitter, Linkedin, MessageCircle, Mail } from 'lucide-react'
 import Link from 'next/link'
 import { useParams } from 'next/navigation'
 import { useState, useEffect } from 'react'
 import Image from 'next/image'
 
-// Statik referanslar (referanslarimiz/page.tsx ile aynı)
+// Referans interface'i
+interface Reference {
+  id: string
+  name: string
+  sector: string
+  logoUrl?: string
+  title?: string
+  excerpt?: string
+  content?: string
+  category?: string
+  location?: string
+  client?: string
+  projectValue?: string
+  duration?: string
+  slug?: string
+  mainImage?: string
+  gallery?: string[]
+  tags?: string[]
+  featured?: boolean
+  views?: number
+  isActive: boolean
+  createdAt: string
+  updatedAt: string
+}
+
+// Fallback statik referanslar
 const staticReferences = [
   {
     id: 1,
@@ -177,8 +202,17 @@ const staticReferences = [
   }
 ]
 
-// Kategori renk haritası
-const getCategoryColor = (category: string) => {
+// Kategori renk haritası - database'den gelen kategorileri kullan
+const getCategoryColor = (category: string, dbCategories: {name: string, color: string}[]) => {
+  // Önce database'den gelen kategorileri kontrol et
+  if (dbCategories && Array.isArray(dbCategories)) {
+    const dbCategory = dbCategories.find(cat => cat.name === category)
+    if (dbCategory) {
+      return dbCategory.color
+    }
+  }
+  
+  // Fallback statik renkler
   const colors: Record<string, string> = {
     'Güneş Enerjisi': 'bg-yellow-100 text-yellow-800',
     'Endüstriyel': 'bg-blue-100 text-blue-800',
@@ -198,18 +232,150 @@ export default function ReferansDetayPage() {
   const params = useParams()
   const [selectedImageIndex, setSelectedImageIndex] = useState<number | null>(null)
   const [isGalleryOpen, setIsGalleryOpen] = useState(false)
-  const [referans, setReferans] = useState<any | null>(null)
+  const [referans, setReferans] = useState<Reference | null>(null)
   const [loading, setLoading] = useState(true)
+  const [dbCategories, setDbCategories] = useState<{name: string, color: string}[]>([])
+  const [shareMenuOpen, setShareMenuOpen] = useState(false)
+
+  // Paylaş fonksiyonları
+  const handleShare = async () => {
+    if (!referans) return
+    
+    const shareData = {
+      title: referans.title || referans.name,
+      text: referans.excerpt || `${referans.client || referans.name} projesi hakkında detaylar`,
+      url: window.location.href
+    }
+
+    // Modern Web Share API varsa kullan
+    if (navigator.share) {
+      try {
+        await navigator.share(shareData)
+      } catch (error) {
+        console.log('Paylaşım iptal edildi')
+      }
+    } else {
+      // Fallback: Paylaş menüsünü aç
+      setShareMenuOpen(true)
+    }
+  }
+
+  const copyToClipboard = async () => {
+    try {
+      await navigator.clipboard.writeText(window.location.href)
+      alert('Link kopyalandı!')
+      setShareMenuOpen(false)
+    } catch (error) {
+      console.error('Kopyalama hatası:', error)
+    }
+  }
+
+  const shareToSocial = (platform: string) => {
+    if (!referans) return
+    
+    const url = encodeURIComponent(window.location.href)
+    const title = encodeURIComponent(referans.title || referans.name)
+    const text = encodeURIComponent(referans.excerpt || `${referans.client || referans.name} projesi`)
+    
+    let shareUrl = ''
+    
+    switch (platform) {
+      case 'facebook':
+        shareUrl = `https://www.facebook.com/sharer/sharer.php?u=${url}`
+        break
+      case 'twitter':
+        shareUrl = `https://twitter.com/intent/tweet?url=${url}&text=${title}`
+        break
+      case 'linkedin':
+        shareUrl = `https://www.linkedin.com/sharing/share-offsite/?url=${url}`
+        break
+      case 'whatsapp':
+        shareUrl = `https://wa.me/?text=${title}%20${url}`
+        break
+      case 'email':
+        shareUrl = `mailto:?subject=${title}&body=${text}%0A%0A${url}`
+        break
+    }
+    
+    if (shareUrl) {
+      window.open(shareUrl, '_blank', 'width=600,height=400')
+      setShareMenuOpen(false)
+    }
+  }
+
+  // Paylaş menüsünü dışarı tıklayınca kapat
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (shareMenuOpen && !(event.target as Element).closest('.share-menu')) {
+        setShareMenuOpen(false)
+      }
+    }
+
+    document.addEventListener('mousedown', handleClickOutside)
+    return () => document.removeEventListener('mousedown', handleClickOutside)
+  }, [shareMenuOpen])
 
   useEffect(() => {
     const load = async () => {
-      const id = params.id as string
+      const slugOrId = params.id as string
       try {
-        // API çağrısı burada olacak, şimdilik statik veri kullanıyoruz
-        const found = staticReferences.find(r => String(r.id) === String(id))
+        setLoading(true)
+        
+        // Kategorileri çek
+        const categoriesResponse = await fetch('/api/reference-categories')
+        if (categoriesResponse.ok) {
+          const categoriesData = await categoriesResponse.json()
+          setDbCategories(Array.isArray(categoriesData) ? categoriesData : [])
+        } else {
+          setDbCategories([])
+        }
+        
+        // Önce slug ile dene
+        try {
+          const slugResponse = await fetch(`/api/references/${slugOrId}`)
+          if (slugResponse.ok) {
+            const referenceData = await slugResponse.json()
+            setReferans(referenceData)
+            // Görüntülenme sayısını artır
+            try {
+              await fetch(`/api/references/${referenceData.id}/view`, { method: 'POST' })
+            } catch (error) {
+              console.log('View count update failed:', error)
+            }
+            return
+          }
+        } catch (error) {
+          console.log('Slug fetch failed, trying with ID:', error)
+        }
+        
+        // Slug ile bulunamazsa, tüm referansları çekip ID ile ara
+        const referencesResponse = await fetch('/api/references')
+        if (referencesResponse.ok) {
+          const references = await referencesResponse.json()
+          const found = references.find((r: Reference) => String(r.id) === String(slugOrId))
+          if (found) {
+            setReferans(found)
+            // Görüntülenme sayısını artır
+            try {
+              await fetch(`/api/references/${found.id}/view`, { method: 'POST' })
+            } catch (error) {
+              console.log('View count update failed:', error)
+            }
+          } else {
+            // API'de bulunamadıysa statik veriden ara
+            const staticFound = staticReferences.find(r => String(r.id) === String(slugOrId))
+            setReferans(staticFound || null)
+          }
+        } else {
+          // API hatası durumunda statik veri kullan
+          const found = staticReferences.find(r => String(r.id) === String(slugOrId))
+          setReferans(found || null)
+        }
+      } catch (error) {
+        console.error('Referans yüklenirken hata:', error)
+        // Hata durumunda statik veri kullan
+        const found = staticReferences.find(r => String(r.id) === String(slugOrId))
         setReferans(found || null)
-      } catch {
-        setReferans(null)
       } finally {
         setLoading(false)
       }
@@ -299,7 +465,7 @@ export default function ReferansDetayPage() {
               <span className='mx-2'>/</span>
               <Link href='/referanslarimiz' className='hover:text-white transition-colors'>Referanslarımız</Link>
               <span className='mx-2'>/</span>
-              <span>{referans.title}</span>
+              <span>{referans.title || referans.name}</span>
             </nav>
             
             <div className='flex items-center gap-4 mb-6'>
@@ -315,10 +481,10 @@ export default function ReferansDetayPage() {
             <div className='grid lg:grid-cols-3 gap-8'>
               <div className='lg:col-span-2'>
                 <h1 className='font-neuropol text-3xl lg:text-4xl font-bold mb-4'>
-                  {referans.title}
+                  {referans.title || referans.name}
                 </h1>
                 <p className='text-lg text-gray-300 mb-6'>
-                  {referans.excerpt}
+                  {referans.excerpt || `${referans.sector} sektöründe gerçekleştirdiğimiz ${referans.name} projesi.`}
                 </p>
               </div>
               
@@ -328,7 +494,7 @@ export default function ReferansDetayPage() {
                   <div className='flex items-center gap-2'>
                     <Calendar className='w-4 h-4 text-gray-400' />
                     <span className='text-gray-300'>Tarih:</span>
-                    <span>{new Date(referans.date).toLocaleDateString('tr-TR')}</span>
+                    <span>{new Date(referans.createdAt).toLocaleDateString('tr-TR')}</span>
                   </div>
                   <div className='flex items-center gap-2'>
                     <MapPin className='w-4 h-4 text-gray-400' />
@@ -338,7 +504,7 @@ export default function ReferansDetayPage() {
                   <div className='flex items-center gap-2'>
                     <Building className='w-4 h-4 text-gray-400' />
                     <span className='text-gray-300'>Müşteri:</span>
-                    <span>{referans.client}</span>
+                    <span>{referans.client || referans.name}</span>
                   </div>
                   <div className='flex items-center gap-2'>
                     <DollarSign className='w-4 h-4 text-gray-400' />
@@ -371,8 +537,8 @@ export default function ReferansDetayPage() {
               <div className='mb-8'>
                 <div className='relative h-96 rounded-lg overflow-hidden cursor-pointer' onClick={() => openGallery(0)}>
                   <Image
-                    src={referans.gallery?.[0] || referans.image}
-                    alt={referans.title}
+                    src={referans.gallery?.[0] || referans.mainImage || referans.image || 'https://images.unsplash.com/photo-1509391366360-2e959784a276?w=800&h=600&fit=crop'}
+                    alt={referans.title || referans.name}
                     fill
                     className='object-cover hover:scale-105 transition-transform duration-300'
                   />
@@ -410,10 +576,80 @@ export default function ReferansDetayPage() {
                 <div className='mt-8 pt-6 border-t border-gray-200'>
                   <div className='flex items-center justify-between'>
                     <h4 className='text-sm font-semibold text-gray-900'>Bu projeyi paylaş</h4>
-                    <button className='flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors'>
-                      <Share2 className='w-4 h-4' />
-                      <span>Paylaş</span>
-                    </button>
+                    <div className='relative'>
+                      <button 
+                        onClick={handleShare}
+                        className='flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors'
+                      >
+                        <Share2 className='w-4 h-4' />
+                        <span>Paylaş</span>
+                      </button>
+
+                      {/* Paylaş Menüsü */}
+                      {shareMenuOpen && (
+                        <div className='share-menu absolute right-0 top-12 bg-white border border-gray-200 rounded-lg shadow-lg p-4 w-64 z-50'>
+                          <div className='flex items-center justify-between mb-3'>
+                            <h5 className='text-sm font-semibold text-gray-900'>Paylaş</h5>
+                            <button 
+                              onClick={() => setShareMenuOpen(false)}
+                              className='text-gray-400 hover:text-gray-600'
+                            >
+                              <X className='w-4 h-4' />
+                            </button>
+                          </div>
+                          
+                          {/* Sosyal Medya Butonları */}
+                          <div className='grid grid-cols-2 gap-2 mb-3'>
+                            <button
+                              onClick={() => shareToSocial('facebook')}
+                              className='flex items-center gap-2 p-2 text-sm text-blue-600 hover:bg-blue-50 rounded-md transition-colors'
+                            >
+                              <Facebook className='w-4 h-4' />
+                              Facebook
+                            </button>
+                            <button
+                              onClick={() => shareToSocial('twitter')}
+                              className='flex items-center gap-2 p-2 text-sm text-sky-600 hover:bg-sky-50 rounded-md transition-colors'
+                            >
+                              <Twitter className='w-4 h-4' />
+                              Twitter
+                            </button>
+                            <button
+                              onClick={() => shareToSocial('linkedin')}
+                              className='flex items-center gap-2 p-2 text-sm text-blue-700 hover:bg-blue-50 rounded-md transition-colors'
+                            >
+                              <Linkedin className='w-4 h-4' />
+                              LinkedIn
+                            </button>
+                            <button
+                              onClick={() => shareToSocial('whatsapp')}
+                              className='flex items-center gap-2 p-2 text-sm text-green-600 hover:bg-green-50 rounded-md transition-colors'
+                            >
+                              <MessageCircle className='w-4 h-4' />
+                              WhatsApp
+                            </button>
+                          </div>
+
+                          {/* Email ve Link Kopyala */}
+                          <div className='space-y-2 pt-3 border-t border-gray-100'>
+                            <button
+                              onClick={() => shareToSocial('email')}
+                              className='w-full flex items-center gap-2 p-2 text-sm text-gray-600 hover:bg-gray-50 rounded-md transition-colors'
+                            >
+                              <Mail className='w-4 h-4' />
+                              E-posta ile gönder
+                            </button>
+                            <button
+                              onClick={copyToClipboard}
+                              className='w-full flex items-center gap-2 p-2 text-sm text-gray-600 hover:bg-gray-50 rounded-md transition-colors'
+                            >
+                              <Copy className='w-4 h-4' />
+                              Linki kopyala
+                            </button>
+                          </div>
+                        </div>
+                      )}
+                    </div>
                   </div>
                 </div>
               </div>
@@ -424,8 +660,8 @@ export default function ReferansDetayPage() {
               {/* Kategori */}
               <div className='bg-white rounded-lg shadow-sm p-6'>
                 <h3 className='text-lg font-semibold text-gray-900 mb-4'>Kategori</h3>
-                <span className={`inline-block px-4 py-2 rounded-full text-sm font-medium ${getCategoryColor(referans.category)}`}>
-                  {referans.category}
+                <span className={`inline-block px-4 py-2 rounded-full text-sm font-medium ${getCategoryColor(referans.category || referans.sector, dbCategories)}`}>
+                  {referans.category || referans.sector}
                 </span>
               </div>
 

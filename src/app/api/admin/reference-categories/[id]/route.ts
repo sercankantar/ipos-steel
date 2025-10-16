@@ -7,35 +7,23 @@ export async function PUT(request: NextRequest, { params }: { params: { id: stri
     const isAuthenticated = await isAdminAuthenticated()
     if (!isAuthenticated) return NextResponse.json({ error: 'Yetkisiz' }, { status: 401 })
     
-    const data = await request.json()
-    const updated = await prisma.reference.update({
+    const { name, color, isActive } = await request.json()
+    
+    const updated = await prisma.referenceCategory.update({
       where: { id: params.id },
       data: {
-        name: data.name,
-        sector: data.sector,
-        logoUrl: data.logoUrl,
-        logoPublicId: data.logoPublicId,
-        title: data.title,
-        excerpt: data.excerpt,
-        content: data.content,
-        category: data.category,
-        location: data.location,
-        client: data.client,
-        projectValue: data.projectValue,
-        duration: data.duration,
-        slug: data.slug,
-        mainImage: data.mainImage,
-        mainImagePublicId: data.mainImagePublicId,
-        gallery: data.gallery || [],
-        galleryPublicIds: data.galleryPublicIds || [],
-        tags: data.tags || [],
-        featured: data.featured ?? false,
-        isActive: data.isActive ?? true
+        name,
+        color,
+        isActive
       }
     })
+    
     return NextResponse.json(updated)
   } catch (error) {
-    console.error('Reference update error:', error)
+    console.error('Reference category update error:', error)
+    if (error.code === 'P2002') {
+      return NextResponse.json({ error: 'Bu kategori adı zaten mevcut' }, { status: 400 })
+    }
     return NextResponse.json({ error: 'Sunucu hatası' }, { status: 500 })
   }
 }
@@ -44,11 +32,14 @@ export async function DELETE(request: NextRequest, { params }: { params: { id: s
   try {
     const isAuthenticated = await isAdminAuthenticated()
     if (!isAuthenticated) return NextResponse.json({ error: 'Yetkisiz' }, { status: 401 })
-    await prisma.reference.delete({ where: { id: params.id } })
+    
+    await prisma.referenceCategory.delete({
+      where: { id: params.id }
+    })
+    
     return NextResponse.json({ success: true })
   } catch (error) {
+    console.error('Reference category delete error:', error)
     return NextResponse.json({ error: 'Sunucu hatası' }, { status: 500 })
   }
 }
-
-

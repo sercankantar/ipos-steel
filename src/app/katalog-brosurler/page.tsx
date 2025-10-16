@@ -102,6 +102,22 @@ const staticCatalogs = [
 
 const categories = ['Tümü', 'Genel Katalog', 'Güneş Enerjisi', 'Endüstriyel', 'Kablo Merdivenleri', 'Destek Sistemleri']
 
+// Katalog kategori renk haritası
+const getCatalogCategoryColor = (category: string) => {
+  const colors: Record<string, string> = {
+    'Genel Katalog': 'bg-blue-600 text-white',
+    'Güneş Enerjisi': 'bg-yellow-600 text-white',
+    'Endüstriyel': 'bg-gray-600 text-white',
+    'Kablo Merdivenleri': 'bg-green-600 text-white',
+    'Destek Sistemleri': 'bg-purple-600 text-white',
+    'Elektrik Sistemleri': 'bg-red-600 text-white',
+    'Montaj Kılavuzları': 'bg-orange-600 text-white',
+    'Teknik Dökümanlar': 'bg-cyan-600 text-white',
+    'Sertifikalar': 'bg-indigo-600 text-white'
+  }
+  return colors[category] || 'bg-slate-600 text-white'
+}
+
 export default function KatalogBrosurlerPage() {
   const [selectedCategory, setSelectedCategory] = useState('Tümü')
   const [searchTerm, setSearchTerm] = useState('')
@@ -205,7 +221,7 @@ export default function KatalogBrosurlerPage() {
                         className='object-cover'
                       />
                       <div className='absolute top-3 right-3'>
-                        <span className='bg-blue-600 text-white px-2 py-1 rounded text-xs font-medium'>
+                        <span className={`px-2 py-1 rounded text-xs font-medium ${getCatalogCategoryColor(catalog.category)}`}>
                           {catalog.category}
                         </span>
                       </div>
