@@ -177,9 +177,26 @@ const staticReferences = [
   }
 ]
 
+// Kategori renk haritası
+const getCategoryColor = (category: string) => {
+  const colors: Record<string, string> = {
+    'Güneş Enerjisi': 'bg-yellow-100 text-yellow-800',
+    'Endüstriyel': 'bg-blue-100 text-blue-800',
+    'Ticari': 'bg-purple-100 text-purple-800',
+    'Sağlık': 'bg-green-100 text-green-800',
+    'Teknoloji': 'bg-cyan-100 text-cyan-800',
+    'Eğitim': 'bg-indigo-100 text-indigo-800',
+    'Otomotiv': 'bg-red-100 text-red-800',
+    'Enerji': 'bg-orange-100 text-orange-800',
+    'Altyapı': 'bg-teal-100 text-teal-800',
+    'İnşaat': 'bg-stone-100 text-stone-800'
+  }
+  return colors[category] || 'bg-gray-100 text-gray-800'
+}
+
 export default function ReferansDetayPage() {
   const params = useParams()
-  const [selectedImageIndex, setSelectedImageIndex] = useState<number | null>(0)
+  const [selectedImageIndex, setSelectedImageIndex] = useState<number | null>(null)
   const [isGalleryOpen, setIsGalleryOpen] = useState(false)
   const [referans, setReferans] = useState<any | null>(null)
   const [loading, setLoading] = useState(true)
@@ -199,6 +216,33 @@ export default function ReferansDetayPage() {
     }
     load()
   }, [params.id])
+
+  // Keyboard event listener for ESC key
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (!isGalleryOpen) return
+      
+      if (event.key === 'Escape') {
+        closeGallery()
+      }
+      if (event.key === 'ArrowLeft' && referans?.gallery && referans.gallery.length > 1) {
+        prevImage()
+      }
+      if (event.key === 'ArrowRight' && referans?.gallery && referans.gallery.length > 1) {
+        nextImage()
+      }
+    }
+
+    if (isGalleryOpen) {
+      document.addEventListener('keydown', handleKeyDown)
+      document.body.style.overflow = 'hidden' // Prevent background scrolling
+    }
+
+    return () => {
+      document.removeEventListener('keydown', handleKeyDown)
+      document.body.style.overflow = 'unset'
+    }
+  }, [isGalleryOpen, selectedImageIndex, referans])
   
   // Galeri fonksiyonları
   const openGallery = (imageIndex: number) => {
@@ -212,13 +256,13 @@ export default function ReferansDetayPage() {
   }
 
   const nextImage = () => {
-    if (referans?.gallery && selectedImageIndex !== null) {
+    if (referans?.gallery && selectedImageIndex !== null && referans.gallery.length > 0) {
       setSelectedImageIndex((selectedImageIndex + 1) % referans.gallery.length)
     }
   }
 
   const prevImage = () => {
-    if (referans?.gallery && selectedImageIndex !== null) {
+    if (referans?.gallery && selectedImageIndex !== null && referans.gallery.length > 0) {
       setSelectedImageIndex(selectedImageIndex === 0 ? referans.gallery.length - 1 : selectedImageIndex - 1)
     }
   }
@@ -327,7 +371,7 @@ export default function ReferansDetayPage() {
               <div className='mb-8'>
                 <div className='relative h-96 rounded-lg overflow-hidden cursor-pointer' onClick={() => openGallery(0)}>
                   <Image
-                    src={referans.image}
+                    src={referans.gallery?.[0] || referans.image}
                     alt={referans.title}
                     fill
                     className='object-cover hover:scale-105 transition-transform duration-300'
@@ -380,7 +424,7 @@ export default function ReferansDetayPage() {
               {/* Kategori */}
               <div className='bg-white rounded-lg shadow-sm p-6'>
                 <h3 className='text-lg font-semibold text-gray-900 mb-4'>Kategori</h3>
-                <span className='inline-block px-4 py-2 bg-blue-100 text-blue-800 rounded-full text-sm font-medium'>
+                <span className={`inline-block px-4 py-2 rounded-full text-sm font-medium ${getCategoryColor(referans.category)}`}>
                   {referans.category}
                 </span>
               </div>
@@ -432,43 +476,52 @@ export default function ReferansDetayPage() {
       </MaxWidthWrapper>
 
       {/* Galeri Modal */}
-      {isGalleryOpen && referans.gallery && selectedImageIndex !== null && (
-        <div className='fixed inset-0 bg-black/90 z-50 flex items-center justify-center p-4'>
-          <div className='relative max-w-4xl max-h-full'>
-            <button
-              onClick={closeGallery}
-              className='absolute top-4 right-4 text-white hover:text-gray-300 z-10'
-            >
-              <X className='w-8 h-8' />
-            </button>
-            
-            <div className='relative h-[80vh] w-full'>
+      {isGalleryOpen && referans?.gallery && selectedImageIndex !== null && referans.gallery[selectedImageIndex] && (
+        <div 
+          className='fixed inset-0 bg-black/90 z-50 flex items-center justify-center p-4'
+          onClick={closeGallery}
+        >
+          <div 
+            className='relative max-w-4xl max-h-full'
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className='relative h-[80vh] w-full min-w-[60vw]'>
               <Image
                 src={referans.gallery[selectedImageIndex]}
                 alt={`${referans.title} - ${selectedImageIndex + 1}`}
                 fill
                 className='object-contain'
+                priority
               />
+              
+              {/* Close button inside the image container */}
+              <button
+                onClick={closeGallery}
+                className='absolute top-4 right-4 text-white hover:text-gray-300 z-30 bg-black/70 hover:bg-black/90 rounded-full p-2 transition-all duration-200'
+              >
+                <X className='w-5 h-5' />
+              </button>
+              
+              {/* Navigation buttons inside the image container */}
+              {referans.gallery.length > 1 && (
+                <>
+                  <button
+                    onClick={prevImage}
+                    className='absolute left-4 top-1/2 -translate-y-1/2 text-white hover:text-gray-300 bg-black/70 hover:bg-black/90 rounded-full p-3 transition-all duration-200 z-20'
+                  >
+                    <ChevronLeft className='w-6 h-6' />
+                  </button>
+                  <button
+                    onClick={nextImage}
+                    className='absolute right-4 top-1/2 -translate-y-1/2 text-white hover:text-gray-300 bg-black/70 hover:bg-black/90 rounded-full p-3 transition-all duration-200 z-20'
+                  >
+                    <ChevronRight className='w-6 h-6' />
+                  </button>
+                </>
+              )}
             </div>
 
-            {referans.gallery.length > 1 && (
-              <>
-                <button
-                  onClick={prevImage}
-                  className='absolute left-4 top-1/2 -translate-y-1/2 text-white hover:text-gray-300'
-                >
-                  <ChevronLeft className='w-8 h-8' />
-                </button>
-                <button
-                  onClick={nextImage}
-                  className='absolute right-4 top-1/2 -translate-y-1/2 text-white hover:text-gray-300'
-                >
-                  <ChevronRight className='w-8 h-8' />
-                </button>
-              </>
-            )}
-
-            <div className='absolute bottom-4 left-1/2 -translate-x-1/2 text-white text-sm'>
+            <div className='absolute bottom-6 left-1/2 -translate-x-1/2 text-white text-sm bg-black/70 px-4 py-2 rounded-full font-medium'>
               {selectedImageIndex + 1} / {referans.gallery.length}
             </div>
           </div>

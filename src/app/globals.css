@@ -28,22 +28,22 @@
     --card-foreground: 222.2 84% 4.9%;
     --popover: 0 0% 100%;
     --popover-foreground: 222.2 84% 4.9%;
-    --primary: 224 76% 41%; /* IPOS Steel primary blue */
+    --primary: 224 76% 41%; /* IPOS-Steel primary blue */
     --primary-foreground: 210 40% 98%;
-    --secondary: 222 84% 5%; /* IPOS Steel navy */
+    --secondary: 222 84% 5%; /* IPOS-Steel navy */
     --secondary-foreground: 210 40% 98%;
-    --muted: 0 0% 86%; /* IPOS Steel gray */
+    --muted: 0 0% 86%; /* IPOS-Steel gray */
     --muted-foreground: 215.4 16.3% 46.9%;
     --accent: 210 40% 96.1%;
     --accent-foreground: 222.2 47.4% 11.2%;
-    --destructive: 0 84% 60%; /* IPOS Steel error red */
+    --destructive: 0 84% 60%; /* IPOS-Steel error red */
     --destructive-foreground: 210 40% 98%;
     --border: 214.3 31.8% 91.4%;
     --input: 214.3 31.8% 91.4%;
     --ring: 224 76% 41%;
     --radius: 0.5rem;
     
-    /* IPOS Steel Custom Variables */
+    /* IPOS-Steel Custom Variables */
     --ipos-primary-blue: 30 58% 200; /* #1e40af */
     --ipos-secondary-navy: 15 23% 30; /* #0f172a */
     --ipos-success-green: 160 84% 39; /* #059669 */
@@ -126,7 +126,7 @@
   scale: 1 !important ;
 }
 
-/* IPOS Steel Component Styles */
+/* IPOS-Steel Component Styles */
 @layer components {
   /* Button Styles */
   .btn-primary {
