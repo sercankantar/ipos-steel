@@ -121,8 +121,8 @@ export default function KatalogBrosurlerPage() {
     return filtered
   }, [selectedCategory, searchTerm])
 
-  const featuredCatalogs = filteredCatalogs.filter(catalog => catalog.featured)
-  const regularCatalogs = filteredCatalogs.filter(catalog => !catalog.featured)
+  // Tüm katalogları tek listede göster
+  const allCatalogs = filteredCatalogs
 
   const handleDownload = (catalog: any) => {
     // Gerçek uygulamada dosya indirme işlemi burada yapılacak
@@ -190,12 +190,12 @@ export default function KatalogBrosurlerPage() {
             </div>
           </div>
 
-          {/* Öne Çıkan Kataloglar */}
-          {featuredCatalogs.length > 0 && (
-            <div className='mb-12'>
-              <h2 className='text-2xl font-bold text-gray-900 mb-6'>Öne Çıkan Kataloglar</h2>
+          {/* Tüm Kataloglar */}
+          {allCatalogs.length > 0 && (
+            <div>
+              <h2 className='text-2xl font-bold text-gray-900 mb-6'>Katalog & Broşürler</h2>
               <div className='grid md:grid-cols-2 lg:grid-cols-3 gap-6'>
-                {featuredCatalogs.map((catalog) => (
+                {allCatalogs.map((catalog) => (
                   <div key={catalog.id} className='bg-white rounded-lg shadow-md overflow-hidden hover:shadow-xl transition-shadow duration-300'>
                     <div className='relative h-48'>
                       <Image
@@ -204,11 +204,6 @@ export default function KatalogBrosurlerPage() {
                         fill
                         className='object-cover'
                       />
-                      <div className='absolute top-3 left-3'>
-                        <span className='bg-red-500 text-white px-2 py-1 rounded text-xs font-medium'>
-                          ÖNE ÇIKAN
-                        </span>
-                      </div>
                       <div className='absolute top-3 right-3'>
                         <span className='bg-blue-600 text-white px-2 py-1 rounded text-xs font-medium'>
                           {catalog.category}
@@ -248,54 +243,6 @@ export default function KatalogBrosurlerPage() {
                       >
                         <Download className='w-4 h-4' />
                         İndir ({catalog.fileSize})
-                      </button>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
-
-          {/* Diğer Kataloglar */}
-          {regularCatalogs.length > 0 && (
-            <div>
-              <h2 className='text-2xl font-bold text-gray-900 mb-6'>Tüm Kataloglar</h2>
-              <div className='grid md:grid-cols-2 lg:grid-cols-3 gap-6'>
-                {regularCatalogs.map((catalog) => (
-                  <div key={catalog.id} className='bg-white rounded-lg shadow-md overflow-hidden hover:shadow-xl transition-shadow duration-300'>
-                    <div className='relative h-40'>
-                      <Image
-                        src={catalog.image}
-                        alt={catalog.title}
-                        fill
-                        className='object-cover'
-                      />
-                      <div className='absolute top-3 right-3'>
-                        <span className='bg-blue-600 text-white px-2 py-1 rounded text-xs font-medium'>
-                          {catalog.category}
-                        </span>
-                      </div>
-                    </div>
-                    
-                    <div className='p-5'>
-                      <h3 className='text-md font-bold text-gray-900 mb-2 line-clamp-2'>
-                        {catalog.title}
-                      </h3>
-                      <p className='text-gray-600 text-sm mb-3 line-clamp-2'>
-                        {catalog.description}
-                      </p>
-                      
-                      <div className='flex justify-between text-xs text-gray-500 mb-3'>
-                        <span>{catalog.pages} sayfa</span>
-                        <span>{catalog.downloadCount} indirme</span>
-                      </div>
-                      
-                      <button
-                        onClick={() => handleDownload(catalog)}
-                        className='w-full bg-blue-600 hover:bg-blue-700 text-white py-2 px-3 rounded-lg text-sm font-medium transition-colors duration-200 flex items-center justify-center gap-2'
-                      >
-                        <Download className='w-3 h-3' />
-                        İndir
                       </button>
                     </div>
                   </div>

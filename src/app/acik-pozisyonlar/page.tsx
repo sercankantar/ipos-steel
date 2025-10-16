@@ -74,10 +74,61 @@ const jobListings = [
       'Detay odaklı çalışma'
     ],
     featured: true
+  },
+  {
+    id: 5,
+    title: 'İnsan Kaynakları Uzmanı',
+    department: 'İnsan Kaynakları',
+    location: 'Kocaeli, Dilovası',
+    type: 'Tam Zamanlı',
+    experience: '1-3 yıl',
+    publishDate: '2024-01-03',
+    description: 'Personel işe alım süreçleri ve çalışan ilişkileri yönetimi.',
+    requirements: [
+      'İnsan Kaynakları mezunu',
+      'İşe alım deneyimi',
+      'İletişim becerileri',
+      'MS Office bilgisi'
+    ],
+    featured: false
+  },
+  {
+    id: 6,
+    title: 'Ar-Ge Mühendisi',
+    department: 'Ar-Ge',
+    location: 'Kocaeli, Dilovası',
+    type: 'Tam Zamanlı',
+    experience: '3-6 yıl',
+    publishDate: '2024-01-01',
+    description: 'Yeni ürün geliştirme ve mevcut ürünlerin iyileştirilmesi projeleri.',
+    requirements: [
+      'Makine/Elektrik Mühendisliği',
+      'CAD yazılımları bilgisi',
+      'Proje yönetimi deneyimi',
+      'Yaratıcı düşünme'
+    ],
+    featured: false
   }
 ]
 
-const departments = ['Tümü', 'Mühendislik', 'Üretim', 'Satış', 'Kalite']
+const departments = ['Tümü', 'Mühendislik', 'Üretim', 'Satış', 'Kalite', 'İnsan Kaynakları', 'Ar-Ge']
+
+// Departman renk haritası
+const getDepartmentColor = (department: string) => {
+  const colors: Record<string, string> = {
+    'Mühendislik': 'bg-blue-100 text-blue-800',
+    'Üretim': 'bg-green-100 text-green-800',
+    'Satış': 'bg-purple-100 text-purple-800',
+    'Kalite': 'bg-orange-100 text-orange-800',
+    'İnsan Kaynakları': 'bg-pink-100 text-pink-800',
+    'Muhasebe': 'bg-indigo-100 text-indigo-800',
+    'IT': 'bg-cyan-100 text-cyan-800',
+    'Lojistik': 'bg-yellow-100 text-yellow-800',
+    'Ar-Ge': 'bg-red-100 text-red-800',
+    'Pazarlama': 'bg-teal-100 text-teal-800'
+  }
+  return colors[department] || 'bg-gray-100 text-gray-800'
+}
 
 export default function AcikPozisyonlar() {
   const [selectedDepartment, setSelectedDepartment] = useState('Tümü')
@@ -220,7 +271,7 @@ export default function AcikPozisyonlar() {
                       <div className='flex-1'>
                         <div className='flex items-center gap-3 mb-2'>
                           <h3 className='text-lg font-bold text-gray-900'>{job.title}</h3>
-                          <span className='bg-blue-100 text-blue-800 text-xs font-medium px-2 py-1 rounded'>
+                          <span className={`${getDepartmentColor(job.department)} text-xs font-medium px-2 py-1 rounded`}>
                             {job.department}
                           </span>
                         </div>
@@ -253,9 +304,12 @@ export default function AcikPozisyonlar() {
                           Detayları Gör
                           <ChevronRight className='w-4 h-4' />
                         </Link>
-                        <button className='bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors duration-200'>
+                        <Link
+                          href='/basvuru'
+                          className='bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors duration-200 inline-block text-center'
+                        >
                           Başvur
-                        </button>
+                        </Link>
                       </div>
                     </div>
                   </div>
@@ -282,9 +336,12 @@ export default function AcikPozisyonlar() {
               Kendinize uygun bir pozisyon bulamadıysanız, CV'nizi insan kaynakları veri tabanımıza 
               eklemek için genel başvuru yapabilirsiniz.
             </p>
-            <button className='bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded-lg font-medium transition-colors duration-200'>
+            <Link
+              href='/basvuru'
+              className='bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded-lg font-medium transition-colors duration-200 inline-block'
+            >
               Genel Başvuru Yap
-            </button>
+            </Link>
           </div>
         </div>
       </MaxWidthWrapper>

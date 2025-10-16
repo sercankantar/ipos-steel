@@ -170,6 +170,23 @@ const staticReferences = [
 
 const defaultReferenceCategories = ['Güneş Enerjisi', 'Endüstriyel', 'Ticari', 'Sağlık', 'Teknoloji', 'Eğitim']
 
+// Kategori renk haritası
+const getCategoryColor = (category: string) => {
+  const colors: Record<string, string> = {
+    'Güneş Enerjisi': 'bg-yellow-100 text-yellow-800',
+    'Endüstriyel': 'bg-blue-100 text-blue-800',
+    'Ticari': 'bg-purple-100 text-purple-800',
+    'Sağlık': 'bg-green-100 text-green-800',
+    'Teknoloji': 'bg-cyan-100 text-cyan-800',
+    'Eğitim': 'bg-indigo-100 text-indigo-800',
+    'Otomotiv': 'bg-red-100 text-red-800',
+    'Enerji': 'bg-orange-100 text-orange-800',
+    'Altyapı': 'bg-teal-100 text-teal-800',
+    'İnşaat': 'bg-stone-100 text-stone-800'
+  }
+  return colors[category] || 'bg-gray-100 text-gray-800'
+}
+
 export default function ReferanslarimizPage() {
   const [selectedKategori, setSelectedKategori] = useState('Tümü')
   const [items, setItems] = useState<any[]>(staticReferences)
@@ -277,7 +294,8 @@ export default function ReferanslarimizPage() {
                   filteredReferanslar.map((referans) => (
                     <article
                       key={referans.id}
-                      className="bg-white border border-gray-200 rounded-lg hover:shadow-lg transition-shadow group overflow-hidden p-4"
+                      className="bg-white border border-gray-200 rounded-lg hover:shadow-lg transition-shadow group overflow-hidden p-4 cursor-pointer"
+                      onClick={() => window.location.href = `/referanslarimiz/${referans.id}`}
                     >
                       <div className="flex gap-4">
                         {/* Küçük Görsel Sol Tarafta */}
@@ -293,11 +311,7 @@ export default function ReferanslarimizPage() {
                         <div className="flex-1">
                           <div className="flex items-start justify-between mb-2">
                             <div className="flex items-center gap-3">
-                              <span className={`px-3 py-1 rounded-full text-xs font-medium ${
-                                referans.featured 
-                                  ? 'bg-red-100 text-red-600' 
-                                  : 'bg-blue-100 text-blue-600'
-                              }`}>
+                              <span className={`px-3 py-1 rounded-full text-xs font-medium ${getCategoryColor(referans.category)}`}>
                                 {referans.category}
                               </span>
                               {referans.featured && (
@@ -338,13 +352,10 @@ export default function ReferanslarimizPage() {
                           </div>
                           
                           <div className="flex items-center justify-start">
-                            <Link
-                              href={`/referanslarimiz/${referans.id}`}
-                              className="inline-flex items-center gap-2 text-slate-700 hover:text-slate-900 font-medium text-sm transition-all duration-200 border border-slate-300 hover:border-slate-400 px-3 py-1.5 rounded-md bg-white hover:bg-slate-50"
-                            >
+                            <span className="inline-flex items-center gap-2 text-slate-700 group-hover:text-slate-900 font-medium text-sm transition-all duration-200 border border-slate-300 group-hover:border-slate-400 px-3 py-1.5 rounded-md bg-white group-hover:bg-slate-50">
                               Detayları Gör
                               <ArrowRight className="h-4 w-4" />
-                            </Link>
+                            </span>
                           </div>
                         </div>
                       </div>
@@ -446,7 +457,7 @@ export default function ReferanslarimizPage() {
                               {referans.title}
                             </h4>
                             <div className="flex items-center gap-2 text-xs text-gray-500">
-                              <span className="px-2 py-0.5 bg-red-100 text-red-600 rounded-full">
+                              <span className={`px-2 py-0.5 rounded-full ${getCategoryColor(referans.category)}`}>
                                 {referans.category}
                               </span>
                               <span>{new Date(referans.date).toLocaleDateString('tr-TR')}</span>

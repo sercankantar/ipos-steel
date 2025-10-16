@@ -29,7 +29,7 @@ export default function StajSurecimiz() {
                 
                 {/* Giriş Paragrafı */}
                 <p className="text-gray-700 leading-relaxed mb-8">
-                  EAE A.Ş. olarak; lise ve üniversite öğrencilerine sağladığımız staj olanağı ile öğrencilerin gelişimine destek verip iş hayatına hazırlanmalarını sağlarken, şirketimizin gelecekteki potansiyel insan kaynağını belirlemeyi hedefliyoruz.
+                  IPOS-Steel olarak; lise ve üniversite öğrencilerine sağladığımız staj olanağı ile öğrencilerin güneş enerjisi kablo tavaları ve elektrik altyapı çözümleri sektöründe gelişimine destek verip iş hayatına hazırlanmalarını sağlarken, şirketimizin gelecekteki potansiyel insan kaynağını belirlemeyi hedefliyoruz.
                 </p>
 
                 {/* Lise Stajları Bölümü */}
@@ -45,7 +45,7 @@ export default function StajSurecimiz() {
                     <li className="flex items-start">
                       <span className="w-2 h-2 bg-gray-400 rounded-full mt-2 mr-3 flex-shrink-0"></span>
                       <span>
-                        İnsan kaynakları departmanı koordinasyonunda şirket genelinde her yılın Nisan ayında "Lise Stajyerleri Kontenjan Anketi" ile bölümlerin öğrenci sayısı, meslek alanı, staj günü talepleri belirlenir.
+                        İnsan kaynakları departmanı koordinasyonunda şirket genelinde her yılın Nisan ayında "Lise Stajyerleri Kontenjan Anketi" ile bölümlerin öğrenci sayısı, meslek alanı (elektrik, makine, endüstri mühendisliği vb.), staj günü talepleri belirlenir.
                       </span>
                     </li>
                     <li className="flex items-start">
@@ -63,7 +63,7 @@ export default function StajSurecimiz() {
                     <li className="flex items-start">
                       <span className="w-2 h-2 bg-gray-400 rounded-full mt-2 mr-3 flex-shrink-0"></span>
                       <span>
-                        Stajın ilk haftasında öğrencilere şirket tanıtımı ve uygulamalarını içeren oryantasyon programı uygulanır.
+                        Stajın ilk haftasında öğrencilere şirket tanıtımı, güneş enerjisi kablo tavaları ve elektrik altyapı çözümleri hakkında bilgilendirme ve uygulamalarını içeren oryantasyon programı uygulanır.
                       </span>
                     </li>
                   </ul>
@@ -87,7 +87,7 @@ export default function StajSurecimiz() {
                       <li className="flex items-start">
                         <span className="w-2 h-2 bg-gray-400 rounded-full mt-2 mr-3 flex-shrink-0"></span>
                         <span>
-                          Öğrencinin öğrenim gördüğü bölümün şirket iş süreçleri ile ilgili olması,
+                          Öğrencinin öğrenim gördüğü bölümün güneş enerjisi, elektrik, makine mühendisliği veya ilgili alanlarda olması,
                         </span>
                       </li>
                       <li className="flex items-start">
@@ -114,7 +114,7 @@ export default function StajSurecimiz() {
                 <div className="relative h-96 lg:h-[500px] rounded-lg overflow-hidden">
                   <Image
                     src="https://images.unsplash.com/photo-1521737711867-e3b97375f902?w=400&h=600&fit=crop"
-                    alt="Staj süreci - profesyonel çalışma ortamı"
+                    alt="IPOS-Steel staj süreci - profesyonel çalışma ortamı"
                     fill
                     className="object-cover"
                   />

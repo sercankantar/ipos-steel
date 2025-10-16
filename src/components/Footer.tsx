@@ -43,7 +43,7 @@ const Footer = () => {
         <MaxWidthWrapper>
           <div className='py-6 text-center'>
             <p className='text-sm text-gray-600'>
-              &copy; {new Date().getFullYear()} IPOS Steel. Tüm hakları saklıdır.
+              &copy; {new Date().getFullYear()} IPOS-Steel. Tüm hakları saklıdır.
             </p>
           </div>
         </MaxWidthWrapper>
@@ -60,8 +60,8 @@ const Footer = () => {
             {/* Şirket Bilgileri */}
             <div className='md:col-span-2 lg:col-span-2'>
               <div className='mb-4'>
-                <img src="/logoipos.svg" alt="IPOS Steel" className='h-10 w-auto mb-3 filter brightness-0 invert' />
-                <h3 className='font-neuropol text-lg font-bold mb-3'>IPOS Steel</h3>
+                <img src="/logoipos.svg" alt="IPOS-Steel" className='h-10 w-auto mb-3 filter brightness-0 invert' />
+                <h3 className='font-neuropol text-lg font-bold mb-3'>IPOS-Steel</h3>
                 <p className='text-gray-300 text-sm leading-relaxed mb-4'>
                   Elektrik dağıtım sistemleri alanında güvenilir çözümler.
                 </p>
@@ -173,7 +173,7 @@ const Footer = () => {
           <div className='flex flex-col md:flex-row md:items-center md:justify-between'>
             <div className='text-center md:text-left mb-4 md:mb-0'>
               <p className='text-gray-400 text-sm'>
-                &copy; {new Date().getFullYear()} IPOS Steel. Tüm hakları saklıdır.
+                &copy; {new Date().getFullYear()} IPOS-Steel. Tüm hakları saklıdır.
               </p>
             </div>
 

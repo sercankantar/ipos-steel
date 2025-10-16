@@ -634,15 +634,6 @@ const NavItem = ({
                           className='block text-sm text-gray-700 hover:text-blue-600 hover:bg-blue-50 px-3 py-2 rounded-md transition-all duration-200 font-medium'>
                           Referanslarımız
                         </Link>
-                        <Link
-                          href='/katalog-brosurler'
-                          onClick={() => {
-                            setIsClicked(false)
-                            close()
-                          }}
-                          className='block text-sm text-gray-700 hover:text-blue-600 hover:bg-blue-50 px-3 py-2 rounded-md transition-all duration-200 font-medium'>
-                          Katalog & Broşürler
-                        </Link>
                       </div>
                     </div>
 
