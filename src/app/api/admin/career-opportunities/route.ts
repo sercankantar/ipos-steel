@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
+import { revalidatePath } from 'next/cache'
 
 export async function GET() {
   try {
@@ -50,6 +51,10 @@ export async function PUT(request: NextRequest) {
         }
       })
     }
+
+    // Cache'i temizle
+    revalidatePath('/kariyer-firsatlari')
+    revalidatePath('/api/career-opportunities')
 
     return NextResponse.json(data)
   } catch (error) {

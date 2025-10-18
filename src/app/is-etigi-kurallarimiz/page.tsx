@@ -4,6 +4,9 @@ import { headers } from 'next/headers'
 import EthicsClient from './EthicsClient'
 import EthicsSidebar from './EthicsSidebar'
 
+export const dynamic = 'force-dynamic'
+export const revalidate = 0
+
 async function getEthicsRules() {
   const hdrs = headers()
   const host = hdrs.get('x-forwarded-host') || hdrs.get('host') || 'localhost:3000'

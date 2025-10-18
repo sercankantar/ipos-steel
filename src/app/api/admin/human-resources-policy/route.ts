@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { isAdminAuthenticated } from '@/lib/auth'
+import { revalidatePath } from 'next/cache'
 
 export async function GET() {
   try {
@@ -25,6 +26,11 @@ export async function POST(request: NextRequest) {
     await prisma.humanResourcesPolicy.updateMany({ where: { isActive: true }, data: { isActive: false } })
 
     const created = await prisma.humanResourcesPolicy.create({ data: { ...data, isActive: true } })
+
+    // Cache'i temizle
+    revalidatePath('/insan-kaynaklari-politikamiz')
+    revalidatePath('/api/human-resources-policy')
+
     return NextResponse.json(created)
   } catch (error) {
     console.error('HR policy oluşturulurken hata:', error)
@@ -42,10 +48,20 @@ export async function PUT(request: NextRequest) {
     const existing = await prisma.humanResourcesPolicy.findFirst({ orderBy: { updatedAt: 'desc' } })
     if (existing) {
       const updated = await prisma.humanResourcesPolicy.update({ where: { id: existing.id }, data })
+
+      // Cache'i temizle
+      revalidatePath('/insan-kaynaklari-politikamiz')
+      revalidatePath('/api/human-resources-policy')
+
       return NextResponse.json(updated)
     }
 
     const created = await prisma.humanResourcesPolicy.create({ data: { ...data, isActive: true } })
+
+    // Cache'i temizle
+    revalidatePath('/insan-kaynaklari-politikamiz')
+    revalidatePath('/api/human-resources-policy')
+
     return NextResponse.json(created)
   } catch (error) {
     console.error('HR policy güncellenirken hata:', error)
