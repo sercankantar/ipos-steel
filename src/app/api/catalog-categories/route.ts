@@ -18,7 +18,7 @@ export async function GET() {
       },
     })
   } catch (error) {
-    console.error('Catalog categories getirilirken hata:', error)
+    console.error('Catalog categories getirilirken hata oluştu:', error)
     return NextResponse.json({ error: 'Sunucu hatası' }, { status: 500 })
   }
 }
