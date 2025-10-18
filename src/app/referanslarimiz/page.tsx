@@ -31,168 +31,7 @@ interface Reference {
   updatedAt: string
 }
 
-// Fallback statik referanslar
-const staticReferences = [
-  {
-    id: 1,
-    title: 'Güneş Enerjisi Santrali Kablo Altyapısı',
-    excerpt: 'Ankara\'da kurulu 50 MW güneş enerjisi santrali için kapsamlı kablo tavaları ve elektrik altyapı çözümleri sağladık.',
-    content: `
-      <p>IPOS-Steel olarak, Ankara'nın en büyük güneş enerjisi santrallerinden biri olan 50 MW kapasiteli projeye kapsamlı elektrik altyapı çözümleri sağladık.</p>
-      
-      <h3>Proje Detayları</h3>
-      <p>Proje kapsamında toplam 15 km kablo tavaları, 200 adet destek sistemi ve özel tasarım montaj aksesuarları tedarik edildi. Tüm ürünler IP65 koruma sınıfında ve UV dayanımlı malzemelerden üretildi.</p>
-      
-      <p>Proje Müdürü Mehmet Yılmaz: "IPOS-Steel'in sağladığı çözümler sayesinde montaj süremizi %30 kısalttık ve maliyet tasarrufu sağladık."</p>
-      
-      <h3>Teknik Özellikler</h3>
-      <p>Kullanılan kablo tavaları 600V gerilim seviyesine uygun, galvanizli çelik malzemeden üretildi. Özel anti-korozyon kaplama ile 25 yıl garanti verildi.</p>
-      
-      <h3>Çevresel Etki</h3>
-      <p>Proje ile yılda 75.000 ton CO2 emisyon tasarrufu sağlanacak. Sürdürülebilir enerji üretiminde IPOS-Steel çözümleri kritik rol oynuyor.</p>
-    `,
-    image: 'https://images.unsplash.com/photo-1509391366360-2e959784a276?w=800&h=600&fit=crop',
-    gallery: [
-      'https://images.unsplash.com/photo-1509391366360-2e959784a276?w=1200&h=800&fit=crop',
-      'https://images.unsplash.com/photo-1497440001374-f26997328c1b?w=1200&h=800&fit=crop',
-      'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=1200&h=800&fit=crop'
-    ],
-    date: '2024-09-15',
-    location: 'Ankara, Türkiye',
-    client: 'Güneş Enerji A.Ş.',
-    category: 'Güneş Enerjisi',
-    projectValue: '2.5 Milyon TL',
-    duration: '6 ay',
-    views: 1250,
-    featured: true,
-    tags: ['güneş-enerjisi', 'kablo-tavaları', 'elektrik-altyapı']
-  },
-  {
-    id: 2,
-    title: 'Endüstriyel Tesis Elektrik Altyapısı',
-    excerpt: 'İstanbul\'da kurulu otomotiv fabrikası için kapsamlı elektrik dağıtım sistemleri ve kablo yönetim çözümleri uyguladık.',
-    content: `
-      <p>Otomotiv sektörünün önde gelen firmalarından biri için İstanbul'da gerçekleştirdiğimiz kapsamlı elektrik altyapı projesi.</p>
-      
-      <h3>Proje Kapsamı</h3>
-      <p>25.000 m² üretim alanında toplam 8 km kablo kanalı, 150 adet kablo merdiveni ve özel tasarım destek sistemleri kuruldu.</p>
-      
-      <h3>Teknik Çözümler</h3>
-      <p>Yüksek akım taşıma kapasiteli kablo tavaları, yangın dayanımlı kaplama ve özel ventilasyon sistemleri uygulandı.</p>
-    `,
-    image: 'https://images.unsplash.com/photo-1581094794329-c8112a89af12?w=800&h=600&fit=crop',
-    gallery: [
-      'https://images.unsplash.com/photo-1581094794329-c8112a89af12?w=1200&h=800&fit=crop',
-      'https://images.unsplash.com/photo-1504328345606-18bbc8c9d7d1?w=1200&h=800&fit=crop'
-    ],
-    date: '2024-08-20',
-    location: 'İstanbul, Türkiye',
-    client: 'Otomotiv Sanayi A.Ş.',
-    category: 'Endüstriyel',
-    projectValue: '1.8 Milyon TL',
-    duration: '4 ay',
-    views: 890,
-    featured: true,
-    tags: ['endüstriyel', 'otomotiv', 'kablo-kanalı']
-  },
-  {
-    id: 3,
-    title: 'Ticari Merkez Elektrik Sistemleri',
-    excerpt: 'İzmir\'de yeni açılan alışveriş merkezi için modern elektrik dağıtım sistemleri ve estetik kablo yönetim çözümleri sağladık.',
-    content: `
-      <p>İzmir'in en büyük alışveriş merkezlerinden biri için gerçekleştirdiğimiz elektrik altyapı projesi.</p>
-      
-      <h3>Estetik ve Fonksiyonellik</h3>
-      <p>Görünür alanlarda estetik kablo kanalları, gizli alanlarda yüksek kapasiteli kablo tavaları kullanıldı.</p>
-    `,
-    image: 'https://images.unsplash.com/photo-1555636222-cae831e670b3?w=800&h=600&fit=crop',
-    gallery: [
-      'https://images.unsplash.com/photo-1555636222-cae831e670b3?w=1200&h=800&fit=crop'
-    ],
-    date: '2024-07-10',
-    location: 'İzmir, Türkiye',
-    client: 'Ticaret Merkezi A.Ş.',
-    category: 'Ticari',
-    projectValue: '1.2 Milyon TL',
-    duration: '3 ay',
-    views: 650,
-    featured: false,
-    tags: ['ticari', 'alışveriş-merkezi', 'estetik']
-  },
-  {
-    id: 4,
-    title: 'Hastane Elektrik Altyapı Projesi',
-    excerpt: 'Bursa\'da yeni kurulan özel hastane için kritik elektrik sistemleri ve acil durum kablo altyapısı uyguladık.',
-    content: `
-      <p>Sağlık sektörünün kritik ihtiyaçları için Bursa'da gerçekleştirdiğimiz özel hastane projesi.</p>
-      
-      <h3>Kritik Sistem Gereksinimleri</h3>
-      <p>Hastane elektrik sistemlerinde kesintisiz güç sağlama, yangın güvenliği ve acil durum sistemleri öncelikli olarak ele alındı.</p>
-    `,
-    image: 'https://images.unsplash.com/photo-1586773860418-d37222d8fce3?w=800&h=600&fit=crop',
-    gallery: [
-      'https://images.unsplash.com/photo-1586773860418-d37222d8fce3?w=1200&h=800&fit=crop'
-    ],
-    date: '2024-06-25',
-    location: 'Bursa, Türkiye',
-    client: 'Özel Sağlık Grubu',
-    category: 'Sağlık',
-    projectValue: '900 Bin TL',
-    duration: '2 ay',
-    views: 420,
-    featured: false,
-    tags: ['sağlık', 'hastane', 'kritik-sistem']
-  },
-  {
-    id: 5,
-    title: 'Veri Merkezi Kablo Yönetimi',
-    excerpt: 'Ankara\'da kurulan veri merkezi için yüksek performanslı kablo yönetim sistemleri ve soğutma destekli çözümler uyguladık.',
-    content: `
-      <p>Teknoloji sektörünün artan veri merkezi ihtiyaçları için Ankara'da gerçekleştirdiğimiz ileri teknoloji projesi.</p>
-      
-      <h3>Yüksek Performans Gereksinimleri</h3>
-      <p>Veri merkezlerinin 7/24 kesintisiz çalışma gereksinimleri için özel tasarım kablo tavaları ve soğutma sistemleri entegrasyonu sağlandı.</p>
-    `,
-    image: 'https://images.unsplash.com/photo-1558494949-ef010cbdcc31?w=800&h=600&fit=crop',
-    gallery: [
-      'https://images.unsplash.com/photo-1558494949-ef010cbdcc31?w=1200&h=800&fit=crop'
-    ],
-    date: '2024-05-15',
-    location: 'Ankara, Türkiye',
-    client: 'Teknoloji Veri A.Ş.',
-    category: 'Teknoloji',
-    projectValue: '1.5 Milyon TL',
-    duration: '5 ay',
-    views: 780,
-    featured: false,
-    tags: ['veri-merkezi', 'teknoloji', 'soğutma']
-  },
-  {
-    id: 6,
-    title: 'Eğitim Kampüsü Elektrik Altyapısı',
-    excerpt: 'Konya\'da kurulan üniversite kampüsü için geniş alan kablo dağıtım sistemleri ve akıllı elektrik çözümleri sağladık.',
-    content: `
-      <p>Eğitim sektörünün modern ihtiyaçları için Konya'da gerçekleştirdiğimiz kapsamlı kampüs projesi.</p>
-      
-      <h3>Geniş Alan Çözümleri</h3>
-      <p>Kampüs genelinde 12 km kablo altyapısı, akıllı elektrik dağıtım sistemleri ve enerji verimli çözümler uygulandı.</p>
-    `,
-    image: 'https://images.unsplash.com/photo-1562774053-701939374585?w=800&h=600&fit=crop',
-    gallery: [
-      'https://images.unsplash.com/photo-1562774053-701939374585?w=1200&h=800&fit=crop'
-    ],
-    date: '2024-04-30',
-    location: 'Konya, Türkiye',
-    client: 'Özel Üniversite',
-    category: 'Eğitim',
-    projectValue: '3.2 Milyon TL',
-    duration: '8 ay',
-    views: 950,
-    featured: false,
-    tags: ['eğitim', 'kampüs', 'akıllı-sistem']
-  }
-]
-
+// Varsayılan kategoriler - sadece veritabanında veri yoksa kullanılacak
 const defaultReferenceCategories = ['Güneş Enerjisi', 'Endüstriyel', 'Ticari', 'Sağlık', 'Teknoloji', 'Eğitim']
 
 // Kategori renk haritası - database'den gelen kategorileri kullan
@@ -233,13 +72,14 @@ export default function ReferanslarimizPage() {
       try {
         setLoading(true)
         
-        // Referansları çek
+        // Referansları çek - sadece veritabanından
         const referencesResponse = await fetch('/api/references')
         if (referencesResponse.ok) {
           const referencesData = await referencesResponse.json()
-          setItems(referencesData.length > 0 ? referencesData : staticReferences)
+          setItems(Array.isArray(referencesData) ? referencesData : [])
         } else {
-          setItems(staticReferences)
+          console.error('Referanslar yüklenemedi:', referencesResponse.status)
+          setItems([])
         }
 
         // Kategorileri çek
@@ -248,11 +88,13 @@ export default function ReferanslarimizPage() {
           const categoriesData = await categoriesResponse.json()
           setDbCategories(Array.isArray(categoriesData) ? categoriesData : [])
         } else {
+          console.error('Kategoriler yüklenemedi:', categoriesResponse.status)
           setDbCategories([])
         }
       } catch (error) {
         console.error('Veri yüklenirken hata:', error)
-        setItems(staticReferences)
+        setItems([])
+        setDbCategories([])
       } finally {
         setLoading(false)
       }

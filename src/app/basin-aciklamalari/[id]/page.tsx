@@ -108,6 +108,7 @@ export default function BasinAciklamaDetayPage() {
             summary: d.summary || '',
             content: d.content || '',
             category: d.category,
+            categoryColor: d.categoryColor || 'bg-gray-100 text-gray-800',
             image: d.imageUrl || ''
           })
           return
@@ -187,9 +188,7 @@ export default function BasinAciklamaDetayPage() {
             {/* Başlık ve Meta Bilgiler */}
             <header className="mb-8">
               <div className="flex items-center gap-3 mb-4">
-                <span className={`px-3 py-1 rounded-full text-xs font-medium ${
-                  'bg-gray-100 text-gray-600'
-                }`}>
+                <span className={`px-3 py-1 rounded-full text-xs font-medium ${item.categoryColor || 'bg-gray-100 text-gray-800'}`}>
                   {item.category}
                 </span>
                 <div className="flex items-center gap-4 text-sm text-gray-500">

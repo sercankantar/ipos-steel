@@ -89,6 +89,7 @@ export default function BasinAciklamalariPage() {
           content: d.content || '',
           pdfUrl: '',
           category: d.category,
+          categoryColor: d.categoryColor || 'bg-gray-100 text-gray-800',
           priority: 'medium',
           image: d.imageUrl || ''
         }))
@@ -223,13 +224,7 @@ export default function BasinAciklamalariPage() {
                       <div className="flex-1">
                         <div className="flex items-start justify-between mb-2">
                           <div className="flex items-center gap-3">
-                            <span className={`px-3 py-1 rounded-full text-xs font-medium ${
-                              aciklama.priority === 'high' 
-                                ? 'bg-red-100 text-red-600' 
-                                : aciklama.priority === 'medium'
-                                ? 'bg-yellow-100 text-yellow-600'
-                                : 'bg-gray-100 text-gray-600'
-                            }`}>
+                            <span className={`px-3 py-1 rounded-full text-xs font-medium ${aciklama.categoryColor || 'bg-gray-100 text-gray-800'}`}>
                               {aciklama.category}
                             </span>
                             <span className={`w-2 h-2 rounded-full ${

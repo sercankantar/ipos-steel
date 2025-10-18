@@ -32,176 +32,6 @@ interface Reference {
   updatedAt: string
 }
 
-// Fallback statik referanslar
-const staticReferences = [
-  {
-    id: 1,
-    title: 'Güneş Enerjisi Santrali Kablo Altyapısı',
-    excerpt: 'Ankara\'da kurulu 50 MW güneş enerjisi santrali için kapsamlı kablo tavaları ve elektrik altyapı çözümleri sağladık.',
-    content: `
-      <p>IPOS-Steel olarak, Ankara'nın en büyük güneş enerjisi santrallerinden biri olan 50 MW kapasiteli projeye kapsamlı elektrik altyapı çözümleri sağladık.</p>
-      
-      <h3>Proje Detayları</h3>
-      <p>Proje kapsamında toplam 15 km kablo tavaları, 200 adet destek sistemi ve özel tasarım montaj aksesuarları tedarik edildi. Tüm ürünler IP65 koruma sınıfında ve UV dayanımlı malzemelerden üretildi.</p>
-      
-      <p>Proje Müdürü Mehmet Yılmaz: "IPOS-Steel'in sağladığı çözümler sayesinde montaj süremizi %30 kısalttık ve maliyet tasarrufu sağladık."</p>
-      
-      <h3>Teknik Özellikler</h3>
-      <p>Kullanılan kablo tavaları 600V gerilim seviyesine uygun, galvanizli çelik malzemeden üretildi. Özel anti-korozyon kaplama ile 25 yıl garanti verildi.</p>
-      
-      <h3>Çevresel Etki</h3>
-      <p>Proje ile yılda 75.000 ton CO2 emisyon tasarrufu sağlanacak. Sürdürülebilir enerji üretiminde IPOS-Steel çözümleri kritik rol oynuyor.</p>
-    `,
-    image: 'https://images.unsplash.com/photo-1509391366360-2e959784a276?w=800&h=600&fit=crop',
-    gallery: [
-      'https://images.unsplash.com/photo-1509391366360-2e959784a276?w=1200&h=800&fit=crop',
-      'https://images.unsplash.com/photo-1497440001374-f26997328c1b?w=1200&h=800&fit=crop',
-      'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=1200&h=800&fit=crop',
-      'https://images.unsplash.com/photo-1473341304170-971dccb5ac1e?w=1200&h=800&fit=crop',
-      'https://images.unsplash.com/photo-1581094794329-c8112a89af12?w=1200&h=800&fit=crop'
-    ],
-    date: '2024-09-15',
-    location: 'Ankara, Türkiye',
-    client: 'Güneş Enerji A.Ş.',
-    category: 'Güneş Enerjisi',
-    projectValue: '2.5 Milyon TL',
-    duration: '6 ay',
-    views: 1250,
-    featured: true,
-    tags: ['güneş-enerjisi', 'kablo-tavaları', 'elektrik-altyapı']
-  },
-  {
-    id: 2,
-    title: 'Endüstriyel Tesis Elektrik Altyapısı',
-    excerpt: 'İstanbul\'da kurulu otomotiv fabrikası için kapsamlı elektrik dağıtım sistemleri ve kablo yönetim çözümleri uyguladık.',
-    content: `
-      <p>Otomotiv sektörünün önde gelen firmalarından biri için İstanbul'da gerçekleştirdiğimiz kapsamlı elektrik altyapı projesi.</p>
-      
-      <h3>Proje Kapsamı</h3>
-      <p>25.000 m² üretim alanında toplam 8 km kablo kanalı, 150 adet kablo merdiveni ve özel tasarım destek sistemleri kuruldu.</p>
-      
-      <h3>Teknik Çözümler</h3>
-      <p>Yüksek akım taşıma kapasiteli kablo tavaları, yangın dayanımlı kaplama ve özel ventilasyon sistemleri uygulandı.</p>
-    `,
-    image: 'https://images.unsplash.com/photo-1581094794329-c8112a89af12?w=800&h=600&fit=crop',
-    gallery: [
-      'https://images.unsplash.com/photo-1581094794329-c8112a89af12?w=1200&h=800&fit=crop',
-      'https://images.unsplash.com/photo-1504328345606-18bbc8c9d7d1?w=1200&h=800&fit=crop',
-      'https://images.unsplash.com/photo-1565008447742-97f6f38c985c?w=1200&h=800&fit=crop',
-      'https://images.unsplash.com/photo-1581092160562-40aa08e78837?w=1200&h=800&fit=crop'
-    ],
-    date: '2024-08-20',
-    location: 'İstanbul, Türkiye',
-    client: 'Otomotiv Sanayi A.Ş.',
-    category: 'Endüstriyel',
-    projectValue: '1.8 Milyon TL',
-    duration: '4 ay',
-    views: 890,
-    featured: true,
-    tags: ['endüstriyel', 'otomotiv', 'kablo-kanalı']
-  },
-  {
-    id: 3,
-    title: 'Ticari Merkez Elektrik Sistemleri',
-    excerpt: 'İzmir\'de yeni açılan alışveriş merkezi için modern elektrik dağıtım sistemleri ve estetik kablo yönetim çözümleri sağladık.',
-    content: `
-      <p>İzmir'in en büyük alışveriş merkezlerinden biri için gerçekleştirdiğimiz elektrik altyapı projesi.</p>
-      
-      <h3>Estetik ve Fonksiyonellik</h3>
-      <p>Görünür alanlarda estetik kablo kanalları, gizli alanlarda yüksek kapasiteli kablo tavaları kullanıldı.</p>
-    `,
-    image: 'https://images.unsplash.com/photo-1555636222-cae831e670b3?w=800&h=600&fit=crop',
-    gallery: [
-      'https://images.unsplash.com/photo-1555636222-cae831e670b3?w=1200&h=800&fit=crop',
-      'https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=1200&h=800&fit=crop',
-      'https://images.unsplash.com/photo-1560472354-b33ff0c44a43?w=1200&h=800&fit=crop'
-    ],
-    date: '2024-07-10',
-    location: 'İzmir, Türkiye',
-    client: 'Ticaret Merkezi A.Ş.',
-    category: 'Ticari',
-    projectValue: '1.2 Milyon TL',
-    duration: '3 ay',
-    views: 650,
-    featured: false,
-    tags: ['ticari', 'alışveriş-merkezi', 'estetik']
-  },
-  {
-    id: 4,
-    title: 'Hastane Elektrik Altyapı Projesi',
-    excerpt: 'Bursa\'da yeni kurulan özel hastane için kritik elektrik sistemleri ve acil durum kablo altyapısı uyguladık.',
-    content: `
-      <p>Sağlık sektörünün kritik ihtiyaçları için Bursa'da gerçekleştirdiğimiz özel hastane projesi.</p>
-      
-      <h3>Kritik Sistem Gereksinimleri</h3>
-      <p>Hastane elektrik sistemlerinde kesintisiz güç sağlama, yangın güvenliği ve acil durum sistemleri öncelikli olarak ele alındı.</p>
-    `,
-    image: 'https://images.unsplash.com/photo-1586773860418-d37222d8fce3?w=800&h=600&fit=crop',
-    gallery: [
-      'https://images.unsplash.com/photo-1586773860418-d37222d8fce3?w=1200&h=800&fit=crop',
-      'https://images.unsplash.com/photo-1551601651-2a8555f1a136?w=1200&h=800&fit=crop',
-      'https://images.unsplash.com/photo-1576091160399-112ba8d25d1f?w=1200&h=800&fit=crop'
-    ],
-    date: '2024-06-25',
-    location: 'Bursa, Türkiye',
-    client: 'Özel Sağlık Grubu',
-    category: 'Sağlık',
-    projectValue: '900 Bin TL',
-    duration: '2 ay',
-    views: 420,
-    featured: false,
-    tags: ['sağlık', 'hastane', 'kritik-sistem']
-  },
-  {
-    id: 5,
-    title: 'Veri Merkezi Kablo Yönetimi',
-    excerpt: 'Ankara\'da kurulan veri merkezi için yüksek performanslı kablo yönetim sistemleri ve soğutma destekli çözümler uyguladık.',
-    content: `
-      <p>Teknoloji sektörünün artan veri merkezi ihtiyaçları için Ankara'da gerçekleştirdiğimiz ileri teknoloji projesi.</p>
-      
-      <h3>Yüksek Performans Gereksinimleri</h3>
-      <p>Veri merkezlerinin 7/24 kesintisiz çalışma gereksinimleri için özel tasarım kablo tavaları ve soğutma sistemleri entegrasyonu sağlandı.</p>
-    `,
-    image: 'https://images.unsplash.com/photo-1558494949-ef010cbdcc31?w=800&h=600&fit=crop',
-    gallery: [
-      'https://images.unsplash.com/photo-1558494949-ef010cbdcc31?w=1200&h=800&fit=crop'
-    ],
-    date: '2024-05-15',
-    location: 'Ankara, Türkiye',
-    client: 'Teknoloji Veri A.Ş.',
-    category: 'Teknoloji',
-    projectValue: '1.5 Milyon TL',
-    duration: '5 ay',
-    views: 780,
-    featured: false,
-    tags: ['veri-merkezi', 'teknoloji', 'soğutma']
-  },
-  {
-    id: 6,
-    title: 'Eğitim Kampüsü Elektrik Altyapısı',
-    excerpt: 'Konya\'da kurulan üniversite kampüsü için geniş alan kablo dağıtım sistemleri ve akıllı elektrik çözümleri sağladık.',
-    content: `
-      <p>Eğitim sektörünün modern ihtiyaçları için Konya'da gerçekleştirdiğimiz kapsamlı kampüs projesi.</p>
-      
-      <h3>Geniş Alan Çözümleri</h3>
-      <p>Kampüs genelinde 12 km kablo altyapısı, akıllı elektrik dağıtım sistemleri ve enerji verimli çözümler uygulandı.</p>
-    `,
-    image: 'https://images.unsplash.com/photo-1562774053-701939374585?w=800&h=600&fit=crop',
-    gallery: [
-      'https://images.unsplash.com/photo-1562774053-701939374585?w=1200&h=800&fit=crop'
-    ],
-    date: '2024-04-30',
-    location: 'Konya, Türkiye',
-    client: 'Özel Üniversite',
-    category: 'Eğitim',
-    projectValue: '3.2 Milyon TL',
-    duration: '8 ay',
-    views: 950,
-    featured: false,
-    tags: ['eğitim', 'kampüs', 'akıllı-sistem']
-  }
-]
-
 // Kategori renk haritası - database'den gelen kategorileri kullan
 const getCategoryColor = (category: string, dbCategories: {name: string, color: string}[]) => {
   // Önce database'den gelen kategorileri kontrol et
@@ -235,85 +65,8 @@ export default function ReferansDetayPage() {
   const [referans, setReferans] = useState<Reference | null>(null)
   const [loading, setLoading] = useState(true)
   const [dbCategories, setDbCategories] = useState<{name: string, color: string}[]>([])
-  const [shareMenuOpen, setShareMenuOpen] = useState(false)
-
-  // Paylaş fonksiyonları
-  const handleShare = async () => {
-    if (!referans) return
-    
-    const shareData = {
-      title: referans.title || referans.name,
-      text: referans.excerpt || `${referans.client || referans.name} projesi hakkında detaylar`,
-      url: window.location.href
-    }
-
-    // Modern Web Share API varsa kullan
-    if (navigator.share) {
-      try {
-        await navigator.share(shareData)
-      } catch (error) {
-        console.log('Paylaşım iptal edildi')
-      }
-    } else {
-      // Fallback: Paylaş menüsünü aç
-      setShareMenuOpen(true)
-    }
-  }
-
-  const copyToClipboard = async () => {
-    try {
-      await navigator.clipboard.writeText(window.location.href)
-      alert('Link kopyalandı!')
-      setShareMenuOpen(false)
-    } catch (error) {
-      console.error('Kopyalama hatası:', error)
-    }
-  }
-
-  const shareToSocial = (platform: string) => {
-    if (!referans) return
-    
-    const url = encodeURIComponent(window.location.href)
-    const title = encodeURIComponent(referans.title || referans.name)
-    const text = encodeURIComponent(referans.excerpt || `${referans.client || referans.name} projesi`)
-    
-    let shareUrl = ''
-    
-    switch (platform) {
-      case 'facebook':
-        shareUrl = `https://www.facebook.com/sharer/sharer.php?u=${url}`
-        break
-      case 'twitter':
-        shareUrl = `https://twitter.com/intent/tweet?url=${url}&text=${title}`
-        break
-      case 'linkedin':
-        shareUrl = `https://www.linkedin.com/sharing/share-offsite/?url=${url}`
-        break
-      case 'whatsapp':
-        shareUrl = `https://wa.me/?text=${title}%20${url}`
-        break
-      case 'email':
-        shareUrl = `mailto:?subject=${title}&body=${text}%0A%0A${url}`
-        break
-    }
-    
-    if (shareUrl) {
-      window.open(shareUrl, '_blank', 'width=600,height=400')
-      setShareMenuOpen(false)
-    }
-  }
-
-  // Paylaş menüsünü dışarı tıklayınca kapat
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (shareMenuOpen && !(event.target as Element).closest('.share-menu')) {
-        setShareMenuOpen(false)
-      }
-    }
-
-    document.addEventListener('mousedown', handleClickOutside)
-    return () => document.removeEventListener('mousedown', handleClickOutside)
-  }, [shareMenuOpen])
+  const [isShareOpen, setIsShareOpen] = useState(false)
+  const [copySuccess, setCopySuccess] = useState(false)
 
   useEffect(() => {
     const load = async () => {
@@ -362,20 +115,16 @@ export default function ReferansDetayPage() {
               console.log('View count update failed:', error)
             }
           } else {
-            // API'de bulunamadıysa statik veriden ara
-            const staticFound = staticReferences.find(r => String(r.id) === String(slugOrId))
-            setReferans(staticFound || null)
+            // Veritabanında bulunamadı
+            setReferans(null)
           }
         } else {
-          // API hatası durumunda statik veri kullan
-          const found = staticReferences.find(r => String(r.id) === String(slugOrId))
-          setReferans(found || null)
+          console.error('Referanslar yüklenemedi:', referencesResponse.status)
+          setReferans(null)
         }
       } catch (error) {
         console.error('Referans yüklenirken hata:', error)
-        // Hata durumunda statik veri kullan
-        const found = staticReferences.find(r => String(r.id) === String(slugOrId))
-        setReferans(found || null)
+        setReferans(null)
       } finally {
         setLoading(false)
       }
@@ -389,30 +138,32 @@ export default function ReferansDetayPage() {
       if (!isGalleryOpen) return
       
       if (event.key === 'Escape') {
-        closeGallery()
-      }
-      if (event.key === 'ArrowLeft' && referans?.gallery && referans.gallery.length > 1) {
-        prevImage()
-      }
-      if (event.key === 'ArrowRight' && referans?.gallery && referans.gallery.length > 1) {
-        nextImage()
+        setIsGalleryOpen(false)
+        setSelectedImageIndex(null)
+      } else if (event.key === 'ArrowLeft') {
+        navigateGallery('prev')
+      } else if (event.key === 'ArrowRight') {
+        navigateGallery('next')
       }
     }
 
-    if (isGalleryOpen) {
-      document.addEventListener('keydown', handleKeyDown)
-      document.body.style.overflow = 'hidden' // Prevent background scrolling
-    }
-
-    return () => {
-      document.removeEventListener('keydown', handleKeyDown)
-      document.body.style.overflow = 'unset'
-    }
+    document.addEventListener('keydown', handleKeyDown)
+    return () => document.removeEventListener('keydown', handleKeyDown)
   }, [isGalleryOpen, selectedImageIndex, referans])
-  
-  // Galeri fonksiyonları
-  const openGallery = (imageIndex: number) => {
-    setSelectedImageIndex(imageIndex)
+
+  const navigateGallery = (direction: 'prev' | 'next') => {
+    if (!referans?.gallery || selectedImageIndex === null) return
+    
+    const totalImages = referans.gallery.length
+    if (direction === 'prev') {
+      setSelectedImageIndex(selectedImageIndex === 0 ? totalImages - 1 : selectedImageIndex - 1)
+    } else {
+      setSelectedImageIndex(selectedImageIndex === totalImages - 1 ? 0 : selectedImageIndex + 1)
+    }
+  }
+
+  const openGallery = (index: number) => {
+    setSelectedImageIndex(index)
     setIsGalleryOpen(true)
   }
 
@@ -421,138 +172,241 @@ export default function ReferansDetayPage() {
     setSelectedImageIndex(null)
   }
 
-  const nextImage = () => {
-    if (referans?.gallery && selectedImageIndex !== null && referans.gallery.length > 0) {
-      setSelectedImageIndex((selectedImageIndex + 1) % referans.gallery.length)
+  const shareUrl = typeof window !== 'undefined' ? window.location.href : ''
+
+  const handleShare = (platform: string) => {
+    const title = referans?.title || referans?.name || 'IPOS-Steel Referansı'
+    const text = referans?.excerpt || `${referans?.client || referans?.name} projesi hakkında detaylar`
+    
+    const urls = {
+      facebook: `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(shareUrl)}`,
+      twitter: `https://twitter.com/intent/tweet?url=${encodeURIComponent(shareUrl)}&text=${encodeURIComponent(title)}`,
+      linkedin: `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(shareUrl)}`,
+      whatsapp: `https://wa.me/?text=${encodeURIComponent(title + ' - ' + shareUrl)}`,
+      email: `mailto:?subject=${encodeURIComponent(title)}&body=${encodeURIComponent(text + '\n\n' + shareUrl)}`
+    }
+
+    if (urls[platform as keyof typeof urls]) {
+      window.open(urls[platform as keyof typeof urls], '_blank')
     }
   }
 
-  const prevImage = () => {
-    if (referans?.gallery && selectedImageIndex !== null && referans.gallery.length > 0) {
-      setSelectedImageIndex(selectedImageIndex === 0 ? referans.gallery.length - 1 : selectedImageIndex - 1)
+  const copyToClipboard = async () => {
+    try {
+      await navigator.clipboard.writeText(shareUrl)
+      setCopySuccess(true)
+      setTimeout(() => setCopySuccess(false), 2000)
+    } catch (err) {
+      console.error('Failed to copy: ', err)
     }
   }
 
   if (loading) {
     return (
-      <div className='min-h-screen bg-gray-50 flex items-center justify-center'>
-        <div className='animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600'></div>
+      <div className='min-h-screen bg-gray-50'>
+        <MaxWidthWrapper>
+          <div className='py-12'>
+            <div className="animate-pulse">
+              <div className="h-8 w-32 bg-gray-200 rounded mb-6"></div>
+              <div className="h-12 w-3/4 bg-gray-200 rounded mb-4"></div>
+              <div className="h-6 w-1/2 bg-gray-200 rounded mb-8"></div>
+              <div className="h-64 bg-gray-200 rounded mb-8"></div>
+              <div className="space-y-4">
+                <div className="h-4 bg-gray-200 rounded w-full"></div>
+                <div className="h-4 bg-gray-200 rounded w-5/6"></div>
+                <div className="h-4 bg-gray-200 rounded w-4/6"></div>
+              </div>
+            </div>
+          </div>
+        </MaxWidthWrapper>
       </div>
     )
   }
 
   if (!referans) {
     return (
-      <div className='min-h-screen bg-gray-50 flex items-center justify-center'>
-        <div className='text-center'>
-          <h1 className='text-2xl font-bold text-gray-900 mb-4'>Referans Bulunamadı</h1>
-          <Link href='/referanslarimiz' className='text-blue-600 hover:text-blue-800'>
-            Referanslar sayfasına dön
-          </Link>
-        </div>
+      <div className='min-h-screen bg-gray-50'>
+        <MaxWidthWrapper>
+          <div className='py-12 text-center'>
+            <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+              <Building className="h-8 w-8 text-gray-400" />
+            </div>
+            <h1 className='font-neuropol text-2xl font-bold text-gray-900 mb-4'>
+              Referans Bulunamadı
+            </h1>
+            <p className='text-gray-600 mb-8'>
+              Aradığınız referans mevcut değil veya kaldırılmış olabilir.
+            </p>
+            <Link
+              href='/referanslarimiz'
+              className='inline-flex items-center gap-2 bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors'
+            >
+              <ArrowLeft className='h-4 w-4' />
+              Referanslarımıza Dön
+            </Link>
+          </div>
+        </MaxWidthWrapper>
       </div>
     )
   }
 
+  const galleryImages = referans.gallery || []
+  if (referans.mainImage && !galleryImages.includes(referans.mainImage)) {
+    galleryImages.unshift(referans.mainImage)
+  }
+
   return (
     <div className='min-h-screen bg-gray-50'>
-      {/* Hero Section */}
-      <div className='bg-gray-900 py-12'>
+      {/* Breadcrumb ve Geri Dön */}
+      <div className='bg-white border-b border-gray-200'>
         <MaxWidthWrapper>
-          <div className='text-white'>
-            <nav className='text-sm text-gray-300 mb-6'>
-              <Link href='/' className='hover:text-white transition-colors'>Ana Sayfa</Link>
-              <span className='mx-2'>/</span>
-              <Link href='/referanslarimiz' className='hover:text-white transition-colors'>Referanslarımız</Link>
-              <span className='mx-2'>/</span>
-              <span>{referans.title || referans.name}</span>
+          <div className='py-6'>
+            <nav className='flex items-center gap-2 text-sm text-gray-500 mb-4'>
+              <Link href='/' className='hover:text-gray-700 transition-colors'>Ana Sayfa</Link>
+              <span>/</span>
+              <Link href='/referanslarimiz' className='hover:text-gray-700 transition-colors'>Referanslarımız</Link>
+              <span>/</span>
+              <span className='text-gray-900'>{referans.title || referans.name}</span>
             </nav>
             
-            <div className='flex items-center gap-4 mb-6'>
-              <Link
-                href='/referanslarimiz'
-                className='flex items-center gap-2 text-gray-300 hover:text-white transition-colors'
-              >
-                <ArrowLeft className='w-4 h-4' />
-                <span>Geri Dön</span>
-              </Link>
-            </div>
-
-            <div className='grid lg:grid-cols-3 gap-8'>
-              <div className='lg:col-span-2'>
-                <h1 className='font-neuropol text-3xl lg:text-4xl font-bold mb-4'>
-                  {referans.title || referans.name}
-                </h1>
-                <p className='text-lg text-gray-300 mb-6'>
-                  {referans.excerpt || `${referans.sector} sektöründe gerçekleştirdiğimiz ${referans.name} projesi.`}
-                </p>
-              </div>
-              
-              <div className='bg-gray-800 p-6 rounded-lg'>
-                <h3 className='text-lg font-semibold mb-4'>Proje Bilgileri</h3>
-                <div className='space-y-3 text-sm'>
-                  <div className='flex items-center gap-2'>
-                    <Calendar className='w-4 h-4 text-gray-400' />
-                    <span className='text-gray-300'>Tarih:</span>
-                    <span>{new Date(referans.createdAt).toLocaleDateString('tr-TR')}</span>
-                  </div>
-                  <div className='flex items-center gap-2'>
-                    <MapPin className='w-4 h-4 text-gray-400' />
-                    <span className='text-gray-300'>Konum:</span>
-                    <span>{referans.location}</span>
-                  </div>
-                  <div className='flex items-center gap-2'>
-                    <Building className='w-4 h-4 text-gray-400' />
-                    <span className='text-gray-300'>Müşteri:</span>
-                    <span>{referans.client || referans.name}</span>
-                  </div>
-                  <div className='flex items-center gap-2'>
-                    <DollarSign className='w-4 h-4 text-gray-400' />
-                    <span className='text-gray-300'>Proje Değeri:</span>
-                    <span>{referans.projectValue}</span>
-                  </div>
-                  <div className='flex items-center gap-2'>
-                    <Clock className='w-4 h-4 text-gray-400' />
-                    <span className='text-gray-300'>Süre:</span>
-                    <span>{referans.duration}</span>
-                  </div>
-                  <div className='flex items-center gap-2'>
-                    <Eye className='w-4 h-4 text-gray-400' />
-                    <span className='text-gray-300'>Görüntülenme:</span>
-                    <span>{referans.views}</span>
-                  </div>
-                </div>
-              </div>
-            </div>
+            <Link
+              href='/referanslarimiz'
+              className='inline-flex items-center gap-2 text-blue-600 hover:text-blue-700 font-medium transition-colors'
+            >
+              <ArrowLeft className='h-4 w-4' />
+              Referanslarımıza Dön
+            </Link>
           </div>
         </MaxWidthWrapper>
       </div>
 
       <MaxWidthWrapper>
         <div className='py-12'>
-          <div className='grid lg:grid-cols-3 gap-8'>
-            {/* Ana İçerik */}
+          <div className='grid grid-cols-1 lg:grid-cols-3 gap-12'>
+            
+            {/* Sol Kolon - Ana İçerik */}
             <div className='lg:col-span-2'>
-              {/* Ana Görsel */}
+              
+              {/* Başlık ve Meta Bilgiler */}
               <div className='mb-8'>
-                <div className='relative h-96 rounded-lg overflow-hidden cursor-pointer' onClick={() => openGallery(0)}>
-                  <Image
-                    src={referans.gallery?.[0] || referans.mainImage || referans.image || 'https://images.unsplash.com/photo-1509391366360-2e959784a276?w=800&h=600&fit=crop'}
-                    alt={referans.title || referans.name}
-                    fill
-                    className='object-cover hover:scale-105 transition-transform duration-300'
-                  />
-                  <div className='absolute inset-0 bg-black/20 hover:bg-black/10 transition-colors duration-300'></div>
-                  <div className='absolute top-4 right-4 bg-white/90 backdrop-blur-sm px-3 py-1 rounded-full text-sm font-medium'>
-                    {referans.gallery?.length || 1} Fotoğraf
+                <div className='flex items-start justify-between mb-4'>
+                  <div className='flex items-center gap-3'>
+                    <span className={`px-3 py-1 rounded-full text-xs font-medium ${getCategoryColor(referans.category || referans.sector, dbCategories)}`}>
+                      {referans.category || referans.sector}
+                    </span>
+                    {referans.featured && (
+                      <span className='px-3 py-1 bg-amber-100 text-amber-800 rounded-full text-xs font-medium'>
+                        Öne Çıkan
+                      </span>
+                    )}
+                  </div>
+                  
+                  <div className='flex items-center gap-4'>
+                    <div className='flex items-center gap-1 text-sm text-gray-500'>
+                      <Eye className='h-4 w-4' />
+                      <span>{referans.views || 0}</span>
+                    </div>
+                    <button
+                      onClick={() => setIsShareOpen(true)}
+                      className='flex items-center gap-1 text-sm text-gray-500 hover:text-gray-700 transition-colors'
+                    >
+                      <Share2 className='h-4 w-4' />
+                      <span>Paylaş</span>
+                    </button>
                   </div>
                 </div>
+                
+                <h1 className='font-neuropol text-3xl lg:text-4xl font-bold text-slate-900 mb-4'>
+                  {referans.title || referans.name}
+                </h1>
+                
+                {referans.excerpt && (
+                  <p className='text-xl text-gray-600 leading-relaxed mb-6'>
+                    {referans.excerpt}
+                  </p>
+                )}
+                
+                <div className='flex items-center gap-6 text-sm text-gray-500'>
+                  <div className='flex items-center gap-1'>
+                    <Calendar className='h-4 w-4' />
+                    <span>{new Date(referans.createdAt).toLocaleDateString('tr-TR')}</span>
+                  </div>
+                  {referans.location && (
+                    <div className='flex items-center gap-1'>
+                      <MapPin className='h-4 w-4' />
+                      <span>{referans.location}</span>
+                    </div>
+                  )}
+                  {referans.client && (
+                    <div className='flex items-center gap-1'>
+                      <Building className='h-4 w-4' />
+                      <span>{referans.client}</span>
+                    </div>
+                  )}
+                </div>
               </div>
+
+              {/* Ana Görsel */}
+              {(referans.mainImage || galleryImages.length > 0) && (
+                <div className='mb-8'>
+                  <div 
+                    className='relative aspect-video rounded-lg overflow-hidden cursor-pointer group'
+                    onClick={() => openGallery(0)}
+                  >
+                    <Image
+                      src={referans.mainImage || galleryImages[0] || 'https://images.unsplash.com/photo-1509391366360-2e959784a276?w=1200&h=800&fit=crop'}
+                      alt={referans.title || referans.name}
+                      fill
+                      className='object-cover group-hover:scale-105 transition-transform duration-300'
+                    />
+                    <div className='absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-20 transition-all duration-300 flex items-center justify-center'>
+                      <div className='opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-white bg-opacity-90 rounded-full p-3'>
+                        <Eye className='h-6 w-6 text-gray-900' />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* Galeri */}
+              {galleryImages.length > 1 && (
+                <div className='mb-8'>
+                  <h3 className='font-neuropol font-bold text-lg mb-4 text-slate-900'>Proje Galerisi</h3>
+                  <div className='grid grid-cols-2 md:grid-cols-3 gap-4'>
+                    {galleryImages.slice(1, 7).map((image, index) => (
+                      <div
+                        key={index}
+                        className='relative aspect-video rounded-lg overflow-hidden cursor-pointer group'
+                        onClick={() => openGallery(index + 1)}
+                      >
+                        <Image
+                          src={image}
+                          alt={`${referans.title || referans.name} - Görsel ${index + 2}`}
+                          fill
+                          className='object-cover group-hover:scale-105 transition-transform duration-300'
+                        />
+                        <div className='absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-30 transition-all duration-300' />
+                      </div>
+                    ))}
+                    {galleryImages.length > 7 && (
+                      <div
+                        className='relative aspect-video rounded-lg overflow-hidden cursor-pointer group bg-gray-900 flex items-center justify-center'
+                        onClick={() => openGallery(7)}
+                      >
+                        <div className='text-white text-center'>
+                          <span className='text-2xl font-bold'>+{galleryImages.length - 7}</span>
+                          <p className='text-sm'>Daha fazla</p>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
 
               {/* İçerik */}
               <div className='bg-white rounded-lg shadow-sm p-8'>
                 <div className='prose prose-lg max-w-none'>
-                  <div dangerouslySetInnerHTML={{ __html: referans.content }} />
+                  <div dangerouslySetInnerHTML={{ __html: referans.content || `<p>${referans.excerpt || `${referans.sector} sektöründe gerçekleştirdiğimiz ${referans.name} projesi.`}</p>` }} />
                 </div>
 
                 {/* Etiketler */}
@@ -574,137 +428,112 @@ export default function ReferansDetayPage() {
 
                 {/* Paylaş */}
                 <div className='mt-8 pt-6 border-t border-gray-200'>
-                  <div className='flex items-center justify-between'>
-                    <h4 className='text-sm font-semibold text-gray-900'>Bu projeyi paylaş</h4>
-                    <div className='relative'>
-                      <button 
-                        onClick={handleShare}
-                        className='flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors'
-                      >
-                        <Share2 className='w-4 h-4' />
-                        <span>Paylaş</span>
-                      </button>
-
-                      {/* Paylaş Menüsü */}
-                      {shareMenuOpen && (
-                        <div className='share-menu absolute right-0 top-12 bg-white border border-gray-200 rounded-lg shadow-lg p-4 w-64 z-50'>
-                          <div className='flex items-center justify-between mb-3'>
-                            <h5 className='text-sm font-semibold text-gray-900'>Paylaş</h5>
-                            <button 
-                              onClick={() => setShareMenuOpen(false)}
-                              className='text-gray-400 hover:text-gray-600'
-                            >
-                              <X className='w-4 h-4' />
-                            </button>
-                          </div>
-                          
-                          {/* Sosyal Medya Butonları */}
-                          <div className='grid grid-cols-2 gap-2 mb-3'>
-                            <button
-                              onClick={() => shareToSocial('facebook')}
-                              className='flex items-center gap-2 p-2 text-sm text-blue-600 hover:bg-blue-50 rounded-md transition-colors'
-                            >
-                              <Facebook className='w-4 h-4' />
-                              Facebook
-                            </button>
-                            <button
-                              onClick={() => shareToSocial('twitter')}
-                              className='flex items-center gap-2 p-2 text-sm text-sky-600 hover:bg-sky-50 rounded-md transition-colors'
-                            >
-                              <Twitter className='w-4 h-4' />
-                              Twitter
-                            </button>
-                            <button
-                              onClick={() => shareToSocial('linkedin')}
-                              className='flex items-center gap-2 p-2 text-sm text-blue-700 hover:bg-blue-50 rounded-md transition-colors'
-                            >
-                              <Linkedin className='w-4 h-4' />
-                              LinkedIn
-                            </button>
-                            <button
-                              onClick={() => shareToSocial('whatsapp')}
-                              className='flex items-center gap-2 p-2 text-sm text-green-600 hover:bg-green-50 rounded-md transition-colors'
-                            >
-                              <MessageCircle className='w-4 h-4' />
-                              WhatsApp
-                            </button>
-                          </div>
-
-                          {/* Email ve Link Kopyala */}
-                          <div className='space-y-2 pt-3 border-t border-gray-100'>
-                            <button
-                              onClick={() => shareToSocial('email')}
-                              className='w-full flex items-center gap-2 p-2 text-sm text-gray-600 hover:bg-gray-50 rounded-md transition-colors'
-                            >
-                              <Mail className='w-4 h-4' />
-                              E-posta ile gönder
-                            </button>
-                            <button
-                              onClick={copyToClipboard}
-                              className='w-full flex items-center gap-2 p-2 text-sm text-gray-600 hover:bg-gray-50 rounded-md transition-colors'
-                            >
-                              <Copy className='w-4 h-4' />
-                              Linki kopyala
-                            </button>
-                          </div>
-                        </div>
-                      )}
-                    </div>
+                  <h4 className='text-sm font-semibold text-gray-900 mb-3'>Bu projeyi paylaş</h4>
+                  <div className='flex gap-3'>
+                    <button
+                      onClick={() => handleShare('facebook')}
+                      className='flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm'
+                    >
+                      <Facebook className='h-4 w-4' />
+                      Facebook
+                    </button>
+                    <button
+                      onClick={() => handleShare('twitter')}
+                      className='flex items-center gap-2 px-4 py-2 bg-sky-500 text-white rounded-lg hover:bg-sky-600 transition-colors text-sm'
+                    >
+                      <Twitter className='h-4 w-4' />
+                      Twitter
+                    </button>
+                    <button
+                      onClick={() => handleShare('linkedin')}
+                      className='flex items-center gap-2 px-4 py-2 bg-blue-700 text-white rounded-lg hover:bg-blue-800 transition-colors text-sm'
+                    >
+                      <Linkedin className='h-4 w-4' />
+                      LinkedIn
+                    </button>
                   </div>
                 </div>
               </div>
             </div>
 
-            {/* Yan Panel */}
-            <div className='space-y-6'>
-              {/* Kategori */}
-              <div className='bg-white rounded-lg shadow-sm p-6'>
-                <h3 className='text-lg font-semibold text-gray-900 mb-4'>Kategori</h3>
-                <span className={`inline-block px-4 py-2 rounded-full text-sm font-medium ${getCategoryColor(referans.category || referans.sector, dbCategories)}`}>
-                  {referans.category || referans.sector}
-                </span>
-              </div>
-
-              {/* Galeri Önizleme */}
-              {referans.gallery && referans.gallery.length > 1 && (
+            {/* Sağ Sidebar */}
+            <div className='lg:col-span-1'>
+              <div className='sticky top-8 space-y-6'>
+                
+                {/* Proje Bilgileri */}
                 <div className='bg-white rounded-lg shadow-sm p-6'>
-                  <h3 className='text-lg font-semibold text-gray-900 mb-4'>Proje Galerisi</h3>
-                  <div className='grid grid-cols-2 gap-2'>
-                    {referans.gallery.slice(0, 4).map((img: string, index: number) => (
-                      <div
-                        key={index}
-                        className='relative h-20 rounded cursor-pointer overflow-hidden'
-                        onClick={() => openGallery(index)}
-                      >
-                        <Image
-                          src={img}
-                          alt={`${referans.title} - ${index + 1}`}
-                          fill
-                          className='object-cover hover:scale-110 transition-transform duration-300'
-                        />
-                        {index === 3 && referans.gallery.length > 4 && (
-                          <div className='absolute inset-0 bg-black/60 flex items-center justify-center text-white text-sm font-medium'>
-                            +{referans.gallery.length - 4}
-                          </div>
-                        )}
+                  <h3 className='font-neuropol font-bold text-lg mb-4 text-slate-900'>Proje Bilgileri</h3>
+                  <div className='space-y-4'>
+                    {referans.client && (
+                      <div>
+                        <div className='flex items-center gap-2 text-sm text-gray-500 mb-1'>
+                          <Building className='h-4 w-4' />
+                          <span>Müşteri</span>
+                        </div>
+                        <p className='font-medium text-gray-900'>{referans.client}</p>
                       </div>
-                    ))}
+                    )}
+                    
+                    {referans.location && (
+                      <div>
+                        <div className='flex items-center gap-2 text-sm text-gray-500 mb-1'>
+                          <MapPin className='h-4 w-4' />
+                          <span>Konum</span>
+                        </div>
+                        <p className='font-medium text-gray-900'>{referans.location}</p>
+                      </div>
+                    )}
+                    
+                    {referans.projectValue && (
+                      <div>
+                        <div className='flex items-center gap-2 text-sm text-gray-500 mb-1'>
+                          <DollarSign className='h-4 w-4' />
+                          <span>Proje Değeri</span>
+                        </div>
+                        <p className='font-medium text-gray-900'>{referans.projectValue}</p>
+                      </div>
+                    )}
+                    
+                    {referans.duration && (
+                      <div>
+                        <div className='flex items-center gap-2 text-sm text-gray-500 mb-1'>
+                          <Clock className='h-4 w-4' />
+                          <span>Süre</span>
+                        </div>
+                        <p className='font-medium text-gray-900'>{referans.duration}</p>
+                      </div>
+                    )}
+                    
+                    <div>
+                      <div className='flex items-center gap-2 text-sm text-gray-500 mb-1'>
+                        <Calendar className='h-4 w-4' />
+                        <span>Tamamlanma Tarihi</span>
+                      </div>
+                      <p className='font-medium text-gray-900'>
+                        {new Date(referans.createdAt).toLocaleDateString('tr-TR', {
+                          year: 'numeric',
+                          month: 'long',
+                          day: 'numeric'
+                        })}
+                      </p>
+                    </div>
                   </div>
                 </div>
-              )}
 
-              {/* İletişim CTA */}
-              <div className='bg-blue-50 rounded-lg p-6 border border-blue-200'>
-                <h3 className='text-lg font-semibold text-gray-900 mb-2'>Benzer Bir Proje mi İstiyorsunuz?</h3>
-                <p className='text-gray-600 text-sm mb-4'>
-                  Elektrik altyapı çözümlerimiz hakkında detaylı bilgi almak için bizimle iletişime geçin.
-                </p>
-                <Link
-                  href='/iletisim'
-                  className='block w-full text-center bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition-colors font-medium'
-                >
-                  İletişime Geç
-                </Link>
+                {/* İletişim */}
+                <div className='bg-gradient-to-br from-blue-600 to-blue-700 rounded-lg shadow-sm p-6 text-white'>
+                  <h3 className='font-neuropol font-bold text-lg mb-3'>Benzer Bir Proje Mi İstiyorsunuz?</h3>
+                  <p className='text-blue-100 mb-4 text-sm'>
+                    Uzman ekibimizle iletişime geçin ve projeniz için özel çözümler keşfedin.
+                  </p>
+                  <Link
+                    href='/iletisim'
+                    className='inline-flex items-center gap-2 bg-white text-blue-600 px-4 py-2 rounded-lg hover:bg-blue-50 transition-colors font-medium text-sm w-full justify-center'
+                  >
+                    <Mail className='h-4 w-4' />
+                    İletişime Geç
+                  </Link>
+                </div>
               </div>
             </div>
           </div>
@@ -712,53 +541,133 @@ export default function ReferansDetayPage() {
       </MaxWidthWrapper>
 
       {/* Galeri Modal */}
-      {isGalleryOpen && referans?.gallery && selectedImageIndex !== null && referans.gallery[selectedImageIndex] && (
-        <div 
-          className='fixed inset-0 bg-black/90 z-50 flex items-center justify-center p-4'
-          onClick={closeGallery}
-        >
-          <div 
-            className='relative max-w-4xl max-h-full'
-            onClick={(e) => e.stopPropagation()}
-          >
-            <div className='relative h-[80vh] w-full min-w-[60vw]'>
-              <Image
-                src={referans.gallery[selectedImageIndex]}
-                alt={`${referans.title} - ${selectedImageIndex + 1}`}
-                fill
-                className='object-contain'
-                priority
-              />
-              
-              {/* Close button inside the image container */}
+      {isGalleryOpen && selectedImageIndex !== null && (
+        <div className='fixed inset-0 bg-black bg-opacity-90 z-50 flex items-center justify-center'>
+          <div className='relative w-full h-full flex items-center justify-center p-4'>
+            {/* Kapat Butonu */}
+            <button
+              onClick={closeGallery}
+              className='absolute top-4 right-4 z-10 bg-white bg-opacity-20 hover:bg-opacity-30 rounded-full p-2 transition-colors'
+            >
+              <X className='h-6 w-6 text-white' />
+            </button>
+
+            {/* Önceki Buton */}
+            {galleryImages.length > 1 && (
               <button
-                onClick={closeGallery}
-                className='absolute top-4 right-4 text-white hover:text-gray-300 z-30 bg-black/70 hover:bg-black/90 rounded-full p-2 transition-all duration-200'
+                onClick={() => navigateGallery('prev')}
+                className='absolute left-4 z-10 bg-white bg-opacity-20 hover:bg-opacity-30 rounded-full p-2 transition-colors'
               >
-                <X className='w-5 h-5' />
+                <ChevronLeft className='h-6 w-6 text-white' />
               </button>
-              
-              {/* Navigation buttons inside the image container */}
-              {referans.gallery.length > 1 && (
-                <>
-                  <button
-                    onClick={prevImage}
-                    className='absolute left-4 top-1/2 -translate-y-1/2 text-white hover:text-gray-300 bg-black/70 hover:bg-black/90 rounded-full p-3 transition-all duration-200 z-20'
-                  >
-                    <ChevronLeft className='w-6 h-6' />
-                  </button>
-                  <button
-                    onClick={nextImage}
-                    className='absolute right-4 top-1/2 -translate-y-1/2 text-white hover:text-gray-300 bg-black/70 hover:bg-black/90 rounded-full p-3 transition-all duration-200 z-20'
-                  >
-                    <ChevronRight className='w-6 h-6' />
-                  </button>
-                </>
-              )}
+            )}
+
+            {/* Ana Görsel */}
+            <div className='relative max-w-4xl max-h-full'>
+              <Image
+                src={galleryImages[selectedImageIndex]}
+                alt={`${referans.title || referans.name} - Görsel ${selectedImageIndex + 1}`}
+                width={1200}
+                height={800}
+                className='max-w-full max-h-full object-contain'
+              />
             </div>
 
-            <div className='absolute bottom-6 left-1/2 -translate-x-1/2 text-white text-sm bg-black/70 px-4 py-2 rounded-full font-medium'>
-              {selectedImageIndex + 1} / {referans.gallery.length}
+            {/* Sonraki Buton */}
+            {galleryImages.length > 1 && (
+              <button
+                onClick={() => navigateGallery('next')}
+                className='absolute right-4 z-10 bg-white bg-opacity-20 hover:bg-opacity-30 rounded-full p-2 transition-colors'
+              >
+                <ChevronRight className='h-6 w-6 text-white' />
+              </button>
+            )}
+
+            {/* Görsel Sayacı */}
+            <div className='absolute bottom-4 left-1/2 transform -translate-x-1/2 bg-white bg-opacity-20 rounded-full px-4 py-2'>
+              <span className='text-white text-sm'>
+                {selectedImageIndex + 1} / {galleryImages.length}
+              </span>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Paylaş Modal */}
+      {isShareOpen && (
+        <div className='fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4'>
+          <div className='bg-white rounded-lg p-6 w-full max-w-md'>
+            <div className='flex items-center justify-between mb-4'>
+              <h3 className='font-semibold text-lg'>Projeyi Paylaş</h3>
+              <button
+                onClick={() => setIsShareOpen(false)}
+                className='text-gray-400 hover:text-gray-600'
+              >
+                <X className='h-5 w-5' />
+              </button>
+            </div>
+            
+            <div className='space-y-3'>
+              <button
+                onClick={() => handleShare('facebook')}
+                className='w-full flex items-center gap-3 p-3 rounded-lg border border-gray-200 hover:bg-gray-50 transition-colors'
+              >
+                <Facebook className='h-5 w-5 text-blue-600' />
+                <span>Facebook'ta Paylaş</span>
+              </button>
+              
+              <button
+                onClick={() => handleShare('twitter')}
+                className='w-full flex items-center gap-3 p-3 rounded-lg border border-gray-200 hover:bg-gray-50 transition-colors'
+              >
+                <Twitter className='h-5 w-5 text-sky-500' />
+                <span>Twitter'da Paylaş</span>
+              </button>
+              
+              <button
+                onClick={() => handleShare('linkedin')}
+                className='w-full flex items-center gap-3 p-3 rounded-lg border border-gray-200 hover:bg-gray-50 transition-colors'
+              >
+                <Linkedin className='h-5 w-5 text-blue-700' />
+                <span>LinkedIn'de Paylaş</span>
+              </button>
+              
+              <button
+                onClick={() => handleShare('whatsapp')}
+                className='w-full flex items-center gap-3 p-3 rounded-lg border border-gray-200 hover:bg-gray-50 transition-colors'
+              >
+                <MessageCircle className='h-5 w-5 text-green-600' />
+                <span>WhatsApp'ta Paylaş</span>
+              </button>
+              
+              <button
+                onClick={() => handleShare('email')}
+                className='w-full flex items-center gap-3 p-3 rounded-lg border border-gray-200 hover:bg-gray-50 transition-colors'
+              >
+                <Mail className='h-5 w-5 text-gray-600' />
+                <span>E-posta ile Gönder</span>
+              </button>
+              
+              <div className='border-t pt-3'>
+                <div className='flex items-center gap-2'>
+                  <input
+                    type='text'
+                    value={shareUrl}
+                    readOnly
+                    className='flex-1 p-2 border border-gray-200 rounded text-sm bg-gray-50'
+                  />
+                  <button
+                    onClick={copyToClipboard}
+                    className={`px-3 py-2 rounded text-sm font-medium transition-colors ${
+                      copySuccess
+                        ? 'bg-green-100 text-green-700'
+                        : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                    }`}
+                  >
+                    {copySuccess ? 'Kopyalandı!' : 'Kopyala'}
+                  </button>
+                </div>
+              </div>
             </div>
           </div>
         </div>

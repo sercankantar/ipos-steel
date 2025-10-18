@@ -136,6 +136,15 @@ model Reference {
   updatedAt     DateTime @updatedAt
 }
 
+model PressReleaseCategory {
+  id        String   @id @default(cuid())
+  name      String   @unique
+  color     String   @default("bg-blue-100 text-blue-800")
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
 model PressRelease {
   id            String   @id @default(cuid())
   title         String
