@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { isAdminAuthenticated } from '@/lib/auth'
+import { revalidatePath } from 'next/cache'
 
 export async function GET() {
   try {
@@ -51,6 +52,11 @@ export async function POST(request: NextRequest) {
         categoryId,
       }
     })
+
+    // Cache'i temizle
+    revalidatePath('/products')
+    revalidatePath('/api/products')
+    revalidatePath('/api/product-categories')
 
     return NextResponse.json(product)
   } catch (error) {

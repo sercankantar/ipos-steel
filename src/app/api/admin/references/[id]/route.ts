@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { isAdminAuthenticated } from '@/lib/auth'
+import { revalidatePath } from 'next/cache'
 
 export async function PUT(request: NextRequest, { params }: { params: { id: string } }) {
   try {
@@ -33,6 +34,12 @@ export async function PUT(request: NextRequest, { params }: { params: { id: stri
         isActive: data.isActive ?? true
       }
     })
+
+    // Cache'i temizle
+    revalidatePath('/referanslar')
+    revalidatePath('/referanslarimiz')
+    revalidatePath('/api/references')
+
     return NextResponse.json(updated)
   } catch (error) {
     console.error('Reference update error:', error)

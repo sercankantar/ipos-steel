@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { isAdminAuthenticated } from '@/lib/auth'
+import { revalidatePath } from 'next/cache'
 
 export async function GET() {
   try {
@@ -22,6 +23,11 @@ export async function POST(request: NextRequest) {
     const created = await prisma.news.create({
       data: { title, category, publishedAt: new Date(publishedAt), summary, content, imageUrl, imagePublicId, isActive: isActive ?? true }
     })
+
+    // Cache'i temizle
+    revalidatePath('/haberler')
+    revalidatePath('/api/news')
+
     return NextResponse.json(created)
   } catch (error) {
     return NextResponse.json({ error: 'Sunucu hatası' }, { status: 500 })

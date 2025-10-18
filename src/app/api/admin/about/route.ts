@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { isAdminAuthenticated } from '@/lib/auth'
+import { revalidatePath } from 'next/cache'
 
 export async function GET() {
   try {
@@ -32,11 +33,21 @@ export async function PUT(request: NextRequest) {
           imagePublicId: imagePublicId ?? existing.imagePublicId,
         }
       })
+
+      // Cache'i temizle
+      revalidatePath('/hakkimizda')
+      revalidatePath('/api/about')
+
       return NextResponse.json(updated)
     } else {
       const created = await prisma.about.create({
         data: { title, description, imageUrl, imagePublicId, isActive: true }
       })
+
+      // Cache'i temizle
+      revalidatePath('/hakkimizda')
+      revalidatePath('/api/about')
+
       return NextResponse.json(created)
     }
   } catch (error) {

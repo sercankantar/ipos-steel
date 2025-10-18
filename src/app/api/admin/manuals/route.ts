@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { isAdminAuthenticated } from '@/lib/auth'
+import { revalidatePath } from 'next/cache'
 
 export async function GET() {
   try {
@@ -52,6 +53,10 @@ export async function POST(request: NextRequest) {
       }
     })
 
+    // Cache'i temizle
+    revalidatePath('/el-kitaplari-montaj-kilavuzlari')
+    revalidatePath('/api/manuals')
+
     return NextResponse.json(manual)
   } catch (error) {
     console.error('Manual oluşturulurken hata:', error)
@@ -91,6 +96,10 @@ export async function PUT(request: NextRequest) {
       }
     })
 
+    // Cache'i temizle
+    revalidatePath('/el-kitaplari-montaj-kilavuzlari')
+    revalidatePath('/api/manuals')
+
     return NextResponse.json(manual)
   } catch (error) {
     console.error('Manual güncellenirken hata:', error)
@@ -109,6 +118,10 @@ export async function DELETE(request: NextRequest) {
     if (!id) return NextResponse.json({ error: 'ID gerekli' }, { status: 400 })
 
     await prisma.manual.delete({ where: { id } })
+
+    // Cache'i temizle
+    revalidatePath('/el-kitaplari-montaj-kilavuzlari')
+    revalidatePath('/api/manuals')
 
     return NextResponse.json({ success: true })
   } catch (error) {
