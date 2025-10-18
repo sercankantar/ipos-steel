@@ -29,6 +29,24 @@ interface KvkkPrivacyPolicy {
   telefon: string
   adres: string
   isActive: boolean
+  // Dinamik başlıklar
+  amacTitle?: string
+  kapsamTitle?: string
+  tanimlarTitle?: string
+  rollerTitle?: string
+  yukumluluklerTitle?: string
+  siniflandirmaTitle?: string
+  islenmesiTitle?: string
+  aktarilmasiTitle?: string
+  saklanmasiTitle?: string
+  guvenligiTitle?: string
+  haklariTitle?: string
+  gizlilikTitle?: string
+  girisCikisTitle?: string
+  silinmesiTitle?: string
+  yayinlanmasiTitle?: string
+  guncellemeTitle?: string
+  yururlukTitle?: string
 }
 
 export default function KvkkGizlilikPolitikasiClient() {
@@ -229,23 +247,23 @@ export default function KvkkGizlilikPolitikasiClient() {
             <div className='lg:w-3/4'>
               <div className='bg-white rounded-lg shadow-sm border border-gray-200 p-8 space-y-12'>
                 
-                {renderSection('amac', 'Amaç', policy.amac, 0)}
-                {renderSection('kapsam', 'Kapsam', policy.kapsam, 1)}
-                {renderSection('tanimlar', 'Tanım ve Kısaltmalar', policy.tanimlar, 2)}
-                {renderSection('roller', 'Rol ve Sorumluluklar', policy.roller, 3)}
-                {renderSection('yukumlulukler', 'Hukuki Yükümlülükler', policy.yukumlulukler, 4)}
-                {renderSection('siniflandirma', 'Kişisel Verilerin Sınıflandırılması', policy.siniflandirma, 5)}
-                {renderSection('islenmesi', 'Kişisel Verilerin İşlenmesi', policy.islenmesi, 6)}
-                {renderSection('aktarilmasi', 'Kişisel Verilerin Aktarılması', policy.aktarilmasi, 7)}
-                {renderSection('saklanmasi', 'Kişisel Verilerin Saklanması', policy.saklanmasi, 8)}
-                {renderSection('guvenligi', 'Kişisel Verilerin Güvenliği', policy.guvenligi, 9)}
-                {renderSection('haklari', 'Kişisel Veri Sahibinin Hakları', policy.haklari, 10)}
-                {renderSection('gizlilik', 'Gizlilik Politikası', policy.gizlilik, 11)}
-                {renderSection('giris-cikis', 'Şirket Giriş-Çıkışları ve Kişisel Veriler', policy.girisCikis, 12)}
-                {renderSection('silinmesi', 'Kişisel Verilerin Silinmesi', policy.silinmesi, 13)}
-                {renderSection('yayinlanmasi', 'Dokümanın Yayınlanması', policy.yayinlanmasi, 14)}
-                {renderSection('guncelleme', 'Güncelleme Periyodu', policy.guncelleme, 15)}
-                {renderSection('yururluk', 'Yürürlük', policy.yururluk, 16)}
+                {renderSection('amac', policy.amacTitle || 'Amaç', policy.amac, 0)}
+                {renderSection('kapsam', policy.kapsamTitle || 'Kapsam', policy.kapsam, 1)}
+                {renderSection('tanimlar', policy.tanimlarTitle || 'Tanım ve Kısaltmalar', policy.tanimlar, 2)}
+                {renderSection('roller', policy.rollerTitle || 'Rol ve Sorumluluklar', policy.roller, 3)}
+                {renderSection('yukumlulukler', policy.yukumluluklerTitle || 'Hukuki Yükümlülükler', policy.yukumlulukler, 4)}
+                {renderSection('siniflandirma', policy.siniflandirmaTitle || 'Kişisel Verilerin Sınıflandırılması', policy.siniflandirma, 5)}
+                {renderSection('islenmesi', policy.islenmesiTitle || 'Kişisel Verilerin İşlenmesi', policy.islenmesi, 6)}
+                {renderSection('aktarilmasi', policy.aktarilmasiTitle || 'Kişisel Verilerin Aktarılması', policy.aktarilmasi, 7)}
+                {renderSection('saklanmasi', policy.saklanmasiTitle || 'Kişisel Verilerin Saklanması', policy.saklanmasi, 8)}
+                {renderSection('guvenligi', policy.guvenligiTitle || 'Kişisel Verilerin Güvenliği', policy.guvenligi, 9)}
+                {renderSection('haklari', policy.haklariTitle || 'Kişisel Veri Sahibinin Hakları', policy.haklari, 10)}
+                {renderSection('gizlilik', policy.gizlilikTitle || 'Gizlilik Politikası', policy.gizlilik, 11)}
+                {renderSection('giris-cikis', policy.girisCikisTitle || 'Şirket Giriş-Çıkışları ve Kişisel Veriler', policy.girisCikis, 12)}
+                {renderSection('silinmesi', policy.silinmesiTitle || 'Kişisel Verilerin Silinmesi', policy.silinmesi, 13)}
+                {renderSection('yayinlanmasi', policy.yayinlanmasiTitle || 'Dokümanın Yayınlanması', policy.yayinlanmasi, 14)}
+                {renderSection('guncelleme', policy.guncellemeTitle || 'Güncelleme Periyodu', policy.guncelleme, 15)}
+                {renderSection('yururluk', policy.yururlukTitle || 'Yürürlük', policy.yururluk, 16)}
 
               </div>
 
