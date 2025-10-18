@@ -721,3 +721,68 @@ model KvkkPrivacyPolicy {
   createdAt             DateTime @default(now())
   updatedAt             DateTime @updatedAt
 }
+
+model KvkkDisclosureText {
+  id                    String   @id @default(cuid())
+
+  // Temel Bilgiler
+  title                 String   @default("Kişisel Verilere İlişkin Aydınlatma Metni")
+  lastUpdated           DateTime @default(now())
+
+  // Hero Section
+  heroTitle             String
+  heroSubtitle          String
+
+  // Veri Sorumlusu Bölümü
+  veriSorumlusuTitle   String   @default("Veri Sorumlusu")
+  veriSorumlusuContent String
+
+  // Kişisel Verilerin İşlenme Amacı Bölümü
+  islemeAmaciTitle     String   @default("Kişisel Verilerinizin İşlenme Amacı")
+  islemeAmaciContent   String
+  islemeAmaciBullets   String[] // Array of bullet points
+  calisanVerileriTitle String   @default("Çalışan Verileri")
+  calisanVerileriContent String
+
+  // Kişisel Verilerin Aktarılması Bölümü
+  aktarilmaTitle       String   @default("Kişisel Verilerinizin Aktarılması")
+  aktarilmaContent     String
+  yurtIciAktarim       String[] // Array of domestic transfer items
+  yurtDisiAktarim      String[] // Array of international transfer items
+  acikRizaTitle        String   @default("Açık Rıza ile İşleme")
+  acikRizaContent      String
+  acikRizaBullets      String[] // Array of consent-based processing items
+
+  // Toplanma Yöntemi ve Hukuki Sebep Bölümü
+  toplamaYontemiTitle  String   @default("Kişisel Verilerinizin Toplanma Yöntemi ve Hukuki Sebebi")
+  toplamaYontemiContent String
+  dijitalKanallar      String[] // Array of digital channels
+  fizikselKanallar     String[] // Array of physical channels
+  iletisimKanallari    String[] // Array of communication channels
+
+  // Kişisel Veri Sahibi Hakları Bölümü
+  haklarTitle          String   @default("Kişisel Veri Sahibi Olarak Haklarınız")
+  haklarContent        String
+  haklarListesi        String[] // Array of rights
+  haklarKullanimTitle  String   @default("Haklarınızı Nasıl Kullanabilirsiniz?")
+  haklarKullanimContent String
+  emailIletisim        String
+  kepIletisim          String
+  basvuruSartlari      String[] // Array of application requirements
+
+  // İletişim Bölümü
+  iletisimTitle        String   @default("İletişim")
+  iletisimContent      String
+
+  // İletişim Bilgileri
+  email                String
+  telefon              String
+  adres                String
+  mapUrl               String?  // Google Maps URL
+
+  // Durum
+  isActive             Boolean  @default(true)
+
+  createdAt            DateTime @default(now())
+  updatedAt            DateTime @updatedAt
+}
