@@ -13,6 +13,9 @@ import {
 } from 'lucide-react'
 import { headers } from 'next/headers'
 
+export const dynamic = 'force-dynamic'
+export const revalidate = 0
+
 function getBaseUrl() {
   const h = headers()
   const proto = h.get('x-forwarded-proto') || 'https'

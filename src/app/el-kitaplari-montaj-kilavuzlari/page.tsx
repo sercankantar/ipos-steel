@@ -4,6 +4,9 @@ import Link from 'next/link'
 import { headers } from 'next/headers'
 import ManualClient from './ManualClient'
 
+export const dynamic = 'force-dynamic'
+export const revalidate = 0
+
 async function getManuals() {
   const hdrs = headers()
   const host = hdrs.get('x-forwarded-host') || hdrs.get('host') || 'localhost:3000'

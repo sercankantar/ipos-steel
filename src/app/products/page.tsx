@@ -3,6 +3,9 @@ import { headers } from 'next/headers'
 import Link from 'next/link'
 import { ChevronRight } from 'lucide-react'
 
+export const dynamic = 'force-dynamic'
+export const revalidate = 0
+
 type Param = string | string[] | undefined
 
 interface ProductsPageProps {

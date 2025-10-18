@@ -3,6 +3,9 @@ import Link from 'next/link'
 import { headers } from 'next/headers'
 import CatalogClient from './CatalogClient'
 
+export const dynamic = 'force-dynamic'
+export const revalidate = 0
+
 async function getCatalogs() {
   const hdrs = headers()
   const host = hdrs.get('x-forwarded-host') || hdrs.get('host') || 'localhost:3000'
