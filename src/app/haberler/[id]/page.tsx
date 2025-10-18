@@ -202,6 +202,7 @@ export default function HaberDetayPage() {
             date: d.publishedAt,
             author: 'IPOS-Steel',
             category: d.category,
+            categoryColor: d.categoryColor || 'bg-gray-100 text-gray-800',
             views: 0,
             tags: []
           })
@@ -223,6 +224,7 @@ export default function HaberDetayPage() {
               date: d.publishedAt,
               author: 'IPOS-Steel',
               category: d.category,
+              categoryColor: d.categoryColor || 'bg-gray-100 text-gray-800',
               views: 0,
               tags: []
             })
@@ -352,16 +354,16 @@ export default function HaberDetayPage() {
             {/* Haber Başlığı ve Meta Bilgiler */}
             <header className="mb-8">
               <div className="flex items-center gap-3 mb-4">
-                <span className="bg-gray-500 text-white px-3 py-1 rounded text-sm font-medium uppercase">
+                <span className={`px-3 py-1 rounded text-sm font-medium uppercase ${haber.categoryColor || 'bg-gray-500 text-white'}`}>
                   {haber.category}
                 </span>
                 <div className="flex items-center gap-4 text-sm text-gray-500">
                   <div className="flex items-center gap-1">
                     <Calendar className="h-4 w-4" />
                     <span>{new Date(haber.date).toLocaleDateString('tr-TR', { 
-                      year: 'numeric', 
-                      month: 'long', 
-                      day: 'numeric' 
+                      day: '2-digit', 
+                      month: '2-digit', 
+                      year: 'numeric' 
                     })}</span>
                   </div>
                   <div className="flex items-center gap-1">
@@ -533,7 +535,11 @@ export default function HaberDetayPage() {
                           {ilgiliHaber.excerpt}
                         </p>
                         <div className="mt-2 text-xs text-gray-500">
-                          {new Date(ilgiliHaber.date).toLocaleDateString('tr-TR')}
+                          {new Date(ilgiliHaber.date).toLocaleDateString('tr-TR', { 
+                            day: '2-digit', 
+                            month: '2-digit', 
+                            year: 'numeric' 
+                          })}
                         </div>
                       </article>
                     </Link>

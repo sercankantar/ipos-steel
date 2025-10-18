@@ -5,34 +5,26 @@ import { Eye, Calendar, X, ChevronLeft, ChevronRight } from 'lucide-react'
 import Image from 'next/image'
 import { useState, useEffect, useMemo } from 'react'
 
-// Varsayılan kategoriler (API yoksa)
-const galeriKategorileri = [
-  {
-    id: 'fabrika',
-    name: 'Fabrika ve Üretim',
-    count: 24
-  },
-  {
-    id: 'urunler',
-    name: 'Ürünler',
-    count: 18
-  },
-  {
-    id: 'projeler',
-    name: 'Projeler',
-    count: 32
-  },
-  {
-    id: 'etkinlikler',
-    name: 'Etkinlikler',
-    count: 15
-  },
-  {
-    id: 'sergiler',
-    name: 'Fuarlar ve Sergiler',
-    count: 12
-  }
-]
+interface GalleryImage {
+  id: string
+  imageUrl: string
+  imagePublicId: string
+  order: number
+}
+
+interface GalleryItem {
+  id: string
+  title: string
+  summary?: string
+  category: string
+  categoryColor?: string
+  publishedAt: string
+  imageUrl?: string
+  images?: GalleryImage[]
+  isActive: boolean
+}
+
+// Kategoriler artık dinamik olarak backend'den geliyor
 
 // Fallback görseller (API yoksa)
 const galeriGorselleri = [
@@ -315,25 +307,39 @@ export default function GaleriPage() {
   const [selectedImageIndex, setSelectedImageIndex] = useState<number>(0)
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [items, setItems] = useState<any[]>([])
+  const [categories, setCategories] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
     const load = async () => {
       try {
-        const res = await fetch('/api/gallery', { cache: 'no-store' })
-        const data = res.ok ? await res.json() : []
-        const mapped = (data as any[]).map(d => ({
+        // Galeri öğelerini ve kategorileri paralel olarak çek
+        const [galleryRes, categoriesRes] = await Promise.all([
+          fetch('/api/gallery', { cache: 'no-store' }),
+          fetch('/api/gallery-categories', { cache: 'no-store' })
+        ])
+        
+        const galleryData = galleryRes.ok ? await galleryRes.json() : []
+        const categoriesData = categoriesRes.ok ? await categoriesRes.json() : []
+        
+        const mapped = (galleryData as any[]).map(d => ({
           id: d.id,
           title: d.title,
           category: d.category,
-          image: d.imageUrl || '',
+          categoryColor: d.categoryColor || 'bg-gray-100 text-gray-800',
+          image: d.imageUrl || (d.images && d.images.length > 0 ? d.images[0].imageUrl : ''),
           date: d.publishedAt,
           description: d.summary || '',
-          gallery: d.imageUrl ? [d.imageUrl] : []
+          gallery: d.images && d.images.length > 0 
+            ? d.images.map((img: any) => img.imageUrl)
+            : (d.imageUrl ? [d.imageUrl] : [])
         }))
+        
         setItems(mapped)
+        setCategories(categoriesData)
       } catch {
         setItems([])
+        setCategories([])
       } finally {
         setLoading(false)
       }
@@ -341,6 +347,29 @@ export default function GaleriPage() {
     load()
   }, [])
   
+  // Dinamik kategori listesi oluştur
+  const dynamicCategories = useMemo(() => {
+    const categoryMap = new Map()
+    
+    // Tüm kategorileri say
+    items.forEach(item => {
+      if (item.category) {
+        const existing = categoryMap.get(item.category)
+        if (existing) {
+          existing.count++
+        } else {
+          categoryMap.set(item.category, {
+            id: item.category,
+            name: item.category,
+            count: 1
+          })
+        }
+      }
+    })
+    
+    return Array.from(categoryMap.values()).sort((a, b) => a.name.localeCompare(b.name))
+  }, [items])
+
   // Kategoriye göre filtrelenmiş görseller
   const filteredGorseller = selectedKategori === 'tumü' 
     ? items 
@@ -477,8 +506,8 @@ export default function GaleriPage() {
 
                         {/* Kategori Badge */}
                         <div className="absolute top-3 left-3">
-                          <span className="bg-white/90 text-gray-700 px-2 py-1 rounded text-xs font-medium">
-                        {galeriKategorileri.find(k => k.id === gorsel.category)?.name || gorsel.category}
+                          <span className={`px-2 py-1 rounded text-xs font-medium ${gorsel.categoryColor || 'bg-white/90 text-gray-700'}`}>
+                        {gorsel.category}
                           </span>
                         </div>
                       </div>
@@ -508,7 +537,7 @@ export default function GaleriPage() {
                     Bu kategoride görsel bulunamadı
                   </h3>
                   <p className="text-gray-500 text-sm">
-                    "{galeriKategorileri.find(k => k.id === selectedKategori)?.name}" kategorisinde henüz görsel bulunmuyor.
+                    "{selectedKategori}" kategorisinde henüz görsel bulunmuyor.
                   </p>
                   <button 
                     onClick={() => handleKategoriChange('tumü')}
@@ -559,29 +588,26 @@ export default function GaleriPage() {
                         {loading ? '...' : items.length}
                       </span>
                     </button>
-                    {galeriKategorileri.map((kategori) => {
-                      const count = items.filter((g: any) => g.category === kategori.id).length
-                      return (
-                        <button
-                          key={kategori.id}
-                          onClick={() => handleKategoriChange(kategori.id)}
-                          className={`w-full flex items-center justify-between py-2 px-3 rounded-md transition-colors text-left ${
-                            selectedKategori === kategori.id
-                              ? 'bg-blue-50 text-blue-700'
-                              : 'hover:bg-white text-slate-700 hover:text-slate-900'
-                          }`}
-                        >
-                          <span className="text-sm font-medium">{kategori.name}</span>
-                          <span className={`text-xs px-2 py-1 rounded-full ${
-                            selectedKategori === kategori.id
-                              ? 'bg-blue-100 text-blue-700'
-                              : 'bg-white text-gray-500'
-                          }`}>
-                            {loading ? '...' : count}
-                          </span>
-                        </button>
-                      )
-                    })}
+                    {dynamicCategories.map((kategori) => (
+                      <button
+                        key={kategori.id}
+                        onClick={() => handleKategoriChange(kategori.id)}
+                        className={`w-full flex items-center justify-between py-2 px-3 rounded-md transition-colors text-left ${
+                          selectedKategori === kategori.id
+                            ? 'bg-blue-50 text-blue-700'
+                            : 'hover:bg-white text-slate-700 hover:text-slate-900'
+                        }`}
+                      >
+                        <span className="text-sm font-medium">{kategori.name}</span>
+                        <span className={`text-xs px-2 py-1 rounded-full ${
+                          selectedKategori === kategori.id
+                            ? 'bg-blue-100 text-blue-700'
+                            : 'bg-white text-gray-500'
+                        }`}>
+                          {kategori.count}
+                        </span>
+                      </button>
+                    ))}
                   </div>
                 </div>
 
@@ -651,8 +677,8 @@ export default function GaleriPage() {
                       <Calendar className="h-4 w-4" />
                       <span>{currentImage?.date ? new Date(currentImage.date).toLocaleDateString('tr-TR') : ''}</span>
                     </div>
-                    <span className="bg-gray-100 text-gray-700 px-2 py-1 rounded text-xs font-medium">
-                      {galeriKategorileri.find(k => k.id === currentImage?.category)?.name}
+                    <span className={`px-2 py-1 rounded text-xs font-medium ${currentImage?.categoryColor || 'bg-gray-100 text-gray-700'}`}>
+                      {currentImage?.category}
                     </span>
                     {currentGallery && currentGallery.length > 1 && (
                       <span className="bg-blue-100 text-blue-700 px-2 py-1 rounded text-xs font-medium">

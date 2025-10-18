@@ -145,6 +145,24 @@ model PressReleaseCategory {
   updatedAt DateTime @updatedAt
 }
 
+model NewsCategory {
+  id        String   @id @default(cuid())
+  name      String   @unique
+  color     String   @default("bg-blue-100 text-blue-800")
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model GalleryCategory {
+  id        String   @id @default(cuid())
+  name      String   @unique
+  color     String   @default("bg-blue-100 text-blue-800")
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
 model PressRelease {
   id            String   @id @default(cuid())
   title         String
@@ -174,16 +192,31 @@ model News {
 }
 
 model GalleryItem {
-  id            String   @id @default(cuid())
+  id            String         @id @default(cuid())
   title         String
   summary       String?
   category      String
   publishedAt   DateTime
-  imageUrl      String?
-  imagePublicId String?
-  isActive      Boolean  @default(true)
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
+  imageUrl      String?        // Ana görsel (geriye uyumluluk için)
+  imagePublicId String?        // Ana görsel public ID (geriye uyumluluk için)
+  images        GalleryImage[] // Çoklu görseller
+  isActive      Boolean        @default(true)
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+}
+
+model GalleryImage {
+  id            String      @id @default(cuid())
+  galleryItemId String
+  imageUrl      String
+  imagePublicId String
+  order         Int         @default(0)
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+  
+  galleryItem   GalleryItem @relation(fields: [galleryItemId], references: [id], onDelete: Cascade)
+  
+  @@index([galleryItemId])
 }
 
 model Product {

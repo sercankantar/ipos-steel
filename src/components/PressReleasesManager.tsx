@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { Edit, Trash2, Plus, Tag } from 'lucide-react'
+import { Edit, Trash2, Plus, Tag, Search } from 'lucide-react'
 import { toast } from 'sonner'
 
 interface PressRelease {
@@ -48,6 +48,7 @@ export default function PressReleasesManager() {
   const [editing, setEditing] = useState<PressRelease | null>(null)
   const [formOpen, setFormOpen] = useState(false)
   const [categoryFormOpen, setCategoryFormOpen] = useState(false)
+  const [searchTerm, setSearchTerm] = useState('')
   const [newCategoryName, setNewCategoryName] = useState('')
   const [newCategoryColor, setNewCategoryColor] = useState('bg-blue-100 text-blue-800')
   const [form, setForm] = useState({ title: '', category: '', publishedAt: '', summary: '', content: '', isActive: true })
@@ -216,6 +217,20 @@ export default function PressReleasesManager() {
 
   if (loading) return <div className="p-8"><div className="h-6 w-40 bg-gray-200 rounded animate-pulse mb-4" /><div className="h-4 w-full bg-gray-200 rounded animate-pulse mb-2" /><div className="h-4 w-2/3 bg-gray-200 rounded animate-pulse" /></div>
 
+  // Arama filtreleme
+  const filteredItems = items.filter(item => {
+    const searchLower = searchTerm.toLowerCase()
+    return (
+      item.title.toLowerCase().includes(searchLower) ||
+      item.category.toLowerCase().includes(searchLower) ||
+      (item.summary && item.summary.toLowerCase().includes(searchLower)) ||
+      (item.content && item.content.toLowerCase().includes(searchLower))
+    )
+  })
+
+  const activeItems = filteredItems.filter(item => item.isActive)
+  const inactiveItems = filteredItems.filter(item => !item.isActive)
+
   return (
     <div className="space-y-6">
       {/* Header */}
@@ -241,6 +256,35 @@ export default function PressReleasesManager() {
         </div>
       </div>
 
+      {/* Search Bar */}
+      <div className="bg-white p-4 rounded-lg shadow-sm border">
+        <div className="relative">
+          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+          <Input
+            type="text"
+            placeholder="Basın açıklaması başlığı, kategori, özet veya içerikte ara..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="pl-10 pr-4 py-2 w-full"
+          />
+          {searchTerm && (
+            <button
+              onClick={() => setSearchTerm('')}
+              className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
+            >
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+          )}
+        </div>
+        {searchTerm && (
+          <p className="text-sm text-gray-500 mt-2">
+            "{searchTerm}" için {filteredItems.length} sonuç bulundu
+          </p>
+        )}
+      </div>
+
       {/* İstatistikler */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
         <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
@@ -250,7 +294,7 @@ export default function PressReleasesManager() {
             </div>
             <div className="ml-3">
               <p className="text-sm font-medium text-blue-900">Toplam Açıklama</p>
-              <p className="text-2xl font-bold text-blue-600">{items.length}</p>
+              <p className="text-2xl font-bold text-blue-600">{filteredItems.length}</p>
             </div>
           </div>
         </div>
@@ -261,7 +305,7 @@ export default function PressReleasesManager() {
             </div>
             <div className="ml-3">
               <p className="text-sm font-medium text-green-900">Aktif Açıklama</p>
-              <p className="text-2xl font-bold text-green-600">{items.filter(i => i.isActive).length}</p>
+              <p className="text-2xl font-bold text-green-600">{activeItems.length}</p>
             </div>
           </div>
         </div>
@@ -283,7 +327,7 @@ export default function PressReleasesManager() {
             </div>
             <div className="ml-3">
               <p className="text-sm font-medium text-gray-900">Pasif Açıklama</p>
-              <p className="text-2xl font-bold text-gray-600">{items.filter(i => !i.isActive).length}</p>
+              <p className="text-2xl font-bold text-gray-600">{inactiveItems.length}</p>
             </div>
           </div>
         </div>
@@ -291,23 +335,36 @@ export default function PressReleasesManager() {
 
       {/* Ana İçerik */}
       <div className="bg-white rounded-lg border border-gray-200 shadow-sm">
-        {items.length === 0 ? (
+        {filteredItems.length === 0 ? (
           <div className="text-center py-12">
             <div className="mx-auto w-24 h-24 bg-gray-100 rounded-full flex items-center justify-center mb-4">
-              <Plus className="w-8 h-8 text-gray-400" />
+              {searchTerm ? <Search className="w-8 h-8 text-gray-400" /> : <Plus className="w-8 h-8 text-gray-400" />}
             </div>
-            <h3 className="text-lg font-medium text-gray-900 mb-2">Henüz basın açıklaması yok</h3>
-            <p className="text-gray-500 mb-6">İlk basın açıklamanızı ekleyerek başlayın</p>
+            <h3 className="text-lg font-medium text-gray-900 mb-2">
+              {searchTerm ? 'Arama sonucu bulunamadı' : 'Henüz basın açıklaması yok'}
+            </h3>
+            <p className="text-gray-500 mb-6">
+              {searchTerm 
+                ? `"${searchTerm}" ile eşleşen basın açıklaması bulunamadı. Farklı anahtar kelimeler deneyin.`
+                : 'İlk basın açıklamanızı ekleyerek başlayın'
+              }
+            </p>
+            {searchTerm ? (
+              <Button variant="outline" onClick={() => setSearchTerm('')}>
+                Aramayı Temizle
+              </Button>
+            ) : (
         <Button onClick={() => { setFormOpen(true); setEditing(null) }}>
-              <Plus className="w-4 h-4 mr-2" /> Basın Açıklaması Ekle
-            </Button>
+                <Plus className="w-4 h-4 mr-2" /> Basın Açıklaması Ekle
+              </Button>
+            )}
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 p-6">
-            {items.map((item) => (
+          <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 p-4">
+            {filteredItems.map((item) => (
               <div key={item.id} className="bg-white border border-gray-200 rounded-lg hover:shadow-md transition-shadow group overflow-hidden">
                 {/* Image Area */}
-                <div className="relative h-32 bg-gray-50 border-b border-gray-200 flex items-center justify-center">
+                <div className="relative h-24 bg-gray-50 border-b border-gray-200 flex items-center justify-center">
                   {item.imageUrl ? (
                     <img 
                       src={item.imageUrl} 
@@ -316,16 +373,16 @@ export default function PressReleasesManager() {
                     />
                   ) : (
                     <div className="text-center">
-                      <Plus className="w-8 h-8 text-gray-400 mx-auto mb-2" />
+                      <Plus className="w-6 h-6 text-gray-400 mx-auto mb-1" />
                       <span className="text-xs text-gray-400">Görsel Yok</span>
                     </div>
                   )}
                   
                   {/* Status Badge */}
-                  <div className="absolute top-2 right-2">
+                  <div className="absolute top-1 right-1">
                     <button
                       onClick={() => toggleActive(item)}
-                      className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium transition-colors ${
+                      className={`inline-flex items-center px-1.5 py-0.5 rounded-full text-xs font-medium transition-colors ${
                         item.isActive 
                           ? 'bg-green-100 text-green-800 hover:bg-green-200' 
                           : 'bg-red-100 text-red-800 hover:bg-red-200'
@@ -337,24 +394,24 @@ export default function PressReleasesManager() {
                 </div>
 
                 {/* Content */}
-                <div className="p-4">
-                  <h4 className="font-semibold text-gray-900 mb-1 line-clamp-2">{item.title}</h4>
+                <div className="p-3">
+                  <h4 className="font-semibold text-gray-900 mb-1 line-clamp-2 text-sm">{item.title}</h4>
                   <div className="flex items-center gap-2 mb-2">
-                    <span className={`px-2 py-1 rounded-full text-xs font-medium ${getCategoryColor(item.category)}`}>
+                    <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${getCategoryColor(item.category)}`}>
                       {item.category}
                     </span>
                   </div>
                   
                   {item.summary && (
-                    <p className="text-xs text-gray-500 mb-3 line-clamp-2">{item.summary}</p>
+                    <p className="text-xs text-gray-500 mb-2 line-clamp-2">{item.summary}</p>
                   )}
                   
-                  <div className="text-xs text-gray-400 mb-4">
-                    <div>Yayın Tarihi: {new Date(item.publishedAt).toLocaleDateString('tr-TR')}</div>
+                  <div className="text-xs text-gray-400 mb-3">
+                    <div>{new Date(item.publishedAt).toLocaleDateString('tr-TR')}</div>
                   </div>
 
                   {/* Actions */}
-                  <div className="flex gap-2">
+                  <div className="flex gap-1">
                     <Button 
                       size="sm" 
                       variant="outline" 
@@ -372,18 +429,18 @@ export default function PressReleasesManager() {
                         setImage(null); 
                         setImagePreview(item.imageUrl || null);
                       }}
-                      className="flex-1"
+                      className="flex-1 text-xs px-2 py-1 h-7"
                     >
-                      <Edit className="w-4 h-4 mr-1" />
+                      <Edit className="w-3 h-3 mr-1" />
                       Düzenle
                     </Button>
                     <Button 
                       size="sm" 
                       variant="outline" 
                       onClick={() => onDelete(item.id)}
-                      className="text-red-600 hover:text-red-700 hover:bg-red-50"
+                      className="text-red-600 hover:text-red-700 hover:bg-red-50 px-2 py-1 h-7"
                     >
-                      <Trash2 className="w-4 h-4" />
+                      <Trash2 className="w-3 h-3" />
         </Button>
                   </div>
                 </div>
@@ -396,24 +453,25 @@ export default function PressReleasesManager() {
       {/* Form Modal */}
       {formOpen && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-lg shadow-xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
-            <div className="sticky top-0 bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between">
+          <div className="bg-white rounded-lg shadow-xl max-w-4xl w-full max-h-[90vh] overflow-y-auto relative">
+            <div className="sticky top-0 bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between z-10">
               <h3 className="text-lg font-semibold text-gray-900">
                 {editing ? 'Basın Açıklaması Düzenle' : 'Yeni Basın Açıklaması Ekle'}
               </h3>
-              <Button 
-                type="button" 
-                variant="outline" 
+              <button
                 onClick={() => { 
                   setFormOpen(false); 
                   setEditing(null); 
+                  setForm({ title: '', category: '', publishedAt: '', summary: '', content: '', isActive: true })
                   setImage(null); 
                   setImagePreview(null);
                 }}
-                className="text-gray-400 hover:text-gray-600"
+                className="text-gray-400 hover:text-gray-600 transition-colors"
               >
-                ✕
-              </Button>
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
             </div>
             
             <div className="p-6">
@@ -589,20 +647,24 @@ export default function PressReleasesManager() {
       {/* Kategori Yönetimi Modal */}
       {categoryFormOpen && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-lg shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
-            <div className="sticky top-0 bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between">
+          <div className="bg-white rounded-lg shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto relative">
+            <div className="sticky top-0 bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between z-10">
               <div>
                 <h3 className="text-lg font-semibold text-gray-900">Basın Açıklaması Kategorileri</h3>
                 <p className="text-sm text-gray-600 mt-1">Basın açıklamaları için kategori ekleyin ve yönetin</p>
               </div>
-              <Button
-                type="button"
-                variant="outline"
-                onClick={() => setCategoryFormOpen(false)}
-                className="text-gray-400 hover:text-gray-600"
+              <button
+                onClick={() => {
+                  setCategoryFormOpen(false)
+                  setNewCategoryName('')
+                  setNewCategoryColor('bg-blue-100 text-blue-800')
+                }}
+                className="text-gray-400 hover:text-gray-600 transition-colors"
               >
-                ✕
-              </Button>
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
             </div>
 
             <div className="p-6">
