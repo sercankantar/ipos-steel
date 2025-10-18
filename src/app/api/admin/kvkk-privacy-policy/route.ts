@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
+import { revalidatePath } from 'next/cache'
 
 export async function GET() {
   try {
@@ -66,6 +67,10 @@ export async function POST(request: NextRequest) {
       }
     })
 
+    // Cache'i temizle
+    revalidatePath('/kvkk-gizlilik-politikasi')
+    revalidatePath('/api/kvkk-privacy-policy')
+    
     return NextResponse.json(policy, { status: 201 })
   } catch (error) {
     console.error('KVKK Gizlilik Politikası oluşturma hatası:', error)

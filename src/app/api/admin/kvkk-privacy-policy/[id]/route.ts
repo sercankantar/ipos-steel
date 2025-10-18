@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
+import { revalidatePath } from 'next/cache'
 
 export async function GET(
   request: NextRequest,
@@ -77,6 +78,10 @@ export async function PUT(
         lastUpdated: new Date()
       }
     })
+
+    // Cache'i temizle
+    revalidatePath('/kvkk-gizlilik-politikasi')
+    revalidatePath('/api/kvkk-privacy-policy')
 
     return NextResponse.json(policy)
   } catch (error) {
