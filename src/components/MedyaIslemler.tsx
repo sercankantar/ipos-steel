@@ -8,6 +8,7 @@ import { Plus, Edit, Trash2 } from 'lucide-react'
 import PressReleasesManager from '@/components/PressReleasesManager'
 import NewsManager from '@/components/NewsManager'
 import GalleryManager from '@/components/GalleryManager'
+import CustomerSatisfactionManager from '@/components/CustomerSatisfactionManager'
 
 interface CorporateMediaProduct {
   id: string
@@ -24,7 +25,7 @@ export default function MedyaIslemler() {
   const [products, setProducts] = useState<CorporateMediaProduct[]>([])
   const [loading, setLoading] = useState(true)
   const [showForm, setShowForm] = useState(false)
-  const [activeTab, setActiveTab] = useState<'media' | 'press' | 'news' | 'gallery'>('press')
+  const [activeTab, setActiveTab] = useState<'media' | 'press' | 'news' | 'gallery' | 'surveys'>('press')
   const [editingProduct, setEditingProduct] = useState<CorporateMediaProduct | null>(null)
   const [formData, setFormData] = useState({
     title: '',
@@ -158,6 +159,14 @@ export default function MedyaIslemler() {
         >
           Galeri
         </button>
+        <button
+          onClick={() => setActiveTab('surveys')}
+          className={`px-4 py-2 rounded-md text-sm font-medium border ${
+            activeTab === 'surveys' ? 'bg-blue-600 text-white border-blue-600' : 'bg-white text-gray-700 border-gray-200'
+          }`}
+        >
+          Anket Değerlendirmeleri
+        </button>
       </div>
 
       {activeTab === 'media' && (
@@ -278,6 +287,12 @@ export default function MedyaIslemler() {
       {activeTab === 'gallery' && (
         <div className="mb-10">
           <GalleryManager />
+        </div>
+      )}
+
+      {activeTab === 'surveys' && (
+        <div className="mb-10">
+          <CustomerSatisfactionManager />
         </div>
       )}
 

@@ -195,3 +195,529 @@ model Product {
   createdAt      DateTime         @default(now())
   updatedAt      DateTime         @updatedAt
 }
+
+model HumanResourcesPolicy {
+  id                    String   @id @default(cuid())
+  // Hero
+  heroTitle             String
+  heroSubtitle          String
+
+  // Section 1
+  section1Title         String
+  section1Paragraph     String
+  section1Bullets       String[]
+  section1ImageUrl      String?
+  section1ImagePublicId String?
+
+  // Section 2
+  section2Title         String
+  section2Paragraph     String
+  section2Bullets       String[]
+  section2ImageUrl      String?
+  section2ImagePublicId String?
+
+  // Section 3
+  section3Title         String
+  section3Paragraph     String
+  section3Highlight     String?
+  section3ImageUrl      String?
+  section3ImagePublicId String?
+
+  // Values section
+  valuesTitle           String
+  valuesParagraph       String
+  values                Json      // array of { title, description }
+
+  // Closing
+  closingParagraph      String
+
+  isActive              Boolean  @default(true)
+  createdAt             DateTime @default(now())
+  updatedAt             DateTime @updatedAt
+}
+
+model BusinessEthicsRules {
+  id                    String   @id @default(cuid())
+  
+  // Hero
+  heroTitle             String
+  
+  // Section 1: Giriş
+  section1Title         String
+  section1Content       String
+  
+  // Section 2: Çalışan İlişkileri
+  section2Title         String
+  section2Content       String
+  section2Bullets       String[]
+  
+  // Section 3: Şirket Dışı İlişkiler
+  section3Title         String
+  section3Content       String
+  section3Subsections   Json     // array of { title, bullets }
+  
+  // Section 4: Etik Davranış Kuralları
+  section4Title         String
+  section4Content       String
+  section4Bullets       String[]
+  
+  // Section 5: İş Sağlığı ve Güvenliği
+  section5Title         String
+  section5Content       String
+  section5Bullets       String[]
+  
+  // Section 6: Siyasal Faaliyet Yasağı
+  section6Title         String
+  section6Content       String
+  section6Bullets       String[]
+  
+  // Section 7: Uygulama Prensipleri
+  section7Title         String
+  section7Subsections   Json     // array of { title, content }
+  
+  // İletişim
+  contactTitle          String
+  contactDescription    String
+  contactEmail          String
+  contactPhone          String
+  contactAddress        String
+  contactMapUrl         String?
+
+  isActive              Boolean  @default(true)
+  createdAt             DateTime @default(now())
+  updatedAt             DateTime @updatedAt
+}
+
+model CatalogCategory {
+  id            String   @id @default(cuid())
+  name          String   @unique
+  color         String   @default("bg-slate-600 text-white")
+  isActive      Boolean  @default(true)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  catalogs      Catalog[]
+}
+
+model Catalog {
+  id              String          @id @default(cuid())
+  title           String
+  description     String
+  categoryId      String
+  category        CatalogCategory @relation(fields: [categoryId], references: [id])
+  
+  // Dosya bilgileri
+  fileType        String          // "pdf" veya "jpeg"
+  fileSize        String          // "15.2 MB"
+  fileData        String?         // base64 encoded file data
+  fileUrl         String?         // Cloudinary URL (opsiyonel)
+  filePublicId    String?         // Cloudinary public ID (opsiyonel)
+  
+  // Görsel
+  imageUrl        String?
+  imagePublicId   String?
+  
+  // Metadata
+  pages           Int?
+  language        String          @default("Türkçe")
+  version         String?
+  publishDate     DateTime        @default(now())
+  downloadCount   Int             @default(0)
+  featured        Boolean         @default(false)
+  
+  isActive        Boolean         @default(true)
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
+}
+
+model CatalogPageSettings {
+  id              String   @id @default(cuid())
+  heroTitle       String
+  heroSubtitle    String
+  isActive        Boolean  @default(true)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+model ManualCategory {
+  id            String   @id @default(cuid())
+  name          String   @unique
+  color         String   @default("bg-slate-600 text-white")
+  isActive      Boolean  @default(true)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  manuals       Manual[]
+}
+
+model Manual {
+  id              String          @id @default(cuid())
+  title           String
+  description     String
+  categoryId      String
+  category        ManualCategory  @relation(fields: [categoryId], references: [id])
+  
+  // Dosya bilgileri
+  fileType        String          // "pdf" veya "jpeg"
+  fileSize        String          // "8.0 MB"
+  fileData        String?         // base64 encoded file data
+  fileUrl         String?         // Cloudinary URL (opsiyonel)
+  filePublicId    String?         // Cloudinary public ID (opsiyonel)
+  
+  // Görsel
+  imageUrl        String?
+  imagePublicId   String?
+  
+  // Metadata
+  pages           Int?
+  language        String          @default("Türkçe")
+  version         String?
+  publishDate     DateTime        @default(now())
+  downloadCount   Int             @default(0)
+  featured        Boolean         @default(false)
+  
+  isActive        Boolean         @default(true)
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
+}
+
+model ManualPageSettings {
+  id              String   @id @default(cuid())
+  heroTitle       String
+  heroSubtitle    String
+  isActive        Boolean  @default(true)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+model SalaryAndBenefitsManagement {
+  id                    String   @id @default(cuid())
+  
+  // Hero Section
+  heroTitle             String
+  heroSubtitle          String
+  
+  // Ücretlendirme Politikası
+  salaryPolicyTitle     String
+  salaryPolicySubtitle  String
+  salaryPolicyContent   String
+  salaryPolicyImageUrl  String?
+  salaryPolicyImagePublicId String?
+  
+  // Strateji
+  strategyTitle         String
+  strategyContent       String
+  strategyBullets       String[]
+  
+  // Yan Haklar
+  benefitsTitle         String
+  benefitsSubtitle      String
+  
+  // Tüm Çalışanlara Sağlanan Olanaklar
+  generalBenefitsTitle  String
+  generalBenefitsSubtitle String
+  generalBenefits       Json     // array of { title, description }
+  
+  // Görevi Gereği Sağlanan Olanaklar
+  positionBenefitsTitle String
+  positionBenefitsSubtitle String
+  positionBenefits      Json     // array of { title, description }
+  positionBenefitsNote  String
+  
+  // CTA Section
+  ctaTitle              String
+  ctaContent            String
+  ctaButton1Text        String
+  ctaButton1Link        String
+  ctaButton2Text        String
+  ctaButton2Link        String
+
+  isActive              Boolean  @default(true)
+  createdAt             DateTime @default(now())
+  updatedAt             DateTime @updatedAt
+}
+
+model RecruitmentProcess {
+  id                    String   @id @default(cuid())
+  
+  // Hero Section
+  heroTitle             String
+  heroSubtitle          String
+  
+  // Amacımız Section
+  purposeTitle          String
+  purposeMissionTitle   String
+  purposeMissionContent String
+  purposeValuesTitle    String
+  purposeValuesContent  String
+  purposeValues         Json     // array of { title, description }
+  purposeImageUrl       String?
+  purposeImagePublicId  String?
+  purposeImageCaption   String?
+  
+  // Aradığımız Özellikler Section
+  requirementsTitle     String
+  requirementsSubtitle  String
+  requirementsCategories Json    // array of { title, items } - 4 kategori
+  
+  // İşe Alım Süreci Section
+  processTitle          String
+  processSubtitle       String
+  processSteps          Json     // array of { stepNumber, title, leftTitle, leftItems, rightTitle, rightItems, bgColor }
+  
+  // CTA Section
+  ctaTitle              String
+  ctaContent            String
+  ctaButton1Text        String
+  ctaButton1Link        String
+  ctaButton2Text        String
+  ctaButton2Link        String
+
+  isActive              Boolean  @default(true)
+  createdAt             DateTime @default(now())
+  updatedAt             DateTime @updatedAt
+}
+
+model CareerOpportunities {
+  id                    String   @id @default(cuid())
+  
+  // Hero Section
+  heroTitle             String
+  heroSubtitle          String?
+  
+  // Ana İçerik
+  mainTitle             String
+  mainSubtitle          String?
+  mainDescription       String
+  
+  // Platform Kartları
+  platformCards         Json     // array of { title, logoUrl, buttonText, buttonLink, buttonColor }
+  
+  // KVKK Onay
+  kvkkTitle             String
+  kvkkContent           String
+
+  isActive              Boolean  @default(true)
+  createdAt             DateTime @default(now())
+  updatedAt             DateTime @updatedAt
+}
+
+model InternshipProcess {
+  id                    String   @id @default(cuid())
+  
+  // Hero Section
+  heroTitle             String
+  heroSubtitle          String?
+  
+  // Ana İçerik
+  mainDescription       String
+  
+  // Lise Stajları
+  highSchoolTitle       String
+  highSchoolBullets     String[] // array of bullet points
+  
+  // Üniversite Stajları
+  universityTitle       String
+  universityBullets     String[] // array of bullet points
+  
+  // Ön Seçim Kriterleri
+  criteriaTitle         String
+  criteriaBullets       String[] // array of criteria
+  
+  // Sonuç Paragrafı
+  conclusionParagraph   String
+  
+  // Görsel
+  imageUrl              String?
+  imagePublicId         String?
+  imageAlt              String?
+
+  isActive              Boolean  @default(true)
+  createdAt             DateTime @default(now())
+  updatedAt             DateTime @updatedAt
+}
+
+model Department {
+  id                    String   @id @default(cuid())
+  name                  String   @unique
+  color                 String   @default("bg-gray-100 text-gray-800")
+  isActive              Boolean  @default(true)
+  createdAt             DateTime @default(now())
+  updatedAt             DateTime @updatedAt
+  jobPositions          JobPosition[]
+}
+
+model JobPosition {
+  id                    String   @id @default(cuid())
+  
+  // Temel Bilgiler
+  title                 String
+  departmentId          String
+  department            Department @relation(fields: [departmentId], references: [id])
+  location              String
+  type                  String   // "Tam Zamanlı", "Yarı Zamanlı", "Staj", vb.
+  experience            String   // "1-3 yıl", "2-5 yıl", vb.
+  publishDate           DateTime
+  description           String
+  
+  // Detay Bilgileri
+  responsibilities      String[] // array of responsibilities
+  qualifications        String[] // array of qualifications
+  benefits              String[] // array of benefits
+  
+  // Ek Bilgiler
+  salary                String?  // "25.000 - 35.000 TL"
+  workingHours          String?  // "08:30 - 17:30"
+  reportingTo           String?  // "Proje Müdürü"
+  
+  // Durum
+  featured              Boolean  @default(false)
+  isActive              Boolean  @default(true)
+  
+  // SEO
+  slug                  String?  @unique
+  
+  createdAt             DateTime @default(now())
+  updatedAt             DateTime @updatedAt
+  
+  // İlişkiler
+  applications          JobApplication[]
+}
+
+model JobApplication {
+  id                    String   @id @default(cuid())
+  
+  // Başvuru Bilgileri
+  jobPositionId         String?
+  jobPosition           JobPosition? @relation(fields: [jobPositionId], references: [id])
+  positionTitle         String   // Başvurulan pozisyon adı
+  
+  // Kişisel Bilgiler
+  firstName             String
+  lastName              String
+  email                 String
+  phone                 String
+  city                  String
+  birthDate             DateTime
+  
+  // Profesyonel Bilgiler
+  experience            String   // "0-1 yıl", "1-3 yıl", vb.
+  education             String
+  
+  // Dosya Bilgileri
+  cvFileName            String?  // CV dosya adı
+  cvFileUrl             String?  // CV dosya URL'i
+  portfolioFileName     String?  // Portfolyo dosya adı
+  portfolioFileUrl      String?  // Portfolyo dosya URL'i
+  
+  // İçerik
+  coverLetter           String?  // Ön yazı
+  
+  // Durum
+  status                String   @default("pending") // "pending", "reviewed", "accepted", "rejected"
+  notes                 String?  // Admin notları
+  
+  // KVKK
+  consentGiven          Boolean  @default(false)
+  
+  createdAt             DateTime @default(now())
+  updatedAt             DateTime @updatedAt
+}
+
+model CustomerSatisfactionSurvey {
+  id                    String   @id @default(cuid())
+
+  // Temel Bilgiler
+  firmaUnvani           String
+  adSoyad               String
+  email                 String
+  telefon               String
+
+  // Değerlendirme Puanları (1-5 arası)
+  kilikKiyafet          Int?     // 1: Çok Kötü, 5: Çok İyi
+  konusma               Int?
+  teknikYeterlilik      Int?
+  ulasimGeriDonus       Int?
+  bayilerUlasim         Int?
+  ziyaretSikligi        Int?
+  talepKarsilama        Int?
+  dokumanlar            Int?
+
+  // Genel Değerlendirmeler
+  webSayfaYeterli       String   // "Evet" veya "Hayır"
+  aktivitelerYeterli    String   // Textarea cevabı
+
+  // Çoklu Seçim (Checkbox)
+  nedenIpos             String[] // Array of selected options
+
+  // Tek Seçim (Radio)
+  tekrarCalisma         String?  // "Kesinlikle çalışırım", vb.
+
+  // Açık Uçlu Sorular
+  istenilenUrunler      String
+  beklentiOneriler      String
+
+  // KVKK
+  kvkkOnay              Boolean  @default(false)
+
+  // Admin Notları
+  notes                 String?
+
+  createdAt             DateTime @default(now())
+  updatedAt             DateTime @updatedAt
+}
+
+model KvkkPrivacyPolicy {
+  id                    String   @id @default(cuid())
+
+  // Temel Bilgiler
+  title                 String   @default("Kişisel Verilerin Korunması, İşlenmesi ve Gizlilik Politikası")
+  lastUpdated           DateTime @default(now())
+
+  // Bölüm Başlıkları
+  amacTitle             String   @default("Amaç")
+  kapsamTitle           String   @default("Kapsam")
+  tanimlarTitle         String   @default("Tanım ve Kısaltmalar")
+  rollerTitle           String   @default("Rol ve Sorumluluklar")
+  yukumluluklerTitle    String   @default("Hukuki Yükümlülükler")
+  siniflandirmaTitle    String   @default("Kişisel Verilerin Sınıflandırılması")
+  islenmesiTitle        String   @default("Kişisel Verilerin İşlenmesi")
+  aktarilmasiTitle      String   @default("Kişisel Verilerin Aktarılması")
+  saklanmasiTitle       String   @default("Kişisel Verilerin Saklanması")
+  guvenligiTitle        String   @default("Kişisel Verilerin Güvenliği")
+  haklariTitle          String   @default("Kişisel Veri Sahibinin Hakları")
+  gizlilikTitle         String   @default("Gizlilik Politikası")
+  girisCikisTitle       String   @default("Şirket Giriş-Çıkışları ve Kişisel Veriler")
+  silinmesiTitle        String   @default("Kişisel Verilerin Silinmesi")
+  yayinlanmasiTitle     String   @default("Dokümanın Yayınlanması")
+  guncellemeTitle       String   @default("Güncelleme Periyodu")
+  yururlukTitle         String   @default("Yürürlük")
+
+  // Bölüm İçerikleri
+  amac                  String   // Amaç bölümü
+  kapsam                String   // Kapsam bölümü
+  tanimlar              String   // Tanım ve Kısaltmalar bölümü
+  roller                String   // Rol ve Sorumluluklar bölümü
+  yukumlulukler         String   // Hukuki Yükümlülükler bölümü
+  siniflandirma         String   // Kişisel Verilerin Sınıflandırılması bölümü
+  islenmesi             String   // Kişisel Verilerin İşlenmesi bölümü
+  aktarilmasi           String   // Kişisel Verilerin Aktarılması bölümü
+  saklanmasi            String   // Kişisel Verilerin Saklanması bölümü
+  guvenligi             String   // Kişisel Verilerin Güvenliği bölümü
+  haklari               String   // Kişisel Veri Sahibinin Hakları bölümü
+  gizlilik              String   // Gizlilik Politikası bölümü
+  girisCikis            String   // Şirket Giriş-Çıkışları bölümü
+  silinmesi             String   // Kişisel Verilerin Silinmesi bölümü
+  yayinlanmasi          String   // Dokümanın Yayınlanması bölümü
+  guncelleme            String   // Güncelleme Periyodu bölümü
+  yururluk              String   // Yürürlük bölümü
+
+  // İletişim Bilgileri
+  email                 String
+  telefon               String
+  adres                 String
+
+  // Durum
+  isActive              Boolean  @default(true)
+
+  createdAt             DateTime @default(now())
+  updatedAt             DateTime @updatedAt
+}

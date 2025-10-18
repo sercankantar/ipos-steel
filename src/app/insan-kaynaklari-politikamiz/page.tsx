@@ -1,12 +1,25 @@
 import MaxWidthWrapper from '@/components/MaxWidthWrapper'
 import Link from 'next/link'
+import { headers } from 'next/headers'
 
-export default function InsanKaynaklariPolitikamiz() {
+async function getPolicy() {
+  const hdrs = headers()
+  const host = hdrs.get('x-forwarded-host') || hdrs.get('host') || 'localhost:3000'
+  const protocol = hdrs.get('x-forwarded-proto') || 'http'
+  const baseUrl = `${protocol}://${host}`
+
+  const res = await fetch(`${baseUrl}/api/human-resources-policy`, { cache: 'no-store' })
+  if (!res.ok) return null
+  return res.json()
+}
+
+export default async function InsanKaynaklariPolitikamiz() {
+  const policy = await getPolicy()
+
   return (
     <div className='min-h-screen bg-white'>
-      {/* Hero Section */}
       <div className='bg-gray-900 py-16'>
-    <MaxWidthWrapper>
+        <MaxWidthWrapper>
           <div className='text-center text-white'>
             <nav className='text-sm text-gray-300 mb-6'>
               <Link href='/' className='hover:text-white'>Ana Sayfa</Link>
@@ -14,172 +27,160 @@ export default function InsanKaynaklariPolitikamiz() {
               <span>İnsan Kaynakları Politikamız</span>
             </nav>
             <h1 className='font-neuropol text-4xl lg:text-5xl font-bold mb-4'>
-            İnsan Kaynakları Politikamız
-          </h1>
-            <p className='text-lg text-gray-300 max-w-2xl mx-auto'>
-              Güneş enerjisi altyapısı ve elektrik kablo yönetim sistemlerinde uzmanlaşmış ekibimizle, sürdürülebilir enerji geleceğinin inşasında insan kaynaklarımızı en stratejik varlığımız olarak görüyoruz
-            </p>
+              {policy?.heroTitle || 'İnsan Kaynakları Politikamız'}
+            </h1>
+            {policy?.heroSubtitle && (
+              <p className='text-lg text-gray-300 max-w-2xl mx-auto'>
+                {policy.heroSubtitle}
+              </p>
+            )}
           </div>
         </MaxWidthWrapper>
       </div>
 
       <MaxWidthWrapper>
         <div className='py-16'>
-          {/* Yetenek Geliştirme Section */}
           <div className='mb-12'>
             <h2 className='text-2xl font-bold text-gray-900 mb-6 border-b-2 border-blue-600 pb-2'>
-              İnsan Kaynağı Geliştirme ve Kariyer Planlaması
+              {policy?.section1Title || 'İnsan Kaynağı Geliştirme ve Kariyer Planlaması'}
             </h2>
             
             <div className='grid lg:grid-cols-2 gap-8 items-center mb-8'>
               <div>
                 <p className='text-gray-700 text-base leading-relaxed mb-6'>
-                  Güneş enerjisi panelleri için kablo tavası, elektrik altyapı çözümleri ve enerji iletim sistemlerinde öncü konumumuzu korurken, elektrik mühendislerimizden üretim uzmanlarımıza kadar tüm ekibimizin yenilikçi çözümler geliştirmesini destekliyoruz. İnsan kaynakları stratejimizin temel pilleri:
+                  {policy?.section1Paragraph}
                 </p>
 
-                <ul className='space-y-3'>
-                  <li className='flex items-start gap-3'>
-                    <span className='w-1.5 h-1.5 bg-blue-600 rounded-full mt-2 flex-shrink-0'></span>
-                    <span className='text-gray-700'>Elektrik altyapısı ve güneş enerjisi sistemleri uzmanlığı gerektiren pozisyonlarda yetkinlik bazlı işe alım</span>
-                  </li>
-                  <li className='flex items-start gap-3'>
-                    <span className='w-1.5 h-1.5 bg-blue-600 rounded-full mt-2 flex-shrink-0'></span>
-                    <span className='text-gray-700'>Elektrik sistemleri, kablo yönetimi ve güneş paneli montaj teknikleri eğitimleri</span>
-                  </li>
-                  <li className='flex items-start gap-3'>
-                    <span className='w-1.5 h-1.5 bg-blue-600 rounded-full mt-2 flex-shrink-0'></span>
-                    <span className='text-gray-700'>Elektrik güvenlik sertifikaları ve yenilenebilir enerji standartlarına uyum eğitimleri</span>
-                  </li>
-                  <li className='flex items-start gap-3'>
-                    <span className='w-1.5 h-1.5 bg-blue-600 rounded-full mt-2 flex-shrink-0'></span>
-                    <span className='text-gray-700'>Elektrik uzmanlarından yeni mezunlara deneyim aktarımı ve teknik liderlik geliştirme</span>
-                  </li>
-                </ul>
+                {Array.isArray(policy?.section1Bullets) && (
+                  <ul className='space-y-3'>
+                    {policy.section1Bullets.map((b: string, i: number) => (
+                      <li key={i} className='flex items-start gap-3'>
+                        <span className='w-1.5 h-1.5 bg-blue-600 rounded-full mt-2 flex-shrink-0'></span>
+                        <span className='text-gray-700'>{b}</span>
+                      </li>
+                    ))}
+                  </ul>
+                )}
               </div>
               
-              <div className='relative'>
-                <img 
-                  src='https://images.unsplash.com/photo-1552664730-d307ca884978?w=600&h=400&fit=crop&crop=center'
-                  alt='Takım çalışması ve işbirliği'
-                  className='w-full h-80 object-cover border border-gray-200'
-                />
-                <div className='absolute inset-0 bg-blue-900/10'></div>
-              </div>
+              {policy?.section1ImageUrl && (
+                <div className='relative'>
+                  <img 
+                    src={policy.section1ImageUrl}
+                    alt='İK görseli'
+                    className='w-full h-80 object-cover border border-gray-200'
+                  />
+                  <div className='absolute inset-0 bg-blue-900/10'></div>
+                </div>
+              )}
             </div>
           </div>
 
-          {/* Değerler ve İnsan Kaynakları Yaklaşımı Section */}
           <div className='mb-12'>
             <h2 className='text-2xl font-bold text-gray-900 mb-6 border-b-2 border-blue-600 pb-2'>
-              Kurumsal Kültür ve İnsan Kaynakları Felsefesi
+              {policy?.section2Title || 'Kurumsal Kültür ve İnsan Kaynakları Felsefesi'}
             </h2>
 
             <div className='grid lg:grid-cols-2 gap-8 items-center mb-8'>
-              <div className='relative order-2 lg:order-1'>
-                <img 
-                  src='https://images.unsplash.com/photo-1521737604893-d14cc237f11d?w=600&h=400&fit=crop&crop=center'
-                  alt='Kurumsal değerler ve işbirliği'
-                  className='w-full h-80 object-cover border border-gray-200'
-                />
-                <div className='absolute inset-0 bg-blue-900/10'></div>
-              </div>
+              {policy?.section2ImageUrl && (
+                <div className='relative order-2 lg:order-1'>
+                  <img 
+                    src={policy.section2ImageUrl}
+                    alt='Kurumsal değerler ve işbirliği'
+                    className='w-full h-80 object-cover border border-gray-200'
+                  />
+                  <div className='absolute inset-0 bg-blue-900/10'></div>
+                </div>
+              )}
               
               <div className='order-1 lg:order-2'>
                 <p className='text-gray-700 text-base leading-relaxed mb-6'>
-                  Güneş enerjisi sistemlerinin hızla yaygınlaşması ve elektrik altyapısının karmaşıklaşması, uzman ekipler gerektirir. IPOS-Steel'de her çalışanımızı yenilenebilir enerji geleceğinin mimarları olarak görüyor, kablo tavası ve elektrik altyapı çözümlerinde inovasyon yapmalarını destekliyoruz.
+                  {policy?.section2Paragraph}
                 </p>
 
-                <div className='bg-gray-50 p-6 border-l-4 border-blue-600'>
-                         <h3 className='font-semibold text-gray-900 mb-4'>Güneş enerjisi altyapısında öncü konumumuzu destekleyen insan kaynakları yaklaşımımızın temelleri:</h3>
-                  <ul className='space-y-2'>
-                    <li className='flex items-start gap-2'>
-                      <span className='text-blue-600 font-bold'>•</span>
-                             <span className='text-gray-700'>Elektrik güvenliği, ürün kalitesi ve müşteri memnuniyeti odaklı çalışma anlayışımız</span>
-                    </li>
-                    <li className='flex items-start gap-2'>
-                      <span className='text-blue-600 font-bold'>•</span>
-                             <span className='text-gray-700'>Elektrik teknolojilerinde mükemmellik ve yenilenebilir enerji trendlerini takip etme kültürümüz</span>
-                    </li>
-                    <li className='flex items-start gap-2'>
-                      <span className='text-blue-600 font-bold'>•</span>
-                             <span className='text-gray-700'>Elektrik güvenlik standartları ve sürdürülebilir enerji bilinci</span>
-                    </li>
-                    <li className='flex items-start gap-2'>
-                      <span className='text-blue-600 font-bold'>•</span>
-                             <span className='text-gray-700'>Uluslararası elektrik standartlarına uyum ve çevre dostu üretim anlayışımızdır</span>
-                    </li>
-                  </ul>
-                </div>
+                {Array.isArray(policy?.section2Bullets) && (
+                  <div className='bg-gray-50 p-6 border-l-4 border-blue-600'>
+                    <h3 className='font-semibold text-gray-900 mb-4'>Öne çıkan ilkeler</h3>
+                    <ul className='space-y-2'>
+                      {policy.section2Bullets.map((b: string, i: number) => (
+                        <li key={i} className='flex items-start gap-2'>
+                          <span className='text-blue-600 font-bold'>•</span>
+                          <span className='text-gray-700'>{b}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
               </div>
             </div>
           </div>
 
-          {/* Hedef Odaklı ve Eğitimsel Yaklaşım Section */}
           <div className='mb-12'>
             <h2 className='text-2xl font-bold text-gray-900 mb-6 border-b-2 border-blue-600 pb-2'>
-              Performans Odaklı Eğitim ve Gelişim Stratejisi
+              {policy?.section3Title || 'Performans Odaklı Eğitim ve Gelişim Stratejisi'}
             </h2>
 
             <div className='grid lg:grid-cols-2 gap-8 items-center mb-8'>
               <div>
                 <p className='text-gray-700 text-base leading-relaxed mb-6'>
-                  Güneş enerjisi sistemleri ve elektrik altyapı projelerinin teknik gereklilikleri, multidisipliner yaklaşım gerektirir. Elektrik mühendislerinden üretim uzmanlarına, kalite kontrol elemanlarından saha montaj ekiplerine kadar her seviyede uzmanlaşmış ekipler oluşturuyoruz. Hedefimiz, her çalışanımızın yenilenebilir enerji sektöründe uzman olmasıdır.
+                  {policy?.section3Paragraph}
                 </p>
-                
-                <div className='bg-blue-50 p-6 border border-blue-200'>
-                  <p className='text-gray-700 text-base leading-relaxed font-medium'>
-                    Elektrik teknolojilerindeki gelişmeleri yakından takip ederek, AutoCAD Electrical, ETAP analiz yazılımları ve modern kablo yönetim sistemlerinde sürekli eğitim programları düzenliyor, çalışanlarımızın güneş enerjisi sektöründeki yeniliklere uyum sağlamasını destekliyoruz.
-                  </p>
-                </div>
+                {policy?.section3Highlight && (
+                  <div className='bg-blue-50 p-6 border border-blue-200'>
+                    <p className='text-gray-700 text-base leading-relaxed font-medium'>
+                      {policy.section3Highlight}
+                    </p>
+                  </div>
+                )}
               </div>
               
-              <div className='relative'>
-                <img 
-                  src='https://images.unsplash.com/photo-1560472354-b33ff0c44a43?w=600&h=400&fit=crop&crop=center'
-                  alt='Eğitim ve gelişim programları'
-                  className='w-full h-80 object-cover border border-gray-200'
-                />
-                <div className='absolute inset-0 bg-blue-900/10'></div>
-              </div>
+              {policy?.section3ImageUrl && (
+                <div className='relative'>
+                  <img 
+                    src={policy.section3ImageUrl}
+                    alt='Eğitim ve gelişim programları'
+                    className='w-full h-80 object-cover border border-gray-200'
+                  />
+                  <div className='absolute inset-0 bg-blue-900/10'></div>
+                </div>
+              )}
             </div>
           </div>
 
-          {/* Kurumsal Değerler Section */}
           <div className='mb-12'>
             <h2 className='text-2xl font-bold text-gray-900 mb-6 border-b-2 border-blue-600 pb-2'>
-              Temel Değerlerimiz
+              {policy?.valuesTitle || 'Temel Değerlerimiz'}
             </h2>
             
-                   <p className='text-gray-700 text-base leading-relaxed mb-8'>
-                     Güneş enerjisi altyapısında elektrik güvenliği, ürün kalitesi ve zamanlı teslimat kritik başarı faktörleridir. Bu değerlerle hareket eden, elektrik teknolojilerinde yetkin ve sürekli gelişen bir ekip oluşturmayı hedefliyoruz.
-                   </p>
+            {policy?.valuesParagraph && (
+              <p className='text-gray-700 text-base leading-relaxed mb-8'>
+                {policy.valuesParagraph}
+              </p>
+            )}
 
-                   <div className='grid md:grid-cols-3 gap-8 mb-8'>
-                     <div className='text-center p-6 border border-gray-200'>
-                       <h3 className='text-lg font-bold text-gray-900 mb-3'>Elektrik Mükemmelligi</h3>
-                       <p className='text-gray-600 text-sm'>Her güneş enerjisi projesinde elektrik mühendisliği hassasiyeti ve kalite</p>
-                     </div>
-                     
-                     <div className='text-center p-6 border border-gray-200'>
-                       <h3 className='text-lg font-bold text-gray-900 mb-3'>Elektrik Güvenliği</h3>
-                       <p className='text-gray-600 text-sm'>Elektrik güvenlik standartlarında öncü yaklaşım ve sıfır kaza hedefi</p>
-                     </div>
-                     
-                     <div className='text-center p-6 border border-gray-200'>
-                       <h3 className='text-lg font-bold text-gray-900 mb-3'>Yenilenebilir Enerji Vizyonu</h3>
-                       <p className='text-gray-600 text-sm'>Güneş enerjisi teknolojilerinde yenilikçi çözümler ve sürdürülebilirlik</p>
-                     </div>
-                   </div>
+            {Array.isArray(policy?.values) && policy.values.length > 0 && (
+              <div className='grid md:grid-cols-3 gap-8 mb-8'>
+                {policy.values.map((v: any, i: number) => (
+                  <div key={i} className='text-center p-6 border border-gray-200'>
+                    <h3 className='text-lg font-bold text-gray-900 mb-3'>{v.title}</h3>
+                    <p className='text-gray-600 text-sm'>{v.description}</p>
+                  </div>
+                ))}
+              </div>
+            )}
 
-            <div className='bg-gray-50 p-6 border border-gray-200'>
-              <p className='text-gray-700 text-base leading-relaxed'>
-                IPOS-Steel, güneş enerjisi panelleri için kablo tavaları, elektrik altyapı çözümleri ve enerji iletim sistemlerinde uzmanlaşmış bir ekiple hizmet vermektedir. Güneş enerjisi santralları, endüstriyel tesisler ve ticari binaların elektrik altyapı projelerinde teknik ekibimizin uzmanlığı ve çalışanlarımızın sürekli gelişimi sayesinde sürdürülebilir enerji geleceğine katkı sağlamayı hedefliyoruz.
-            </p>
+            {policy?.closingParagraph && (
+              <div className='bg-gray-50 p-6 border border-gray-200'>
+                <p className='text-gray-700 text-base leading-relaxed'>
+                  {policy.closingParagraph}
+                </p>
+              </div>
+            )}
           </div>
+
         </div>
 
-      </div>
-    </MaxWidthWrapper>
+      </MaxWidthWrapper>
     </div>
   )
 }

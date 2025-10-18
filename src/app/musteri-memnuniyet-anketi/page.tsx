@@ -3,6 +3,7 @@
 import MaxWidthWrapper from '@/components/MaxWidthWrapper'
 import Link from 'next/link'
 import { useState } from 'react'
+import { CheckCircle, AlertCircle } from 'lucide-react'
 
 export default function MusteriMemnuniyetAnketi() {
   const [formData, setFormData] = useState({
@@ -18,6 +19,9 @@ export default function MusteriMemnuniyetAnketi() {
     beklentiOneriler: '',
     kvkkOnay: false
   })
+
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [submitStatus, setSubmitStatus] = useState<'idle' | 'success' | 'error'>('idle')
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value, type } = e.target
@@ -38,10 +42,126 @@ export default function MusteriMemnuniyetAnketi() {
     }
   }
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    console.log('Form gönderildi:', formData)
-    // Form gönderme işlemi burada yapılacak
+    setIsSubmitting(true)
+    
+    try {
+      // Radio button değerlerini topla
+      const ratingData = {
+        kilikKiyafet: getRadioValue('rating_0'),
+        konusma: getRadioValue('rating_1'),
+        teknikYeterlilik: getRadioValue('rating_2'),
+        ulasimGeriDonus: getRadioValue('rating_3'),
+        bayilerUlasim: getRadioValue('service_0'),
+        ziyaretSikligi: getRadioValue('service_1'),
+        talepKarsilama: getRadioValue('service_2'),
+        dokumanlar: getRadioValue('service_3')
+      }
+
+      const surveyData = {
+        ...formData,
+        ...ratingData
+      }
+
+      console.log('Anket verileri gönderiliyor...', surveyData)
+
+      const response = await fetch('/api/customer-satisfaction-surveys', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(surveyData),
+      })
+
+      if (response.ok) {
+        console.log('Anket başarıyla gönderildi')
+        setSubmitStatus('success')
+      } else {
+        const errorData = await response.json()
+        console.error('API hatası:', errorData)
+        throw new Error(errorData.error || 'Anket gönderilemedi')
+      }
+    } catch (error) {
+      console.error('Anket gönderilirken hata:', error)
+      setSubmitStatus('error')
+    } finally {
+      setIsSubmitting(false)
+    }
+  }
+
+  const getRadioValue = (name: string): number | null => {
+    const radio = document.querySelector(`input[name="${name}"]:checked`) as HTMLInputElement
+    if (!radio) return null
+    
+    const value = radio.value
+    const ratingMap: { [key: string]: number } = {
+      'Çok Kötü': 1,
+      'Kötü': 2,
+      'Orta': 3,
+      'İyi': 4,
+      'Çok İyi': 5
+    }
+    
+    return ratingMap[value] || null
+  }
+
+  if (submitStatus === 'success') {
+    return (
+      <div className='min-h-screen bg-gray-50 flex items-center justify-center'>
+        <MaxWidthWrapper>
+          <div className='max-w-md mx-auto bg-white rounded-lg shadow-lg p-8 text-center'>
+            <div className='w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4'>
+              <CheckCircle className='w-8 h-8 text-green-600' />
+            </div>
+            <h2 className='text-2xl font-bold text-gray-900 mb-2'>Anketiniz Alındı!</h2>
+            <p className='text-gray-600 mb-6'>
+              Değerli görüşleriniz için teşekkür ederiz. Geri bildirimleriniz bizim için çok önemlidir.
+            </p>
+            <div className='space-y-3'>
+              <Link
+                href='/'
+                className='block w-full bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-lg font-medium transition-colors'
+              >
+                Ana Sayfaya Dön
+              </Link>
+            </div>
+          </div>
+        </MaxWidthWrapper>
+      </div>
+    )
+  }
+
+  if (submitStatus === 'error') {
+    return (
+      <div className='min-h-screen bg-gray-50 flex items-center justify-center'>
+        <MaxWidthWrapper>
+          <div className='max-w-md mx-auto bg-white rounded-lg shadow-lg p-8 text-center'>
+            <div className='w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4'>
+              <AlertCircle className='w-8 h-8 text-red-600' />
+            </div>
+            <h2 className='text-2xl font-bold text-gray-900 mb-2'>Anket Gönderilemedi!</h2>
+            <p className='text-gray-600 mb-6'>
+              Anketiniz gönderilirken bir hata oluştu. Lütfen tekrar deneyiniz.
+            </p>
+            <div className='space-y-3'>
+              <button
+                onClick={() => setSubmitStatus('idle')}
+                className='block w-full bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-lg font-medium transition-colors'
+              >
+                Tekrar Dene
+              </button>
+              <Link
+                href='/'
+                className='block w-full bg-gray-100 hover:bg-gray-200 text-gray-700 py-2 px-4 rounded-lg font-medium transition-colors'
+              >
+                Ana Sayfaya Dön
+              </Link>
+            </div>
+          </div>
+        </MaxWidthWrapper>
+      </div>
+    )
   }
 
   return (
@@ -371,9 +491,20 @@ export default function MusteriMemnuniyetAnketi() {
                 <div className='text-center pt-6'>
                   <button
                     type='submit'
-                    className='bg-blue-600 hover:bg-blue-700 text-white px-12 py-3 rounded-lg font-semibold text-lg transition-colors duration-200'
+                    disabled={isSubmitting}
+                    className='bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400 text-white px-12 py-3 rounded-lg font-semibold text-lg transition-colors duration-200 flex items-center justify-center gap-2 mx-auto'
                   >
-                    Gönder
+                    {isSubmitting ? (
+                      <>
+                        <div className='w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin' />
+                        Gönderiliyor...
+                      </>
+                    ) : (
+                      <>
+                        <CheckCircle className='w-5 h-5' />
+                        Gönder
+                      </>
+                    )}
                   </button>
                 </div>
               </form>

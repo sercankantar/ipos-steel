@@ -40,15 +40,131 @@ export default function BasvuruFormu() {
     setFormData(prev => ({ ...prev, [fieldName]: file }))
   }
 
+  const uploadFile = async (file: File): Promise<string | null> => {
+    try {
+      console.log('Dosya yükleniyor:', file.name, 'Boyut:', file.size, 'Tip:', file.type)
+      
+      // Dosya boyutu kontrolü (2MB limit)
+      const maxSize = 2 * 1024 * 1024 // 2MB
+      if (file.size > maxSize) {
+        console.error('Dosya çok büyük:', file.size, 'bytes')
+        alert('Dosya boyutu 2MB\'dan küçük olmalıdır')
+        return null
+      }
+      
+      // Base64 encoding kullan
+      return new Promise((resolve) => {
+        const reader = new FileReader()
+        reader.onload = () => {
+          const base64 = reader.result as string
+          console.log('Dosya base64 olarak hazırlandı, boyut:', base64.length)
+          resolve(base64)
+        }
+        reader.onerror = () => {
+          console.error('Dosya okuma hatası')
+          resolve(null)
+        }
+        reader.readAsDataURL(file)
+      })
+      
+      // Cloudinary yükleme (şimdilik devre dışı)
+      /*
+      const formData = new FormData()
+      formData.append('file', file)
+      formData.append('upload_preset', 'job_applications')
+      formData.append('resource_type', 'raw')
+      formData.append('folder', 'job-applications')
+
+      const cloudName = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME
+      if (!cloudName) {
+        console.error('Cloudinary cloud name bulunamadı')
+        throw new Error('Cloudinary cloud name bulunamadı')
+      }
+
+      const response = await fetch(`https://api.cloudinary.com/v1_1/${cloudName}/raw/upload`, {
+        method: 'POST',
+        body: formData
+      })
+
+      if (response.ok) {
+        const data = await response.json()
+        return data.secure_url
+      } else {
+        const errorData = await response.json()
+        console.error('Cloudinary yükleme hatası:', errorData)
+        return null
+      }
+      */
+    } catch (error) {
+      console.error('Dosya yükleme hatası:', error)
+      return null
+    }
+  }
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setIsSubmitting(true)
     
-    // Simüle edilmiş form gönderimi
     try {
-      await new Promise(resolve => setTimeout(resolve, 2000))
-      setSubmitStatus('success')
+      // Dosyaları yükle (opsiyonel)
+      let cvFileUrl = null
+      let portfolioFileUrl = null
+
+      if (formData.cvFile) {
+        console.log('CV dosyası yükleniyor...')
+        cvFileUrl = await uploadFile(formData.cvFile)
+        if (!cvFileUrl) {
+          console.warn('CV dosyası yüklenemedi, dosya olmadan devam ediliyor')
+        }
+      }
+
+      if (formData.portfolioFile) {
+        console.log('Portfolyo dosyası yükleniyor...')
+        portfolioFileUrl = await uploadFile(formData.portfolioFile)
+        if (!portfolioFileUrl) {
+          console.warn('Portfolyo dosyası yüklenemedi, dosya olmadan devam ediliyor')
+        }
+      }
+
+      // Başvuru verilerini gönder
+      const applicationData = {
+        positionTitle: formData.position,
+        firstName: formData.firstName,
+        lastName: formData.lastName,
+        email: formData.email,
+        phone: formData.phone,
+        city: formData.city,
+        birthDate: formData.birthDate,
+        experience: formData.experience,
+        education: formData.education,
+        cvFileName: formData.cvFile?.name,
+        cvFileUrl: cvFileUrl,
+        portfolioFileName: formData.portfolioFile?.name,
+        portfolioFileUrl: portfolioFileUrl,
+        coverLetter: formData.coverLetter,
+        consentGiven: formData.consent
+      }
+
+      console.log('Başvuru verileri gönderiliyor...', applicationData)
+
+      const response = await fetch('/api/job-applications', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(applicationData),
+      })
+
+      if (response.ok) {
+        console.log('Başvuru başarıyla gönderildi')
+        setSubmitStatus('success')
+      } else {
+        const errorData = await response.json()
+        console.error('API hatası:', errorData)
+        throw new Error(errorData.error || 'Başvuru gönderilemedi')
+      }
     } catch (error) {
+      console.error('Başvuru gönderilirken hata:', error)
       setSubmitStatus('error')
     } finally {
       setIsSubmitting(false)
@@ -79,6 +195,38 @@ export default function BasvuruFormu() {
                 className='block w-full bg-gray-100 hover:bg-gray-200 text-gray-700 py-2 px-4 rounded-lg font-medium transition-colors'
               >
                 Ana Sayfaya Dön
+              </Link>
+            </div>
+          </div>
+        </MaxWidthWrapper>
+      </div>
+    )
+  }
+
+  if (submitStatus === 'error') {
+    return (
+      <div className='min-h-screen bg-gray-50 flex items-center justify-center'>
+        <MaxWidthWrapper>
+          <div className='max-w-md mx-auto bg-white rounded-lg shadow-lg p-8 text-center'>
+            <div className='w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4'>
+              <AlertCircle className='w-8 h-8 text-red-600' />
+            </div>
+            <h2 className='text-2xl font-bold text-gray-900 mb-2'>Başvuru Gönderilemedi!</h2>
+            <p className='text-gray-600 mb-6'>
+              Başvurunuz gönderilirken bir hata oluştu. Lütfen tekrar deneyiniz.
+            </p>
+            <div className='space-y-3'>
+              <button
+                onClick={() => setSubmitStatus('idle')}
+                className='block w-full bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-lg font-medium transition-colors'
+              >
+                Tekrar Dene
+              </button>
+              <Link
+                href='/acik-pozisyonlar'
+                className='block w-full bg-gray-100 hover:bg-gray-200 text-gray-700 py-2 px-4 rounded-lg font-medium transition-colors'
+              >
+                Açık Pozisyonlara Dön
               </Link>
             </div>
           </div>
@@ -347,7 +495,7 @@ export default function BasvuruFormu() {
                         <p className='text-sm text-gray-600'>
                           {formData.cvFile ? formData.cvFile.name : 'CV dosyanızı seçin veya sürükleyin'}
                         </p>
-                        <p className='text-xs text-gray-400 mt-1'>Maksimum 5MB</p>
+                        <p className='text-xs text-gray-400 mt-1'>Maksimum 2MB</p>
                       </label>
                     </div>
                   </div>
@@ -373,7 +521,7 @@ export default function BasvuruFormu() {
                         <p className='text-sm text-gray-600'>
                           {formData.portfolioFile ? formData.portfolioFile.name : 'Portfolyo dosyanızı seçin'}
                         </p>
-                        <p className='text-xs text-gray-400 mt-1'>Maksimum 10MB</p>
+                        <p className='text-xs text-gray-400 mt-1'>Maksimum 2MB</p>
                       </label>
                     </div>
                   </div>
