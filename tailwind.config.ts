@@ -21,6 +21,7 @@ module.exports = {
         'neuropol': ['Neuropol', 'Inter', 'Arial Black', 'sans-serif'],
         'sans': ['Neuropol', 'Inter', 'Arial Black', 'system-ui', 'sans-serif'],
         'display': ['Neuropol', 'Inter', 'Arial Black', 'sans-serif'],
+        'default': ['Neuropol', 'Inter', 'Arial Black', 'sans-serif'],
       },
       fontSize: {
         'fluid-xl': 'clamp(1.5rem, 4vw, 3rem)',

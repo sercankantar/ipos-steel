@@ -78,38 +78,69 @@
 @layer base {
   * {
     @apply border-border;
+    font-family: 'Neuropol', 'Inter', 'Arial Black', sans-serif !important;
   }
+  
   body {
-    @apply bg-background text-foreground font-neuropol;
+    @apply bg-background text-foreground;
+    font-family: 'Neuropol', 'Inter', 'Arial Black', sans-serif !important;
   }
   
+  /* Tüm başlıklar için Neuropol */
   h1, h2, h3, h4, h5, h6 {
-    @apply font-neuropol font-bold;
+    font-family: 'Neuropol', 'Inter', 'Arial Black', sans-serif !important;
+    @apply font-bold;
   }
   
-  /* Ana metin için */
-  p, span, div, li, td, th {
-    @apply font-neuropol;
+  /* Ana metin elementleri için */
+  p, span, div, li, td, th, a, label {
+    font-family: 'Neuropol', 'Inter', 'Arial Black', sans-serif !important;
   }
   
   /* Form elementleri için */
   input, textarea, select, button {
-    @apply font-neuropol;
+    font-family: 'Neuropol', 'Inter', 'Arial Black', sans-serif !important;
   }
   
-  /* Neuropol kullanımını artır */
+  /* Navigation ve menü elementleri için */
+  nav, nav *, .nav-item, .menu-item {
+    font-family: 'Neuropol', 'Inter', 'Arial Black', sans-serif !important;
+  }
+  
+  /* Neuropol sınıfı */
   .font-neuropol {
-    font-family: 'Neuropol', 'Inter', sans-serif !important;
+    font-family: 'Neuropol', 'Inter', 'Arial Black', sans-serif !important;
   }
   
   /* Logo ve marka metinleri için */
   .brand-text {
-    @apply font-neuropol font-bold;
+    font-family: 'Neuropol', 'Inter', 'Arial Black', sans-serif !important;
+    @apply font-bold;
   }
   
   /* Buton metinleri için */
   .btn-text {
-    @apply font-neuropol font-semibold;
+    font-family: 'Neuropol', 'Inter', 'Arial Black', sans-serif !important;
+    @apply font-semibold;
+  }
+  
+  /* Card ve component metinleri için */
+  .card, .card *, .component, .component * {
+    font-family: 'Neuropol', 'Inter', 'Arial Black', sans-serif !important;
+  }
+  
+  /* Radix UI ve diğer UI library elementleri için */
+  [data-radix-collection-item], [data-radix-collection-item] *, 
+  .radix-ui, .radix-ui *,
+  [role="button"], [role="menuitem"], [role="tab"], [role="tabpanel"] {
+    font-family: 'Neuropol', 'Inter', 'Arial Black', sans-serif !important;
+  }
+  
+  /* Dropdown ve modal içerikleri için */
+  .dropdown-content, .dropdown-content *,
+  .modal-content, .modal-content *,
+  .popover-content, .popover-content * {
+    font-family: 'Neuropol', 'Inter', 'Arial Black', sans-serif !important;
   }
 }
 
