@@ -1,8 +1,16 @@
 'use client'
 
-import ReactQuill from 'react-quill'
-import 'react-quill/dist/quill.snow.css'
+import dynamic from 'next/dynamic'
 import { useMemo } from 'react'
+
+// React Quill'i dinamik olarak import et (SSR sorununu çözer)
+const ReactQuill = dynamic(() => import('react-quill'), { 
+  ssr: false,
+  loading: () => <div className="border border-gray-300 rounded-md h-[242px] flex items-center justify-center bg-gray-50">Editör yükleniyor...</div>
+})
+
+// CSS'i dinamik olarak import et
+import 'react-quill/dist/quill.snow.css'
 
 interface RichTextEditorProps {
   value: string

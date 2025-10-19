@@ -1,17 +1,9 @@
 import MaxWidthWrapper from '@/components/MaxWidthWrapper'
 import { Target, Eye } from 'lucide-react'
-import { headers } from 'next/headers'
-
-function getBaseUrl() {
-  const h = headers()
-  const proto = h.get('x-forwarded-proto') || 'https'
-  const host = h.get('host')
-  return `${proto}://${host}`
-}
 
 async function getMissionVision() {
   try {
-    const base = process.env.NEXT_PUBLIC_SERVER_URL || getBaseUrl()
+    const base = process.env.NEXT_PUBLIC_SERVER_URL || 'https://ipos-steel.vercel.app'
     const response = await fetch(`${base}/api/mission-vision`, {
       cache: 'no-store'
     })
