@@ -51,6 +51,7 @@ export default function KariyerIslemler() {
     closingParagraph: '',
   })
 
+
   const s1InputRef = useRef<HTMLInputElement | null>(null)
   const s2InputRef = useRef<HTMLInputElement | null>(null)
   const s3InputRef = useRef<HTMLInputElement | null>(null)

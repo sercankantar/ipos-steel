@@ -18,7 +18,12 @@ export async function GET(
     if (catalog.fileData) {
       // Base64 veriyi data URL olarak döndür
       const mimeType = catalog.fileType === 'pdf' ? 'application/pdf' : 'image/jpeg'
-      const dataUrl = `data:${mimeType};base64,${catalog.fileData}`
+      
+      // Eğer zaten data URL formatındaysa, olduğu gibi kullan
+      let dataUrl = catalog.fileData
+      if (!dataUrl.startsWith('data:')) {
+        dataUrl = `data:${mimeType};base64,${catalog.fileData}`
+      }
       
       return NextResponse.json({ 
         success: true, 
@@ -58,7 +63,13 @@ export async function POST(
 
     // Dosya verisini döndür
     if (catalog.fileData) {
-      const buffer = Buffer.from(catalog.fileData, 'base64')
+      // Base64 verisini temizle (data URL prefix'ini kaldır)
+      let cleanBase64 = catalog.fileData
+      if (cleanBase64.includes(',')) {
+        cleanBase64 = cleanBase64.split(',')[1]
+      }
+      
+      const buffer = Buffer.from(cleanBase64, 'base64')
       const headers = new Headers()
       headers.set('Content-Type', catalog.fileType === 'pdf' ? 'application/pdf' : 'image/jpeg')
       

@@ -171,9 +171,11 @@ export default function IndirmeMerkeziIslemler() {
       })
       
       if (res.ok) {
+        const newCategory = await res.json()
+        // Kategori listesini anında güncelle
+        setCategories(prev => [...prev, newCategory])
         setNewCategoryName('')
         setNewCategoryColor('bg-slate-600 text-white')
-        loadCategories()
       }
     } catch (error) {
       console.error('Kategori eklenirken hata:', error)
@@ -367,9 +369,11 @@ export default function IndirmeMerkeziIslemler() {
       })
       
       if (res.ok) {
+        const newCategory = await res.json()
+        // El kitabı kategori listesini anında güncelle
+        setManualCategories(prev => [...prev, newCategory])
         setNewCategoryName('')
         setNewCategoryColor('bg-slate-600 text-white')
-        loadManualCategories()
       }
     } catch (error) {
       console.error('El kitabı kategorisi eklenirken hata:', error)
