@@ -10,6 +10,7 @@ import RecruitmentProcessManager from '@/components/RecruitmentProcessManager'
 import CareerOpportunitiesManager from '@/components/CareerOpportunitiesManager'
 import InternshipProcessManager from '@/components/InternshipProcessManager'
 import JobPositionsManager from '@/components/JobPositionsManager'
+import RichTextEditor from '@/components/ui/RichTextEditor'
 
 type CareerTabKey =
   | 'ikPolitikamiz'
@@ -32,11 +33,9 @@ export default function KariyerIslemler() {
     heroSubtitle: '',
     section1Title: '',
     section1Paragraph: '',
-    section1BulletsText: '', // textarea -> array split by new lines
     section1ImageUrl: '',
     section2Title: '',
     section2Paragraph: '',
-    section2BulletsText: '',
     section2ImageUrl: '',
     section3Title: '',
     section3Paragraph: '',
@@ -112,17 +111,16 @@ export default function KariyerIslemler() {
           const res = await fetch('/api/admin/human-resources-policy')
           if (!res.ok) return
           const data = await res.json()
+          console.log('HR Policy API\'den gelen veri:', data)
           if (!data) return
-          setHrForm({
+          const formData = {
             heroTitle: data.heroTitle || '',
             heroSubtitle: data.heroSubtitle || '',
             section1Title: data.section1Title || '',
             section1Paragraph: data.section1Paragraph || '',
-            section1BulletsText: Array.isArray(data.section1Bullets) ? data.section1Bullets.join('\n') : '',
             section1ImageUrl: data.section1ImageUrl || '',
             section2Title: data.section2Title || '',
             section2Paragraph: data.section2Paragraph || '',
-            section2BulletsText: Array.isArray(data.section2Bullets) ? data.section2Bullets.join('\n') : '',
             section2ImageUrl: data.section2ImageUrl || '',
             section3Title: data.section3Title || '',
             section3Paragraph: data.section3Paragraph || '',
@@ -136,7 +134,9 @@ export default function KariyerIslemler() {
               { title: '', description: '' },
             ],
             closingParagraph: data.closingParagraph || '',
-          })
+          }
+          console.log('HR Form state güncelleniyor:', formData)
+          setHrForm(formData)
           if (data.section1ImageUrl) setS1Preview(data.section1ImageUrl)
           if (data.section2ImageUrl) setS2Preview(data.section2ImageUrl)
           if (data.section3ImageUrl) setS3Preview(data.section3ImageUrl)
@@ -225,18 +225,10 @@ export default function KariyerIslemler() {
         heroSubtitle: hrForm.heroSubtitle,
         section1Title: hrForm.section1Title,
         section1Paragraph: hrForm.section1Paragraph,
-        section1Bullets: hrForm.section1BulletsText
-          .split('\n')
-          .map((s) => s.trim())
-          .filter(Boolean),
         section1ImageUrl: s1Upload?.secure_url || (hrForm.section1ImageUrl || undefined),
         section1ImagePublicId: s1Upload?.public_id,
         section2Title: hrForm.section2Title,
         section2Paragraph: hrForm.section2Paragraph,
-        section2Bullets: hrForm.section2BulletsText
-          .split('\n')
-          .map((s) => s.trim())
-          .filter(Boolean),
         section2ImageUrl: s2Upload?.secure_url || (hrForm.section2ImageUrl || undefined),
         section2ImagePublicId: s2Upload?.public_id,
         section3Title: hrForm.section3Title,
@@ -428,19 +420,18 @@ export default function KariyerIslemler() {
 
             <div className="space-y-3">
               <h3 className="font-medium text-gray-900">Bölüm 1</h3>
-              <div className="grid md:grid-cols-2 gap-4">
-                <div>
-                  <Label htmlFor="s1Title">Başlık</Label>
-                  <Input id="s1Title" value={hrForm.section1Title} onChange={(e) => setHrForm({ ...hrForm, section1Title: e.target.value })} required />
-                </div>
-                <div>
-                  <Label htmlFor="s1Bullets">Maddeler (her satır bir madde)</Label>
-                  <textarea id="s1Bullets" value={hrForm.section1BulletsText} onChange={(e) => setHrForm({ ...hrForm, section1BulletsText: e.target.value })} className="w-full px-3 py-2 border border-gray-300 rounded-md" rows={4} />
-                </div>
-              </div>
               <div>
+                <Label htmlFor="s1Title">Başlık</Label>
+                <Input id="s1Title" value={hrForm.section1Title} onChange={(e) => setHrForm({ ...hrForm, section1Title: e.target.value })} required />
+              </div>
+              <div className="pb-8">
                 <Label htmlFor="s1Paragraph">Paragraf</Label>
-                <textarea id="s1Paragraph" value={hrForm.section1Paragraph} onChange={(e) => setHrForm({ ...hrForm, section1Paragraph: e.target.value })} className="w-full px-3 py-2 border border-gray-300 rounded-md" rows={4} />
+                <RichTextEditor
+                  value={hrForm.section1Paragraph}
+                  onChange={(value) => setHrForm({ ...hrForm, section1Paragraph: value })}
+                  placeholder="Paragraf içeriğini girin..."
+                  height={150}
+                />
               </div>
               <div className="flex items-center gap-3">
                 <input ref={s1InputRef} id="s1Image" type="file" accept="image/*" className="hidden" onChange={(e) => { const f = e.target.files?.[0] || null; setS1File(f); setS1Preview(f ? URL.createObjectURL(f) : hrForm.section1ImageUrl || null) }} />
@@ -454,19 +445,18 @@ export default function KariyerIslemler() {
 
             <div className="space-y-3">
               <h3 className="font-medium text-gray-900">Bölüm 2</h3>
-              <div className="grid md:grid-cols-2 gap-4">
-                <div>
-                  <Label htmlFor="s2Title">Başlık</Label>
-                  <Input id="s2Title" value={hrForm.section2Title} onChange={(e) => setHrForm({ ...hrForm, section2Title: e.target.value })} required />
-                </div>
-                <div>
-                  <Label htmlFor="s2Bullets">Maddeler (her satır bir madde)</Label>
-                  <textarea id="s2Bullets" value={hrForm.section2BulletsText} onChange={(e) => setHrForm({ ...hrForm, section2BulletsText: e.target.value })} className="w-full px-3 py-2 border border-gray-300 rounded-md" rows={4} />
-                </div>
-              </div>
               <div>
+                <Label htmlFor="s2Title">Başlık</Label>
+                <Input id="s2Title" value={hrForm.section2Title} onChange={(e) => setHrForm({ ...hrForm, section2Title: e.target.value })} required />
+              </div>
+              <div className="pb-8">
                 <Label htmlFor="s2Paragraph">Paragraf</Label>
-                <textarea id="s2Paragraph" value={hrForm.section2Paragraph} onChange={(e) => setHrForm({ ...hrForm, section2Paragraph: e.target.value })} className="w-full px-3 py-2 border border-gray-300 rounded-md" rows={4} />
+                <RichTextEditor
+                  value={hrForm.section2Paragraph}
+                  onChange={(value) => setHrForm({ ...hrForm, section2Paragraph: value })}
+                  placeholder="Paragraf içeriğini girin..."
+                  height={150}
+                />
               </div>
               <div className="flex items-center gap-3">
                 <input ref={s2InputRef} id="s2Image" type="file" accept="image/*" className="hidden" onChange={(e) => { const f = e.target.files?.[0] || null; setS2File(f); setS2Preview(f ? URL.createObjectURL(f) : hrForm.section2ImageUrl || null) }} />
@@ -485,14 +475,24 @@ export default function KariyerIslemler() {
                   <Label htmlFor="s3Title">Başlık</Label>
                   <Input id="s3Title" value={hrForm.section3Title} onChange={(e) => setHrForm({ ...hrForm, section3Title: e.target.value })} required />
                 </div>
-                <div>
+                <div className="pb-8">
                   <Label htmlFor="s3Highlight">Vurgu Bloğu</Label>
-                  <Input id="s3Highlight" value={hrForm.section3Highlight} onChange={(e) => setHrForm({ ...hrForm, section3Highlight: e.target.value })} />
+                  <RichTextEditor
+                    value={hrForm.section3Highlight}
+                    onChange={(value) => setHrForm({ ...hrForm, section3Highlight: value })}
+                    placeholder="Vurgu bloğu içeriğini girin..."
+                    height={120}
+                  />
                 </div>
               </div>
-              <div>
+              <div className="pb-8">
                 <Label htmlFor="s3Paragraph">Paragraf</Label>
-                <textarea id="s3Paragraph" value={hrForm.section3Paragraph} onChange={(e) => setHrForm({ ...hrForm, section3Paragraph: e.target.value })} className="w-full px-3 py-2 border border-gray-300 rounded-md" rows={4} />
+                <RichTextEditor
+                  value={hrForm.section3Paragraph}
+                  onChange={(value) => setHrForm({ ...hrForm, section3Paragraph: value })}
+                  placeholder="Paragraf içeriğini girin..."
+                  height={150}
+                />
               </div>
               <div className="flex items-center gap-3">
                 <input ref={s3InputRef} id="s3Image" type="file" accept="image/*" className="hidden" onChange={(e) => { const f = e.target.files?.[0] || null; setS3File(f); setS3Preview(f ? URL.createObjectURL(f) : hrForm.section3ImageUrl || null) }} />
@@ -528,17 +528,27 @@ export default function KariyerIslemler() {
                   </div>
                 ))}
               </div>
-              <div>
+              <div className="pb-8">
                 <Label>Değerler Giriş Paragrafı</Label>
-                <textarea value={hrForm.valuesParagraph} onChange={(e) => setHrForm({ ...hrForm, valuesParagraph: e.target.value })} className="w-full px-3 py-2 border border-gray-300 rounded-md" rows={3} />
+                <RichTextEditor
+                  value={hrForm.valuesParagraph}
+                  onChange={(value) => setHrForm({ ...hrForm, valuesParagraph: value })}
+                  placeholder="Değerler giriş paragrafını girin..."
+                  height={120}
+                />
               </div>
             </div>
 
             <Separator />
 
-            <div>
+            <div className="pb-8">
               <Label>Kapanış Paragrafı</Label>
-              <textarea value={hrForm.closingParagraph} onChange={(e) => setHrForm({ ...hrForm, closingParagraph: e.target.value })} className="w-full px-3 py-2 border border-gray-300 rounded-md" rows={4} />
+              <RichTextEditor
+                value={hrForm.closingParagraph}
+                onChange={(value) => setHrForm({ ...hrForm, closingParagraph: value })}
+                placeholder="Kapanış paragrafını girin..."
+                height={150}
+              />
             </div>
 
             <div className="flex gap-3">

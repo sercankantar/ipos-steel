@@ -551,6 +551,7 @@ model InternshipProcess {
   
   // Ana İçerik
   mainDescription       String
+  content               String?  // Yeni HTML içerik alanı (opsiyonel)
   
   // Lise Stajları
   highSchoolTitle       String

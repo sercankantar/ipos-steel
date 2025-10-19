@@ -50,20 +50,11 @@ export default async function InsanKaynaklariPolitikamiz() {
             
             <div className='grid lg:grid-cols-2 gap-8 items-center mb-8'>
               <div>
-                <p className='text-gray-700 text-base leading-relaxed mb-6'>
-                  {policy?.section1Paragraph}
-                </p>
+                <div 
+                  className='text-gray-700 text-base leading-relaxed mb-6 prose prose-sm max-w-none'
+                  dangerouslySetInnerHTML={{ __html: policy?.section1Paragraph || '' }}
+                />
 
-                {Array.isArray(policy?.section1Bullets) && (
-                  <ul className='space-y-3'>
-                    {policy.section1Bullets.map((b: string, i: number) => (
-                      <li key={i} className='flex items-start gap-3'>
-                        <span className='w-1.5 h-1.5 bg-blue-600 rounded-full mt-2 flex-shrink-0'></span>
-                        <span className='text-gray-700'>{b}</span>
-                      </li>
-                    ))}
-                  </ul>
-                )}
               </div>
               
               {policy?.section1ImageUrl && (
@@ -97,23 +88,11 @@ export default async function InsanKaynaklariPolitikamiz() {
               )}
               
               <div className='order-1 lg:order-2'>
-                <p className='text-gray-700 text-base leading-relaxed mb-6'>
-                  {policy?.section2Paragraph}
-                </p>
+                <div 
+                  className='text-gray-700 text-base leading-relaxed mb-6 prose prose-sm max-w-none'
+                  dangerouslySetInnerHTML={{ __html: policy?.section2Paragraph || '' }}
+                />
 
-                {Array.isArray(policy?.section2Bullets) && (
-                  <div className='bg-gray-50 p-6 border-l-4 border-blue-600'>
-                    <h3 className='font-semibold text-gray-900 mb-4'>Öne çıkan ilkeler</h3>
-                    <ul className='space-y-2'>
-                      {policy.section2Bullets.map((b: string, i: number) => (
-                        <li key={i} className='flex items-start gap-2'>
-                          <span className='text-blue-600 font-bold'>•</span>
-                          <span className='text-gray-700'>{b}</span>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                )}
               </div>
             </div>
           </div>
@@ -125,14 +104,16 @@ export default async function InsanKaynaklariPolitikamiz() {
 
             <div className='grid lg:grid-cols-2 gap-8 items-center mb-8'>
               <div>
-                <p className='text-gray-700 text-base leading-relaxed mb-6'>
-                  {policy?.section3Paragraph}
-                </p>
+                <div 
+                  className='text-gray-700 text-base leading-relaxed mb-6 prose prose-sm max-w-none'
+                  dangerouslySetInnerHTML={{ __html: policy?.section3Paragraph || '' }}
+                />
                 {policy?.section3Highlight && (
                   <div className='bg-blue-50 p-6 border border-blue-200'>
-                    <p className='text-gray-700 text-base leading-relaxed font-medium'>
-                      {policy.section3Highlight}
-                    </p>
+                    <div 
+                      className='text-gray-700 text-base leading-relaxed font-medium prose prose-sm max-w-none'
+                      dangerouslySetInnerHTML={{ __html: policy.section3Highlight }}
+                    />
                   </div>
                 )}
               </div>
@@ -156,9 +137,10 @@ export default async function InsanKaynaklariPolitikamiz() {
             </h2>
             
             {policy?.valuesParagraph && (
-              <p className='text-gray-700 text-base leading-relaxed mb-8'>
-                {policy.valuesParagraph}
-              </p>
+              <div 
+                className='text-gray-700 text-base leading-relaxed mb-8 prose prose-sm max-w-none'
+                dangerouslySetInnerHTML={{ __html: policy.valuesParagraph }}
+              />
             )}
 
             {Array.isArray(policy?.values) && policy.values.length > 0 && (
@@ -174,9 +156,10 @@ export default async function InsanKaynaklariPolitikamiz() {
 
             {policy?.closingParagraph && (
               <div className='bg-gray-50 p-6 border border-gray-200'>
-                <p className='text-gray-700 text-base leading-relaxed'>
-                  {policy.closingParagraph}
-                </p>
+                <div 
+                  className='text-gray-700 text-base leading-relaxed prose prose-sm max-w-none'
+                  dangerouslySetInnerHTML={{ __html: policy.closingParagraph }}
+                />
               </div>
             )}
           </div>

@@ -8,14 +8,15 @@ interface InternshipProcessData {
   id: string
   heroTitle: string
   heroSubtitle?: string
-  mainDescription: string
-  highSchoolTitle: string
-  highSchoolBullets: string[]
-  universityTitle: string
-  universityBullets: string[]
-  criteriaTitle: string
-  criteriaBullets: string[]
-  conclusionParagraph: string
+  content?: string
+  mainDescription?: string
+  highSchoolTitle?: string
+  highSchoolBullets?: string[]
+  universityTitle?: string
+  universityBullets?: string[]
+  criteriaTitle?: string
+  criteriaBullets?: string[]
+  conclusionParagraph?: string
   imageUrl?: string
   imageAlt?: string
 }
@@ -107,57 +108,80 @@ export default function StajSurecimizClient() {
             
             {/* Sol Kolon - Metin İçeriği */}
             <div className="lg:col-span-2">
-              <div className="prose prose-lg max-w-none">
-                
-                {/* Giriş Paragrafı */}
-                <p className="text-gray-700 leading-relaxed mb-8">
-                  {data.mainDescription}
-                </p>
-
-                {/* Lise Stajları Bölümü */}
-                <div className="mb-8">
-                  <h2 className="text-xl font-bold text-gray-900 mb-4">{data.highSchoolTitle}</h2>
-                  <ul className="space-y-3 text-gray-700">
-                    {data.highSchoolBullets.map((bullet, index) => (
-                      <li key={index} className="flex items-start">
-                        <span className="w-2 h-2 bg-gray-400 rounded-full mt-2 mr-3 flex-shrink-0"></span>
-                        <span>{bullet}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-
-                {/* Üniversite Stajları Bölümü */}
-                <div className="mb-8">
-                  <h2 className="text-xl font-bold text-gray-900 mb-4">{data.universityTitle}</h2>
-                  <ul className="space-y-3 text-gray-700">
-                    {data.universityBullets.map((bullet, index) => (
-                      <li key={index} className="flex items-start">
-                        <span className="w-2 h-2 bg-gray-400 rounded-full mt-2 mr-3 flex-shrink-0"></span>
-                        <span>{bullet}</span>
-                      </li>
-                    ))}
-                  </ul>
+              {data.content ? (
+                // Yeni HTML content varsa onu göster
+                <div 
+                  className="prose prose-lg max-w-none text-gray-700"
+                  dangerouslySetInnerHTML={{ __html: data.content }}
+                />
+              ) : (
+                // Eski veri yapısını göster
+                <div className="prose prose-lg max-w-none">
                   
-                  <div className="mt-6">
-                    <h3 className="text-lg font-semibold text-gray-900 mb-3">{data.criteriaTitle}</h3>
-                    <ul className="space-y-2 text-gray-700">
-                      {data.criteriaBullets.map((bullet, index) => (
-                        <li key={index} className="flex items-start">
-                          <span className="w-2 h-2 bg-gray-400 rounded-full mt-2 mr-3 flex-shrink-0"></span>
-                          <span>{bullet}</span>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
+                  {/* Giriş Paragrafı */}
+                  <p className="text-gray-700 leading-relaxed mb-8">
+                    {data.mainDescription || ''}
+                  </p>
+
+                  {/* Lise Stajları Bölümü */}
+                  {data.highSchoolTitle && (
+                    <div className="mb-8">
+                      <h2 className="text-xl font-bold text-gray-900 mb-4">{data.highSchoolTitle}</h2>
+                      {data.highSchoolBullets && data.highSchoolBullets.length > 0 && (
+                        <ul className="space-y-3 text-gray-700">
+                          {data.highSchoolBullets.map((bullet, index) => (
+                            <li key={index} className="flex items-start">
+                              <span className="w-2 h-2 bg-gray-400 rounded-full mt-2 mr-3 flex-shrink-0"></span>
+                              <span>{bullet}</span>
+                            </li>
+                          ))}
+                        </ul>
+                      )}
+                    </div>
+                  )}
+
+                  {/* Üniversite Stajları Bölümü */}
+                  {data.universityTitle && (
+                    <div className="mb-8">
+                      <h2 className="text-xl font-bold text-gray-900 mb-4">{data.universityTitle}</h2>
+                      {data.universityBullets && data.universityBullets.length > 0 && (
+                        <ul className="space-y-3 text-gray-700">
+                          {data.universityBullets.map((bullet, index) => (
+                            <li key={index} className="flex items-start">
+                              <span className="w-2 h-2 bg-gray-400 rounded-full mt-2 mr-3 flex-shrink-0"></span>
+                              <span>{bullet}</span>
+                            </li>
+                          ))}
+                        </ul>
+                      )}
+                      
+                      {data.criteriaTitle && (
+                        <div className="mt-6">
+                          <h3 className="text-lg font-semibold text-gray-900 mb-3">{data.criteriaTitle}</h3>
+                          {data.criteriaBullets && data.criteriaBullets.length > 0 && (
+                            <ul className="space-y-2 text-gray-700">
+                              {data.criteriaBullets.map((bullet, index) => (
+                                <li key={index} className="flex items-start">
+                                  <span className="w-2 h-2 bg-gray-400 rounded-full mt-2 mr-3 flex-shrink-0"></span>
+                                  <span>{bullet}</span>
+                                </li>
+                              ))}
+                            </ul>
+                          )}
+                        </div>
+                      )}
+                    </div>
+                  )}
+
+                  {/* Sonuç Paragrafı */}
+                  {data.conclusionParagraph && (
+                    <p className="text-gray-700 leading-relaxed">
+                      {data.conclusionParagraph}
+                    </p>
+                  )}
+
                 </div>
-
-                {/* Sonuç Paragrafı */}
-                <p className="text-gray-700 leading-relaxed">
-                  {data.conclusionParagraph}
-                </p>
-
-              </div>
+              )}
             </div>
 
             {/* Sağ Kolon - Görsel */}

@@ -6,19 +6,13 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Plus, Trash2 } from 'lucide-react'
 import { toast } from 'sonner'
+import RichTextEditor from '@/components/ui/RichTextEditor'
 
 interface InternshipProcessData {
   id: string
   heroTitle: string
   heroSubtitle?: string
-  mainDescription: string
-  highSchoolTitle: string
-  highSchoolBullets: string[]
-  universityTitle: string
-  universityBullets: string[]
-  criteriaTitle: string
-  criteriaBullets: string[]
-  conclusionParagraph: string
+  content: string // Tek HTML içerik alanı
   imageUrl?: string
   imagePublicId?: string
   imageAlt?: string
@@ -33,14 +27,7 @@ export default function InternshipProcessManager() {
   const [formData, setFormData] = useState({
     heroTitle: '',
     heroSubtitle: '',
-    mainDescription: '',
-    highSchoolTitle: '',
-    highSchoolBullets: [''],
-    universityTitle: '',
-    universityBullets: [''],
-    criteriaTitle: '',
-    criteriaBullets: [''],
-    conclusionParagraph: '',
+    content: '',
     imageAlt: ''
   })
   const [imagePreview, setImagePreview] = useState<string | null>(null)
@@ -53,21 +40,14 @@ export default function InternshipProcessManager() {
 
   const fetchData = async () => {
     try {
-      const response = await fetch('/api/admin/internship-process')
+      const response = await fetch('/api/internship-process')
       const result = await response.json()
       setData(result)
       if (result) {
         setFormData({
           heroTitle: result.heroTitle || '',
           heroSubtitle: result.heroSubtitle || '',
-          mainDescription: result.mainDescription || '',
-          highSchoolTitle: result.highSchoolTitle || '',
-          highSchoolBullets: result.highSchoolBullets || [''],
-          universityTitle: result.universityTitle || '',
-          universityBullets: result.universityBullets || [''],
-          criteriaTitle: result.criteriaTitle || '',
-          criteriaBullets: result.criteriaBullets || [''],
-          conclusionParagraph: result.conclusionParagraph || '',
+          content: result.content || '',
           imageAlt: result.imageAlt || ''
         })
         if (result.imageUrl) {
@@ -96,7 +76,7 @@ export default function InternshipProcessManager() {
         if (res.ok) imageUpload = await res.json()
       }
 
-      const response = await fetch('/api/admin/internship-process', {
+      const response = await fetch('/api/internship-process', {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -118,65 +98,6 @@ export default function InternshipProcessManager() {
     }
   }
 
-  const addHighSchoolBullet = () => {
-    setFormData({
-      ...formData,
-      highSchoolBullets: [...formData.highSchoolBullets, '']
-    })
-  }
-
-  const removeHighSchoolBullet = (index: number) => {
-    setFormData({
-      ...formData,
-      highSchoolBullets: formData.highSchoolBullets.filter((_, i) => i !== index)
-    })
-  }
-
-  const updateHighSchoolBullet = (index: number, value: string) => {
-    const newBullets = [...formData.highSchoolBullets]
-    newBullets[index] = value
-    setFormData({ ...formData, highSchoolBullets: newBullets })
-  }
-
-  const addUniversityBullet = () => {
-    setFormData({
-      ...formData,
-      universityBullets: [...formData.universityBullets, '']
-    })
-  }
-
-  const removeUniversityBullet = (index: number) => {
-    setFormData({
-      ...formData,
-      universityBullets: formData.universityBullets.filter((_, i) => i !== index)
-    })
-  }
-
-  const updateUniversityBullet = (index: number, value: string) => {
-    const newBullets = [...formData.universityBullets]
-    newBullets[index] = value
-    setFormData({ ...formData, universityBullets: newBullets })
-  }
-
-  const addCriteriaBullet = () => {
-    setFormData({
-      ...formData,
-      criteriaBullets: [...formData.criteriaBullets, '']
-    })
-  }
-
-  const removeCriteriaBullet = (index: number) => {
-    setFormData({
-      ...formData,
-      criteriaBullets: formData.criteriaBullets.filter((_, i) => i !== index)
-    })
-  }
-
-  const updateCriteriaBullet = (index: number, value: string) => {
-    const newBullets = [...formData.criteriaBullets]
-    newBullets[index] = value
-    setFormData({ ...formData, criteriaBullets: newBullets })
-  }
 
   if (loading) {
     return <div className="p-8"><div className="h-6 w-40 bg-gray-200 rounded animate-pulse mb-4" /><div className="h-4 w-full bg-gray-200 rounded animate-pulse mb-2" /><div className="h-4 w-2/3 bg-gray-200 rounded animate-pulse" /></div>
@@ -211,154 +132,16 @@ export default function InternshipProcessManager() {
           </div>
         </div>
 
-        {/* Ana İçerik */}
+        {/* İçerik */}
         <div className="border-b pb-6">
-          <h3 className="text-lg font-medium mb-4">Ana İçerik</h3>
-          <div>
-            <Label htmlFor="mainDescription">Giriş Paragrafı</Label>
-            <textarea
-              id="mainDescription"
-              value={formData.mainDescription}
-              onChange={(e) => setFormData({ ...formData, mainDescription: e.target.value })}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-              rows={4}
-              required
-            />
-          </div>
-        </div>
-
-        {/* Lise Stajları */}
-        <div className="border-b pb-6">
-          <h3 className="text-lg font-medium mb-4">Lise Stajları</h3>
-          <div className="space-y-4">
-            <div>
-              <Label htmlFor="highSchoolTitle">Başlık</Label>
-              <Input
-                id="highSchoolTitle"
-                value={formData.highSchoolTitle}
-                onChange={(e) => setFormData({ ...formData, highSchoolTitle: e.target.value })}
-                required
-              />
-            </div>
-            <div>
-              <Label>Madde Listesi</Label>
-              {formData.highSchoolBullets.map((bullet, index) => (
-                <div key={index} className="flex gap-2 mb-2">
-                  <Input
-                    value={bullet}
-                    onChange={(e) => updateHighSchoolBullet(index, e.target.value)}
-                    placeholder="Madde açıklaması"
-                  />
-                  <Button
-                    type="button"
-                    variant="outline"
-                    onClick={() => removeHighSchoolBullet(index)}
-                    disabled={formData.highSchoolBullets.length === 1}
-                  >
-                    <Trash2 className="w-4 h-4" />
-                  </Button>
-                </div>
-              ))}
-              <Button type="button" variant="outline" onClick={addHighSchoolBullet} className="mt-2">
-                <Plus className="w-4 h-4 mr-2" />
-                Madde Ekle
-              </Button>
-            </div>
-          </div>
-        </div>
-
-        {/* Üniversite Stajları */}
-        <div className="border-b pb-6">
-          <h3 className="text-lg font-medium mb-4">Üniversite Stajları</h3>
-          <div className="space-y-4">
-            <div>
-              <Label htmlFor="universityTitle">Başlık</Label>
-              <Input
-                id="universityTitle"
-                value={formData.universityTitle}
-                onChange={(e) => setFormData({ ...formData, universityTitle: e.target.value })}
-                required
-              />
-            </div>
-            <div>
-              <Label>Madde Listesi</Label>
-              {formData.universityBullets.map((bullet, index) => (
-                <div key={index} className="flex gap-2 mb-2">
-                  <Input
-                    value={bullet}
-                    onChange={(e) => updateUniversityBullet(index, e.target.value)}
-                    placeholder="Madde açıklaması"
-                  />
-                  <Button
-                    type="button"
-                    variant="outline"
-                    onClick={() => removeUniversityBullet(index)}
-                    disabled={formData.universityBullets.length === 1}
-                  >
-                    <Trash2 className="w-4 h-4" />
-                  </Button>
-                </div>
-              ))}
-              <Button type="button" variant="outline" onClick={addUniversityBullet} className="mt-2">
-                <Plus className="w-4 h-4 mr-2" />
-                Madde Ekle
-              </Button>
-            </div>
-          </div>
-        </div>
-
-        {/* Ön Seçim Kriterleri */}
-        <div className="border-b pb-6">
-          <h3 className="text-lg font-medium mb-4">Ön Seçim Kriterleri</h3>
-          <div className="space-y-4">
-            <div>
-              <Label htmlFor="criteriaTitle">Başlık</Label>
-              <Input
-                id="criteriaTitle"
-                value={formData.criteriaTitle}
-                onChange={(e) => setFormData({ ...formData, criteriaTitle: e.target.value })}
-                required
-              />
-            </div>
-            <div>
-              <Label>Kriter Listesi</Label>
-              {formData.criteriaBullets.map((bullet, index) => (
-                <div key={index} className="flex gap-2 mb-2">
-                  <Input
-                    value={bullet}
-                    onChange={(e) => updateCriteriaBullet(index, e.target.value)}
-                    placeholder="Kriter açıklaması"
-                  />
-                  <Button
-                    type="button"
-                    variant="outline"
-                    onClick={() => removeCriteriaBullet(index)}
-                    disabled={formData.criteriaBullets.length === 1}
-                  >
-                    <Trash2 className="w-4 h-4" />
-                  </Button>
-                </div>
-              ))}
-              <Button type="button" variant="outline" onClick={addCriteriaBullet} className="mt-2">
-                <Plus className="w-4 h-4 mr-2" />
-                Kriter Ekle
-              </Button>
-            </div>
-          </div>
-        </div>
-
-        {/* Sonuç Paragrafı */}
-        <div className="border-b pb-6">
-          <h3 className="text-lg font-medium mb-4">Sonuç Paragrafı</h3>
-          <div>
-            <Label htmlFor="conclusionParagraph">Sonuç Metni</Label>
-            <textarea
-              id="conclusionParagraph"
-              value={formData.conclusionParagraph}
-              onChange={(e) => setFormData({ ...formData, conclusionParagraph: e.target.value })}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-              rows={3}
-              required
+          <h3 className="text-lg font-medium mb-4">İçerik</h3>
+          <div className="pb-8">
+            <Label htmlFor="content">Staj Süreci İçeriği</Label>
+            <RichTextEditor
+              value={formData.content}
+              onChange={(value) => setFormData({ ...formData, content: value })}
+              placeholder="Staj süreci hakkında detaylı bilgileri girin..."
+              height={300}
             />
           </div>
         </div>

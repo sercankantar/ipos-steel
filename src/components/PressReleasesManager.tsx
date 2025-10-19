@@ -6,6 +6,7 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Edit, Trash2, Plus, Tag, Search } from 'lucide-react'
 import { toast } from 'sonner'
+import RichTextEditor from '@/components/ui/RichTextEditor'
 
 interface PressRelease {
   id: string
@@ -549,15 +550,13 @@ export default function PressReleasesManager() {
                         className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
                       />
             </div>
-            <div>
+            <div className="pb-8">
                       <Label htmlFor="content" className="text-sm font-medium text-gray-700">Detaylı İçerik</Label>
-                      <textarea
-                        id="content"
+                      <RichTextEditor
                         value={form.content}
-                        onChange={(e) => setForm({ ...form, content: e.target.value })}
+                        onChange={(value) => setForm({ ...form, content: value })}
                         placeholder="Basın açıklamasının detaylı içeriği..."
-                        rows={8}
-                        className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+                        height={200}
                       />
                     </div>
                   </div>
