@@ -68,9 +68,10 @@ export default async function MisyonVizyonPage() {
               </div>
               
               <div className="bg-gray-50 p-8 rounded-lg border-l-4 border-slate-700">
-                <p className="text-gray-700 leading-relaxed text-lg">
-                  {mission}
-                </p>
+                <div 
+                  className="text-gray-700 leading-relaxed text-lg prose prose-lg max-w-none"
+                  dangerouslySetInnerHTML={{ __html: mission }}
+                />
               </div>
             </div>
             
@@ -104,9 +105,10 @@ export default async function MisyonVizyonPage() {
               </div>
               
               <div className="bg-white p-8 rounded-lg border-l-4 border-slate-700">
-                <p className="text-gray-700 leading-relaxed text-lg">
-                  {vision}
-                </p>
+                <div 
+                  className="text-gray-700 leading-relaxed text-lg prose prose-lg max-w-none"
+                  dangerouslySetInnerHTML={{ __html: vision }}
+                />
               </div>
             </div>
             

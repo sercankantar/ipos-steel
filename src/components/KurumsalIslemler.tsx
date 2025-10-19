@@ -8,6 +8,7 @@ import { Plus, Edit, Trash2, Target, Eye } from 'lucide-react'
 import { toast } from 'sonner'
 import CertificatesManager from '@/components/CertificatesManager'
 import ReferencesManager from '@/components/ReferencesManager'
+import RichTextEditor from '@/components/ui/RichTextEditor'
 
 interface CorporateMediaProduct {
   id: string
@@ -326,20 +327,18 @@ export default function KurumsalIslemler() {
           <h2 className="text-xl font-semibold mb-4">
             Misyon-Vizyon Düzenle
           </h2>
-          <form onSubmit={handleMissionVisionSubmit} className="space-y-4">
+          <form onSubmit={handleMissionVisionSubmit} className="space-y-12">
             <div>
               <Label htmlFor="mission">Misyon</Label>
-              <textarea
-                id="mission"
+              <RichTextEditor
                 value={missionVisionData.mission}
-                onChange={(e) => setMissionVisionData({ ...missionVisionData, mission: e.target.value })}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                rows={4}
-                required
+                onChange={(value) => setMissionVisionData({ ...missionVisionData, mission: value })}
+                placeholder="Misyon yazısını girin..."
+                height={200}
               />
-              <div className="mt-3">
+              <div className="mt-12">
                 <Label>Misyon Görseli</Label>
-                <div className="mt-1 flex items-center gap-3">
+                <div className="mt-6 flex items-center gap-3">
                   <input
                     ref={missionInputRef}
                     id="missionImage"
@@ -383,7 +382,7 @@ export default function KurumsalIslemler() {
                   <img
                     src={missionImagePreview || missionVision?.missionImageUrl || ''}
                     alt="Misyon Görseli"
-                    className="mt-2 h-28 w-28 object-cover rounded border"
+                    className="mt-4 h-28 w-28 object-cover rounded border"
                   />
                 )}
               </div>
@@ -391,17 +390,15 @@ export default function KurumsalIslemler() {
             
             <div>
               <Label htmlFor="vision">Vizyon</Label>
-              <textarea
-                id="vision"
+              <RichTextEditor
                 value={missionVisionData.vision}
-                onChange={(e) => setMissionVisionData({ ...missionVisionData, vision: e.target.value })}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                rows={4}
-                required
+                onChange={(value) => setMissionVisionData({ ...missionVisionData, vision: value })}
+                placeholder="Vizyon yazısını girin..."
+                height={200}
               />
-              <div className="mt-3">
+              <div className="mt-12">
                 <Label>Vizyon Görseli</Label>
-                <div className="mt-1 flex items-center gap-3">
+                <div className="mt-6 flex items-center gap-3">
                   <input
                     ref={visionInputRef}
                     id="visionImage"
@@ -445,7 +442,7 @@ export default function KurumsalIslemler() {
                   <img
                     src={visionImagePreview || missionVision?.visionImageUrl || ''}
                     alt="Vizyon Görseli"
-                    className="mt-2 h-28 w-28 object-cover rounded border"
+                    className="mt-4 h-28 w-28 object-cover rounded border"
                   />
                 )}
               </div>
