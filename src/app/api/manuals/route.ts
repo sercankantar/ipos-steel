@@ -25,8 +25,25 @@ export async function GET(request: NextRequest) {
 
     const manuals = await prisma.manual.findMany({
       where,
-      include: {
+      select: {
+        id: true,
+        title: true,
+        description: true,
+        categoryId: true,
+        fileType: true,
+        fileSize: true,
+        imageUrl: true,
+        pages: true,
+        language: true,
+        version: true,
+        publishDate: true,
+        downloadCount: true,
+        featured: true,
+        isActive: true,
+        createdAt: true,
+        updatedAt: true,
         category: true
+        // fileData ve fileUrl'yi dahil etmiyoruz - performans için
       },
       orderBy: [
         { featured: 'desc' },

@@ -44,6 +44,10 @@ export default function CatalogClient({ catalogs, categories }: CatalogClientPro
   const [selectedCategory, setSelectedCategory] = useState('all')
   const [searchTerm, setSearchTerm] = useState('')
   const [downloadingIds, setDownloadingIds] = useState<Set<string>>(new Set())
+  const [currentPage, setCurrentPage] = useState(1)
+  const [isLoading, setIsLoading] = useState(false)
+  
+  const ITEMS_PER_PAGE = 6
 
   const filteredCatalogs = useMemo(() => {
     let filtered = selectedCategory === 'all' 
@@ -59,6 +63,31 @@ export default function CatalogClient({ catalogs, categories }: CatalogClientPro
     
     return filtered
   }, [selectedCategory, searchTerm, catalogs])
+
+  // Pagination için katalogları böl
+  const paginatedCatalogs = useMemo(() => {
+    const startIndex = (currentPage - 1) * ITEMS_PER_PAGE
+    return filteredCatalogs.slice(startIndex, startIndex + ITEMS_PER_PAGE)
+  }, [filteredCatalogs, currentPage])
+
+  const totalPages = Math.ceil(filteredCatalogs.length / ITEMS_PER_PAGE)
+
+  // Sayfa değiştiğinde scroll to top
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page)
+    window.scrollTo({ top: 0, behavior: 'smooth' })
+  }
+
+  // Filtreleme değiştiğinde sayfa sıfırla
+  const handleCategoryChange = (categoryId: string) => {
+    setSelectedCategory(categoryId)
+    setCurrentPage(1)
+  }
+
+  const handleSearchChange = (term: string) => {
+    setSearchTerm(term)
+    setCurrentPage(1)
+  }
 
   const handleDownload = async (catalog: Catalog) => {
     try {
@@ -119,7 +148,7 @@ export default function CatalogClient({ catalogs, categories }: CatalogClientPro
               type='text'
               placeholder='Katalog ara...'
               value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
+              onChange={(e) => handleSearchChange(e.target.value)}
               className='w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent'
             />
           </div>
@@ -127,7 +156,7 @@ export default function CatalogClient({ catalogs, categories }: CatalogClientPro
           {/* Kategori Filtreleri */}
           <div className='flex flex-wrap gap-2'>
             <button
-              onClick={() => setSelectedCategory('all')}
+              onClick={() => handleCategoryChange('all')}
               className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
                 selectedCategory === 'all'
                   ? 'bg-blue-600 text-white'
@@ -139,7 +168,7 @@ export default function CatalogClient({ catalogs, categories }: CatalogClientPro
             {categories.map((category) => (
               <button
                 key={category.id}
-                onClick={() => setSelectedCategory(category.id)}
+                onClick={() => handleCategoryChange(category.id)}
                 className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
                   selectedCategory === category.id
                     ? 'bg-blue-600 text-white'
@@ -153,12 +182,34 @@ export default function CatalogClient({ catalogs, categories }: CatalogClientPro
         </div>
       </div>
 
+      {/* Loading State */}
+      {isLoading && (
+        <div className='grid md:grid-cols-2 lg:grid-cols-3 gap-6'>
+          {Array.from({ length: 6 }).map((_, i) => (
+            <div key={i} className='bg-white rounded-lg shadow-md overflow-hidden animate-pulse'>
+              <div className='h-48 bg-gray-200'></div>
+              <div className='p-6'>
+                <div className='h-6 bg-gray-200 rounded mb-2'></div>
+                <div className='h-4 bg-gray-200 rounded mb-4'></div>
+                <div className='h-4 bg-gray-200 rounded mb-4'></div>
+                <div className='h-10 bg-gray-200 rounded'></div>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+
       {/* Tüm Kataloglar */}
-      {filteredCatalogs.length > 0 && (
+      {!isLoading && filteredCatalogs.length > 0 && (
         <div>
-          <h2 className='text-2xl font-bold text-gray-900 mb-6'>Katalog & Broşürler</h2>
+          <div className='flex justify-between items-center mb-6'>
+            <h2 className='text-2xl font-bold text-gray-900'>Katalog & Broşürler</h2>
+            <span className='text-sm text-gray-500'>
+              {filteredCatalogs.length} katalog bulundu
+            </span>
+          </div>
           <div className='grid md:grid-cols-2 lg:grid-cols-3 gap-6'>
-            {filteredCatalogs.map((catalog) => (
+            {paginatedCatalogs.map((catalog) => (
               <div key={catalog.id} className='bg-white rounded-lg shadow-md overflow-hidden hover:shadow-xl transition-shadow duration-300'>
                 <div className='relative h-48'>
                   <Image
@@ -166,6 +217,9 @@ export default function CatalogClient({ catalogs, categories }: CatalogClientPro
                     alt={catalog.title}
                     fill
                     className='object-cover'
+                    sizes='(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw'
+                    priority={false}
+                    loading='lazy'
                   />
                   <div className='absolute top-3 right-3'>
                     <span className={`px-2 py-1 rounded text-xs font-medium ${getCatalogCategoryColor(catalog.category.color)}`}>
@@ -236,11 +290,46 @@ export default function CatalogClient({ catalogs, categories }: CatalogClientPro
               </div>
             ))}
           </div>
+          
+          {/* Pagination */}
+          {totalPages > 1 && (
+            <div className='flex justify-center items-center gap-2 mt-8'>
+              <button
+                onClick={() => handlePageChange(currentPage - 1)}
+                disabled={currentPage === 1}
+                className='px-3 py-2 rounded-lg border border-gray-300 text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed'
+              >
+                Önceki
+              </button>
+              
+              {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+                <button
+                  key={page}
+                  onClick={() => handlePageChange(page)}
+                  className={`px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
+                    currentPage === page
+                      ? 'bg-blue-600 text-white'
+                      : 'border border-gray-300 text-gray-700 hover:bg-gray-50'
+                  }`}
+                >
+                  {page}
+                </button>
+              ))}
+              
+              <button
+                onClick={() => handlePageChange(currentPage + 1)}
+                disabled={currentPage === totalPages}
+                className='px-3 py-2 rounded-lg border border-gray-300 text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed'
+              >
+                Sonraki
+              </button>
+            </div>
+          )}
         </div>
       )}
 
       {/* Sonuç Bulunamadı */}
-      {filteredCatalogs.length === 0 && (
+      {!isLoading && filteredCatalogs.length === 0 && (
         <div className='text-center py-12'>
           <div className='text-gray-400 mb-4'>
             <FileText className='w-16 h-16 mx-auto' />

@@ -2,7 +2,7 @@
 
 import MaxWidthWrapper from '@/components/MaxWidthWrapper'
 import { useEffect, useState } from 'react'
-import { ChevronDown, Download } from 'lucide-react'
+import { ChevronDown, Download, RefreshCw } from 'lucide-react'
 
 interface Certificate {
   id: string
@@ -19,11 +19,20 @@ export default function SertifikalarPage() {
   const [openItems, setOpenItems] = useState<string[]>([])
   const [items, setItems] = useState<Certificate[]>([])
   const [loading, setLoading] = useState(true)
+  const [downloadingIds, setDownloadingIds] = useState<Set<string>>(new Set())
+  const [refreshing, setRefreshing] = useState(false)
 
   useEffect(() => {
     const load = async () => {
       try {
-        const res = await fetch('/api/certificates', { cache: 'no-store' })
+        setLoading(true)
+        const res = await fetch('/api/certificates', { 
+          cache: 'no-store',
+          headers: {
+            'Cache-Control': 'no-cache',
+            'Pragma': 'no-cache'
+          }
+        })
         if (!res.ok) return
         const data = await res.json()
         setItems(data)
@@ -36,12 +45,90 @@ export default function SertifikalarPage() {
     load()
   }, [])
 
+  // Sayfa focus olduğunda verileri yenile
+  useEffect(() => {
+    const handleFocus = () => {
+      const load = async () => {
+        try {
+          const res = await fetch('/api/certificates', { 
+            cache: 'no-store',
+            headers: {
+              'Cache-Control': 'no-cache',
+              'Pragma': 'no-cache'
+            }
+          })
+          if (!res.ok) return
+          const data = await res.json()
+          setItems(data)
+        } catch (e) {
+          console.error('Veri yenileme hatası:', e)
+        }
+      }
+      load()
+    }
+
+    window.addEventListener('focus', handleFocus)
+    return () => window.removeEventListener('focus', handleFocus)
+  }, [])
+
   const toggleItem = (id: string) => {
     setOpenItems(prev => 
       prev.includes(id) 
         ? prev.filter(item => item !== id)
         : [...prev, id]
     )
+  }
+
+  const handleDownload = async (certificate: Certificate) => {
+    try {
+      setDownloadingIds(prev => new Set(prev).add(certificate.id))
+      
+      const response = await fetch(`/api/certificates/${certificate.id}/download`)
+      
+      if (response.ok) {
+        const blob = await response.blob()
+        const url = window.URL.createObjectURL(blob)
+        const a = document.createElement('a')
+        a.href = url
+        a.download = `${certificate.title}.${certificate.fileType}`
+        document.body.appendChild(a)
+        a.click()
+        window.URL.revokeObjectURL(url)
+        document.body.removeChild(a)
+      } else {
+        console.error('İndirme hatası:', response.statusText)
+        alert('Sertifika indirilemedi')
+      }
+    } catch (error) {
+      console.error('Download error:', error)
+      alert('Sertifika indirilemedi')
+    } finally {
+      setDownloadingIds(prev => {
+        const newSet = new Set(prev)
+        newSet.delete(certificate.id)
+        return newSet
+      })
+    }
+  }
+
+  const refreshData = async () => {
+    try {
+      setRefreshing(true)
+      const res = await fetch('/api/certificates', { 
+        cache: 'no-store',
+        headers: {
+          'Cache-Control': 'no-cache',
+          'Pragma': 'no-cache'
+        }
+      })
+      if (!res.ok) return
+      const data = await res.json()
+      setItems(data)
+    } catch (e) {
+      console.error('Veri yenileme hatası:', e)
+    } finally {
+      setRefreshing(false)
+    }
   }
 
   const kategoriler = Array.from(new Set(items.map(s => s.category)))
@@ -65,13 +152,18 @@ export default function SertifikalarPage() {
         <MaxWidthWrapper>
           <div className="max-w-4xl mx-auto">
             <div className="mb-12">
-              <h2 className="font-neuropol text-3xl font-bold mb-6 text-slate-900">
-                Sertifikalar ve Test Raporları
-              </h2>
-              <p className="text-gray-600 leading-relaxed">
-                Ürünlerimizin kalite, güvenlik ve performans standartlarına uygunluğunu belgeleyen 
-                sertifika ve test raporlarımızı aşağıda bulabilirsiniz.
-              </p>
+              <div className="flex justify-between items-start mb-6">
+                <div>
+                  <h2 className="font-neuropol text-3xl font-bold mb-2 text-slate-900">
+                    Sertifikalar ve Test Raporları
+                  </h2>
+                  <p className="text-gray-600 leading-relaxed">
+                    Ürünlerimizin kalite, güvenlik ve performans standartlarına uygunluğunu belgeleyen 
+                    sertifika ve test raporlarımızı aşağıda bulabilirsiniz.
+                  </p>
+                </div>
+                
+              </div>
             </div>
 
 
@@ -137,14 +229,27 @@ export default function SertifikalarPage() {
                               </span>
                             </div>
                           </div>
-                          <a
-                            href={sertifika.fileUrl || '#'}
-                            download={`sertifika-${(sertifika.title || 'dosya').replace(/[^a-z0-9-_]+/gi,'-').toLowerCase()}.${(sertifika.fileType || 'pdf').toLowerCase()}`}
-                            className="inline-flex items-center justify-center gap-2 bg-slate-800 text-white px-3 py-2 rounded-md hover:bg-slate-900 transition-colors text-xs sm:text-sm w-full sm:w-auto"
+                          <button
+                            onClick={() => handleDownload(sertifika)}
+                            disabled={downloadingIds.has(sertifika.id)}
+                            className={`inline-flex items-center justify-center gap-2 px-3 py-2 rounded-md transition-colors text-xs sm:text-sm w-full sm:w-auto ${
+                              downloadingIds.has(sertifika.id)
+                                ? 'bg-gray-400 cursor-not-allowed text-white'
+                                : 'bg-slate-800 text-white hover:bg-slate-900'
+                            }`}
                           >
-                            <Download className="h-4 w-4" />
-                            Sertifikayı İndir ({(sertifika.fileType || '').toUpperCase()})
-                          </a>
+                            {downloadingIds.has(sertifika.id) ? (
+                              <>
+                                <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                                İndiriliyor...
+                              </>
+                            ) : (
+                              <>
+                                <Download className="h-4 w-4" />
+                                Sertifikayı İndir ({(sertifika.fileType || '').toUpperCase()})
+                              </>
+                            )}
+                          </button>
                         </div>
                       </div>
                     </div>

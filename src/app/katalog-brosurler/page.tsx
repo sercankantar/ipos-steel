@@ -1,48 +1,119 @@
+'use client'
+
 import MaxWidthWrapper from '@/components/MaxWidthWrapper'
 import Link from 'next/link'
-import { headers } from 'next/headers'
+import { useEffect, useState } from 'react'
+import { RefreshCw } from 'lucide-react'
 import CatalogClient from './CatalogClient'
 
-export const dynamic = 'force-dynamic'
-export const revalidate = 0
-
-async function getCatalogs() {
-  const hdrs = headers()
-  const host = hdrs.get('x-forwarded-host') || hdrs.get('host') || 'localhost:3000'
-  const protocol = hdrs.get('x-forwarded-proto') || 'http'
-  const baseUrl = `${protocol}://${host}`
-
-  const res = await fetch(`${baseUrl}/api/catalogs`, { cache: 'no-store' })
-  if (!res.ok) return []
-  return res.json()
+interface Catalog {
+  id: string
+  title: string
+  description: string
+  category: {
+    id: string
+    name: string
+    color: string
+  }
+  fileType: string
+  fileSize: string
+  imageUrl?: string
+  pages?: number
+  language: string
+  version?: string
+  publishDate: string
+  downloadCount: number
+  featured: boolean
 }
 
-async function getCategories() {
-  const hdrs = headers()
-  const host = hdrs.get('x-forwarded-host') || hdrs.get('host') || 'localhost:3000'
-  const protocol = hdrs.get('x-forwarded-proto') || 'http'
-  const baseUrl = `${protocol}://${host}`
-
-  const res = await fetch(`${baseUrl}/api/catalog-categories`, { cache: 'no-store' })
-  if (!res.ok) return []
-  return res.json()
+interface Category {
+  id: string
+  name: string
+  color: string
 }
 
-async function getPageSettings() {
-  const hdrs = headers()
-  const host = hdrs.get('x-forwarded-host') || hdrs.get('host') || 'localhost:3000'
-  const protocol = hdrs.get('x-forwarded-proto') || 'http'
-  const baseUrl = `${protocol}://${host}`
-
-  const res = await fetch(`${baseUrl}/api/catalog-page-settings`, { cache: 'no-store' })
-  if (!res.ok) return null
-  return res.json()
+interface PageSettings {
+  heroTitle: string
+  heroSubtitle: string
 }
 
-export default async function KatalogBrosurlerPage() {
-  const catalogs = await getCatalogs()
-  const categories = await getCategories()
-  const pageSettings = await getPageSettings()
+export default function KatalogBrosurlerPage() {
+  const [catalogs, setCatalogs] = useState<Catalog[]>([])
+  const [categories, setCategories] = useState<Category[]>([])
+  const [pageSettings, setPageSettings] = useState<PageSettings | null>(null)
+  const [loading, setLoading] = useState(true)
+  const [refreshing, setRefreshing] = useState(false)
+
+  const loadData = async () => {
+    try {
+      setLoading(true)
+      const [catalogsRes, categoriesRes, settingsRes] = await Promise.all([
+        fetch('/api/catalogs', { 
+          cache: 'no-store',
+          headers: {
+            'Cache-Control': 'no-cache',
+            'Pragma': 'no-cache'
+          }
+        }),
+        fetch('/api/catalog-categories', { 
+          cache: 'no-store',
+          headers: {
+            'Cache-Control': 'no-cache',
+            'Pragma': 'no-cache'
+          }
+        }),
+        fetch('/api/catalog-page-settings', { 
+          cache: 'no-store',
+          headers: {
+            'Cache-Control': 'no-cache',
+            'Pragma': 'no-cache'
+          }
+        })
+      ])
+
+      if (catalogsRes.ok) {
+        const catalogsData = await catalogsRes.json()
+        setCatalogs(catalogsData)
+      }
+      
+      if (categoriesRes.ok) {
+        const categoriesData = await categoriesRes.json()
+        setCategories(categoriesData)
+      }
+      
+      if (settingsRes.ok) {
+        const settingsData = await settingsRes.json()
+        setPageSettings(settingsData)
+      }
+    } catch (error) {
+      console.error('Veri yükleme hatası:', error)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const refreshData = async () => {
+    try {
+      setRefreshing(true)
+      await loadData()
+    } finally {
+      setRefreshing(false)
+    }
+  }
+
+  useEffect(() => {
+    loadData()
+  }, [])
+
+  // Sayfa focus olduğunda verileri yenile
+  useEffect(() => {
+    const handleFocus = () => {
+      loadData()
+    }
+
+    window.addEventListener('focus', handleFocus)
+    return () => window.removeEventListener('focus', handleFocus)
+  }, [])
 
   return (
     <div className='min-h-screen bg-gray-50'>
@@ -69,7 +140,14 @@ export default async function KatalogBrosurlerPage() {
 
       <MaxWidthWrapper>
         <div className='py-12'>
-          <CatalogClient catalogs={catalogs} categories={categories} />
+          {loading ? (
+            <div className="text-center py-12">
+              <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+              <p className="mt-4 text-gray-600">Kataloglar yükleniyor...</p>
+            </div>
+          ) : (
+            <CatalogClient catalogs={catalogs} categories={categories} />
+          )}
         </div>
       </MaxWidthWrapper>
     </div>

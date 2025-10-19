@@ -184,7 +184,7 @@ export default function IndirmeMerkeziIslemler() {
     }
   }
 
-  const uploadFile = async (file: File): Promise<string | null> => {
+  const uploadFile = async (file: File, folder: string): Promise<{ fileUrl: string; filePublicId: string } | null> => {
     try {
       console.log('Dosya yükleniyor:', file.name, 'Boyut:', file.size, 'Tip:', file.type)
       
@@ -196,20 +196,25 @@ export default function IndirmeMerkeziIslemler() {
         return null
       }
       
-      // Base64 encoding kullan
-      return new Promise((resolve) => {
-        const reader = new FileReader()
-        reader.onload = () => {
-          const base64 = reader.result as string
-          console.log('Dosya base64 olarak hazırlandı, boyut:', base64.length)
-          resolve(base64)
-        }
-        reader.onerror = () => {
-          console.error('Dosya okuma hatası')
-          resolve(null)
-        }
-        reader.readAsDataURL(file)
+      // Cloudinary'e yükle
+      const formData = new FormData()
+      formData.append('file', file)
+      formData.append('folder', folder)
+      
+      const response = await fetch('/api/admin/upload', {
+        method: 'POST',
+        body: formData
       })
+      
+      if (!response.ok) {
+        throw new Error('Yükleme başarısız')
+      }
+      
+      const result = await response.json()
+      return {
+        fileUrl: result.secure_url,
+        filePublicId: result.public_id
+      }
     } catch (error) {
       console.error('Dosya yükleme hatası:', error)
       return null
@@ -222,20 +227,17 @@ export default function IndirmeMerkeziIslemler() {
     try {
       setIsSaving(true)
       
-      // Dosyayı base64'e çevir
-      const fileData = await uploadFile(selectedFile)
-      if (!fileData) {
+      // Dosyayı Cloudinary'e yükle
+      const fileResult = await uploadFile(selectedFile, 'ipos-steel/catalogs')
+      if (!fileResult) {
         alert('Dosya yüklenemedi')
         return
       }
       
       // Görsel yükle (opsiyonel)
-      let imageUrl = ''
+      let imageResult = null
       if (selectedImage) {
-        const imageData = await uploadFile(selectedImage)
-        if (imageData) {
-          imageUrl = imageData
-        }
+        imageResult = await uploadFile(selectedImage, 'ipos-steel/catalogs/images')
       }
       
       const res = await fetch('/api/admin/catalogs', {
@@ -243,8 +245,10 @@ export default function IndirmeMerkeziIslemler() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           ...catalogForm,
-          fileData,
-          imageUrl,
+          fileUrl: fileResult.fileUrl,
+          filePublicId: fileResult.filePublicId,
+          imageUrl: imageResult?.fileUrl || '',
+          imagePublicId: imageResult?.filePublicId || '',
           publishDate: new Date(catalogForm.publishDate)
         })
       })
@@ -388,18 +392,17 @@ export default function IndirmeMerkeziIslemler() {
     try {
       setIsSaving(true)
       
-      const fileData = await uploadFile(selectedManualFile)
-      if (!fileData) {
+      // Dosyayı Cloudinary'e yükle
+      const fileResult = await uploadFile(selectedManualFile, 'ipos-steel/manuals')
+      if (!fileResult) {
         alert('Dosya yüklenemedi')
         return
       }
       
-      let imageUrl = ''
+      // Görsel yükle (opsiyonel)
+      let imageResult = null
       if (selectedManualImage) {
-        const imageData = await uploadFile(selectedManualImage)
-        if (imageData) {
-          imageUrl = imageData
-        }
+        imageResult = await uploadFile(selectedManualImage, 'ipos-steel/manuals/images')
       }
       
       const res = await fetch('/api/admin/manuals', {
@@ -407,8 +410,10 @@ export default function IndirmeMerkeziIslemler() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           ...manualForm,
-          fileData,
-          imageUrl,
+          fileUrl: fileResult.fileUrl,
+          filePublicId: fileResult.filePublicId,
+          imageUrl: imageResult?.fileUrl || '',
+          imagePublicId: imageResult?.filePublicId || '',
           publishDate: new Date(manualForm.publishDate)
         })
       })
@@ -506,17 +511,19 @@ export default function IndirmeMerkeziIslemler() {
       
       // Yeni dosya yüklendiyse
       if (selectedFile) {
-        const fileData = await uploadFile(selectedFile)
-        if (fileData) {
-          updateData.fileData = fileData
+        const fileResult = await uploadFile(selectedFile, 'ipos-steel/catalogs')
+        if (fileResult) {
+          updateData.fileUrl = fileResult.fileUrl
+          updateData.filePublicId = fileResult.filePublicId
         }
       }
       
       // Yeni görsel yüklendiyse
       if (selectedImage) {
-        const imageData = await uploadFile(selectedImage)
-        if (imageData) {
-          updateData.imageUrl = imageData
+        const imageResult = await uploadFile(selectedImage, 'ipos-steel/catalogs/images')
+        if (imageResult) {
+          updateData.imageUrl = imageResult.fileUrl
+          updateData.imagePublicId = imageResult.filePublicId
         }
       }
       

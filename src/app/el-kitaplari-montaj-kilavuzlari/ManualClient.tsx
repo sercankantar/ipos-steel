@@ -1,6 +1,6 @@
 'use client'
 
-import { Download, FileText, Calendar, Eye, Tag } from 'lucide-react'
+import { Download, FileText, Calendar, Tag } from 'lucide-react'
 import { useState, useMemo } from 'react'
 import Image from 'next/image'
 
@@ -38,6 +38,10 @@ interface ManualClientProps {
 export default function ManualClient({ manuals, categories }: ManualClientProps) {
   const [selectedCategory, setSelectedCategory] = useState('all')
   const [downloadingIds, setDownloadingIds] = useState<Set<string>>(new Set())
+  const [currentPage, setCurrentPage] = useState(1)
+  const [isLoading, setIsLoading] = useState(false)
+  
+  const ITEMS_PER_PAGE = 6
 
   const filteredManuals = useMemo(() => {
     let filtered = selectedCategory === 'all' 
@@ -46,6 +50,26 @@ export default function ManualClient({ manuals, categories }: ManualClientProps)
     
     return filtered
   }, [selectedCategory, manuals])
+
+  // Pagination için el kitaplarını böl
+  const paginatedManuals = useMemo(() => {
+    const startIndex = (currentPage - 1) * ITEMS_PER_PAGE
+    return filteredManuals.slice(startIndex, startIndex + ITEMS_PER_PAGE)
+  }, [filteredManuals, currentPage])
+
+  const totalPages = Math.ceil(filteredManuals.length / ITEMS_PER_PAGE)
+
+  // Sayfa değiştiğinde scroll to top
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page)
+    window.scrollTo({ top: 0, behavior: 'smooth' })
+  }
+
+  // Filtreleme değiştiğinde sayfa sıfırla
+  const handleCategoryChange = (categoryId: string) => {
+    setSelectedCategory(categoryId)
+    setCurrentPage(1)
+  }
 
   const handleDownload = async (manual: Manual) => {
     try {
@@ -77,22 +101,6 @@ export default function ManualClient({ manuals, categories }: ManualClientProps)
     }
   }
 
-  const handleViewOption = async (manual: Manual, option: string) => {
-    try {
-      const response = await fetch(`/api/manuals/${manual.id}/download`)
-      const data = await response.json()
-      
-      if (data.success && data.dataUrl) {
-        window.open(data.dataUrl, '_blank')
-      } else {
-        console.error('PDF yüklenemedi:', data.error)
-        alert('PDF açılamadı')
-      }
-    } catch (error) {
-      console.error('PDF görüntüleme hatası:', error)
-      alert('PDF açılamadı')
-    }
-  }
 
   return (
     <div className="flex flex-col lg:flex-row gap-12">
@@ -172,38 +180,27 @@ export default function ManualClient({ manuals, categories }: ManualClientProps)
                   </p>
 
                         {/* İndir ve Görüntüle Butonları */}
-                        <div className="flex gap-2">
-                          <button
-                            onClick={() => handleDownload(manual)}
-                            disabled={downloadingIds.has(manual.id)}
-                            className={`flex-1 py-2 px-3 rounded-lg text-sm font-medium transition-colors duration-200 flex items-center justify-center gap-2 ${
-                              downloadingIds.has(manual.id)
-                                ? 'bg-gray-400 cursor-not-allowed text-white'
-                                : 'bg-blue-600 hover:bg-blue-700 text-white'
-                            }`}
-                          >
-                            {downloadingIds.has(manual.id) ? (
-                              <>
-                                <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                                İndiriliyor...
-                              </>
-                            ) : (
-                              <>
-                                <Download className="w-4 h-4" />
-                                İndir ({manual.fileSize})
-                              </>
-                            )}
-                          </button>
-                          
-                          {/* Görüntüle Butonu */}
-                          <button
-                            onClick={() => handleViewOption(manual, 'browser')}
-                            className="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-700 py-2 px-3 rounded-lg text-sm font-medium transition-colors duration-200 flex items-center justify-center gap-2"
-                          >
-                            <Eye className="w-4 h-4" />
-                            Görüntüle
-                          </button>
-                        </div>
+                        <button
+                          onClick={() => handleDownload(manual)}
+                          disabled={downloadingIds.has(manual.id)}
+                          className={`w-full py-2 px-3 rounded-lg text-sm font-medium transition-colors duration-200 flex items-center justify-center gap-2 ${
+                            downloadingIds.has(manual.id)
+                              ? 'bg-gray-400 cursor-not-allowed text-white'
+                              : 'bg-blue-600 hover:bg-blue-700 text-white'
+                          }`}
+                        >
+                          {downloadingIds.has(manual.id) ? (
+                            <>
+                              <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                              İndiriliyor...
+                            </>
+                          ) : (
+                            <>
+                              <Download className="w-4 h-4" />
+                              İndir ({manual.fileSize})
+                            </>
+                          )}
+                        </button>
                 </div>
               </article>
             ))
