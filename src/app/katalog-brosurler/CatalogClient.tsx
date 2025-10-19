@@ -1,6 +1,6 @@
 'use client'
 
-import { Download, FileText, Calendar, Eye, Search } from 'lucide-react'
+import { Download, FileText, Calendar, Search } from 'lucide-react'
 import { useState, useMemo } from 'react'
 import Image from 'next/image'
 
@@ -119,22 +119,6 @@ export default function CatalogClient({ catalogs, categories }: CatalogClientPro
     }
   }
 
-  const handleViewOption = async (catalog: Catalog, option: string) => {
-    try {
-      const response = await fetch(`/api/catalogs/${catalog.id}/download`)
-      const data = await response.json()
-      
-      if (data.success && data.dataUrl) {
-        window.open(data.dataUrl, '_blank')
-      } else {
-        console.error('PDF yüklenemedi:', data.error)
-        alert('PDF açılamadı')
-      }
-    } catch (error) {
-      console.error('PDF görüntüleme hatası:', error)
-      alert('PDF açılamadı')
-    }
-  }
 
   return (
     <>
@@ -249,43 +233,32 @@ export default function CatalogClient({ catalogs, categories }: CatalogClientPro
                       <span>Boyut: {catalog.fileSize}</span>
                     </div>
                     <div className='flex items-center gap-1'>
-                      <Eye className='w-3 h-3' />
+                      <Download className='w-3 h-3' />
                       <span>{catalog.downloadCount} indirme</span>
                     </div>
                   </div>
                   
-                  <div className="flex gap-2">
-                    <button
-                      onClick={() => handleDownload(catalog)}
-                      disabled={downloadingIds.has(catalog.id)}
-                      className={`flex-1 py-2 px-3 rounded-lg font-medium transition-colors duration-200 flex items-center justify-center gap-2 ${
-                        downloadingIds.has(catalog.id)
-                          ? 'bg-gray-400 cursor-not-allowed text-white'
-                          : 'bg-blue-600 hover:bg-blue-700 text-white'
-                      }`}
-                    >
-                      {downloadingIds.has(catalog.id) ? (
-                        <>
-                          <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                          İndiriliyor...
-                        </>
-                      ) : (
-                        <>
-                          <Download className='w-4 h-4' />
-                          İndir ({catalog.fileSize})
-                        </>
-                      )}
-                    </button>
-                    
-                    {/* Görüntüle Butonu */}
-                    <button
-                      onClick={() => handleViewOption(catalog, 'browser')}
-                      className="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-700 py-2 px-3 rounded-lg text-sm font-medium transition-colors duration-200 flex items-center justify-center gap-2"
-                    >
-                      <Eye className="w-4 h-4" />
-                      Görüntüle
-                    </button>
-                  </div>
+                  <button
+                    onClick={() => handleDownload(catalog)}
+                    disabled={downloadingIds.has(catalog.id)}
+                    className={`w-full py-2 px-3 rounded-lg font-medium transition-colors duration-200 flex items-center justify-center gap-2 ${
+                      downloadingIds.has(catalog.id)
+                        ? 'bg-gray-400 cursor-not-allowed text-white'
+                        : 'bg-blue-600 hover:bg-blue-700 text-white'
+                    }`}
+                  >
+                    {downloadingIds.has(catalog.id) ? (
+                      <>
+                        <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                        İndiriliyor...
+                      </>
+                    ) : (
+                      <>
+                        <Download className='w-4 h-4' />
+                        İndir ({catalog.fileSize})
+                      </>
+                    )}
+                  </button>
                 </div>
               </div>
             ))}
