@@ -7,6 +7,7 @@ import { Label } from '@/components/ui/label'
 import { Edit, Trash2, Plus, Building, Eye } from 'lucide-react'
 import { toast } from 'sonner'
 import { generateSlug, createUniqueSlug } from '@/lib/slug'
+import RichTextEditor from '@/components/ui/RichTextEditor'
 
 interface Reference {
   id: string
@@ -504,15 +505,13 @@ export default function ReferencesManager() {
                   />
                 </div>
 
-                <div>
+                <div className="pb-8">
                   <Label htmlFor="content" className="text-sm font-medium text-gray-700">İçerik Geniş Bilgilendirme</Label>
-                  <textarea
-                    id="content"
+                  <RichTextEditor
                     value={form.content}
-                    onChange={(e) => setForm({ ...form, content: e.target.value })}
+                    onChange={(value) => setForm({ ...form, content: value })}
                     placeholder="Projenin detaylı açıklaması, teknik özellikler, başarılar..."
-                    rows={8}
-                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+                    height={200}
                   />
                 </div>
 

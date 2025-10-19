@@ -6,6 +6,7 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Edit, Trash2, Plus, Download } from 'lucide-react'
 import { toast } from 'sonner'
+import RichTextEditor from '@/components/ui/RichTextEditor'
 
 interface Certificate {
   id: string
@@ -154,9 +155,14 @@ export default function CertificatesManager() {
               <Label htmlFor="description">Açıklama</Label>
               <Input id="description" value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} required />
             </div>
-            <div>
+            <div className="pb-8">
               <Label htmlFor="details">Detaylar</Label>
-              <textarea id="details" value={form.details} onChange={(e) => setForm({ ...form, details: e.target.value })} className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" rows={4} />
+              <RichTextEditor
+                value={form.details}
+                onChange={(value) => setForm({ ...form, details: value })}
+                placeholder="Sertifika detaylarını girin..."
+                height={200}
+              />
             </div>
             <div className="flex items-center gap-3">
               <input ref={fileRef} type="file" accept="image/*,application/pdf" className="hidden" onChange={(e) => {

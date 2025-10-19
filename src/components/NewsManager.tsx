@@ -6,6 +6,7 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Edit, Trash2, Plus, Tag, Search } from 'lucide-react'
 import { toast } from 'sonner'
+import RichTextEditor from '@/components/ui/RichTextEditor'
 
 interface NewsItem {
   id: string
@@ -515,17 +516,15 @@ export default function NewsManager() {
                     placeholder="Kısa açıklama..."
                   />
             </div>
-            <div>
+            <div className="pb-8">
               <Label htmlFor="content">İçerik (HTML)</Label>
-                  <textarea 
-                    id="content" 
-                    value={form.content} 
-                    onChange={(e) => setForm({ ...form, content: e.target.value })} 
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" 
-                    rows={8}
-                    placeholder="Haber içeriği..."
-                  />
-                </div>
+              <RichTextEditor
+                value={form.content}
+                onChange={(value) => setForm({ ...form, content: value })}
+                placeholder="Haber içeriği..."
+                height={200}
+              />
+            </div>
             </div>
 
               {/* Image */}

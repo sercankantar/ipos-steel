@@ -488,7 +488,7 @@ export default function KurumsalIslemler() {
                 console.error(err)
               }
             }}
-            className="space-y-4"
+            className="space-y-6"
           >
             <div>
               <Label htmlFor="aboutTitle">Başlık</Label>
@@ -499,7 +499,7 @@ export default function KurumsalIslemler() {
                 required
               />
             </div>
-            <div>
+            <div className="mb-8">
               <Label htmlFor="aboutDesc">Açıklama</Label>
               <RichTextEditor
                 value={aboutData.description}
@@ -508,9 +508,9 @@ export default function KurumsalIslemler() {
                 height={200}
               />
             </div>
-            <div>
+            <div className="mt-12 pt-10">
               <Label>Şirket Fotoğrafı</Label>
-              <div className="mt-1 flex items-center gap-3">
+              <div className="mt-16 flex items-center gap-3">
                 <input
                   ref={aboutInputRef}
                   id="aboutImage"
@@ -549,7 +549,7 @@ export default function KurumsalIslemler() {
                 )}
               </div>
               {aboutImagePreview && (
-                <img src={aboutImagePreview} alt="Hakkımızda Görseli" className="mt-2 h-28 w-28 object-cover rounded border" />
+                <img src={aboutImagePreview} alt="Hakkımızda couldseli" className="mt-16 h-28 w-28 object-cover rounded border" />
               )}
             </div>
             <div className="flex gap-4">

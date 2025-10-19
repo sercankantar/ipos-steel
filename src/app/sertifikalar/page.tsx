@@ -121,9 +121,10 @@ export default function SertifikalarPage() {
                   {openItems.includes(sertifika.id) && (
                     <div className="px-6 pb-6 border-t border-gray-100 bg-gray-50">
                       <div className="pt-4">
-                        <p className="text-gray-700 leading-relaxed">
-                          {sertifika.details}
-                        </p>
+                        <div 
+                          className="text-gray-700 leading-relaxed prose prose-sm max-w-none"
+                          dangerouslySetInnerHTML={{ __html: sertifika.details || '' }}
+                        />
                         <div className="mt-4 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
                           <div className="flex items-center gap-4">
                             <div className="text-sm text-gray-500">
