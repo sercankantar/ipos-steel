@@ -11,21 +11,13 @@ import {
   Factory,
   TrendingUp
 } from 'lucide-react'
-import { headers } from 'next/headers'
 
 export const dynamic = 'force-dynamic'
 export const revalidate = 0
 
-function getBaseUrl() {
-  const h = headers()
-  const proto = h.get('x-forwarded-proto') || 'https'
-  const host = h.get('host')
-  return `${proto}://${host}`
-}
-
 async function getAbout() {
   try {
-    const base = process.env.NEXT_PUBLIC_SERVER_URL || getBaseUrl()
+    const base = process.env.NEXT_PUBLIC_SERVER_URL || 'https://ipos-steel.vercel.app'
     const res = await fetch(`${base}/api/about`, { cache: 'no-store' })
     if (!res.ok) return null
     return await res.json()
@@ -58,7 +50,10 @@ export default async function HakkimizdaPage() {
                 {about?.title || 'Şirket Profili'}
               </h2>
               <div className="space-y-6 text-gray-700 leading-relaxed text-lg">
-                <p>{about?.description || 'Şirket açıklaması yakında güncellenecek.'}</p>
+                <div 
+                  className="prose prose-lg max-w-none"
+                  dangerouslySetInnerHTML={{ __html: about?.description || 'Şirket açıklaması yakında güncellenecek.' }}
+                />
               </div>
             </div>
             
