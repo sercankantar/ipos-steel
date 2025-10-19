@@ -284,6 +284,9 @@ model BusinessEthicsRules {
   // Hero
   heroTitle             String
   
+  // Yeni HTML içerik alanı (opsiyonel)
+  content               String?
+  
   // Section 1: Giriş
   section1Title         String
   section1Content       String
@@ -714,6 +717,9 @@ model KvkkPrivacyPolicy {
   // Temel Bilgiler
   title                 String   @default("Kişisel Verilerin Korunması, İşlenmesi ve Gizlilik Politikası")
   lastUpdated           DateTime @default(now())
+  
+  // Yeni HTML içerik alanı (opsiyonel)
+  content               String?
 
   // Bölüm Başlıkları
   amacTitle             String   @default("Amaç")
@@ -771,6 +777,9 @@ model KvkkDisclosureText {
   // Temel Bilgiler
   title                 String   @default("Kişisel Verilere İlişkin Aydınlatma Metni")
   lastUpdated           DateTime @default(now())
+  
+  // Yeni HTML içerik alanı (opsiyonel)
+  content               String?
 
   // Hero Section
   heroTitle             String

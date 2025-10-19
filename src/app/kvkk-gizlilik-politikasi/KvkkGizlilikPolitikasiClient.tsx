@@ -8,6 +8,7 @@ interface KvkkPrivacyPolicy {
   id: string
   title: string
   lastUpdated: string
+  content?: string // Yeni HTML içerik alanı
   amac: string
   kapsam: string
   tanimlar: string
@@ -53,6 +54,8 @@ export default function KvkkGizlilikPolitikasiClient() {
   const [policy, setPolicy] = useState<KvkkPrivacyPolicy | null>(null)
   const [loading, setLoading] = useState(true)
   const [activeSection, setActiveSection] = useState('')
+  const [processedContent, setProcessedContent] = useState('')
+  const [headings, setHeadings] = useState<Array<{ id: string; text: string; level: number }>>([])
 
   const [sections, setSections] = useState([
     { id: 'amac', title: 'Amaç' },
@@ -78,17 +81,85 @@ export default function KvkkGizlilikPolitikasiClient() {
     fetchPolicy()
   }, [])
 
+  // HTML content'i işle - H1 ve H2'lere id ekle
+  useEffect(() => {
+    if (policy?.content) {
+      const parser = new DOMParser()
+      const doc = parser.parseFromString(policy.content, 'text/html')
+      
+      // H1'lere id ekle
+      const h1Elements = doc.querySelectorAll('h1')
+      h1Elements.forEach((h1, index) => {
+        h1.id = `heading-${index}`
+      })
+      
+      // H2'lere id ekle
+      const h2Elements = doc.querySelectorAll('h2')
+      h2Elements.forEach((h2, index) => {
+        h2.id = `heading-h2-${index}`
+      })
+      
+      setProcessedContent(doc.documentElement.outerHTML)
+      
+      // Heading'leri çıkar
+      const extractedHeadings: Array<{ id: string; text: string; level: number }> = []
+      
+      h1Elements.forEach((h1, index) => {
+        extractedHeadings.push({
+          id: `heading-${index}`,
+          text: h1.textContent || '',
+          level: 1
+        })
+      })
+      
+      h2Elements.forEach((h2, index) => {
+        extractedHeadings.push({
+          id: `heading-h2-${index}`,
+          text: h2.textContent || '',
+          level: 2
+        })
+      })
+      
+      setHeadings(extractedHeadings)
+    }
+  }, [policy?.content])
+
   useEffect(() => {
     const handleScroll = () => {
-      const scrollPosition = window.scrollY + 100
+      if (policy?.content && processedContent && headings.length > 0) {
+        // Yeni content varsa heading'leri takip et
+        const parser = new DOMParser()
+        const doc = parser.parseFromString(processedContent, 'text/html')
+        const h1Elements = doc.querySelectorAll('h1')
+        const h2Elements = doc.querySelectorAll('h2')
+        
+        let currentSection = h1Elements[0]?.id || h2Elements[0]?.id || ''
+        
+        // Tüm heading'leri kontrol et
+        const allHeadings = Array.from(h1Elements).concat(Array.from(h2Elements))
+        allHeadings.forEach((heading) => {
+          const element = document.getElementById(heading.id)
+          if (element) {
+            const rect = element.getBoundingClientRect()
+            if (rect.top <= 150) {
+              currentSection = heading.id
+            }
+          }
+        })
+        
+        setActiveSection(currentSection)
+      } else {
+        // Eski yapı için scroll tracking
+        const scrollPosition = window.scrollY + 100
 
-      for (const section of sections) {
-        const element = document.getElementById(section.id)
-        if (element) {
-          const { offsetTop, offsetHeight } = element
-          if (scrollPosition >= offsetTop && scrollPosition < offsetTop + offsetHeight) {
-            setActiveSection(section.id)
-            break
+        for (const section of sections) {
+          const element = document.getElementById(section.id)
+          if (element) {
+            const { offsetTop, offsetHeight } = element
+            if (scrollPosition >= offsetTop && scrollPosition < offsetTop + offsetHeight) {
+              setActiveSection(section.id)
+              break
+            }
           }
         }
       }
@@ -98,7 +169,7 @@ export default function KvkkGizlilikPolitikasiClient() {
     handleScroll()
 
     return () => window.removeEventListener('scroll', handleScroll)
-  }, [policy])
+  }, [policy, processedContent, headings, sections])
 
   const fetchPolicy = async () => {
     try {
@@ -225,19 +296,37 @@ export default function KvkkGizlilikPolitikasiClient() {
                     İçindekiler
                   </h3>
                   <nav className='space-y-2'>
-                    {sections.map((section) => (
-                      <button
-                        key={section.id}
-                        onClick={() => scrollToSection(section.id)}
-                        className={`w-full text-left px-3 py-2 rounded-md text-sm transition-colors duration-200 ${
-                          activeSection === section.id
-                            ? 'bg-blue-50 text-blue-700 font-medium border-l-4 border-blue-600'
-                            : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
-                        }`}
-                      >
-                        {section.title}
-                      </button>
-                    ))}
+                    {policy?.content && headings.length > 0 ? (
+                      // Yeni content varsa heading'leri göster
+                      headings.map((heading) => (
+                        <button
+                          key={heading.id}
+                          onClick={() => scrollToSection(heading.id)}
+                          className={`w-full text-left px-3 py-2 rounded-md text-sm transition-colors duration-200 ${
+                            activeSection === heading.id
+                              ? 'bg-blue-50 text-blue-700 font-medium border-l-4 border-blue-600'
+                              : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
+                          } ${heading.level === 2 ? 'ml-4 text-xs' : ''}`}
+                        >
+                          {heading.text}
+                        </button>
+                      ))
+                    ) : (
+                      // Eski yapıyı göster
+                      sections.map((section) => (
+                        <button
+                          key={section.id}
+                          onClick={() => scrollToSection(section.id)}
+                          className={`w-full text-left px-3 py-2 rounded-md text-sm transition-colors duration-200 ${
+                            activeSection === section.id
+                              ? 'bg-blue-50 text-blue-700 font-medium border-l-4 border-blue-600'
+                              : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
+                          }`}
+                        >
+                          {section.title}
+                        </button>
+                      ))
+                    )}
                   </nav>
                 </div>
               </div>
@@ -247,23 +336,34 @@ export default function KvkkGizlilikPolitikasiClient() {
             <div className='lg:w-3/4'>
               <div className='bg-white rounded-lg shadow-sm border border-gray-200 p-8 space-y-12'>
                 
-                {renderSection('amac', policy.amacTitle || 'Amaç', policy.amac, 0)}
-                {renderSection('kapsam', policy.kapsamTitle || 'Kapsam', policy.kapsam, 1)}
-                {renderSection('tanimlar', policy.tanimlarTitle || 'Tanım ve Kısaltmalar', policy.tanimlar, 2)}
-                {renderSection('roller', policy.rollerTitle || 'Rol ve Sorumluluklar', policy.roller, 3)}
-                {renderSection('yukumlulukler', policy.yukumluluklerTitle || 'Hukuki Yükümlülükler', policy.yukumlulukler, 4)}
-                {renderSection('siniflandirma', policy.siniflandirmaTitle || 'Kişisel Verilerin Sınıflandırılması', policy.siniflandirma, 5)}
-                {renderSection('islenmesi', policy.islenmesiTitle || 'Kişisel Verilerin İşlenmesi', policy.islenmesi, 6)}
-                {renderSection('aktarilmasi', policy.aktarilmasiTitle || 'Kişisel Verilerin Aktarılması', policy.aktarilmasi, 7)}
-                {renderSection('saklanmasi', policy.saklanmasiTitle || 'Kişisel Verilerin Saklanması', policy.saklanmasi, 8)}
-                {renderSection('guvenligi', policy.guvenligiTitle || 'Kişisel Verilerin Güvenliği', policy.guvenligi, 9)}
-                {renderSection('haklari', policy.haklariTitle || 'Kişisel Veri Sahibinin Hakları', policy.haklari, 10)}
-                {renderSection('gizlilik', policy.gizlilikTitle || 'Gizlilik Politikası', policy.gizlilik, 11)}
-                {renderSection('giris-cikis', policy.girisCikisTitle || 'Şirket Giriş-Çıkışları ve Kişisel Veriler', policy.girisCikis, 12)}
-                {renderSection('silinmesi', policy.silinmesiTitle || 'Kişisel Verilerin Silinmesi', policy.silinmesi, 13)}
-                {renderSection('yayinlanmasi', policy.yayinlanmasiTitle || 'Dokümanın Yayınlanması', policy.yayinlanmasi, 14)}
-                {renderSection('guncelleme', policy.guncellemeTitle || 'Güncelleme Periyodu', policy.guncelleme, 15)}
-                {renderSection('yururluk', policy.yururlukTitle || 'Yürürlük', policy.yururluk, 16)}
+                {policy?.content ? (
+                  // Yeni HTML content varsa onu göster
+                  <div 
+                    className="prose prose-lg max-w-none text-gray-700"
+                    dangerouslySetInnerHTML={{ __html: processedContent }}
+                  />
+                ) : (
+                  // Eski veri yapısını göster
+                  <>
+                    {renderSection('amac', policy.amacTitle || 'Amaç', policy.amac, 0)}
+                    {renderSection('kapsam', policy.kapsamTitle || 'Kapsam', policy.kapsam, 1)}
+                    {renderSection('tanimlar', policy.tanimlarTitle || 'Tanım ve Kısaltmalar', policy.tanimlar, 2)}
+                    {renderSection('roller', policy.rollerTitle || 'Rol ve Sorumluluklar', policy.roller, 3)}
+                    {renderSection('yukumlulukler', policy.yukumluluklerTitle || 'Hukuki Yükümlülükler', policy.yukumlulukler, 4)}
+                    {renderSection('siniflandirma', policy.siniflandirmaTitle || 'Kişisel Verilerin Sınıflandırılması', policy.siniflandirma, 5)}
+                    {renderSection('islenmesi', policy.islenmesiTitle || 'Kişisel Verilerin İşlenmesi', policy.islenmesi, 6)}
+                    {renderSection('aktarilmasi', policy.aktarilmasiTitle || 'Kişisel Verilerin Aktarılması', policy.aktarilmasi, 7)}
+                    {renderSection('saklanmasi', policy.saklanmasiTitle || 'Kişisel Verilerin Saklanması', policy.saklanmasi, 8)}
+                    {renderSection('guvenligi', policy.guvenligiTitle || 'Kişisel Verilerin Güvenliği', policy.guvenligi, 9)}
+                    {renderSection('haklari', policy.haklariTitle || 'Kişisel Veri Sahibinin Hakları', policy.haklari, 10)}
+                    {renderSection('gizlilik', policy.gizlilikTitle || 'Gizlilik Politikası', policy.gizlilik, 11)}
+                    {renderSection('giris-cikis', policy.girisCikisTitle || 'Şirket Giriş-Çıkışları ve Kişisel Veriler', policy.girisCikis, 12)}
+                    {renderSection('silinmesi', policy.silinmesiTitle || 'Kişisel Verilerin Silinmesi', policy.silinmesi, 13)}
+                    {renderSection('yayinlanmasi', policy.yayinlanmasiTitle || 'Dokümanın Yayınlanması', policy.yayinlanmasi, 14)}
+                    {renderSection('guncelleme', policy.guncellemeTitle || 'Güncelleme Periyodu', policy.guncelleme, 15)}
+                    {renderSection('yururluk', policy.yururlukTitle || 'Yürürlük', policy.yururluk, 16)}
+                  </>
+                )}
 
               </div>
 

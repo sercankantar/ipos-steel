@@ -64,37 +64,7 @@ export default function KariyerIslemler() {
   // İş Etiği form state
   const [ethicsForm, setEthicsForm] = useState({
     heroTitle: '',
-    section1Title: '',
-    section1Content: '',
-    section2Title: '',
-    section2Content: '',
-    section2BulletsText: '',
-    section3Title: '',
-    section3Content: '',
-    section3Subsections: [
-      { title: '', bullets: [''] },
-      { title: '', bullets: [''] },
-      { title: '', bullets: [''] },
-      { title: '', bullets: [''] },
-      { title: '', bullets: [''] },
-      { title: '', bullets: [''] },
-      { title: '', bullets: [''] },
-    ],
-    section4Title: '',
-    section4Content: '',
-    section4BulletsText: '',
-    section5Title: '',
-    section5Content: '',
-    section5BulletsText: '',
-    section6Title: '',
-    section6Content: '',
-    section6BulletsText: '',
-    section7Title: '',
-    section7Subsections: [
-      { title: '', content: '' },
-      { title: '', content: '' },
-      { title: '', content: '' },
-    ],
+    content: '',
     contactTitle: '',
     contactDescription: '',
     contactEmail: '',
@@ -111,7 +81,6 @@ export default function KariyerIslemler() {
           const res = await fetch('/api/admin/human-resources-policy')
           if (!res.ok) return
           const data = await res.json()
-          console.log('HR Policy API\'den gelen veri:', data)
           if (!data) return
           const formData = {
             heroTitle: data.heroTitle || '',
@@ -135,7 +104,6 @@ export default function KariyerIslemler() {
             ],
             closingParagraph: data.closingParagraph || '',
           }
-          console.log('HR Form state güncelleniyor:', formData)
           setHrForm(formData)
           if (data.section1ImageUrl) setS1Preview(data.section1ImageUrl)
           if (data.section2ImageUrl) setS2Preview(data.section2ImageUrl)
@@ -154,37 +122,7 @@ export default function KariyerIslemler() {
           if (!data) return
           setEthicsForm({
             heroTitle: data.heroTitle || '',
-            section1Title: data.section1Title || '',
-            section1Content: data.section1Content || '',
-            section2Title: data.section2Title || '',
-            section2Content: data.section2Content || '',
-            section2BulletsText: Array.isArray(data.section2Bullets) ? data.section2Bullets.join('\n') : '',
-            section3Title: data.section3Title || '',
-            section3Content: data.section3Content || '',
-            section3Subsections: Array.isArray(data.section3Subsections) && data.section3Subsections.length > 0 ? data.section3Subsections : [
-              { title: '', bullets: [''] },
-              { title: '', bullets: [''] },
-              { title: '', bullets: [''] },
-              { title: '', bullets: [''] },
-              { title: '', bullets: [''] },
-              { title: '', bullets: [''] },
-              { title: '', bullets: [''] },
-            ],
-            section4Title: data.section4Title || '',
-            section4Content: data.section4Content || '',
-            section4BulletsText: Array.isArray(data.section4Bullets) ? data.section4Bullets.join('\n') : '',
-            section5Title: data.section5Title || '',
-            section5Content: data.section5Content || '',
-            section5BulletsText: Array.isArray(data.section5Bullets) ? data.section5Bullets.join('\n') : '',
-            section6Title: data.section6Title || '',
-            section6Content: data.section6Content || '',
-            section6BulletsText: Array.isArray(data.section6Bullets) ? data.section6Bullets.join('\n') : '',
-            section7Title: data.section7Title || '',
-            section7Subsections: Array.isArray(data.section7Subsections) && data.section7Subsections.length > 0 ? data.section7Subsections : [
-              { title: '', content: '' },
-              { title: '', content: '' },
-              { title: '', content: '' },
-            ],
+            content: data.content || '',
             contactTitle: data.contactTitle || '',
             contactDescription: data.contactDescription || '',
             contactEmail: data.contactEmail || '',
@@ -273,40 +211,7 @@ export default function KariyerIslemler() {
     try {
       const payload = {
         heroTitle: ethicsForm.heroTitle,
-        section1Title: ethicsForm.section1Title,
-        section1Content: ethicsForm.section1Content,
-        section2Title: ethicsForm.section2Title,
-        section2Content: ethicsForm.section2Content,
-        section2Bullets: ethicsForm.section2BulletsText
-          .split('\n')
-          .map((s) => s.trim())
-          .filter(Boolean),
-        section3Title: ethicsForm.section3Title,
-        section3Content: ethicsForm.section3Content,
-        section3Subsections: ethicsForm.section3Subsections.map(sub => ({
-          ...sub,
-          bullets: sub.bullets.filter(b => b.trim())
-        })).filter(sub => sub.title.trim()),
-        section4Title: ethicsForm.section4Title,
-        section4Content: ethicsForm.section4Content,
-        section4Bullets: ethicsForm.section4BulletsText
-          .split('\n')
-          .map((s) => s.trim())
-          .filter(Boolean),
-        section5Title: ethicsForm.section5Title,
-        section5Content: ethicsForm.section5Content,
-        section5Bullets: ethicsForm.section5BulletsText
-          .split('\n')
-          .map((s) => s.trim())
-          .filter(Boolean),
-        section6Title: ethicsForm.section6Title,
-        section6Content: ethicsForm.section6Content,
-        section6Bullets: ethicsForm.section6BulletsText
-          .split('\n')
-          .map((s) => s.trim())
-          .filter(Boolean),
-        section7Title: ethicsForm.section7Title,
-        section7Subsections: ethicsForm.section7Subsections.filter(sub => sub.title.trim() && sub.content.trim()),
+        content: ethicsForm.content,
         contactTitle: ethicsForm.contactTitle,
         contactDescription: ethicsForm.contactDescription,
         contactEmail: ethicsForm.contactEmail,
@@ -565,6 +470,7 @@ export default function KariyerIslemler() {
           <p className="text-gray-600 mt-1">Müşteri sayfasındaki içeriklerle uyumlu alanları doldurun.</p>
 
           <form onSubmit={handleSubmitEthics} className="mt-6 space-y-6">
+            {/* Hero Bölümü */}
             <div>
               <Label htmlFor="ethicsHeroTitle">Hero Başlık</Label>
               <Input id="ethicsHeroTitle" value={ethicsForm.heroTitle} onChange={(e) => setEthicsForm({ ...ethicsForm, heroTitle: e.target.value })} required />
@@ -572,179 +478,23 @@ export default function KariyerIslemler() {
 
             <Separator />
 
-            <div className="space-y-3">
-              <h3 className="font-medium text-gray-900">Bölüm 1: Giriş</h3>
-              <div>
-                <Label htmlFor="s1EthicsTitle">Başlık</Label>
-                <Input id="s1EthicsTitle" value={ethicsForm.section1Title} onChange={(e) => setEthicsForm({ ...ethicsForm, section1Title: e.target.value })} required />
-              </div>
-              <div>
-                <Label htmlFor="s1EthicsContent">İçerik</Label>
-                <textarea id="s1EthicsContent" value={ethicsForm.section1Content} onChange={(e) => setEthicsForm({ ...ethicsForm, section1Content: e.target.value })} className="w-full px-3 py-2 border border-gray-300 rounded-md" rows={4} />
-              </div>
-            </div>
-
-            <Separator />
-
-            <div className="space-y-3">
-              <h3 className="font-medium text-gray-900">Bölüm 2: Çalışan İlişkileri</h3>
-              <div>
-                <Label htmlFor="s2EthicsTitle">Başlık</Label>
-                <Input id="s2EthicsTitle" value={ethicsForm.section2Title} onChange={(e) => setEthicsForm({ ...ethicsForm, section2Title: e.target.value })} required />
-              </div>
-              <div>
-                <Label htmlFor="s2EthicsContent">İçerik</Label>
-                <textarea id="s2EthicsContent" value={ethicsForm.section2Content} onChange={(e) => setEthicsForm({ ...ethicsForm, section2Content: e.target.value })} className="w-full px-3 py-2 border border-gray-300 rounded-md" rows={4} />
-              </div>
-              <div>
-                <Label htmlFor="s2EthicsBullets">Maddeler (her satır bir madde)</Label>
-                <textarea id="s2EthicsBullets" value={ethicsForm.section2BulletsText} onChange={(e) => setEthicsForm({ ...ethicsForm, section2BulletsText: e.target.value })} className="w-full px-3 py-2 border border-gray-300 rounded-md" rows={6} />
+            {/* İçerik */}
+            <div className="border-b pb-6">
+              <h3 className="text-lg font-medium mb-4">İçerik</h3>
+              <div className="pb-8">
+                <Label htmlFor="ethicsContent">İş Etiği Kuralları İçeriği</Label>
+                <RichTextEditor
+                  value={ethicsForm.content}
+                  onChange={(value) => setEthicsForm({ ...ethicsForm, content: value })}
+                  placeholder="İş etiği kuralları hakkında detaylı bilgileri girin..."
+                  height={400}
+                />
               </div>
             </div>
 
             <Separator />
 
-            <div className="space-y-3">
-              <h3 className="font-medium text-gray-900">Bölüm 3: Şirket Dışı İlişkiler</h3>
-              <div>
-                <Label htmlFor="s3EthicsTitle">Başlık</Label>
-                <Input id="s3EthicsTitle" value={ethicsForm.section3Title} onChange={(e) => setEthicsForm({ ...ethicsForm, section3Title: e.target.value })} required />
-              </div>
-              <div>
-                <Label htmlFor="s3EthicsContent">İçerik</Label>
-                <textarea id="s3EthicsContent" value={ethicsForm.section3Content} onChange={(e) => setEthicsForm({ ...ethicsForm, section3Content: e.target.value })} className="w-full px-3 py-2 border border-gray-300 rounded-md" rows={4} />
-              </div>
-              <div>
-                <Label>Alt Bölümler</Label>
-                <div className="space-y-3">
-                  {ethicsForm.section3Subsections.map((sub, idx) => (
-                    <div key={idx} className="border p-3 rounded-md">
-                      <div className="grid md:grid-cols-2 gap-3 mb-2">
-                        <div>
-                          <Label>Alt Başlık</Label>
-                          <Input value={sub.title} onChange={(e) => {
-                            const arr = [...ethicsForm.section3Subsections]
-                            arr[idx] = { ...arr[idx], title: e.target.value }
-                            setEthicsForm({ ...ethicsForm, section3Subsections: arr })
-                          }} />
-                        </div>
-                        <div>
-                          <Label>Madde Sayısı</Label>
-                          <Input type="number" min="1" max="10" value={sub.bullets.length} onChange={(e) => {
-                            const count = parseInt(e.target.value) || 1
-                            const arr = [...ethicsForm.section3Subsections]
-                            arr[idx] = { ...arr[idx], bullets: Array(count).fill('').map((_, i) => sub.bullets[i] || '') }
-                            setEthicsForm({ ...ethicsForm, section3Subsections: arr })
-                          }} />
-                        </div>
-                      </div>
-                      <div>
-                        <Label>Maddeler (her satır bir madde)</Label>
-                        <textarea value={sub.bullets.join('\n')} onChange={(e) => {
-                          const arr = [...ethicsForm.section3Subsections]
-                          arr[idx] = { ...arr[idx], bullets: e.target.value.split('\n') }
-                          setEthicsForm({ ...ethicsForm, section3Subsections: arr })
-                        }} className="w-full px-3 py-2 border border-gray-300 rounded-md" rows={3} />
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
-
-            <Separator />
-
-            <div className="space-y-3">
-              <h3 className="font-medium text-gray-900">Bölüm 4: Etik Davranış Kuralları</h3>
-              <div>
-                <Label htmlFor="s4EthicsTitle">Başlık</Label>
-                <Input id="s4EthicsTitle" value={ethicsForm.section4Title} onChange={(e) => setEthicsForm({ ...ethicsForm, section4Title: e.target.value })} required />
-              </div>
-              <div>
-                <Label htmlFor="s4EthicsContent">İçerik</Label>
-                <textarea id="s4EthicsContent" value={ethicsForm.section4Content} onChange={(e) => setEthicsForm({ ...ethicsForm, section4Content: e.target.value })} className="w-full px-3 py-2 border border-gray-300 rounded-md" rows={4} />
-              </div>
-              <div>
-                <Label htmlFor="s4EthicsBullets">Maddeler (her satır bir madde)</Label>
-                <textarea id="s4EthicsBullets" value={ethicsForm.section4BulletsText} onChange={(e) => setEthicsForm({ ...ethicsForm, section4BulletsText: e.target.value })} className="w-full px-3 py-2 border border-gray-300 rounded-md" rows={4} />
-              </div>
-            </div>
-
-            <Separator />
-
-            <div className="space-y-3">
-              <h3 className="font-medium text-gray-900">Bölüm 5: İş Sağlığı ve Güvenliği</h3>
-              <div>
-                <Label htmlFor="s5EthicsTitle">Başlık</Label>
-                <Input id="s5EthicsTitle" value={ethicsForm.section5Title} onChange={(e) => setEthicsForm({ ...ethicsForm, section5Title: e.target.value })} required />
-              </div>
-              <div>
-                <Label htmlFor="s5EthicsContent">İçerik</Label>
-                <textarea id="s5EthicsContent" value={ethicsForm.section5Content} onChange={(e) => setEthicsForm({ ...ethicsForm, section5Content: e.target.value })} className="w-full px-3 py-2 border border-gray-300 rounded-md" rows={4} />
-              </div>
-              <div>
-                <Label htmlFor="s5EthicsBullets">Maddeler (her satır bir madde)</Label>
-                <textarea id="s5EthicsBullets" value={ethicsForm.section5BulletsText} onChange={(e) => setEthicsForm({ ...ethicsForm, section5BulletsText: e.target.value })} className="w-full px-3 py-2 border border-gray-300 rounded-md" rows={4} />
-              </div>
-            </div>
-
-            <Separator />
-
-            <div className="space-y-3">
-              <h3 className="font-medium text-gray-900">Bölüm 6: Siyasal Faaliyet Yasağı</h3>
-              <div>
-                <Label htmlFor="s6EthicsTitle">Başlık</Label>
-                <Input id="s6EthicsTitle" value={ethicsForm.section6Title} onChange={(e) => setEthicsForm({ ...ethicsForm, section6Title: e.target.value })} required />
-              </div>
-              <div>
-                <Label htmlFor="s6EthicsContent">İçerik</Label>
-                <textarea id="s6EthicsContent" value={ethicsForm.section6Content} onChange={(e) => setEthicsForm({ ...ethicsForm, section6Content: e.target.value })} className="w-full px-3 py-2 border border-gray-300 rounded-md" rows={4} />
-              </div>
-              <div>
-                <Label htmlFor="s6EthicsBullets">Maddeler (her satır bir madde)</Label>
-                <textarea id="s6EthicsBullets" value={ethicsForm.section6BulletsText} onChange={(e) => setEthicsForm({ ...ethicsForm, section6BulletsText: e.target.value })} className="w-full px-3 py-2 border border-gray-300 rounded-md" rows={4} />
-              </div>
-            </div>
-
-            <Separator />
-
-            <div className="space-y-3">
-              <h3 className="font-medium text-gray-900">Bölüm 7: Uygulama Prensipleri</h3>
-              <div>
-                <Label htmlFor="s7EthicsTitle">Başlık</Label>
-                <Input id="s7EthicsTitle" value={ethicsForm.section7Title} onChange={(e) => setEthicsForm({ ...ethicsForm, section7Title: e.target.value })} required />
-              </div>
-              <div>
-                <Label>Alt Bölümler</Label>
-                <div className="space-y-3">
-                  {ethicsForm.section7Subsections.map((sub, idx) => (
-                    <div key={idx} className="border p-3 rounded-md">
-                      <div className="grid md:grid-cols-2 gap-3">
-                        <div>
-                          <Label>Alt Başlık</Label>
-                          <Input value={sub.title} onChange={(e) => {
-                            const arr = [...ethicsForm.section7Subsections]
-                            arr[idx] = { ...arr[idx], title: e.target.value }
-                            setEthicsForm({ ...ethicsForm, section7Subsections: arr })
-                          }} />
-                        </div>
-                        <div>
-                          <Label>İçerik</Label>
-                          <textarea value={sub.content} onChange={(e) => {
-                            const arr = [...ethicsForm.section7Subsections]
-                            arr[idx] = { ...arr[idx], content: e.target.value }
-                            setEthicsForm({ ...ethicsForm, section7Subsections: arr })
-                          }} className="w-full px-3 py-2 border border-gray-300 rounded-md" rows={3} />
-                        </div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
-
-            <Separator />
-
+            {/* İletişim Bilgileri */}
             <div className="space-y-3">
               <h3 className="font-medium text-gray-900">İletişim Bilgileri</h3>
               <div className="grid md:grid-cols-2 gap-4">

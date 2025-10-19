@@ -14,6 +14,7 @@ export async function PUT(
       where: { id },
       data: {
         title: data.title,
+        content: data.content,
         
         // Hero Section
         heroTitle: data.heroTitle,
@@ -23,14 +24,12 @@ export async function PUT(
         veriSorumlusuTitle: data.veriSorumlusuTitle,
         veriSorumlusuContent: data.veriSorumlusuContent,
 
-        // Kişisel Verilerin İşlenme Amacı Bölümü
+        // Eski alanlar
         islemeAmaciTitle: data.islemeAmaciTitle,
         islemeAmaciContent: data.islemeAmaciContent,
         islemeAmaciBullets: data.islemeAmaciBullets || [],
         calisanVerileriTitle: data.calisanVerileriTitle,
         calisanVerileriContent: data.calisanVerileriContent,
-
-        // Kişisel Verilerin Aktarılması Bölümü
         aktarilmaTitle: data.aktarilmaTitle,
         aktarilmaContent: data.aktarilmaContent,
         yurtIciAktarim: data.yurtIciAktarim || [],
@@ -38,15 +37,11 @@ export async function PUT(
         acikRizaTitle: data.acikRizaTitle,
         acikRizaContent: data.acikRizaContent,
         acikRizaBullets: data.acikRizaBullets || [],
-
-        // Toplanma Yöntemi ve Hukuki Sebep Bölümü
         toplamaYontemiTitle: data.toplamaYontemiTitle,
         toplamaYontemiContent: data.toplamaYontemiContent,
         dijitalKanallar: data.dijitalKanallar || [],
         fizikselKanallar: data.fizikselKanallar || [],
         iletisimKanallari: data.iletisimKanallari || [],
-
-        // Kişisel Veri Sahibi Hakları Bölümü
         haklarTitle: data.haklarTitle,
         haklarContent: data.haklarContent,
         haklarListesi: data.haklarListesi || [],

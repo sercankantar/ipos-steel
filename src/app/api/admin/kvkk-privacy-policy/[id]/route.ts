@@ -33,6 +33,7 @@ export async function PUT(
       where: { id: params.id },
       data: {
         title: data.title,
+        content: data.content,
         
         // Bölüm Başlıkları
         amacTitle: data.amacTitle,

@@ -6,6 +6,7 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Plus, Edit, Trash2, Save, X } from 'lucide-react'
 import { toast } from 'sonner'
+import RichTextEditor from '@/components/ui/RichTextEditor'
 
 interface KvkkPrivacyPolicy {
   id: string
@@ -95,47 +96,10 @@ export default function KvkkIslemler() {
   // Form state for privacy policy
   const [formData, setFormData] = useState({
     title: "Kişisel Verilerin Korunması, İşlenmesi ve Gizlilik Politikası",
-    
-    // Bölüm Başlıkları
-    amacTitle: "Amaç",
-    kapsamTitle: "Kapsam",
-    tanimlarTitle: "Tanım ve Kısaltmalar",
-    rollerTitle: "Rol ve Sorumluluklar",
-    yukumluluklerTitle: "Hukuki Yükümlülükler",
-    siniflandirmaTitle: "Kişisel Verilerin Sınıflandırılması",
-    islenmesiTitle: "Kişisel Verilerin İşlenmesi",
-    aktarilmasiTitle: "Kişisel Verilerin Aktarılması",
-    saklanmasiTitle: "Kişisel Verilerin Saklanması",
-    guvenligiTitle: "Kişisel Verilerin Güvenliği",
-    haklariTitle: "Kişisel Veri Sahibinin Hakları",
-    gizlilikTitle: "Gizlilik Politikası",
-    girisCikisTitle: "Şirket Giriş-Çıkışları ve Kişisel Veriler",
-    silinmesiTitle: "Kişisel Verilerin Silinmesi",
-    yayinlanmasiTitle: "Dokümanın Yayınlanması",
-    guncellemeTitle: "Güncelleme Periyodu",
-    yururlukTitle: "Yürürlük",
-
-    // Bölüm İçerikleri
-    amac: '',
-    kapsam: '',
-    tanimlar: '',
-    roller: '',
-    yukumlulukler: '',
-    siniflandirma: '',
-    islenmesi: '',
-    aktarilmasi: '',
-    saklanmasi: '',
-    guvenligi: '',
-    haklari: '',
-    gizlilik: '',
-    girisCikis: '',
-    silinmesi: '',
-    yayinlanmasi: '',
-    guncelleme: '',
-    yururluk: '',
-    email: '',
-    telefon: '',
-    adres: '',
+    content: "",
+    email: "",
+    telefon: "",
+    adres: "",
     isActive: true
   })
 
@@ -150,39 +114,9 @@ export default function KvkkIslemler() {
     // Veri Sorumlusu Bölümü
     veriSorumlusuTitle: "Veri Sorumlusu",
     veriSorumlusuContent: '',
-
-    // Kişisel Verilerin İşlenme Amacı Bölümü
-    islemeAmaciTitle: "Kişisel Verilerinizin İşlenme Amacı",
-    islemeAmaciContent: '',
-    islemeAmaciBullets: [] as string[],
-    calisanVerileriTitle: "Çalışan Verileri",
-    calisanVerileriContent: '',
-
-    // Kişisel Verilerin Aktarılması Bölümü
-    aktarilmaTitle: "Kişisel Verilerinizin Aktarılması",
-    aktarilmaContent: '',
-    yurtIciAktarim: [] as string[],
-    yurtDisiAktarim: [] as string[],
-    acikRizaTitle: "Açık Rıza ile İşleme",
-    acikRizaContent: '',
-    acikRizaBullets: [] as string[],
-
-    // Toplanma Yöntemi ve Hukuki Sebep Bölümü
-    toplamaYontemiTitle: "Kişisel Verilerinizin Toplanma Yöntemi ve Hukuki Sebebi",
-    toplamaYontemiContent: '',
-    dijitalKanallar: [] as string[],
-    fizikselKanallar: [] as string[],
-    iletisimKanallari: [] as string[],
-
-    // Kişisel Veri Sahibi Hakları Bölümü
-    haklarTitle: "Kişisel Veri Sahibi Olarak Haklarınız",
-    haklarContent: '',
-    haklarListesi: [] as string[],
-    haklarKullanimTitle: "Haklarınızı Nasıl Kullanabilirsiniz?",
-    haklarKullanimContent: '',
-    emailIletisim: 'kvkk@ipossteel.com',
-    kepIletisim: 'ipossteel@hs01.kep.tr',
-    basvuruSartlari: [] as string[],
+    
+    // Yeni HTML içerik alanı
+    content: '',
 
     // İletişim Bölümü
     iletisimTitle: "İletişim",
@@ -301,47 +235,10 @@ export default function KvkkIslemler() {
     setEditingPolicy(policy)
     setFormData({
       title: policy.title,
-      
-      // Bölüm Başlıkları
-      amacTitle: policy.amacTitle || "Amaç",
-      kapsamTitle: policy.kapsamTitle || "Kapsam",
-      tanimlarTitle: policy.tanimlarTitle || "Tanım ve Kısaltmalar",
-      rollerTitle: policy.rollerTitle || "Rol ve Sorumluluklar",
-      yukumluluklerTitle: policy.yukumluluklerTitle || "Hukuki Yükümlülükler",
-      siniflandirmaTitle: policy.siniflandirmaTitle || "Kişisel Verilerin Sınıflandırılması",
-      islenmesiTitle: policy.islenmesiTitle || "Kişisel Verilerin İşlenmesi",
-      aktarilmasiTitle: policy.aktarilmasiTitle || "Kişisel Verilerin Aktarılması",
-      saklanmasiTitle: policy.saklanmasiTitle || "Kişisel Verilerin Saklanması",
-      guvenligiTitle: policy.guvenligiTitle || "Kişisel Verilerin Güvenliği",
-      haklariTitle: policy.haklariTitle || "Kişisel Veri Sahibinin Hakları",
-      gizlilikTitle: policy.gizlilikTitle || "Gizlilik Politikası",
-      girisCikisTitle: policy.girisCikisTitle || "Şirket Giriş-Çıkışları ve Kişisel Veriler",
-      silinmesiTitle: policy.silinmesiTitle || "Kişisel Verilerin Silinmesi",
-      yayinlanmasiTitle: policy.yayinlanmasiTitle || "Dokümanın Yayınlanması",
-      guncellemeTitle: policy.guncellemeTitle || "Güncelleme Periyodu",
-      yururlukTitle: policy.yururlukTitle || "Yürürlük",
-
-      // Bölüm İçerikleri
-      amac: policy.amac,
-      kapsam: policy.kapsam,
-      tanimlar: policy.tanimlar,
-      roller: policy.roller,
-      yukumlulukler: policy.yukumlulukler,
-      siniflandirma: policy.siniflandirma,
-      islenmesi: policy.islenmesi,
-      aktarilmasi: policy.aktarilmasi,
-      saklanmasi: policy.saklanmasi,
-      guvenligi: policy.guvenligi,
-      haklari: policy.haklari,
-      gizlilik: policy.gizlilik,
-      girisCikis: policy.girisCikis,
-      silinmesi: policy.silinmesi,
-      yayinlanmasi: policy.yayinlanmasi,
-      guncelleme: policy.guncelleme,
-      yururluk: policy.yururluk,
-      email: policy.email,
-      telefon: policy.telefon,
-      adres: policy.adres,
+      content: policy.content || '',
+      email: policy.email || '',
+      telefon: policy.telefon || '',
+      adres: policy.adres || '',
       isActive: policy.isActive
     })
     setShowForm(true)
@@ -375,37 +272,12 @@ export default function KvkkIslemler() {
       heroSubtitle: disclosure.heroSubtitle,
       veriSorumlusuTitle: disclosure.veriSorumlusuTitle,
       veriSorumlusuContent: disclosure.veriSorumlusuContent,
-      islemeAmaciTitle: disclosure.islemeAmaciTitle,
-      islemeAmaciContent: disclosure.islemeAmaciContent,
-      islemeAmaciBullets: disclosure.islemeAmaciBullets,
-      calisanVerileriTitle: disclosure.calisanVerileriTitle,
-      calisanVerileriContent: disclosure.calisanVerileriContent,
-      aktarilmaTitle: disclosure.aktarilmaTitle,
-      aktarilmaContent: disclosure.aktarilmaContent,
-      yurtIciAktarim: disclosure.yurtIciAktarim,
-      yurtDisiAktarim: disclosure.yurtDisiAktarim,
-      acikRizaTitle: disclosure.acikRizaTitle,
-      acikRizaContent: disclosure.acikRizaContent,
-      acikRizaBullets: disclosure.acikRizaBullets,
-      toplamaYontemiTitle: disclosure.toplamaYontemiTitle,
-      toplamaYontemiContent: disclosure.toplamaYontemiContent,
-      dijitalKanallar: disclosure.dijitalKanallar,
-      fizikselKanallar: disclosure.fizikselKanallar,
-      iletisimKanallari: disclosure.iletisimKanallari,
-      haklarTitle: disclosure.haklarTitle,
-      haklarContent: disclosure.haklarContent,
-      haklarListesi: disclosure.haklarListesi,
-      haklarKullanimTitle: disclosure.haklarKullanimTitle,
-      haklarKullanimContent: disclosure.haklarKullanimContent,
-      emailIletisim: disclosure.emailIletisim,
-      kepIletisim: disclosure.kepIletisim,
-      basvuruSartlari: disclosure.basvuruSartlari,
+      content: disclosure.content || '',
       iletisimTitle: disclosure.iletisimTitle,
       iletisimContent: disclosure.iletisimContent,
       email: disclosure.email,
       telefon: disclosure.telefon,
       adres: disclosure.adres,
-      mapUrl: disclosure.mapUrl || '',
       isActive: disclosure.isActive
     })
     setShowForm(true)
@@ -434,47 +306,10 @@ export default function KvkkIslemler() {
   const resetForm = () => {
     setFormData({
       title: "Kişisel Verilerin Korunması, İşlenmesi ve Gizlilik Politikası",
-      
-      // Bölüm Başlıkları
-      amacTitle: "Amaç",
-      kapsamTitle: "Kapsam",
-      tanimlarTitle: "Tanım ve Kısaltmalar",
-      rollerTitle: "Rol ve Sorumluluklar",
-      yukumluluklerTitle: "Hukuki Yükümlülükler",
-      siniflandirmaTitle: "Kişisel Verilerin Sınıflandırılması",
-      islenmesiTitle: "Kişisel Verilerin İşlenmesi",
-      aktarilmasiTitle: "Kişisel Verilerin Aktarılması",
-      saklanmasiTitle: "Kişisel Verilerin Saklanması",
-      guvenligiTitle: "Kişisel Verilerin Güvenliği",
-      haklariTitle: "Kişisel Veri Sahibinin Hakları",
-      gizlilikTitle: "Gizlilik Politikası",
-      girisCikisTitle: "Şirket Giriş-Çıkışları ve Kişisel Veriler",
-      silinmesiTitle: "Kişisel Verilerin Silinmesi",
-      yayinlanmasiTitle: "Dokümanın Yayınlanması",
-      guncellemeTitle: "Güncelleme Periyodu",
-      yururlukTitle: "Yürürlük",
-
-      // Bölüm İçerikleri
-      amac: '',
-      kapsam: '',
-      tanimlar: '',
-      roller: '',
-      yukumlulukler: '',
-      siniflandirma: '',
-      islenmesi: '',
-      aktarilmasi: '',
-      saklanmasi: '',
-      guvenligi: '',
-      haklari: '',
-      gizlilik: '',
-      girisCikis: '',
-      silinmesi: '',
-      yayinlanmasi: '',
-      guncelleme: '',
-      yururluk: '',
-      email: '',
-      telefon: '',
-      adres: '',
+      content: "",
+      email: "",
+      telefon: "",
+      adres: "",
       isActive: true
     })
     setEditingPolicy(null)
@@ -512,37 +347,12 @@ export default function KvkkIslemler() {
       heroSubtitle: '',
       veriSorumlusuTitle: "Veri Sorumlusu",
       veriSorumlusuContent: '',
-      islemeAmaciTitle: "Kişisel Verilerinizin İşlenme Amacı",
-      islemeAmaciContent: '',
-      islemeAmaciBullets: [],
-      calisanVerileriTitle: "Çalışan Verileri",
-      calisanVerileriContent: '',
-      aktarilmaTitle: "Kişisel Verilerinizin Aktarılması",
-      aktarilmaContent: '',
-      yurtIciAktarim: [],
-      yurtDisiAktarim: [],
-      acikRizaTitle: "Açık Rıza ile İşleme",
-      acikRizaContent: '',
-      acikRizaBullets: [],
-      toplamaYontemiTitle: "Kişisel Verilerinizin Toplanma Yöntemi ve Hukuki Sebebi",
-      toplamaYontemiContent: '',
-      dijitalKanallar: [],
-      fizikselKanallar: [],
-      iletisimKanallari: [],
-      haklarTitle: "Kişisel Veri Sahibi Olarak Haklarınız",
-      haklarContent: '',
-      haklarListesi: [],
-      haklarKullanimTitle: "Haklarınızı Nasıl Kullanabilirsiniz?",
-      haklarKullanimContent: '',
-      emailIletisim: 'kvkk@ipossteel.com',
-      kepIletisim: 'ipossteel@hs01.kep.tr',
-      basvuruSartlari: [],
+      content: '',
       iletisimTitle: "İletişim",
       iletisimContent: '',
       email: '',
       telefon: '',
       adres: '',
-      mapUrl: '',
       isActive: true
     })
     setEditingDisclosure(null)
@@ -649,64 +459,18 @@ export default function KvkkIslemler() {
                   />
                 </div>
 
-                {/* Bölümler */}
-                <div className="space-y-6">
-                  <h4 className="text-lg font-semibold text-gray-900">Politika Bölümleri</h4>
-                  
-                  {[
-                    { key: 'amac', titleKey: 'amacTitle', label: '1. Amaç' },
-                    { key: 'kapsam', titleKey: 'kapsamTitle', label: '2. Kapsam' },
-                    { key: 'tanimlar', titleKey: 'tanimlarTitle', label: '3. Tanım ve Kısaltmalar' },
-                    { key: 'roller', titleKey: 'rollerTitle', label: '4. Rol ve Sorumluluklar' },
-                    { key: 'yukumlulukler', titleKey: 'yukumluluklerTitle', label: '5. Hukuki Yükümlülükler' },
-                    { key: 'siniflandirma', titleKey: 'siniflandirmaTitle', label: '6. Kişisel Verilerin Sınıflandırılması' },
-                    { key: 'islenmesi', titleKey: 'islenmesiTitle', label: '7. Kişisel Verilerin İşlenmesi' },
-                    { key: 'aktarilmasi', titleKey: 'aktarilmasiTitle', label: '8. Kişisel Verilerin Aktarılması' },
-                    { key: 'saklanmasi', titleKey: 'saklanmasiTitle', label: '9. Kişisel Verilerin Saklanması' },
-                    { key: 'guvenligi', titleKey: 'guvenligiTitle', label: '10. Kişisel Verilerin Güvenliği' },
-                    { key: 'haklari', titleKey: 'haklariTitle', label: '11. Kişisel Veri Sahibinin Hakları' },
-                    { key: 'gizlilik', titleKey: 'gizlilikTitle', label: '12. Gizlilik Politikası' },
-                    { key: 'girisCikis', titleKey: 'girisCikisTitle', label: '13. Şirket Giriş-Çıkışları' },
-                    { key: 'silinmesi', titleKey: 'silinmesiTitle', label: '14. Kişisel Verilerin Silinmesi' },
-                    { key: 'yayinlanmasi', titleKey: 'yayinlanmasiTitle', label: '15. Dokümanın Yayınlanması' },
-                    { key: 'guncelleme', titleKey: 'guncellemeTitle', label: '16. Güncelleme Periyodu' },
-                    { key: 'yururluk', titleKey: 'yururlukTitle', label: '17. Yürürlük' }
-                  ].map((section, index) => (
-                    <div key={section.key} className="border border-gray-200 rounded-lg p-4">
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                        <div>
-                          <Label htmlFor={section.titleKey}>Bölüm Başlığı</Label>
-                          <Input
-                            id={section.titleKey}
-                            value={formData[section.titleKey as keyof typeof formData] as string}
-                            onChange={(e) => setFormData({ ...formData, [section.titleKey]: e.target.value })}
-                            placeholder={section.label}
-                            required
-                          />
-                        </div>
-                        <div>
-                          <Label htmlFor={`${section.key}-number`}>Madde Numarası</Label>
-                          <Input
-                            id={`${section.key}-number`}
-                            value={index + 1}
-                            disabled
-                            className="bg-gray-100"
-                          />
-                        </div>
-                      </div>
-                      <div>
-                        <Label htmlFor={section.key}>Bölüm İçeriği</Label>
-                        <textarea
-                          id={section.key}
-                          value={formData[section.key as keyof typeof formData] as string}
-                          onChange={(e) => setFormData({ ...formData, [section.key]: e.target.value })}
-                          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                          rows={4}
-                          required
-                        />
-                      </div>
-                    </div>
-                  ))}
+                {/* İçerik */}
+                <div className="border-b pb-6">
+                  <h3 className="text-lg font-medium mb-4">İçerik</h3>
+                  <div className="pb-8">
+                    <Label htmlFor="content">KVKK Gizlilik Politikası İçeriği</Label>
+                    <RichTextEditor
+                      value={formData.content}
+                      onChange={(value) => setFormData({ ...formData, content: value })}
+                      placeholder="KVKK Gizlilik Politikası içeriğini girin..."
+                      height={400}
+                    />
+                  </div>
                 </div>
 
                 {/* Durum */}
@@ -872,610 +636,17 @@ export default function KvkkIslemler() {
                   </div>
                 </div>
 
-                {/* İşlenme Amacı Bölümü */}
-                <div className="border border-gray-200 rounded-lg p-4">
-                  <h4 className="text-lg font-semibold text-gray-900 mb-4">İşlenme Amacı Bölümü</h4>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                    <div>
-                      <Label htmlFor="islemeAmaciTitle">Bölüm Başlığı</Label>
-                      <Input
-                        id="islemeAmaciTitle"
-                        value={disclosureFormData.islemeAmaciTitle}
-                        onChange={(e) => setDisclosureFormData({ ...disclosureFormData, islemeAmaciTitle: e.target.value })}
-                        required
-                      />
-                    </div>
-                  </div>
-                  <div className="mb-4">
-                    <Label htmlFor="islemeAmaciContent">İçerik</Label>
-                    <textarea
-                      id="islemeAmaciContent"
-                      value={disclosureFormData.islemeAmaciContent}
-                      onChange={(e) => setDisclosureFormData({ ...disclosureFormData, islemeAmaciContent: e.target.value })}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                      rows={4}
-                      required
+                {/* İçerik */}
+                <div className="border-b pb-6">
+                  <h3 className="text-lg font-medium mb-4">Ana İçerik</h3>
+                  <div className="pb-8">
+                    <Label htmlFor="disclosureContent">Aydınlatma Metni İçeriği</Label>
+                    <RichTextEditor
+                      value={disclosureFormData.content}
+                      onChange={(value) => setDisclosureFormData({ ...disclosureFormData, content: value })}
+                      placeholder="Aydınlatma metni içeriğini girin..."
+                      height={400}
                     />
-                  </div>
-                  <div className="mb-4">
-                    <Label htmlFor="calisanVerileriTitle">Çalışan Verileri Başlığı</Label>
-                    <Input
-                      id="calisanVerileriTitle"
-                      value={disclosureFormData.calisanVerileriTitle}
-                      onChange={(e) => setDisclosureFormData({ ...disclosureFormData, calisanVerileriTitle: e.target.value })}
-                      required
-                    />
-                  </div>
-                  <div>
-                    <Label htmlFor="calisanVerileriContent">Çalışan Verileri İçeriği</Label>
-                    <textarea
-                      id="calisanVerileriContent"
-                      value={disclosureFormData.calisanVerileriContent}
-                      onChange={(e) => setDisclosureFormData({ ...disclosureFormData, calisanVerileriContent: e.target.value })}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                      rows={3}
-                      required
-                    />
-                  </div>
-                  
-                  {/* İşlenme Amacı Bullet Points */}
-                  <div className="mt-4">
-                    <Label>İşlenme Amacı Madde Listesi</Label>
-                    <div className="space-y-2">
-                      {disclosureFormData.islemeAmaciBullets.map((bullet, index) => (
-                        <div key={index} className="flex gap-2">
-                          <Input
-                            value={bullet}
-                            onChange={(e) => updateArrayItem('islemeAmaciBullets', index, e.target.value)}
-                            placeholder="Madde içeriği"
-                          />
-                          <Button
-                            type="button"
-                            variant="outline"
-                            size="sm"
-                            onClick={() => removeArrayItem('islemeAmaciBullets', index)}
-                          >
-                            <X className="w-4 h-4" />
-                          </Button>
-                        </div>
-                      ))}
-                      <div className="flex gap-2">
-                        <Input
-                          placeholder="Yeni madde ekle"
-                          onKeyPress={(e) => {
-                            if (e.key === 'Enter') {
-                              addArrayItem('islemeAmaciBullets', e.currentTarget.value)
-                              e.currentTarget.value = ''
-                            }
-                          }}
-                        />
-                        <Button
-                          type="button"
-                          variant="outline"
-                          size="sm"
-                          onClick={(e) => {
-                            const input = e.currentTarget.previousElementSibling as HTMLInputElement
-                            addArrayItem('islemeAmaciBullets', input.value)
-                            input.value = ''
-                          }}
-                        >
-                          <Plus className="w-4 h-4" />
-                        </Button>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Aktarılması Bölümü */}
-                <div className="border border-gray-200 rounded-lg p-4">
-                  <h4 className="text-lg font-semibold text-gray-900 mb-4">Aktarılması Bölümü</h4>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                    <div>
-                      <Label htmlFor="aktarilmaTitle">Bölüm Başlığı</Label>
-                      <Input
-                        id="aktarilmaTitle"
-                        value={disclosureFormData.aktarilmaTitle}
-                        onChange={(e) => setDisclosureFormData({ ...disclosureFormData, aktarilmaTitle: e.target.value })}
-                        required
-                      />
-                    </div>
-                  </div>
-                  <div className="mb-4">
-                    <Label htmlFor="aktarilmaContent">İçerik</Label>
-                    <textarea
-                      id="aktarilmaContent"
-                      value={disclosureFormData.aktarilmaContent}
-                      onChange={(e) => setDisclosureFormData({ ...disclosureFormData, aktarilmaContent: e.target.value })}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                      rows={4}
-                      required
-                    />
-                  </div>
-                  
-                  {/* Yurt İçi Aktarım */}
-                  <div className="mb-4">
-                    <Label>Yurt İçi Aktarım Listesi</Label>
-                    <div className="space-y-2">
-                      {disclosureFormData.yurtIciAktarim.map((item, index) => (
-                        <div key={index} className="flex gap-2">
-                          <Input
-                            value={item}
-                            onChange={(e) => updateArrayItem('yurtIciAktarim', index, e.target.value)}
-                            placeholder="Aktarım türü"
-                          />
-                          <Button
-                            type="button"
-                            variant="outline"
-                            size="sm"
-                            onClick={() => removeArrayItem('yurtIciAktarim', index)}
-                          >
-                            <X className="w-4 h-4" />
-                          </Button>
-                        </div>
-                      ))}
-                      <div className="flex gap-2">
-                        <Input
-                          placeholder="Yeni yurt içi aktarım türü"
-                          onKeyPress={(e) => {
-                            if (e.key === 'Enter') {
-                              addArrayItem('yurtIciAktarim', e.currentTarget.value)
-                              e.currentTarget.value = ''
-                            }
-                          }}
-                        />
-                        <Button
-                          type="button"
-                          variant="outline"
-                          size="sm"
-                          onClick={(e) => {
-                            const input = e.currentTarget.previousElementSibling as HTMLInputElement
-                            addArrayItem('yurtIciAktarim', input.value)
-                            input.value = ''
-                          }}
-                        >
-                          <Plus className="w-4 h-4" />
-                        </Button>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Yurt Dışı Aktarım */}
-                  <div className="mb-4">
-                    <Label>Yurt Dışı Aktarım Listesi</Label>
-                    <div className="space-y-2">
-                      {disclosureFormData.yurtDisiAktarim.map((item, index) => (
-                        <div key={index} className="flex gap-2">
-                          <Input
-                            value={item}
-                            onChange={(e) => updateArrayItem('yurtDisiAktarim', index, e.target.value)}
-                            placeholder="Aktarım türü"
-                          />
-                          <Button
-                            type="button"
-                            variant="outline"
-                            size="sm"
-                            onClick={() => removeArrayItem('yurtDisiAktarim', index)}
-                          >
-                            <X className="w-4 h-4" />
-                          </Button>
-                        </div>
-                      ))}
-                      <div className="flex gap-2">
-                        <Input
-                          placeholder="Yeni yurt dışı aktarım türü"
-                          onKeyPress={(e) => {
-                            if (e.key === 'Enter') {
-                              addArrayItem('yurtDisiAktarim', e.currentTarget.value)
-                              e.currentTarget.value = ''
-                            }
-                          }}
-                        />
-                        <Button
-                          type="button"
-                          variant="outline"
-                          size="sm"
-                          onClick={(e) => {
-                            const input = e.currentTarget.previousElementSibling as HTMLInputElement
-                            addArrayItem('yurtDisiAktarim', input.value)
-                            input.value = ''
-                          }}
-                        >
-                          <Plus className="w-4 h-4" />
-                        </Button>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Açık Rıza ile İşleme */}
-                  <div>
-                    <Label htmlFor="acikRizaTitle">Açık Rıza ile İşleme Başlığı</Label>
-                    <Input
-                      id="acikRizaTitle"
-                      value={disclosureFormData.acikRizaTitle}
-                      onChange={(e) => setDisclosureFormData({ ...disclosureFormData, acikRizaTitle: e.target.value })}
-                      className="mb-4"
-                      required
-                    />
-                    <Label htmlFor="acikRizaContent">Açık Rıza ile İşleme İçeriği</Label>
-                    <textarea
-                      id="acikRizaContent"
-                      value={disclosureFormData.acikRizaContent}
-                      onChange={(e) => setDisclosureFormData({ ...disclosureFormData, acikRizaContent: e.target.value })}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 mb-4"
-                      rows={3}
-                      required
-                    />
-                    <Label>Açık Rıza ile İşleme Madde Listesi</Label>
-                    <div className="space-y-2">
-                      {disclosureFormData.acikRizaBullets.map((bullet, index) => (
-                        <div key={index} className="flex gap-2">
-                          <Input
-                            value={bullet}
-                            onChange={(e) => updateArrayItem('acikRizaBullets', index, e.target.value)}
-                            placeholder="Madde içeriği"
-                          />
-                          <Button
-                            type="button"
-                            variant="outline"
-                            size="sm"
-                            onClick={() => removeArrayItem('acikRizaBullets', index)}
-                          >
-                            <X className="w-4 h-4" />
-                          </Button>
-                        </div>
-                      ))}
-                      <div className="flex gap-2">
-                        <Input
-                          placeholder="Yeni madde ekle"
-                          onKeyPress={(e) => {
-                            if (e.key === 'Enter') {
-                              addArrayItem('acikRizaBullets', e.currentTarget.value)
-                              e.currentTarget.value = ''
-                            }
-                          }}
-                        />
-                        <Button
-                          type="button"
-                          variant="outline"
-                          size="sm"
-                          onClick={(e) => {
-                            const input = e.currentTarget.previousElementSibling as HTMLInputElement
-                            addArrayItem('acikRizaBullets', input.value)
-                            input.value = ''
-                          }}
-                        >
-                          <Plus className="w-4 h-4" />
-                        </Button>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Toplanma Yöntemi Bölümü */}
-                <div className="border border-gray-200 rounded-lg p-4">
-                  <h4 className="text-lg font-semibold text-gray-900 mb-4">Toplanma Yöntemi Bölümü</h4>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                    <div>
-                      <Label htmlFor="toplamaYontemiTitle">Bölüm Başlığı</Label>
-                      <Input
-                        id="toplamaYontemiTitle"
-                        value={disclosureFormData.toplamaYontemiTitle}
-                        onChange={(e) => setDisclosureFormData({ ...disclosureFormData, toplamaYontemiTitle: e.target.value })}
-                        required
-                      />
-                    </div>
-                  </div>
-                  <div className="mb-4">
-                    <Label htmlFor="toplamaYontemiContent">İçerik</Label>
-                    <textarea
-                      id="toplamaYontemiContent"
-                      value={disclosureFormData.toplamaYontemiContent}
-                      onChange={(e) => setDisclosureFormData({ ...disclosureFormData, toplamaYontemiContent: e.target.value })}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                      rows={4}
-                      required
-                    />
-                  </div>
-                  
-                  {/* Dijital Kanallar */}
-                  <div className="mb-4">
-                    <Label>Dijital Kanallar Listesi</Label>
-                    <div className="space-y-2">
-                      {disclosureFormData.dijitalKanallar.map((channel, index) => (
-                        <div key={index} className="flex gap-2">
-                          <Input
-                            value={channel}
-                            onChange={(e) => updateArrayItem('dijitalKanallar', index, e.target.value)}
-                            placeholder="Dijital kanal"
-                          />
-                          <Button
-                            type="button"
-                            variant="outline"
-                            size="sm"
-                            onClick={() => removeArrayItem('dijitalKanallar', index)}
-                          >
-                            <X className="w-4 h-4" />
-                          </Button>
-                        </div>
-                      ))}
-                      <div className="flex gap-2">
-                        <Input
-                          placeholder="Yeni dijital kanal"
-                          onKeyPress={(e) => {
-                            if (e.key === 'Enter') {
-                              addArrayItem('dijitalKanallar', e.currentTarget.value)
-                              e.currentTarget.value = ''
-                            }
-                          }}
-                        />
-                        <Button
-                          type="button"
-                          variant="outline"
-                          size="sm"
-                          onClick={(e) => {
-                            const input = e.currentTarget.previousElementSibling as HTMLInputElement
-                            addArrayItem('dijitalKanallar', input.value)
-                            input.value = ''
-                          }}
-                        >
-                          <Plus className="w-4 h-4" />
-                        </Button>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Fiziksel Kanallar */}
-                  <div className="mb-4">
-                    <Label>Fiziksel Kanallar Listesi</Label>
-                    <div className="space-y-2">
-                      {disclosureFormData.fizikselKanallar.map((channel, index) => (
-                        <div key={index} className="flex gap-2">
-                          <Input
-                            value={channel}
-                            onChange={(e) => updateArrayItem('fizikselKanallar', index, e.target.value)}
-                            placeholder="Fiziksel kanal"
-                          />
-                          <Button
-                            type="button"
-                            variant="outline"
-                            size="sm"
-                            onClick={() => removeArrayItem('fizikselKanallar', index)}
-                          >
-                            <X className="w-4 h-4" />
-                          </Button>
-                        </div>
-                      ))}
-                      <div className="flex gap-2">
-                        <Input
-                          placeholder="Yeni fiziksel kanal"
-                          onKeyPress={(e) => {
-                            if (e.key === 'Enter') {
-                              addArrayItem('fizikselKanallar', e.currentTarget.value)
-                              e.currentTarget.value = ''
-                            }
-                          }}
-                        />
-                        <Button
-                          type="button"
-                          variant="outline"
-                          size="sm"
-                          onClick={(e) => {
-                            const input = e.currentTarget.previousElementSibling as HTMLInputElement
-                            addArrayItem('fizikselKanallar', input.value)
-                            input.value = ''
-                          }}
-                        >
-                          <Plus className="w-4 h-4" />
-                        </Button>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* İletişim Kanalları */}
-                  <div>
-                    <Label>İletişim Kanalları Listesi</Label>
-                    <div className="space-y-2">
-                      {disclosureFormData.iletisimKanallari.map((channel, index) => (
-                        <div key={index} className="flex gap-2">
-                          <Input
-                            value={channel}
-                            onChange={(e) => updateArrayItem('iletisimKanallari', index, e.target.value)}
-                            placeholder="İletişim kanalı"
-                          />
-                          <Button
-                            type="button"
-                            variant="outline"
-                            size="sm"
-                            onClick={() => removeArrayItem('iletisimKanallari', index)}
-                          >
-                            <X className="w-4 h-4" />
-                          </Button>
-                        </div>
-                      ))}
-                      <div className="flex gap-2">
-                        <Input
-                          placeholder="Yeni iletişim kanalı"
-                          onKeyPress={(e) => {
-                            if (e.key === 'Enter') {
-                              addArrayItem('iletisimKanallari', e.currentTarget.value)
-                              e.currentTarget.value = ''
-                            }
-                          }}
-                        />
-                        <Button
-                          type="button"
-                          variant="outline"
-                          size="sm"
-                          onClick={(e) => {
-                            const input = e.currentTarget.previousElementSibling as HTMLInputElement
-                            addArrayItem('iletisimKanallari', input.value)
-                            input.value = ''
-                          }}
-                        >
-                          <Plus className="w-4 h-4" />
-                        </Button>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Haklar Bölümü */}
-                <div className="border border-gray-200 rounded-lg p-4">
-                  <h4 className="text-lg font-semibold text-gray-900 mb-4">Haklar Bölümü</h4>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                    <div>
-                      <Label htmlFor="haklarTitle">Bölüm Başlığı</Label>
-                      <Input
-                        id="haklarTitle"
-                        value={disclosureFormData.haklarTitle}
-                        onChange={(e) => setDisclosureFormData({ ...disclosureFormData, haklarTitle: e.target.value })}
-                        required
-                      />
-                    </div>
-                  </div>
-                  <div className="mb-4">
-                    <Label htmlFor="haklarContent">İçerik</Label>
-                    <textarea
-                      id="haklarContent"
-                      value={disclosureFormData.haklarContent}
-                      onChange={(e) => setDisclosureFormData({ ...disclosureFormData, haklarContent: e.target.value })}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                      rows={4}
-                      required
-                    />
-                  </div>
-                  
-                  {/* Haklar Listesi */}
-                  <div className="mb-4">
-                    <Label>Haklar Listesi</Label>
-                    <div className="space-y-2">
-                      {disclosureFormData.haklarListesi.map((hak, index) => (
-                        <div key={index} className="flex gap-2">
-                          <Input
-                            value={hak}
-                            onChange={(e) => updateArrayItem('haklarListesi', index, e.target.value)}
-                            placeholder="Hak açıklaması"
-                          />
-                          <Button
-                            type="button"
-                            variant="outline"
-                            size="sm"
-                            onClick={() => removeArrayItem('haklarListesi', index)}
-                          >
-                            <X className="w-4 h-4" />
-                          </Button>
-                        </div>
-                      ))}
-                      <div className="flex gap-2">
-                        <Input
-                          placeholder="Yeni hak ekle"
-                          onKeyPress={(e) => {
-                            if (e.key === 'Enter') {
-                              addArrayItem('haklarListesi', e.currentTarget.value)
-                              e.currentTarget.value = ''
-                            }
-                          }}
-                        />
-                        <Button
-                          type="button"
-                          variant="outline"
-                          size="sm"
-                          onClick={(e) => {
-                            const input = e.currentTarget.previousElementSibling as HTMLInputElement
-                            addArrayItem('haklarListesi', input.value)
-                            input.value = ''
-                          }}
-                        >
-                          <Plus className="w-4 h-4" />
-                        </Button>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Haklar Kullanımı */}
-                  <div className="mb-4">
-                    <Label htmlFor="haklarKullanimTitle">Haklar Kullanımı Başlığı</Label>
-                    <Input
-                      id="haklarKullanimTitle"
-                      value={disclosureFormData.haklarKullanimTitle}
-                      onChange={(e) => setDisclosureFormData({ ...disclosureFormData, haklarKullanimTitle: e.target.value })}
-                      className="mb-4"
-                      required
-                    />
-                    <Label htmlFor="haklarKullanimContent">Haklar Kullanımı İçeriği</Label>
-                    <textarea
-                      id="haklarKullanimContent"
-                      value={disclosureFormData.haklarKullanimContent}
-                      onChange={(e) => setDisclosureFormData({ ...disclosureFormData, haklarKullanimContent: e.target.value })}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 mb-4"
-                      rows={3}
-                      required
-                    />
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                      <div>
-                        <Label htmlFor="emailIletisim">E-posta İletişim</Label>
-                        <Input
-                          id="emailIletisim"
-                          value={disclosureFormData.emailIletisim}
-                          onChange={(e) => setDisclosureFormData({ ...disclosureFormData, emailIletisim: e.target.value })}
-                          placeholder="kvkk@ipossteel.com"
-                          required
-                        />
-                      </div>
-                      <div>
-                        <Label htmlFor="kepIletisim">KEP İletişim</Label>
-                        <Input
-                          id="kepIletisim"
-                          value={disclosureFormData.kepIletisim}
-                          onChange={(e) => setDisclosureFormData({ ...disclosureFormData, kepIletisim: e.target.value })}
-                          placeholder="ipossteel@hs01.kep.tr"
-                          required
-                        />
-                      </div>
-                    </div>
-                    <Label>Başvuru Şartları Listesi</Label>
-                    <div className="space-y-2">
-                      {disclosureFormData.basvuruSartlari.map((sart, index) => (
-                        <div key={index} className="flex gap-2">
-                          <Input
-                            value={sart}
-                            onChange={(e) => updateArrayItem('basvuruSartlari', index, e.target.value)}
-                            placeholder="Başvuru şartı"
-                          />
-                          <Button
-                            type="button"
-                            variant="outline"
-                            size="sm"
-                            onClick={() => removeArrayItem('basvuruSartlari', index)}
-                          >
-                            <X className="w-4 h-4" />
-                          </Button>
-                        </div>
-                      ))}
-                      <div className="flex gap-2">
-                        <Input
-                          placeholder="Yeni başvuru şartı"
-                          onKeyPress={(e) => {
-                            if (e.key === 'Enter') {
-                              addArrayItem('basvuruSartlari', e.currentTarget.value)
-                              e.currentTarget.value = ''
-                            }
-                          }}
-                        />
-                        <Button
-                          type="button"
-                          variant="outline"
-                          size="sm"
-                          onClick={(e) => {
-                            const input = e.currentTarget.previousElementSibling as HTMLInputElement
-                            addArrayItem('basvuruSartlari', input.value)
-                            input.value = ''
-                          }}
-                        >
-                          <Plus className="w-4 h-4" />
-                        </Button>
-                      </div>
-                    </div>
                   </div>
                 </div>
 

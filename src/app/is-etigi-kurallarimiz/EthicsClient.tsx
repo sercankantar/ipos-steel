@@ -5,6 +5,7 @@ import { useEffect, useState } from 'react'
 interface EthicsRules {
   id?: string
   heroTitle?: string
+  content?: string // Yeni HTML içerik alanı
   section1Title?: string
   section1Content?: string
   section2Title?: string
@@ -38,31 +39,79 @@ interface EthicsClientProps {
 
 export default function EthicsClient({ rules }: EthicsClientProps) {
   const [activeSection, setActiveSection] = useState('giris')
+  const [processedContent, setProcessedContent] = useState('')
+
+  // HTML content'i işle - H1 ve H2'lere id ekle
+  useEffect(() => {
+    if (rules?.content) {
+      const parser = new DOMParser()
+      const doc = parser.parseFromString(rules.content, 'text/html')
+      
+      // H1'lere id ekle
+      const h1Elements = doc.querySelectorAll('h1')
+      h1Elements.forEach((h1, index) => {
+        h1.id = `heading-${index}`
+      })
+      
+      // H2'lere id ekle
+      const h2Elements = doc.querySelectorAll('h2')
+      h2Elements.forEach((h2, index) => {
+        h2.id = `heading-h2-${index}`
+      })
+      
+      setProcessedContent(doc.documentElement.outerHTML)
+    }
+  }, [rules?.content])
 
   useEffect(() => {
     const handleScroll = () => {
-      const sections = ['giris', 'calisan-iliskileri', 'sirket-disi-iliskiler', 'etik-davranis-kurallari', 'is-sagligi-guvenligi', 'siyasal-faaliyet-yasagi', 'uygulama-prensipleri']
-      
-      let currentSection = 'giris'
-      
-      for (const section of sections) {
-        const element = document.getElementById(section)
-        if (element) {
-          const rect = element.getBoundingClientRect()
-          if (rect.top <= 150) {
-            currentSection = section
+      if (rules?.content && processedContent) {
+        // Yeni content varsa heading'leri takip et
+        const parser = new DOMParser()
+        const doc = parser.parseFromString(processedContent, 'text/html')
+        const h1Elements = doc.querySelectorAll('h1')
+        const h2Elements = doc.querySelectorAll('h2')
+        
+        let currentSection = h1Elements[0]?.id || h2Elements[0]?.id || 'giris'
+        
+        // Tüm heading'leri kontrol et
+        const allHeadings = Array.from(h1Elements).concat(Array.from(h2Elements))
+        allHeadings.forEach((heading) => {
+          const element = document.getElementById(heading.id)
+          if (element) {
+            const rect = element.getBoundingClientRect()
+            if (rect.top <= 150) {
+              currentSection = heading.id
+            }
+          }
+        })
+        
+        setActiveSection(currentSection)
+      } else {
+        // Eski yapı için scroll tracking
+        const sections = ['giris', 'calisan-iliskileri', 'sirket-disi-iliskiler', 'etik-davranis-kurallari', 'is-sagligi-guvenligi', 'siyasal-faaliyet-yasagi', 'uygulama-prensipleri']
+        
+        let currentSection = 'giris'
+        
+        for (const section of sections) {
+          const element = document.getElementById(section)
+          if (element) {
+            const rect = element.getBoundingClientRect()
+            if (rect.top <= 150) {
+              currentSection = section
+            }
           }
         }
+        
+        setActiveSection(currentSection)
       }
-      
-      setActiveSection(currentSection)
     }
 
     handleScroll()
     
     window.addEventListener('scroll', handleScroll)
     return () => window.removeEventListener('scroll', handleScroll)
-  }, [])
+  }, [rules?.content, processedContent])
 
   const handleMenuClick = (sectionId: string) => {
     const element = document.getElementById(sectionId)
@@ -81,17 +130,79 @@ export default function EthicsClient({ rules }: EthicsClientProps) {
 
   return (
     <>
-      {/* 1. Giriş */}
-      <section id='giris' className='mb-12'>
-        <h2 className='text-2xl font-bold text-gray-900 mb-6 border-b-2 border-blue-600 pb-2'>
-          {rules?.section1Title || '1. Giriş'}
-        </h2>
-        <div className='space-y-4 text-gray-700'>
-          <p>
-            {rules?.section1Content || 'IPOS-Steel, güneş enerjisi altyapısı ve elektrik kablo yönetim sistemlerinde kazandığı güven ve itibarı korumak için, tüm çalışanlarından yüksek etik standartlarda davranmalarını bekler. Güneş enerjisi projelerinde elektrik güvenliği, kalite kontrol ve çevresel duyarlılık süreçlerinin kritik önemi nedeniyle, etik davranış kurallarımız sadece iç işleyişimizi değil, müşteri güveni ve yenilenebilir enerji sektöründeki itibarımızı da doğrudan etkiler.'}
-          </p>
-        </div>
-      </section>
+      {rules?.content ? (
+        // Yeni HTML content varsa onu göster
+        <>
+          <div 
+            className="prose prose-lg max-w-none text-gray-700"
+            dangerouslySetInnerHTML={{ __html: processedContent }}
+          />
+          
+          {/* İletişim Bilgileri */}
+          <div className='bg-gray-50 border border-gray-200 mt-12'>
+            <div className='bg-white border-b border-gray-200 px-8 py-6'>
+              <h3 className='text-xl font-bold text-gray-900 mb-2'>
+                {rules?.contactTitle || 'İletişim'}
+              </h3>
+              <p className='text-gray-600 text-sm'>
+                {rules?.contactDescription || 'Sorularınız ve bildirimleriniz için aşağıdaki e-posta ve posta adreslerini kullanabilir veya Etik Kurul üyeleri ile direkt temasa geçebilirsiniz.'}
+              </p>
+            </div>
+            
+            <div className='px-8 py-6'>
+              <div className='grid md:grid-cols-3 gap-6'>
+                {/* E-posta */}
+                <div className='bg-white p-4 border border-gray-200'>
+                  <h4 className='font-semibold text-gray-900 mb-2 text-sm uppercase tracking-wide'>E-posta</h4>
+                  <a 
+                    href={`mailto:${rules?.contactEmail || 'info@ipos-steel.com'}`}
+                    className='text-blue-600 hover:text-blue-800 font-medium text-sm transition-colors duration-200'
+                  >
+                    {rules?.contactEmail || 'info@ipos-steel.com'}
+                  </a>
+                </div>
+
+                {/* Telefon */}
+                <div className='bg-white p-4 border border-gray-200'>
+                  <h4 className='font-semibold text-gray-900 mb-2 text-sm uppercase tracking-wide'>Telefon</h4>
+                  <a 
+                    href={`tel:${rules?.contactPhone || '+902626744767'}`}
+                    className='text-blue-600 hover:text-blue-800 font-medium text-sm transition-colors duration-200'
+                  >
+                    {rules?.contactPhone || '+90 (262) 674 47 67'}
+                  </a>
+                </div>
+
+                {/* Adres */}
+                <div className='bg-white p-4 border border-gray-200'>
+                  <h4 className='font-semibold text-gray-900 mb-2 text-sm uppercase tracking-wide'>Adres</h4>
+                  <a 
+                    href={rules?.contactMapUrl || 'https://maps.app.goo.gl/6F7WkS5yQbDf4RW59'}
+                    target='_blank'
+                    rel='noopener noreferrer'
+                    className='text-blue-600 hover:text-blue-800 font-medium text-sm transition-colors duration-200 block leading-relaxed'
+                  >
+                    {rules?.contactAddress || 'Kocaeli Kobi OSB, Organize Sanayi Bölgesi,\n3. Cd. No:52, 41455 Dilovası/Kocaeli'}
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </>
+      ) : (
+        // Eski veri yapısını göster
+        <>
+          {/* 1. Giriş */}
+          <section id='giris' className='mb-12'>
+            <h2 className='text-2xl font-bold text-gray-900 mb-6 border-b-2 border-blue-600 pb-2'>
+              {rules?.section1Title || '1. Giriş'}
+            </h2>
+            <div className='space-y-4 text-gray-700'>
+              <p>
+                {rules?.section1Content || 'IPOS-Steel, güneş enerjisi altyapısı ve elektrik kablo yönetim sistemlerinde kazandığı güven ve itibarı korumak için, tüm çalışanlarından yüksek etik standartlarda davranmalarını bekler. Güneş enerjisi projelerinde elektrik güvenliği, kalite kontrol ve çevresel duyarlılık süreçlerinin kritik önemi nedeniyle, etik davranış kurallarımız sadece iç işleyişimizi değil, müşteri güveni ve yenilenebilir enerji sektöründeki itibarımızı da doğrudan etkiler.'}
+              </p>
+            </div>
+          </section>
 
       {/* 2. Çalışan İlişkileri */}
       <section id='calisan-iliskileri' className='mb-12'>
@@ -529,6 +640,8 @@ export default function EthicsClient({ rules }: EthicsClientProps) {
           </div>
         </div>
       </div>
+        </>
+      )}
     </>
   )
 }

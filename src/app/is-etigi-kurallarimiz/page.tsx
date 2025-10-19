@@ -44,7 +44,7 @@ export default async function IsEtigiKurallarimiz() {
           <div className='grid lg:grid-cols-4 gap-8'>
             {/* Sol Sidebar - İçindekiler */}
             <div className='lg:col-span-1'>
-              <EthicsSidebar />
+              <EthicsSidebar content={rules?.content} />
             </div>
 
             {/* Sağ İçerik Alanı */}

@@ -22,8 +22,9 @@ export async function POST(request: NextRequest) {
     const policy = await prisma.kvkkPrivacyPolicy.create({
       data: {
         title: data.title || "Kişisel Verilerin Korunması, İşlenmesi ve Gizlilik Politikası",
+        content: data.content || "",
         
-        // Bölüm Başlıkları
+        // Bölüm Başlıkları (eski yapı için varsayılan değerler)
         amacTitle: data.amacTitle || "Amaç",
         kapsamTitle: data.kapsamTitle || "Kapsam",
         tanimlarTitle: data.tanimlarTitle || "Tanım ve Kısaltmalar",
@@ -42,24 +43,24 @@ export async function POST(request: NextRequest) {
         guncellemeTitle: data.guncellemeTitle || "Güncelleme Periyodu",
         yururlukTitle: data.yururlukTitle || "Yürürlük",
 
-        // Bölüm İçerikleri
-        amac: data.amac,
-        kapsam: data.kapsam,
-        tanimlar: data.tanimlar,
-        roller: data.roller,
-        yukumlulukler: data.yukumlulukler,
-        siniflandirma: data.siniflandirma,
-        islenmesi: data.islenmesi,
-        aktarilmasi: data.aktarilmasi,
-        saklanmasi: data.saklanmasi,
-        guvenligi: data.guvenligi,
-        haklari: data.haklari,
-        gizlilik: data.gizlilik,
-        girisCikis: data.girisCikis,
-        silinmesi: data.silinmesi,
-        yayinlanmasi: data.yayinlanmasi,
-        guncelleme: data.guncelleme,
-        yururluk: data.yururluk,
+        // Bölüm İçerikleri (eski yapı için boş değerler)
+        amac: data.amac || "",
+        kapsam: data.kapsam || "",
+        tanimlar: data.tanimlar || "",
+        roller: data.roller || "",
+        yukumlulukler: data.yukumlulukler || "",
+        siniflandirma: data.siniflandirma || "",
+        islenmesi: data.islenmesi || "",
+        aktarilmasi: data.aktarilmasi || "",
+        saklanmasi: data.saklanmasi || "",
+        guvenligi: data.guvenligi || "",
+        haklari: data.haklari || "",
+        gizlilik: data.gizlilik || "",
+        girisCikis: data.girisCikis || "",
+        silinmesi: data.silinmesi || "",
+        yayinlanmasi: data.yayinlanmasi || "",
+        guncelleme: data.guncelleme || "",
+        yururluk: data.yururluk || "",
         email: data.email,
         telefon: data.telefon,
         adres: data.adres,

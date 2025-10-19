@@ -8,6 +8,7 @@ interface KvkkDisclosureText {
   id: string
   title: string
   lastUpdated: string
+  content?: string // Yeni HTML içerik alanı
   heroTitle: string
   heroSubtitle: string
   veriSorumlusuTitle: string
@@ -54,6 +55,8 @@ interface KvkkAydinlatmaMetniClientProps {
 
 export default function KvkkAydinlatmaMetniClient({ disclosureText }: KvkkAydinlatmaMetniClientProps) {
   const [activeSection, setActiveSection] = useState('')
+  const [processedContent, setProcessedContent] = useState('')
+  const [headings, setHeadings] = useState<Array<{ id: string; text: string; level: number }>>([])
 
   const sections = [
     { id: 'veri-sorumlusu', title: disclosureText.veriSorumlusuTitle },
@@ -63,17 +66,77 @@ export default function KvkkAydinlatmaMetniClient({ disclosureText }: KvkkAydinl
     { id: 'haklariniz', title: disclosureText.haklarTitle }
   ]
 
+  // HTML content'i işle - H1 ve H2'lere id ekle
+  useEffect(() => {
+    if (disclosureText?.content) {
+      const parser = new DOMParser()
+      const doc = parser.parseFromString(disclosureText.content, 'text/html')
+      
+      // H1'lere id ekle
+      const h1Elements = doc.querySelectorAll('h1')
+      h1Elements.forEach((h1, index) => {
+        h1.id = `heading-${index}`
+      })
+      
+      // H2'lere id ekle
+      const h2Elements = doc.querySelectorAll('h2')
+      h2Elements.forEach((h2, index) => {
+        h2.id = `heading-h2-${index}`
+      })
+      
+      setProcessedContent(doc.documentElement.outerHTML)
+      
+      // Heading'leri çıkar
+      const extractedHeadings: Array<{ id: string; text: string; level: number }> = []
+      
+      h1Elements.forEach((h1, index) => {
+        extractedHeadings.push({
+          id: `heading-${index}`,
+          text: h1.textContent || '',
+          level: 1
+        })
+      })
+      
+      h2Elements.forEach((h2, index) => {
+        extractedHeadings.push({
+          id: `heading-h2-${index}`,
+          text: h2.textContent || '',
+          level: 2
+        })
+      })
+      
+      setHeadings(extractedHeadings)
+    }
+  }, [disclosureText?.content])
+
   useEffect(() => {
     const handleScroll = () => {
-      const scrollPosition = window.scrollY + 100
+      if (disclosureText?.content && processedContent && headings.length > 0) {
+        // New content, track headings
+        let currentSection = headings[0]?.id || ''
+        const allHeadings = Array.from(document.querySelectorAll('h1[id^="heading-"], h2[id^="heading-h2-"]'))
+        allHeadings.forEach((heading) => {
+          const element = document.getElementById(heading.id)
+          if (element) {
+            const rect = element.getBoundingClientRect()
+            if (rect.top <= 150) {
+              currentSection = heading.id
+            }
+          }
+        })
+        setActiveSection(currentSection)
+      } else {
+        // Old structure, track static sections
+        const scrollPosition = window.scrollY + 100
 
-      for (const section of sections) {
-        const element = document.getElementById(section.id)
-        if (element) {
-          const { offsetTop, offsetHeight } = element
-          if (scrollPosition >= offsetTop && scrollPosition < offsetTop + offsetHeight) {
-            setActiveSection(section.id)
-            break
+        for (const section of sections) {
+          const element = document.getElementById(section.id)
+          if (element) {
+            const { offsetTop, offsetHeight } = element
+            if (scrollPosition >= offsetTop && scrollPosition < offsetTop + offsetHeight) {
+              setActiveSection(section.id)
+              break
+            }
           }
         }
       }
@@ -83,7 +146,7 @@ export default function KvkkAydinlatmaMetniClient({ disclosureText }: KvkkAydinl
     handleScroll()
 
     return () => window.removeEventListener('scroll', handleScroll)
-  }, [])
+  }, [disclosureText, processedContent, headings, sections])
 
   const scrollToSection = (sectionId: string) => {
     const element = document.getElementById(sectionId)
@@ -129,19 +192,35 @@ export default function KvkkAydinlatmaMetniClient({ disclosureText }: KvkkAydinl
                     İçindekiler
                   </h3>
                   <nav className='space-y-2'>
-                    {sections.map((section) => (
-                      <button
-                        key={section.id}
-                        onClick={() => scrollToSection(section.id)}
-                        className={`w-full text-left px-3 py-2 rounded-md text-sm transition-colors duration-200 ${
-                          activeSection === section.id
-                            ? 'bg-blue-50 text-blue-700 font-medium border-l-4 border-blue-600'
-                            : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
-                        }`}
-                      >
-                        {section.title}
-                      </button>
-                    ))}
+                    {disclosureText?.content && headings.length > 0 ? (
+                      headings.map((heading) => (
+                        <button
+                          key={heading.id}
+                          onClick={() => scrollToSection(heading.id)}
+                          className={`w-full text-left px-3 py-2 rounded-md text-sm transition-colors duration-200 ${
+                            activeSection === heading.id
+                              ? 'bg-blue-50 text-blue-700 font-medium border-l-4 border-blue-600'
+                              : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
+                          } ${heading.level === 2 ? 'ml-4 text-xs' : ''}`}
+                        >
+                          {heading.text}
+                        </button>
+                      ))
+                    ) : (
+                      sections.map((section) => (
+                        <button
+                          key={section.id}
+                          onClick={() => scrollToSection(section.id)}
+                          className={`w-full text-left px-3 py-2 rounded-md text-sm transition-colors duration-200 ${
+                            activeSection === section.id
+                              ? 'bg-blue-50 text-blue-700 font-medium border-l-4 border-blue-600'
+                              : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
+                          }`}
+                        >
+                          {section.title}
+                        </button>
+                      ))
+                    )}
                   </nav>
                 </div>
               </div>
@@ -151,15 +230,33 @@ export default function KvkkAydinlatmaMetniClient({ disclosureText }: KvkkAydinl
             <div className='lg:w-3/4'>
               <div className='bg-white rounded-lg shadow-sm border border-gray-200 p-8 space-y-12'>
                 
-                {/* Veri Sorumlusu */}
-                <section id='veri-sorumlusu'>
-                  <div className='bg-blue-50 border border-blue-200 rounded-lg p-6 mb-8'>
-                    <h2 className='text-xl font-bold text-blue-900 mb-4'>
-                      {disclosureText.veriSorumlusuTitle}
-                    </h2>
-                    <div className='text-blue-800 font-medium' dangerouslySetInnerHTML={{ __html: disclosureText.veriSorumlusuContent }} />
-                  </div>
-                </section>
+                {disclosureText?.content ? (
+                  <>
+                    {/* Veri Sorumlusu */}
+                    <div className='bg-blue-50 border border-blue-200 rounded-lg p-6 mb-8'>
+                      <h2 className='text-xl font-bold text-blue-900 mb-4'>
+                        {disclosureText.veriSorumlusuTitle}
+                      </h2>
+                      <div className='text-blue-800 font-medium' dangerouslySetInnerHTML={{ __html: disclosureText.veriSorumlusuContent }} />
+                    </div>
+                    
+                    {/* Yeni HTML Content */}
+                    <div 
+                      className='prose prose-lg max-w-none text-gray-700'
+                      dangerouslySetInnerHTML={{ __html: processedContent }}
+                    />
+                  </>
+                ) : (
+                  <>
+                    {/* Veri Sorumlusu */}
+                    <section id='veri-sorumlusu'>
+                      <div className='bg-blue-50 border border-blue-200 rounded-lg p-6 mb-8'>
+                        <h2 className='text-xl font-bold text-blue-900 mb-4'>
+                          {disclosureText.veriSorumlusuTitle}
+                        </h2>
+                        <div className='text-blue-800 font-medium' dangerouslySetInnerHTML={{ __html: disclosureText.veriSorumlusuContent }} />
+                      </div>
+                    </section>
 
                 {/* Kişisel Verilerinizin İşlenme Amacı */}
                 <section id='isleme-amaci'>
@@ -314,6 +411,8 @@ export default function KvkkAydinlatmaMetniClient({ disclosureText }: KvkkAydinl
                     </div>
                   </div>
                 </section>
+                  </>
+                )}
 
               </div>
 
@@ -376,3 +475,4 @@ export default function KvkkAydinlatmaMetniClient({ disclosureText }: KvkkAydinl
     </div>
   )
 }
+

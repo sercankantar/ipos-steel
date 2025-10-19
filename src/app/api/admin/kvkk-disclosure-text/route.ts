@@ -30,6 +30,7 @@ export async function POST(request: NextRequest) {
     const disclosureText = await prisma.kvkkDisclosureText.create({
       data: {
         title: data.title || "Kişisel Verilere İlişkin Aydınlatma Metni",
+        content: data.content || "",
         
         // Hero Section
         heroTitle: data.heroTitle,
@@ -39,37 +40,31 @@ export async function POST(request: NextRequest) {
         veriSorumlusuTitle: data.veriSorumlusuTitle || "Veri Sorumlusu",
         veriSorumlusuContent: data.veriSorumlusuContent,
 
-        // Kişisel Verilerin İşlenme Amacı Bölümü
-        islemeAmaciTitle: data.islemeAmaciTitle || "Kişisel Verilerinizin İşlenme Amacı",
-        islemeAmaciContent: data.islemeAmaciContent,
+        // Eski alanlar için boş değerler
+        islemeAmaciTitle: data.islemeAmaciTitle || "",
+        islemeAmaciContent: data.islemeAmaciContent || "",
         islemeAmaciBullets: data.islemeAmaciBullets || [],
-        calisanVerileriTitle: data.calisanVerileriTitle || "Çalışan Verileri",
-        calisanVerileriContent: data.calisanVerileriContent,
-
-        // Kişisel Verilerin Aktarılması Bölümü
-        aktarilmaTitle: data.aktarilmaTitle || "Kişisel Verilerinizin Aktarılması",
-        aktarilmaContent: data.aktarilmaContent,
+        calisanVerileriTitle: data.calisanVerileriTitle || "",
+        calisanVerileriContent: data.calisanVerileriContent || "",
+        aktarilmaTitle: data.aktarilmaTitle || "",
+        aktarilmaContent: data.aktarilmaContent || "",
         yurtIciAktarim: data.yurtIciAktarim || [],
         yurtDisiAktarim: data.yurtDisiAktarim || [],
-        acikRizaTitle: data.acikRizaTitle || "Açık Rıza ile İşleme",
-        acikRizaContent: data.acikRizaContent,
+        acikRizaTitle: data.acikRizaTitle || "",
+        acikRizaContent: data.acikRizaContent || "",
         acikRizaBullets: data.acikRizaBullets || [],
-
-        // Toplanma Yöntemi ve Hukuki Sebep Bölümü
-        toplamaYontemiTitle: data.toplamaYontemiTitle || "Kişisel Verilerinizin Toplanma Yöntemi ve Hukuki Sebebi",
-        toplamaYontemiContent: data.toplamaYontemiContent,
+        toplamaYontemiTitle: data.toplamaYontemiTitle || "",
+        toplamaYontemiContent: data.toplamaYontemiContent || "",
         dijitalKanallar: data.dijitalKanallar || [],
         fizikselKanallar: data.fizikselKanallar || [],
         iletisimKanallari: data.iletisimKanallari || [],
-
-        // Kişisel Veri Sahibi Hakları Bölümü
-        haklarTitle: data.haklarTitle || "Kişisel Veri Sahibi Olarak Haklarınız",
-        haklarContent: data.haklarContent,
+        haklarTitle: data.haklarTitle || "",
+        haklarContent: data.haklarContent || "",
         haklarListesi: data.haklarListesi || [],
-        haklarKullanimTitle: data.haklarKullanimTitle || "Haklarınızı Nasıl Kullanabilirsiniz?",
-        haklarKullanimContent: data.haklarKullanimContent,
-        emailIletisim: data.emailIletisim,
-        kepIletisim: data.kepIletisim,
+        haklarKullanimTitle: data.haklarKullanimTitle || "",
+        haklarKullanimContent: data.haklarKullanimContent || "",
+        emailIletisim: data.emailIletisim || "",
+        kepIletisim: data.kepIletisim || "",
         basvuruSartlari: data.basvuruSartlari || [],
 
         // İletişim Bölümü
