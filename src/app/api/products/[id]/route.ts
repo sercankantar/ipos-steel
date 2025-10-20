@@ -7,7 +7,13 @@ export async function GET(_req: NextRequest, { params }: { params: { id: string 
   try {
     const product = await prisma.product.findUnique({
       where: { id: params.id },
-      include: { category: true },
+      include: { 
+        category: true,
+        catalog: true,
+        images: {
+          orderBy: { order: 'asc' }
+        }
+      },
     })
     if (!product) return NextResponse.json({ error: 'Ürün bulunamadı' }, { status: 404 })
     return NextResponse.json(product, {

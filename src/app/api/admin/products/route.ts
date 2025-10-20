@@ -13,7 +13,13 @@ export async function GET() {
 
     const products = await prisma.product.findMany({
       orderBy: { createdAt: 'desc' },
-      include: { category: true }
+      include: { 
+        category: true,
+        catalog: true,
+        images: {
+          orderBy: { order: 'asc' }
+        }
+      }
     })
 
     return NextResponse.json(products)
@@ -34,7 +40,24 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Yetkisiz erişim' }, { status: 401 })
     }
 
-    const { name, description, series, material, coatingType, thickness, width, height, imageUrl, imagePublicId, categoryId, isActive } = await request.json()
+    const { 
+      name, 
+      description, 
+      series, 
+      material, 
+      coatingType, 
+      thickness, 
+      width, 
+      height, 
+      imageUrl, 
+      imagePublicId, 
+      generalInfo,
+      technicalInfo,
+      catalogId,
+      categoryId, 
+      isActive,
+      images 
+    } = await request.json()
 
     const product = await prisma.product.create({
       data: {
@@ -48,8 +71,25 @@ export async function POST(request: NextRequest) {
         height: height || null,
         imageUrl: imageUrl || null,
         imagePublicId: imagePublicId || null,
+        generalInfo: generalInfo || null,
+        technicalInfo: technicalInfo || null,
+        catalogId: catalogId || null,
         isActive: typeof isActive === 'boolean' ? isActive : true,
         categoryId,
+        images: images ? {
+          create: images.map((img: any, index: number) => ({
+            imageUrl: img.imageUrl,
+            imagePublicId: img.imagePublicId,
+            order: index
+          }))
+        } : undefined
+      },
+      include: {
+        category: true,
+        catalog: true,
+        images: {
+          orderBy: { order: 'asc' }
+        }
       }
     })
 

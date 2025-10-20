@@ -108,6 +108,30 @@ export default function ProductDetail({ params }: { params: { id: string } }) {
     })
   }
 
+  const handleCatalogDownload = async (catalogId: string) => {
+    try {
+      const response = await fetch(`/api/catalogs/${catalogId}/download`, {
+        method: 'POST'
+      })
+      
+      if (response.ok) {
+        const blob = await response.blob()
+        const url = window.URL.createObjectURL(blob)
+        const a = document.createElement('a')
+        a.href = url
+        a.download = `${product.catalog?.title || 'katalog'}.pdf`
+        document.body.appendChild(a)
+        a.click()
+        window.URL.revokeObjectURL(url)
+        document.body.removeChild(a)
+      } else {
+        console.error('Katalog indirilemedi')
+      }
+    } catch (error) {
+      console.error('Katalog indirme hatası:', error)
+    }
+  }
+
   if (loading) {
     return (
       <MaxWidthWrapper>
@@ -124,12 +148,12 @@ export default function ProductDetail({ params }: { params: { id: string } }) {
     )
   }
 
-  // Örnek ürün görselleri - gerçek veriler geldiğinde bu kısım güncellenecek
-  const productImages = product.imageUrl ? [product.imageUrl] : [
-    '/placeholder-product-1.jpg',
-    '/placeholder-product-2.jpg',
-    '/placeholder-product-3.jpg'
-  ]
+  // Ürün görselleri - önce çoklu görseller, sonra tek görsel, son olarak placeholder
+  const productImages = product.images && product.images.length > 0 
+    ? product.images.map((img: any) => img.imageUrl)
+    : product.imageUrl 
+    ? [product.imageUrl]
+    : ['/placeholder-product-1.jpg']
 
   const tabs = [
     { id: 'genel', label: 'Genel Bilgi' },
@@ -140,117 +164,139 @@ export default function ProductDetail({ params }: { params: { id: string } }) {
   const renderTabContent = () => {
     switch (activeTab) {
       case 'genel':
-        return (
+  return (
           <div className="space-y-6">
-            <div>
-              <h3 className="text-xl font-bold text-gray-800 mb-4">Genel Özellikleri</h3>
-              <p className="text-gray-700 leading-relaxed mb-4">
-                TÜV sertifikalı, IEC standart kablolar ve terminaller ile donatılmış ürünlerimiz iki üretim yöntemi ile ayrılmaktadır.
-              </p>
-              <ul className="space-y-2 text-gray-700">
-                <li className="flex items-start">
-                  <span className="w-2 h-2 bg-gray-400 rounded-full mt-2 mr-3 flex-shrink-0"></span>
-                  Modüler tip prizler ile donatılmış hazır standart ürünler
-                </li>
-                <li className="flex items-start">
-                  <span className="w-2 h-2 bg-gray-400 rounded-full mt-2 mr-3 flex-shrink-0"></span>
-                  İhtiyaçlara ve isteğe bağlı olarak her marka ve sayıda modüler tip prizler ile donatılabilen özel ürünler
-                </li>
-              </ul>
-            </div>
-            
-            <div>
-              <h3 className="text-xl font-bold text-red-600 mb-4">E-Line Smart Masaüstü Priz</h3>
-              <ul className="space-y-2 text-gray-700">
-                <li className="flex items-start">
-                  <span className="w-2 h-2 bg-gray-400 rounded-full mt-2 mr-3 flex-shrink-0"></span>
-                  SM-STD-I Standart Serbest Tip
-                </li>
-                <li className="flex items-start">
-                  <span className="w-2 h-2 bg-gray-400 rounded-full mt-2 mr-3 flex-shrink-0"></span>
-                  SM-LUX-II Lüks Sabitlenebilir Tip (masaya sabitleme ayakları ile birlikte)
-                </li>
-                <li className="flex items-start">
-                  <span className="w-2 h-2 bg-gray-400 rounded-full mt-2 mr-3 flex-shrink-0"></span>
-                  SM-IN-I Masaya Gömme Dikdörtgen Tip
-                </li>
-                <li className="flex items-start">
-                  <span className="w-2 h-2 bg-gray-400 rounded-full mt-2 mr-3 flex-shrink-0"></span>
-                  SM-K Kolon Tip
-                </li>
-              </ul>
-              <p className="text-gray-700 mt-4">
-                8 farklı yapı ve istenen içerikte üretilen ürünlerimiz ile EAE, gelecekteki ihtiyaçlarınız için esnek, sağlam, modüler, estetik ve güvenli çözümler sunmaktadır.
-              </p>
-            </div>
-
-            <div>
-              <h3 className="text-xl font-bold text-red-600 mb-4">Kullanım Alanları</h3>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <ul className="space-y-2 text-gray-700">
-                  <li className="flex items-start">
-                    <span className="w-2 h-2 bg-gray-400 rounded-full mt-2 mr-3 flex-shrink-0"></span>
-                    Bankalar
-                  </li>
-                  <li className="flex items-start">
-                    <span className="w-2 h-2 bg-gray-400 rounded-full mt-2 mr-3 flex-shrink-0"></span>
-                    Oteller
-                  </li>
-                </ul>
-                <ul className="space-y-2 text-gray-700">
-                  <li className="flex items-start">
-                    <span className="w-2 h-2 bg-gray-400 rounded-full mt-2 mr-3 flex-shrink-0"></span>
-                    Ofis ve iş yerleri, yönetim binaları
-                  </li>
-                  <li className="flex items-start">
-                    <span className="w-2 h-2 bg-gray-400 rounded-full mt-2 mr-3 flex-shrink-0"></span>
-                    Hastaneler
-                  </li>
-                </ul>
+            {product.generalInfo ? (
+              <div className="prose max-w-none">
+                <div 
+                  className="text-gray-700 leading-relaxed whitespace-pre-line"
+                  dangerouslySetInnerHTML={{ __html: product.generalInfo }}
+                />
               </div>
-            </div>
+            ) : (
+              <div className="space-y-6">
+        <div>
+                  <h3 className="text-xl font-bold text-gray-800 mb-4">Genel Özellikleri</h3>
+                  <p className="text-gray-700 leading-relaxed mb-4">
+                    TÜV sertifikalı, IEC standart kablolar ve terminaller ile donatılmış ürünlerimiz iki üretim yöntemi ile ayrılmaktadır.
+                  </p>
+                  <ul className="space-y-2 text-gray-700">
+                    <li className="flex items-start">
+                      <span className="w-2 h-2 bg-gray-400 rounded-full mt-2 mr-3 flex-shrink-0"></span>
+                      Modüler tip prizler ile donatılmış hazır standart ürünler
+                    </li>
+                    <li className="flex items-start">
+                      <span className="w-2 h-2 bg-gray-400 rounded-full mt-2 mr-3 flex-shrink-0"></span>
+                      İhtiyaçlara ve isteğe bağlı olarak her marka ve sayıda modüler tip prizler ile donatılabilen özel ürünler
+                    </li>
+                  </ul>
+        </div>
+                
+        <div>
+                  <h3 className="text-xl font-bold text-red-600 mb-4">E-Line Smart Masaüstü Priz</h3>
+                  <ul className="space-y-2 text-gray-700">
+                    <li className="flex items-start">
+                      <span className="w-2 h-2 bg-gray-400 rounded-full mt-2 mr-3 flex-shrink-0"></span>
+                      SM-STD-I Standart Serbest Tip
+                    </li>
+                    <li className="flex items-start">
+                      <span className="w-2 h-2 bg-gray-400 rounded-full mt-2 mr-3 flex-shrink-0"></span>
+                      SM-LUX-II Lüks Sabitlenebilir Tip (masaya sabitleme ayakları ile birlikte)
+                    </li>
+                    <li className="flex items-start">
+                      <span className="w-2 h-2 bg-gray-400 rounded-full mt-2 mr-3 flex-shrink-0"></span>
+                      SM-IN-I Masaya Gömme Dikdörtgen Tip
+                    </li>
+                    <li className="flex items-start">
+                      <span className="w-2 h-2 bg-gray-400 rounded-full mt-2 mr-3 flex-shrink-0"></span>
+                      SM-K Kolon Tip
+                    </li>
+                  </ul>
+                  <p className="text-gray-700 mt-4">
+                    8 farklı yapı ve istenen içerikte üretilen ürünlerimiz ile EAE, gelecekteki ihtiyaçlarınız için esnek, sağlam, modüler, estetik ve güvenli çözümler sunmaktadır.
+                  </p>
+                </div>
+
+                <div>
+                  <h3 className="text-xl font-bold text-red-600 mb-4">Kullanım Alanları</h3>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <ul className="space-y-2 text-gray-700">
+                      <li className="flex items-start">
+                        <span className="w-2 h-2 bg-gray-400 rounded-full mt-2 mr-3 flex-shrink-0"></span>
+                        Bankalar
+                      </li>
+                      <li className="flex items-start">
+                        <span className="w-2 h-2 bg-gray-400 rounded-full mt-2 mr-3 flex-shrink-0"></span>
+                        Oteller
+                      </li>
+                    </ul>
+                    <ul className="space-y-2 text-gray-700">
+                      <li className="flex items-start">
+                        <span className="w-2 h-2 bg-gray-400 rounded-full mt-2 mr-3 flex-shrink-0"></span>
+                        Ofis ve iş yerleri, yönetim binaları
+                      </li>
+                      <li className="flex items-start">
+                        <span className="w-2 h-2 bg-gray-400 rounded-full mt-2 mr-3 flex-shrink-0"></span>
+                        Hastaneler
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
         )
       
       case 'teknik':
         return (
           <div className="space-y-6">
-            <h3 className="text-xl font-bold text-gray-800 mb-4">Teknik Özellikler</h3>
-            <h4 className="text-lg font-semibold text-gray-700 mb-4">E-Line Smart</h4>
-            <ul className="space-y-3 text-gray-700">
-              <li className="flex items-start">
-                <span className="w-2 h-2 bg-gray-400 rounded-full mt-2 mr-3 flex-shrink-0"></span>
-                <span><strong>Gövde Malzemesi:</strong> Alüminyum, beyaz ve siyah renk alternatifleri ile anodik oksidasyon veya elektrostatik toz boya kaplama</span>
-              </li>
-              <li className="flex items-start">
-                <span className="w-2 h-2 bg-gray-400 rounded-full mt-2 mr-3 flex-shrink-0"></span>
-                <span><strong>Yan Kapaklar:</strong> Polikarbonat (PC), "halogen free", IEC 60965 (960 °C glow wire test) ve UL94 "V0" alev direnci uyumlu</span>
-              </li>
-              <li className="flex items-start">
-                <span className="w-2 h-2 bg-gray-400 rounded-full mt-2 mr-3 flex-shrink-0"></span>
-                <span><strong>Standart Ürünler (Serbest Tip):</strong> Entegre ayaklar ile masaya sabitlenebilir veya yan kapaklardaki vida delikleri ile masaya vida ile sabitlenebilir</span>
-              </li>
-              <li className="flex items-start">
-                <span className="w-2 h-2 bg-gray-400 rounded-full mt-2 mr-3 flex-shrink-0"></span>
-                <span><strong>Gömme Tip Ürünler:</strong> Push-open/push-close kapak sistemi, kırılmayı önlemek için maksimum 90 derece açılır</span>
-              </li>
-              <li className="flex items-start">
-                <span className="w-2 h-2 bg-gray-400 rounded-full mt-2 mr-3 flex-shrink-0"></span>
-                <span><strong>Silindirik Tip Ürünler:</strong> "Push-open" sistemi, tam açıkken düşmeyi önleyen fren mekanizması</span>
-              </li>
-              <li className="flex items-start">
-                <span className="w-2 h-2 bg-gray-400 rounded-full mt-2 mr-3 flex-shrink-0"></span>
-                <span><strong>İç Bağlantılar:</strong> Her iletken için vidasız push-in terminaller ile terminal bloğu bağlantı aparatı</span>
-              </li>
-              <li className="flex items-start">
-                <span className="w-2 h-2 bg-gray-400 rounded-full mt-2 mr-3 flex-shrink-0"></span>
-                <span><strong>Güç Çıkışları:</strong> 2.5 mm² veya isteğe bağlı 1.5 mm² H07Z1-K tipi kablolar ile bağlı, en az 16A yük kapasitesi için vidasız push-in terminaller</span>
-              </li>
-              <li className="flex items-start">
-                <span className="w-2 h-2 bg-gray-400 rounded-full mt-2 mr-3 flex-shrink-0"></span>
-                <span><strong>Topraklama:</strong> Alüminyum gövdeye sabitlenmiş topraklama bağlantı vidası ve terminali, 2.5 mm² H07Z1-K tipi kablo ile gövde koruması için bağlı</span>
-              </li>
-            </ul>
+            {product.technicalInfo ? (
+              <div className="prose max-w-none">
+                <div 
+                  className="text-gray-700 leading-relaxed whitespace-pre-line"
+                  dangerouslySetInnerHTML={{ __html: product.technicalInfo }}
+                />
+              </div>
+            ) : (
+              <div className="space-y-6">
+                <h3 className="text-xl font-bold text-gray-800 mb-4">Teknik Özellikler</h3>
+                <h4 className="text-lg font-semibold text-gray-700 mb-4">E-Line Smart</h4>
+                <ul className="space-y-3 text-gray-700">
+                  <li className="flex items-start">
+                    <span className="w-2 h-2 bg-gray-400 rounded-full mt-2 mr-3 flex-shrink-0"></span>
+                    <span><strong>Gövde Malzemesi:</strong> Alüminyum, beyaz ve siyah renk alternatifleri ile anodik oksidasyon veya elektrostatik toz boya kaplama</span>
+                  </li>
+                  <li className="flex items-start">
+                    <span className="w-2 h-2 bg-gray-400 rounded-full mt-2 mr-3 flex-shrink-0"></span>
+                    <span><strong>Yan Kapaklar:</strong> Polikarbonat (PC), "halogen free", IEC 60965 (960 °C glow wire test) ve UL94 "V0" alev direnci uyumlu</span>
+                  </li>
+                  <li className="flex items-start">
+                    <span className="w-2 h-2 bg-gray-400 rounded-full mt-2 mr-3 flex-shrink-0"></span>
+                    <span><strong>Standart Ürünler (Serbest Tip):</strong> Entegre ayaklar ile masaya sabitlenebilir veya yan kapaklardaki vida delikleri ile masaya vida ile sabitlenebilir</span>
+                  </li>
+                  <li className="flex items-start">
+                    <span className="w-2 h-2 bg-gray-400 rounded-full mt-2 mr-3 flex-shrink-0"></span>
+                    <span><strong>Gömme Tip Ürünler:</strong> Push-open/push-close kapak sistemi, kırılmayı önlemek için maksimum 90 derece açılır</span>
+                  </li>
+                  <li className="flex items-start">
+                    <span className="w-2 h-2 bg-gray-400 rounded-full mt-2 mr-3 flex-shrink-0"></span>
+                    <span><strong>Silindirik Tip Ürünler:</strong> "Push-open" sistemi, tam açıkken düşmeyi önleyen fren mekanizması</span>
+                  </li>
+                  <li className="flex items-start">
+                    <span className="w-2 h-2 bg-gray-400 rounded-full mt-2 mr-3 flex-shrink-0"></span>
+                    <span><strong>İç Bağlantılar:</strong> Her iletken için vidasız push-in terminaller ile terminal bloğu bağlantı aparatı</span>
+                  </li>
+                  <li className="flex items-start">
+                    <span className="w-2 h-2 bg-gray-400 rounded-full mt-2 mr-3 flex-shrink-0"></span>
+                    <span><strong>Güç Çıkışları:</strong> 2.5 mm² veya isteğe bağlı 1.5 mm² H07Z1-K tipi kablolar ile bağlı, en az 16A yük kapasitesi için vidasız push-in terminaller</span>
+                  </li>
+                  <li className="flex items-start">
+                    <span className="w-2 h-2 bg-gray-400 rounded-full mt-2 mr-3 flex-shrink-0"></span>
+                    <span><strong>Topraklama:</strong> Alüminyum gövdeye sabitlenmiş topraklama bağlantı vidası ve terminali, 2.5 mm² H07Z1-K tipi kablo ile gövde koruması için bağlı</span>
+                  </li>
+                </ul>
+              </div>
+            )}
           </div>
         )
       
@@ -259,21 +305,61 @@ export default function ProductDetail({ params }: { params: { id: string } }) {
           <div className="space-y-6">
             <h3 className="text-xl font-bold text-gray-800 mb-4">Kataloglar</h3>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              <div className="bg-white border border-gray-200 rounded-lg overflow-hidden hover:shadow-lg transition-shadow">
-                <div className="aspect-video bg-gray-100 flex items-center justify-center">
-                  <FileText className="w-12 h-12 text-gray-400" />
-                </div>
-                <div className="p-4">
-                  <h4 className="font-semibold text-gray-800 mb-2">E-LINE SMART</h4>
-                  <p className="text-sm text-gray-600 mb-4">Ürün kataloğu ve teknik dokümanlar</p>
-                  <div className="flex justify-between">
-                    <button className="flex items-center transition-colors" style={{color: '#1a3056'}} onMouseEnter={(e) => (e.target as HTMLButtonElement).style.color = '#0f1f3a'} onMouseLeave={(e) => (e.target as HTMLButtonElement).style.color = '#1a3056'}>
-                      <Download className="w-4 h-4 mr-1" />
-                      İndir
-                    </button>
+              {product.catalog ? (
+                <div className="bg-white border border-gray-200 rounded-lg overflow-hidden hover:shadow-lg transition-shadow">
+                  <div className="aspect-video bg-gray-100 flex items-center justify-center">
+                    {product.catalog.imageUrl ? (
+                      <img 
+                        src={product.catalog.imageUrl} 
+                        alt={product.catalog.title}
+                        className="w-full h-full object-cover"
+                      />
+                    ) : (
+                      <FileText className="w-12 h-12 text-gray-400" />
+                    )}
+                  </div>
+                  <div className="p-4">
+                    <h4 className="font-semibold text-gray-800 mb-2">{product.catalog.title}</h4>
+                    <p className="text-sm text-gray-600 mb-4">{product.catalog.description}</p>
+                    <div className="flex justify-between">
+                      <button className="text-gray-600 hover:text-gray-800 flex items-center">
+                        <Eye className="w-4 h-4 mr-1" />
+                        Görüntüle
+                      </button>
+                      <button 
+                        onClick={() => product.catalog?.id && handleCatalogDownload(product.catalog.id)}
+                        className="flex items-center transition-colors" 
+                        style={{color: '#1a3056'}} 
+                        onMouseEnter={(e) => (e.target as HTMLButtonElement).style.color = '#0f1f3a'} 
+                        onMouseLeave={(e) => (e.target as HTMLButtonElement).style.color = '#1a3056'}
+                      >
+                        <Download className="w-4 h-4 mr-1" />
+                        İndir
+                      </button>
+                    </div>
                   </div>
                 </div>
-              </div>
+              ) : (
+                <div className="bg-white border border-gray-200 rounded-lg overflow-hidden hover:shadow-lg transition-shadow">
+                  <div className="aspect-video bg-gray-100 flex items-center justify-center">
+                    <FileText className="w-12 h-12 text-gray-400" />
+                  </div>
+                  <div className="p-4">
+                    <h4 className="font-semibold text-gray-800 mb-2">E-LINE SMART</h4>
+                    <p className="text-sm text-gray-600 mb-4">Ürün kataloğu ve teknik dokümanlar</p>
+                    <div className="flex justify-between">
+                      <button className="text-gray-600 hover:text-gray-800 flex items-center">
+                        <Eye className="w-4 h-4 mr-1" />
+                        Görüntüle
+                      </button>
+                      <button className="flex items-center transition-colors" style={{color: '#1a3056'}} onMouseEnter={(e) => (e.target as HTMLButtonElement).style.color = '#0f1f3a'} onMouseLeave={(e) => (e.target as HTMLButtonElement).style.color = '#1a3056'}>
+                        <Download className="w-4 h-4 mr-1" />
+                        İndir
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         )
@@ -314,7 +400,7 @@ export default function ProductDetail({ params }: { params: { id: string } }) {
             
             {/* Küçük görseller */}
             <div className="flex space-x-2 overflow-x-auto pb-2">
-              {productImages.map((image, index) => (
+              {productImages.map((image: string, index: number) => (
                 <button
                   key={index}
                   onClick={() => setSelectedImageIndex(index)}
@@ -377,7 +463,15 @@ export default function ProductDetail({ params }: { params: { id: string } }) {
                   </div>
                   <div className="flex space-x-2">
                     
-                    <button className="text-sm transition-colors" style={{color: '#1a3056'}} onMouseEnter={(e) => (e.target as HTMLButtonElement).style.color = '#0f1f3a'} onMouseLeave={(e) => (e.target as HTMLButtonElement).style.color = '#1a3056'}>İndir</button>
+                    <button 
+                      onClick={() => product.catalog?.id && handleCatalogDownload(product.catalog.id)}
+                      className="text-sm transition-colors" 
+                      style={{color: '#1a3056'}} 
+                      onMouseEnter={(e) => (e.target as HTMLButtonElement).style.color = '#0f1f3a'} 
+                      onMouseLeave={(e) => (e.target as HTMLButtonElement).style.color = '#1a3056'}
+                    >
+                      İndir
+                    </button>
                   </div>
                 </div>
               </div>
@@ -454,7 +548,7 @@ export default function ProductDetail({ params }: { params: { id: string } }) {
             
             {/* Alt küçük görseller */}
             <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex space-x-2">
-              {productImages.map((image, index) => (
+              {productImages.map((image: string, index: number) => (
                 <button
                   key={index}
                   onClick={() => setSelectedImageIndex(index)}

@@ -13,7 +13,29 @@ export async function PUT(
       return NextResponse.json({ error: 'Yetkisiz erişim' }, { status: 401 })
     }
 
-    const { name, description, series, material, coatingType, thickness, width, height, imageUrl, imagePublicId, categoryId, isActive } = await request.json()
+    const { 
+      name, 
+      description, 
+      series, 
+      material, 
+      coatingType, 
+      thickness, 
+      width, 
+      height, 
+      imageUrl, 
+      imagePublicId, 
+      generalInfo,
+      technicalInfo,
+      catalogId,
+      categoryId, 
+      isActive,
+      images 
+    } = await request.json()
+
+    // Önce mevcut görselleri sil
+    await prisma.productImage.deleteMany({
+      where: { productId: params.id }
+    })
 
     const product = await prisma.product.update({
       where: { id: params.id },
@@ -28,8 +50,25 @@ export async function PUT(
         height: height || null,
         imageUrl: imageUrl || null,
         imagePublicId: imagePublicId || null,
+        generalInfo: generalInfo || null,
+        technicalInfo: technicalInfo || null,
+        catalogId: catalogId || null,
         categoryId,
         isActive,
+        images: images ? {
+          create: images.map((img: any, index: number) => ({
+            imageUrl: img.imageUrl,
+            imagePublicId: img.imagePublicId,
+            order: index
+          }))
+        } : undefined
+      },
+      include: {
+        category: true,
+        catalog: true,
+        images: {
+          orderBy: { order: 'asc' }
+        }
       }
     })
 

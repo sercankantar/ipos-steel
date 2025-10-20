@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
+import RichTextEditor from '@/components/ui/RichTextEditor'
 import { Plus, Edit, Trash2 } from 'lucide-react'
 import CategoriesManager from '@/components/CategoriesManager'
 
@@ -19,6 +20,11 @@ interface ProductItem {
   height?: string
   imageUrl?: string
   imagePublicId?: string
+  generalInfo?: string
+  technicalInfo?: string
+  catalogId?: string
+  catalog?: { id: string; title: string }
+  images?: { id: string; imageUrl: string; order: number }[]
   isActive: boolean
   categoryId: string
   category?: { id: string; name: string }
@@ -32,6 +38,7 @@ export default function UrunIslemler() {
   const [showForm, setShowForm] = useState(false)
   const [activeTab, setActiveTab] = useState<'products' | 'categories'>('products')
   const [categories, setCategories] = useState<{ id: string; name: string }[]>([])
+  const [catalogs, setCatalogs] = useState<{ id: string; title: string }[]>([])
   const [editingProduct, setEditingProduct] = useState<ProductItem | null>(null)
   const [formData, setFormData] = useState({
     name: '',
@@ -43,15 +50,19 @@ export default function UrunIslemler() {
     width: '',
     height: '',
     imageUrl: '',
+    generalInfo: '',
+    technicalInfo: '',
+    catalogId: '',
     categoryId: ''
   })
-  const [image, setImage] = useState<File | null>(null)
-  const [imagePreview, setImagePreview] = useState<string | null>(null)
+  const [images, setImages] = useState<File[]>([])
+  const [imagePreviews, setImagePreviews] = useState<string[]>([])
   const fileRef = useRef<HTMLInputElement | null>(null)
 
   useEffect(() => {
     fetchProducts()
     fetchCategories()
+    fetchCatalogs()
   }, [])
 
   const fetchProducts = async () => {
@@ -76,6 +87,16 @@ export default function UrunIslemler() {
     }
   }
 
+  const fetchCatalogs = async () => {
+    try {
+      const res = await fetch('/api/admin/catalogs')
+      const data = await res.json()
+      setCatalogs(Array.isArray(data) ? data.map((c: any) => ({ id: c.id, title: c.title })) : [])
+    } catch (e) {
+      console.error('Kataloglar yüklenirken hata:', e)
+    }
+  }
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     
@@ -86,20 +107,28 @@ export default function UrunIslemler() {
       
       const method = editingProduct ? 'PUT' : 'POST'
       
-      // Görsel seçilmişse önce yükle
-      let upload: { secure_url: string; public_id: string } | null = null
-      if (image) {
-        const fd = new FormData()
-        fd.append('file', image)
-        fd.append('folder', 'ipos-steel/products')
-        const up = await fetch('/api/admin/upload', { method: 'POST', body: fd })
-        if (up.ok) upload = await up.json()
+      // Çoklu görsel yükleme
+      const uploadedImages: { secure_url: string; public_id: string }[] = []
+      if (images.length > 0) {
+        for (const image of images) {
+          const fd = new FormData()
+          fd.append('file', image)
+          fd.append('folder', 'ipos-steel/products')
+          const up = await fetch('/api/admin/upload', { method: 'POST', body: fd })
+          if (up.ok) {
+            const upload = await up.json()
+            uploadedImages.push(upload)
+          }
+        }
       }
 
       const payload: any = {
         ...formData,
-        imageUrl: upload?.secure_url || formData.imageUrl || editingProduct?.imageUrl || '',
-        imagePublicId: upload?.public_id || editingProduct?.imagePublicId || undefined,
+        images: uploadedImages.map((img, index) => ({
+          imageUrl: img.secure_url,
+          imagePublicId: img.public_id,
+          order: index
+        }))
       }
 
       const response = await fetch(url, {
@@ -131,6 +160,9 @@ export default function UrunIslemler() {
       width: product.width || '',
       height: product.height || '',
       imageUrl: product.imageUrl || '',
+      generalInfo: product.generalInfo || '',
+      technicalInfo: product.technicalInfo || '',
+      catalogId: product.catalogId || '',
       categoryId: product.categoryId
     })
     setShowForm(true)
@@ -163,10 +195,13 @@ export default function UrunIslemler() {
       width: '',
       height: '',
       imageUrl: '',
+      generalInfo: '',
+      technicalInfo: '',
+      catalogId: '',
       categoryId: ''
     })
-    setImage(null)
-    setImagePreview(null)
+    setImages([])
+    setImagePreviews([])
     setEditingProduct(null)
     setShowForm(false)
   }
@@ -208,26 +243,25 @@ export default function UrunIslemler() {
       {activeTab === 'products' && (
         <>
           <div className="mb-8">
-            <Button onClick={() => setShowForm(true)}>
+            <Button onClick={() => setShowForm(!showForm)}>
               <Plus className="w-4 h-4 mr-2" />
-              Yeni Ürün Ekle
+              {showForm ? 'Formu Gizle' : 'Yeni Ürün Ekle'}
             </Button>
           </div>
 
-      {showForm && activeTab === 'products' && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center">
-          <div className="absolute inset-0 bg-black/40" onClick={resetForm} />
-          <div className="relative bg-white p-6 rounded-lg shadow w-full max-w-2xl mx-4">
-            <h2 className="text-xl font-semibold mb-4">
-              {editingProduct ? 'Ürün Düzenle' : 'Yeni Ürün Ekle'}
-            </h2>
-            <form onSubmit={handleSubmit} className="space-y-4">
+          {showForm && (
+            <div className="mb-8 bg-white p-6 rounded-lg shadow">
+              <h2 className="text-xl font-semibold mb-4">
+                {editingProduct ? 'Ürün Düzenle' : 'Yeni Ürün Ekle'}
+              </h2>
+              <form onSubmit={handleSubmit} className="space-y-4">
             <div>
-              <Label htmlFor="name">Ürün Adı</Label>
+              <Label htmlFor="name">Ürün Adı *</Label>
               <Input id="name" value={formData.name} onChange={(e) => setFormData({ ...formData, name: e.target.value })} required />
             </div>
+            
             <div>
-              <Label htmlFor="categoryId">Kategori</Label>
+              <Label htmlFor="categoryId">Kategori *</Label>
               <select id="categoryId" className="w-full border rounded-md h-10 px-3"
                 value={formData.categoryId}
                 onChange={(e) => setFormData({ ...formData, categoryId: e.target.value })}
@@ -240,8 +274,46 @@ export default function UrunIslemler() {
             </div>
             
             <div>
-              <Label htmlFor="description">Açıklama</Label>
-              <Input id="description" value={formData.description} onChange={(e) => setFormData({ ...formData, description: e.target.value })} />
+              <Label htmlFor="description">Ürün Açıklaması</Label>
+              <textarea 
+                id="description" 
+                value={formData.description} 
+                onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                className="w-full border rounded-md px-3 py-2 min-h-[100px] resize-none"
+                placeholder="Ürün hakkında kısa açıklama..."
+              />
+            </div>
+
+            <div>
+              <Label htmlFor="catalogId">Katalog</Label>
+              <select id="catalogId" className="w-full border rounded-md h-10 px-3"
+                value={formData.catalogId}
+                onChange={(e) => setFormData({ ...formData, catalogId: e.target.value })}>
+                <option value="">Katalog seçiniz (opsiyonel)</option>
+                {catalogs.map((c) => (
+                  <option key={c.id} value={c.id}>{c.title}</option>
+                ))}
+              </select>
+            </div>
+
+            <div>
+              <Label htmlFor="generalInfo">Genel Bilgi</Label>
+              <RichTextEditor
+                value={formData.generalInfo}
+                onChange={(value) => setFormData({ ...formData, generalInfo: value })}
+                placeholder="Ürünün genel özellikleri ve kullanım alanları..."
+                height={150}
+              />
+            </div>
+
+            <div>
+              <Label htmlFor="technicalInfo">Teknik Bilgi</Label>
+              <RichTextEditor
+                value={formData.technicalInfo}
+                onChange={(value) => setFormData({ ...formData, technicalInfo: value })}
+                placeholder="Teknik özellikler, malzeme bilgileri, standartlar..."
+                height={150}
+              />
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -272,45 +344,73 @@ export default function UrunIslemler() {
             </div>
             
             <div>
-              <Label htmlFor="imageUrl">Resim URL</Label>
-              <Input id="imageUrl" value={formData.imageUrl} onChange={(e) => setFormData({ ...formData, imageUrl: e.target.value })} />
+              <Label htmlFor="imageUrl">Resim URL (Opsiyonel)</Label>
+              <Input id="imageUrl" value={formData.imageUrl} onChange={(e) => setFormData({ ...formData, imageUrl: e.target.value })} placeholder="Manuel resim URL'i girebilirsiniz" />
             </div>
 
+            <div>
+              <Label>Fotoğraflar (Birden fazla seçebilirsiniz)</Label>
               <div className="flex items-center gap-3">
                 <input
                   ref={fileRef}
                   type="file"
                   accept="image/*"
+                  multiple
                   className="hidden"
                   onChange={(e) => {
-                    const f = e.target.files?.[0] || null
-                    setImage(f)
-                    setImagePreview(f ? URL.createObjectURL(f) : null)
+                    const files = Array.from(e.target.files || [])
+                    setImages(files)
+                    setImagePreviews(files.map(file => URL.createObjectURL(file)))
                   }}
                 />
                 <Button type="button" variant="outline" onClick={() => fileRef.current?.click()}>
-                  Fotoğraf Yükle
+                  Fotoğraflar Seç
                 </Button>
-                {image ? (
-                  <span className="text-sm text-gray-600 truncate max-w-[200px]">{image.name}</span>
+                {images.length > 0 ? (
+                  <span className="text-sm text-gray-600">{images.length} dosya seçildi</span>
                 ) : (
-                  <span className="text-sm text-gray-400">Seçili dosya yok</span>
+                  <span className="text-sm text-gray-400">Dosya seçilmedi</span>
                 )}
-                {imagePreview && <img src={imagePreview} alt="Önizleme" className="h-12 w-12 object-cover rounded border ml-auto" />}
               </div>
-            
-            <div className="flex space-x-4">
-              <Button type="submit">
-                {editingProduct ? 'Güncelle' : 'Ekle'}
-              </Button>
-              <Button type="button" variant="outline" onClick={resetForm}>
-                İptal
-              </Button>
+              
+              {imagePreviews.length > 0 && (
+                <div className="mt-4 grid grid-cols-2 md:grid-cols-4 gap-2">
+                  {imagePreviews.map((preview, index) => (
+                    <div key={index} className="relative">
+                      <img 
+                        src={preview} 
+                        alt={`Önizleme ${index + 1}`} 
+                        className="h-20 w-20 object-cover rounded border"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => {
+                          const newImages = images.filter((_, i) => i !== index)
+                          const newPreviews = imagePreviews.filter((_, i) => i !== index)
+                          setImages(newImages)
+                          setImagePreviews(newPreviews)
+                        }}
+                        className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs"
+                      >
+                        ×
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
-            </form>
-          </div>
-        </div>
-      )}
+            
+                <div className="flex space-x-4">
+                  <Button type="submit">
+                    {editingProduct ? 'Güncelle' : 'Ekle'}
+                  </Button>
+                  <Button type="button" variant="outline" onClick={resetForm}>
+                    İptal
+                  </Button>
+                </div>
+              </form>
+            </div>
+          )}
 
       <div className="bg-white shadow rounded-lg">
         <div className="px-6 py-4 border-b border-gray-200">
@@ -322,16 +422,24 @@ export default function UrunIslemler() {
               <div className="flex items-center justify-between">
                 <div className="flex-1">
                   <h4 className="text-lg font-medium text-gray-900">{product.name}</h4>
-                  <p className="text-sm text-gray-500">{product.description}</p>
+                  <p className="text-sm text-gray-500 line-clamp-2">{product.description}</p>
                   {product.category?.name && (
                     <div className="text-xs text-gray-500 mt-1">Kategori: {product.category.name}</div>
                   )}
-                  <div className="mt-2">
+                  {product.catalog?.title && (
+                    <div className="text-xs text-blue-600 mt-1">Katalog: {product.catalog.title}</div>
+                  )}
+                  <div className="mt-2 flex flex-wrap gap-2">
                     <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
                       product.isActive ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
                     }`}>
                       {product.isActive ? 'Aktif' : 'Pasif'}
                     </span>
+                    {product.images && product.images.length > 0 && (
+                      <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                        {product.images.length} Fotoğraf
+                      </span>
+                    )}
                   </div>
                 </div>
                 <div className="flex space-x-2">
@@ -351,13 +459,31 @@ export default function UrunIslemler() {
                   </Button>
                 </div>
               </div>
-              {product.imageUrl && (
+              {(product.imageUrl || (product.images && product.images.length > 0)) && (
                 <div className="mt-4">
-                  <img
-                    src={product.imageUrl}
-                    alt={product.name}
-                    className="h-32 w-32 object-cover rounded"
-                  />
+                  {product.images && product.images.length > 0 ? (
+                    <div className="flex gap-2 flex-wrap">
+                      {product.images.slice(0, 3).map((img, index) => (
+                        <img
+                          key={img.id}
+                          src={img.imageUrl}
+                          alt={`${product.name} ${index + 1}`}
+                          className="h-20 w-20 object-cover rounded"
+                        />
+                      ))}
+                      {product.images.length > 3 && (
+                        <div className="h-20 w-20 bg-gray-100 rounded flex items-center justify-center text-xs text-gray-500">
+                          +{product.images.length - 3}
+                        </div>
+                      )}
+                    </div>
+                  ) : product.imageUrl ? (
+                    <img
+                      src={product.imageUrl}
+                      alt={product.name}
+                      className="h-32 w-32 object-cover rounded"
+                    />
+                  ) : null}
                 </div>
               )}
             </div>
