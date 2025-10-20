@@ -68,7 +68,7 @@ export async function DELETE(request: NextRequest) {
     const isAuthenticated = await isAdminAuthenticated()
     if (!isAuthenticated) return NextResponse.json({ error: 'Yetkisiz erişim' }, { status: 401 })
 
-    const { searchParams } = new URL(request.url)
+    const { searchParams } = request.nextUrl
     const id = searchParams.get('id')
 
     if (!id) return NextResponse.json({ error: 'ID gerekli' }, { status: 400 })
