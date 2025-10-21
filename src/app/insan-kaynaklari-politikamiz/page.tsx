@@ -62,9 +62,9 @@ export default async function InsanKaynaklariPolitikamiz() {
                   <img 
                     src={policy.section1ImageUrl}
                     alt='İK görseli'
-                    className='w-full h-80 object-cover border border-gray-200'
+                    className='w-full h-80 object-cover  border-gray-200'
                   />
-                  <div className='absolute inset-0 bg-blue-900/10'></div>
+                  <div className='absolute inset-0 bg-white-900/10'></div>
                 </div>
               )}
             </div>
@@ -81,9 +81,9 @@ export default async function InsanKaynaklariPolitikamiz() {
                   <img 
                     src={policy.section2ImageUrl}
                     alt='Kurumsal değerler ve işbirliği'
-                    className='w-full h-80 object-cover border border-gray-200'
+                    className='w-full h-80 object-cover  border-gray-200'
                   />
-                  <div className='absolute inset-0 bg-blue-900/10'></div>
+                  <div className='absolute inset-0 bg-white-900/10'></div>
                 </div>
               )}
               
@@ -123,9 +123,9 @@ export default async function InsanKaynaklariPolitikamiz() {
                   <img 
                     src={policy.section3ImageUrl}
                     alt='Eğitim ve gelişim programları'
-                    className='w-full h-80 object-cover border border-gray-200'
+                    className='w-full h-80 object-cover  border-gray-200'
                   />
-                  <div className='absolute inset-0 bg-blue-900/10'></div>
+                  <div className='absolute inset-0 bg-white-900/10'></div>
                 </div>
               )}
             </div>

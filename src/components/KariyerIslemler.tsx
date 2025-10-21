@@ -341,7 +341,7 @@ export default function KariyerIslemler() {
               </div>
               <div className="flex items-center gap-3">
                 <input ref={s1InputRef} id="s1Image" type="file" accept="image/*" className="hidden" onChange={(e) => { const f = e.target.files?.[0] || null; setS1File(f); setS1Preview(f ? URL.createObjectURL(f) : hrForm.section1ImageUrl || null) }} />
-                <Button type="button" variant="outline" onClick={() => s1InputRef.current?.click()}>Bölüm 1 Görsel Seç</Button>
+                <Button type="button" variant="outline" onClick={() => s1InputRef.current?.click()}>Bölüm 1 (616x320 px) Görsel Seç</Button>
                 {s1Preview && <span className="text-sm text-gray-600 truncate max-w-[200px]">Seçili</span>}
                 {s1Preview && <img src={s1Preview} alt="Bölüm 1" className="h-16 w-16 object-cover border" />}
               </div>
@@ -366,7 +366,7 @@ export default function KariyerIslemler() {
               </div>
               <div className="flex items-center gap-3">
                 <input ref={s2InputRef} id="s2Image" type="file" accept="image/*" className="hidden" onChange={(e) => { const f = e.target.files?.[0] || null; setS2File(f); setS2Preview(f ? URL.createObjectURL(f) : hrForm.section2ImageUrl || null) }} />
-                <Button type="button" variant="outline" onClick={() => s2InputRef.current?.click()}>Bölüm 2 Görsel Seç</Button>
+                <Button type="button" variant="outline" onClick={() => s2InputRef.current?.click()}>Bölüm 2 (616x320 px) Görsel Seç</Button>
                 {s2Preview && <span className="text-sm text-gray-600 truncate max-w-[200px]">Seçili</span>}
                 {s2Preview && <img src={s2Preview} alt="Bölüm 2" className="h-16 w-16 object-cover border" />}
               </div>
@@ -402,7 +402,7 @@ export default function KariyerIslemler() {
               </div>
               <div className="flex items-center gap-3">
                 <input ref={s3InputRef} id="s3Image" type="file" accept="image/*" className="hidden" onChange={(e) => { const f = e.target.files?.[0] || null; setS3File(f); setS3Preview(f ? URL.createObjectURL(f) : hrForm.section3ImageUrl || null) }} />
-                <Button type="button" variant="outline" onClick={() => s3InputRef.current?.click()}>Bölüm 3 Görsel Seç</Button>
+                <Button type="button" variant="outline" onClick={() => s3InputRef.current?.click()}>Bölüm 3 (616x320 px) Görsel Seç</Button>
                 {s3Preview && <span className="text-sm text-gray-600 truncate max-w-[200px]">Seçili</span>}
                 {s3Preview && <img src={s3Preview} alt="Bölüm 3" className="h-16 w-16 object-cover border" />}
               </div>

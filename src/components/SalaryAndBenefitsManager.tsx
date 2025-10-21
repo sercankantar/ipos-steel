@@ -299,7 +299,7 @@ export default function SalaryAndBenefitsManager() {
                   }}
                 />
                 <Button type="button" variant="outline" onClick={() => salaryPolicyInputRef.current?.click()}>
-                  Görsel Seç
+                  (608x384 px) Görsel Seç
                 </Button>
                 {salaryPolicyImageFile ? (
                   <span className="text-sm text-gray-600 truncate max-w-[200px]">
