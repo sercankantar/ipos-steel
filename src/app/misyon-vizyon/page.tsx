@@ -48,9 +48,9 @@ export default async function MisyonVizyonPage() {
       </section>
 
       {/* Misyon */}
-      <section className="py-20 bg-white">
+      <section className="py-20 bg-white min-h-[1200px]">
         <MaxWidthWrapper>
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-stretch">
             <div>
               <div className="flex items-center gap-4 mb-8">
                 <div className="w-16 h-16 bg-slate-100 rounded-lg flex items-center justify-center">
@@ -67,27 +67,31 @@ export default async function MisyonVizyonPage() {
               </div>
             </div>
             
-            <div className="relative">
-              {missionImageUrl ? (
-                <img src={missionImageUrl} alt="Misyon" className="rounded-lg h-80 w-full object-cover border border-gray-200" />
-              ) : (
-                <div className="bg-gradient-to-br from-gray-100 to-gray-200 rounded-lg h-80 flex items-center justify-center border border-gray-200">
-                  <div className="text-center">
-                    <Target className="h-20 w-20 text-gray-400 mx-auto mb-4" />
-                    <p className="text-gray-500 text-sm font-medium">Misyon Fotoğrafı</p>
-                    <p className="text-gray-400 text-xs mt-1">(Güncellenecek)</p>
-                  </div>
+            <div className="lg:col-span-1">
+              <div className="sticky top-24">
+                <div className="relative h-96 lg:h-[500px] rounded-lg overflow-hidden border border-gray-200">
+                  {missionImageUrl ? (
+                    <img src={missionImageUrl} alt="Misyon" className="h-full w-full object-cover" />
+                  ) : (
+                    <div className="bg-gradient-to-br from-gray-100 to-gray-200 h-full w-full flex items-center justify-center">
+                      <div className="text-center">
+                        <Target className="h-20 w-20 text-gray-400 mx-auto mb-4" />
+                        <p className="text-gray-500 text-sm font-medium">Misyon Fotoğrafı</p>
+                        <p className="text-gray-400 text-xs mt-1">(Güncellenecek)</p>
+                      </div>
+                    </div>
+                  )}
                 </div>
-              )}
+              </div>
             </div>
           </div>
         </MaxWidthWrapper>
       </section>
 
       {/* Vizyon */}
-      <section className="py-20 bg-gray-50">
+      <section className="py-20 bg-gray-50 min-h-[1200px]">
         <MaxWidthWrapper>
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-stretch">
             <div className="lg:order-2">
               <div className="flex items-center gap-4 mb-8">
                 <div className="w-16 h-16 bg-slate-100 rounded-lg flex items-center justify-center">
@@ -104,18 +108,22 @@ export default async function MisyonVizyonPage() {
               </div>
             </div>
             
-            <div className="lg:order-1 relative">
-              {visionImageUrl ? (
-                <img src={visionImageUrl} alt="Vizyon" className="rounded-lg h-80 w-full object-cover border border-gray-200" />
-              ) : (
-                <div className="bg-gradient-to-br from-gray-100 to-gray-200 rounded-lg h-80 flex items-center justify-center border border-gray-200">
-                  <div className="text-center">
-                    <Eye className="h-20 w-20 text-gray-400 mx-auto mb-4" />
-                    <p className="text-gray-500 text-sm font-medium">Vizyon Fotoğrafı</p>
-                    <p className="text-gray-400 text-xs mt-1">(Güncellenecek)</p>
-                  </div>
+            <div className="lg:order-1 lg:col-span-1">
+              <div className="sticky top-24">
+                <div className="relative h-96 lg:h-[500px] rounded-lg overflow-hidden border border-gray-200">
+                  {visionImageUrl ? (
+                    <img src={visionImageUrl} alt="Vizyon" className="h-full w-full object-cover" />
+                  ) : (
+                    <div className="bg-gradient-to-br from-gray-100 to-gray-200 h-full w-full flex items-center justify-center">
+                      <div className="text-center">
+                        <Eye className="h-20 w-20 text-gray-400 mx-auto mb-4" />
+                        <p className="text-gray-500 text-sm font-medium">Vizyon Fotoğrafı</p>
+                        <p className="text-gray-400 text-xs mt-1">(Güncellenecek)</p>
+                      </div>
+                    </div>
+                  )}
                 </div>
-              )}
+              </div>
             </div>
           </div>
         </MaxWidthWrapper>

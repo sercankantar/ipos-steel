@@ -280,7 +280,7 @@ export default function Home() {
             {/* Sol taraf - Metin içeriği */}
             <div className='space-y-6'>
               <div>
-                <p className='text-sm font-neuropol font-semibold text-red-500 uppercase tracking-wider'>
+                <p className='text-sm font-neuropol font-semibold text-blue-500 uppercase tracking-wider'>
                   Uzman Çözümleri
                 </p>
                 <h2 className='mt-2 text-2xl lg:text-3xl font-neuropol font-bold text-gray-900 leading-tight'>
@@ -294,10 +294,10 @@ export default function Home() {
                 ) : (
                   <>
                     <p className='text-lg'>
-                      35 yılı aşkın tecrübeye sahip, alanında uzman mühendis ve imalat personelinin vermiş olduğu güven sayesinde kuruluşundan bu yana onlarca projeye imza atan IPOS-Steel Dış. Tic. A.Ş. bünyesinde, yenilenen kimliğimiz ile faaliyetlerimizi geliştirip büyütmeye devam etmekteyiz.
+                    IPOS-Steel Dış Ticaret A.Ş., kökleri Almanya’nın endüstriyel üretim geleneğine uzanan, yüksek mühendislik prensiplerini Türk üretim gücüyle buluşturan uluslararası bir mühendislik markasıdır.
                     </p>
                     <p className='text-lg'>
-                      Kablo kanalı üreticisi olmanın yanında elektrik ve endüstriyel malzeme ihtiyaçlarınız için "Hepsi tek bir noktadan" çözümler sunmaktayız. Ana amacımız müşterilerimize rekabetçi fiyatlarla yüksek hizmet standartını en kaliteli ürünlerle sunmaktır.
+                    20 yılı aşkın tecrübe, Almanya’daki kalite kontrol sistemlerimiz ve Türkiye’nin üretim potansiyeliyle birleşerek, Avrupa standartlarının da ötesinde güvenilir, dayanıklı ve yenilikçi çelik sistem çözümleri ortaya koymaktadır.
                     </p>
                   </>
                 )}
@@ -306,7 +306,7 @@ export default function Home() {
               <div className='pt-4'>
                 <Link 
                   href='/hakkimizda'
-                  className='inline-flex items-center px-8 py-3 border-2 border-red-500 text-red-500 font-neuropol font-semibold rounded-lg hover:bg-red-500 hover:text-white transition-all duration-300'
+                  className='inline-flex items-center px-8 py-3 border-2 border-blue-500 text-blue-500 font-neuropol font-semibold rounded-lg hover:bg-blue-500 hover:text-white transition-all duration-300'
                 >
                   Kurumsal
                 </Link>
