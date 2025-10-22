@@ -97,11 +97,7 @@ export const PRODUCT_CATEGORIES = [
         href: '/is-etigi-kurallarimiz',
         imageSrc: '/nav/career-nav.png',
       },
-      {
-        name: 'Ücret ve Yan Haklar Yönetimimiz',
-        href: '/ucret-ve-yan-haklar-yonetimimiz',
-        imageSrc: '/nav/career-nav.png',
-      },
+      
       {
         name: 'İşe Alım Süreci',
         href: '/ise-alim-sureci',

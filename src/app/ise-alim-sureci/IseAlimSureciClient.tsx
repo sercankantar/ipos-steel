@@ -209,47 +209,49 @@ export default function IseAlimSureciClient() {
                   <div className='w-24 h-1 bg-blue-600 mx-auto'></div>
                 </div>
 
-                <div className='grid lg:grid-cols-2 gap-12 items-center'>
-                  <div className='space-y-6'>
-                    <div className='bg-blue-50 p-6 border-l-4 border-blue-600'>
-                      <h3 className='text-xl font-bold text-gray-900 mb-3'>{data.purposeMissionTitle}</h3>
-                      <p className='text-gray-700 leading-relaxed'>
-                        {data.purposeMissionContent}
-                      </p>
-                    </div>
-
-                    <div className='bg-gray-50 p-6 border border-gray-200'>
-                      <h3 className='text-xl font-bold text-gray-900 mb-4'>{data.purposeValuesTitle}</h3>
-                      <p className='text-gray-700 leading-relaxed mb-4'>
-                        {data.purposeValuesContent}
-                      </p>
-                      
-                      <div className='grid md:grid-cols-2 gap-4'>
-                        {data.purposeValues.map((value, index) => (
-                          <div key={index} className='flex items-start gap-3'>
-                            <span className='w-2 h-2 bg-blue-600 rounded-full mt-2 flex-shrink-0'></span>
-                            <div>
-                              <div className='font-semibold text-gray-900'>{value.title}</div>
-                              <div className='text-sm text-gray-600'>{value.description}</div>
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className='relative'>
-                    <img 
-                      src={data.purposeImageUrl || 'https://images.unsplash.com/photo-1600880292203-757bb62b4baf?w=600&h=400&fit=crop&crop=center'}
-                      alt='Güneş enerjisi ekibi ve işe alım süreci'
-                      className='w-full h-96 object-cover border border-gray-200 shadow-lg'
-                    />
-                    <div className='absolute inset-0 bg-blue-900/10'></div>
-                    
+                {/* Fotoğraf - Tek sütun en üstte */}
+                <div className='relative mb-12'>
+                  <img 
+                    src={data.purposeImageUrl || 'https://images.unsplash.com/photo-1600880292203-757bb62b4baf?w=600&h=400&fit=crop&crop=center'}
+                    alt='Güneş enerjisi ekibi ve işe alım süreci'
+                    className='w-full h-96 lg:h-[500px] object-cover border border-gray-200 shadow-lg'
+                  />
+                  <div className='absolute inset-0 bg-blue-900/10'></div>
+                  
+                  {data.purposeImageCaption && (
                     <div className='absolute bottom-6 left-6 right-6 bg-white/95 backdrop-blur-sm p-4 border border-gray-200'>
                       <p className='text-sm font-medium text-gray-900'>
-                        {data.purposeImageCaption || 'Güneş enerjisi teknolojilerinde uzman ekibimizle geleceği inşa ediyoruz'}
+                        {data.purposeImageCaption}
                       </p>
+                    </div>
+                  )}
+                </div>
+
+                {/* Yazılar - Sol sağ düzeni */}
+                <div className='grid lg:grid-cols-2 gap-8'>
+                  <div className='bg-blue-50 p-6 border-l-4 border-blue-600'>
+                    <h3 className='text-xl font-bold text-gray-900 mb-3'>{data.purposeMissionTitle}</h3>
+                    <p className='text-gray-700 leading-relaxed'>
+                      {data.purposeMissionContent}
+                    </p>
+                  </div>
+
+                  <div className='bg-gray-50 p-6 border border-gray-200'>
+                    <h3 className='text-xl font-bold text-gray-900 mb-4'>{data.purposeValuesTitle}</h3>
+                    <p className='text-gray-700 leading-relaxed mb-4'>
+                      {data.purposeValuesContent}
+                    </p>
+                    
+                    <div className='grid md:grid-cols-1 gap-4'>
+                      {data.purposeValues.map((value, index) => (
+                        <div key={index} className='flex items-start gap-3'>
+                          <span className='w-2 h-2 bg-blue-600 rounded-full mt-2 flex-shrink-0'></span>
+                          <div>
+                            <div className='font-semibold text-gray-900'>{value.title}</div>
+                            <div className='text-sm text-gray-600'>{value.description}</div>
+                          </div>
+                        </div>
+                      ))}
                     </div>
                   </div>
                 </div>
