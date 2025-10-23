@@ -136,10 +136,10 @@ export default function SertifikalarPage() {
   return (
     <>
       {/* Hero Section */}
-      <section className="bg-white py-16 border-b border-gray-200">
+      <section className="bg-[#1a3056] py-16 border-b border-gray-200">
         <MaxWidthWrapper>
           <div className="text-center max-w-4xl mx-auto">
-            <h1 className="font-neuropol text-4xl lg:text-5xl font-bold mb-6 text-slate-900">
+            <h1 className="font-neuropol text-4xl lg:text-5xl font-bold mb-6 text-[#ffffff]">
               Sertifikalarımız
             </h1>
           </div>
