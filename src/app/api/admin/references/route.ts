@@ -22,24 +22,18 @@ export async function POST(request: NextRequest) {
     const data = await request.json()
     
     // Validation
-    if (!data.name || !data.sector) {
-      return NextResponse.json({ error: 'Şirket adı ve sektör gerekli' }, { status: 400 })
+    if (!data.sector) {
+      return NextResponse.json({ error: 'Sektör gerekli' }, { status: 400 })
     }
 
     const created = await prisma.reference.create({ 
       data: {
-        name: data.name,
         sector: data.sector,
-        logoUrl: data.logoUrl || null,
-        logoPublicId: data.logoPublicId || null,
         title: data.title || null,
         excerpt: data.excerpt || null,
         content: data.content || null,
         category: data.category || null,
         location: data.location || null,
-        client: data.client || null,
-        projectValue: data.projectValue || null,
-        duration: data.duration || null,
         slug: data.slug || null,
         mainImage: data.mainImage || null,
         mainImagePublicId: data.mainImagePublicId || null,

@@ -12,18 +12,12 @@ export async function PUT(request: NextRequest, { params }: { params: { id: stri
     const updated = await prisma.reference.update({
       where: { id: params.id },
       data: {
-        name: data.name,
         sector: data.sector,
-        logoUrl: data.logoUrl,
-        logoPublicId: data.logoPublicId,
         title: data.title,
         excerpt: data.excerpt,
         content: data.content,
         category: data.category,
         location: data.location,
-        client: data.client,
-        projectValue: data.projectValue,
-        duration: data.duration,
         slug: data.slug,
         mainImage: data.mainImage,
         mainImagePublicId: data.mainImagePublicId,

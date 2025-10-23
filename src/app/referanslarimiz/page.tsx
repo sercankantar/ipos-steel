@@ -9,17 +9,12 @@ import Image from 'next/image'
 // Referans interface'i
 interface Reference {
   id: string
-  name: string
   sector: string
-  logoUrl?: string
   title?: string
   excerpt?: string
   content?: string
   category?: string
   location?: string
-  client?: string
-  projectValue?: string
-  duration?: string
   slug?: string
   mainImage?: string
   gallery?: string[]
@@ -207,13 +202,13 @@ export default function ReferanslarimizPage() {
                       onClick={() => window.location.href = `/referanslarimiz/${referans.slug || referans.id}`}
                     >
                       <div className="flex gap-4">
-                        {/* Şirket Logosu Sol Tarafta */}
+                        {/* Proje Ana Fotoğrafı Sol Tarafta */}
                         <div className="relative w-32 sm:w-40 aspect-[4/3] flex-shrink-0 rounded-md overflow-hidden bg-gray-100 border border-gray-200">
                           <Image
-                            src={referans.logoUrl || referans.gallery?.[0] || referans.mainImage || referans.image || 'https://images.unsplash.com/photo-1509391366360-2e959784a276?w=800&h=600&fit=crop'}
-                            alt={`${referans.client || referans.name} logosu`}
+                            src={referans.mainImage || referans.gallery?.[0] || 'https://images.unsplash.com/photo-1509391366360-2e959784a276?w=800&h=600&fit=crop'}
+                            alt={`${referans.title || 'Proje Görseli'}`}
                             fill
-                            className={`${referans.logoUrl ? 'object-contain p-4' : 'object-cover'} group-hover:scale-[1.03] transition-transform duration-300`}
+                            className="object-cover group-hover:scale-[1.03] transition-transform duration-300"
                           />
                         </div>
                         {/* Metin İçerik */}

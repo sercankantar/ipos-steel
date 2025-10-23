@@ -11,10 +11,7 @@ import RichTextEditor from '@/components/ui/RichTextEditor'
 
 interface Reference {
   id: string
-  name: string
   sector: string
-  logoUrl?: string
-  logoPublicId?: string
   
   // Proje detayları
   title?: string
@@ -22,9 +19,6 @@ interface Reference {
   content?: string
   category?: string
   location?: string
-  client?: string
-  projectValue?: string
-  duration?: string
   
   // SEO
   slug?: string
@@ -66,27 +60,20 @@ export default function ReferencesManager() {
   const [newCategoryName, setNewCategoryName] = useState('')
   const [newCategoryColor, setNewCategoryColor] = useState('bg-blue-100 text-blue-800')
   const [form, setForm] = useState({ 
-    name: '', 
     sector: '', 
     title: '',
     excerpt: '',
     content: '',
     category: '',
     location: '',
-    client: '',
-    projectValue: '',
-    duration: '',
     tags: '',
     featured: false,
     isActive: true 
   })
-  const [logo, setLogo] = useState<File | null>(null)
-  const [logoPreview, setLogoPreview] = useState<string | null>(null)
   const [mainImage, setMainImage] = useState<File | null>(null)
   const [mainImagePreview, setMainImagePreview] = useState<string | null>(null)
   const [galleryImages, setGalleryImages] = useState<File[]>([])
   const [galleryPreviews, setGalleryPreviews] = useState<string[]>([])
-  const fileRef = useRef<HTMLInputElement | null>(null)
   const mainImageRef = useRef<HTMLInputElement | null>(null)
   const galleryRef = useRef<HTMLInputElement | null>(null)
 
@@ -128,10 +115,6 @@ export default function ReferencesManager() {
     e.preventDefault()
     try {
       // Form validation
-      if (!form.name.trim()) {
-        toast.error('Şirket adı gerekli')
-        return
-      }
       if (!form.sector.trim()) {
         toast.error('Sektör gerekli')
         return
@@ -147,9 +130,9 @@ export default function ReferencesManager() {
       }
 
       // Slug oluştur
-      const titleForSlug = form.title || form.name
+      const titleForSlug = form.title
       if (!titleForSlug.trim()) {
-        toast.error('Proje başlığı veya şirket adı gerekli')
+        toast.error('Proje başlığı gerekli')
         return
       }
       
@@ -157,15 +140,6 @@ export default function ReferencesManager() {
       const existingSlugs = items.map(item => item.slug).filter(Boolean) as string[]
       const uniqueSlug = createUniqueSlug(baseSlug, existingSlugs)
 
-      // Logo upload
-      let logoUpload: { secure_url: string; public_id: string } | null = null
-      if (logo) {
-        const fd = new FormData()
-        fd.append('file', logo)
-        fd.append('folder', 'ipos-steel/references/logos')
-        const up = await fetch('/api/admin/upload', { method: 'POST', body: fd })
-        if (up.ok) logoUpload = await up.json()
-      }
 
       // Main image upload
       let mainImageUpload: { secure_url: string; public_id: string } | null = null
@@ -194,22 +168,16 @@ export default function ReferencesManager() {
       const tagsArray = form.tags ? form.tags.split(',').map(tag => tag.trim()).filter(tag => tag) : []
 
       const payload: any = {
-        name: form.name,
         sector: form.sector,
         title: form.title,
         excerpt: form.excerpt,
         content: form.content,
         category: form.category,
         location: form.location,
-        client: form.client,
-        projectValue: form.projectValue,
-        duration: form.duration,
         slug: editing ? editing.slug : uniqueSlug, // Düzenlemede mevcut slug'ı koru, yenide unique slug kullan
         tags: tagsArray,
         featured: form.featured,
         isActive: form.isActive,
-        logoUrl: logoUpload?.secure_url || editing?.logoUrl,
-        logoPublicId: logoUpload?.public_id || editing?.logoPublicId,
         mainImage: mainImageUpload?.secure_url || editing?.mainImage,
         mainImagePublicId: mainImageUpload?.public_id || editing?.mainImagePublicId,
         gallery: galleryUploads.length > 0 ? galleryUploads.map(u => u.secure_url) : editing?.gallery || [],
@@ -226,22 +194,16 @@ export default function ReferencesManager() {
         setFormOpen(false)
         setEditing(null)
         setForm({ 
-          name: '', 
           sector: '', 
           title: '',
           excerpt: '',
           content: '',
           category: '',
           location: '',
-          client: '',
-          projectValue: '',
-          duration: '',
           tags: '',
           featured: false,
           isActive: true 
         })
-        setLogo(null)
-        setLogoPreview(null)
         setMainImage(null)
         setMainImagePreview(null)
         setGalleryImages([])
@@ -329,10 +291,7 @@ export default function ReferencesManager() {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        name: it.name,
         sector: it.sector,
-        logoUrl: it.logoUrl,
-        logoPublicId: it.logoPublicId,
         isActive: !it.isActive,
       })
     })
@@ -433,8 +392,6 @@ export default function ReferencesManager() {
                 onClick={() => { 
                   setFormOpen(false); 
                   setEditing(null); 
-                  setLogo(null); 
-                  setLogoPreview(null);
                   setMainImage(null);
                   setMainImagePreview(null);
                   setGalleryImages([]);
@@ -454,17 +411,6 @@ export default function ReferencesManager() {
               <h4 className="text-base font-semibold text-gray-900 mb-4">Temel Bilgiler</h4>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
-                  <Label htmlFor="name" className="text-sm font-medium text-gray-700">Şirket Adı</Label>
-                  <Input 
-                    id="name" 
-                    value={form.name} 
-                    onChange={(e) => setForm({ ...form, name: e.target.value })} 
-                    placeholder="Örn: ABC Şirketi"
-                    className="mt-1"
-                    required 
-                  />
-                </div>
-              <div>
                   <Label htmlFor="sector" className="text-sm font-medium text-gray-700">Sektör</Label>
                   <Input 
                     id="sector" 
@@ -515,7 +461,7 @@ export default function ReferencesManager() {
                   />
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
                     <div className="flex items-center justify-between mb-1">
                       <Label htmlFor="category" className="text-sm font-medium text-gray-700">Kategori</Label>
@@ -555,39 +501,6 @@ export default function ReferencesManager() {
                     />
                     <p className="text-xs text-gray-500 mt-1">İl ve ülke yazılırken araya virgül (,) konulmalıdır</p>
                   </div>
-                  <div>
-                    <Label htmlFor="client" className="text-sm font-medium text-gray-700">Müşteri</Label>
-                    <Input 
-                      id="client" 
-                      value={form.client} 
-                      onChange={(e) => setForm({ ...form, client: e.target.value })} 
-                      placeholder="Örn: Güneş Enerji A.Ş."
-                      className="mt-1"
-                    />
-                  </div>
-                </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div>
-                    <Label htmlFor="projectValue" className="text-sm font-medium text-gray-700">Proje Değeri</Label>
-                    <Input 
-                      id="projectValue" 
-                      value={form.projectValue} 
-                      onChange={(e) => setForm({ ...form, projectValue: e.target.value })} 
-                      placeholder="Örn: 2.5 Milyon TL"
-                      className="mt-1"
-                    />
-                  </div>
-                  <div>
-                    <Label htmlFor="duration" className="text-sm font-medium text-gray-700">Proje Süresi</Label>
-                    <Input 
-                      id="duration" 
-                      value={form.duration} 
-                      onChange={(e) => setForm({ ...form, duration: e.target.value })} 
-                      placeholder="Örn: 6 ay"
-                      className="mt-1"
-                    />
-                  </div>
                 </div>
 
               <div>
@@ -608,44 +521,6 @@ export default function ReferencesManager() {
             <div className="border-b border-gray-200 pb-6">
               <h4 className="text-base font-semibold text-gray-900 mb-4">Görsel İçerik</h4>
               
-              {/* Logo Upload */}
-              <div className="mb-6">
-                <Label className="text-sm font-medium text-gray-700">İş Yapılan Şirketin Logosu</Label>
-                <div className="mt-2 flex items-center gap-4">
-                  <input 
-                    ref={fileRef} 
-                    type="file" 
-                    accept="image/*" 
-                    className="hidden" 
-                    onChange={(e) => {
-                const f = e.target.files?.[0] || null
-                setLogo(f)
-                setLogoPreview(f ? URL.createObjectURL(f) : null)
-                    }} 
-                  />
-                  <Button 
-                    type="button" 
-                    variant="outline" 
-                    onClick={() => fileRef.current?.click()}
-                    className="flex items-center gap-2"
-                  >
-                    <Plus className="w-4 h-4" />
-                    Logo Seç
-              </Button>
-              {logo ? (
-                    <span className="text-sm text-gray-600 truncate max-w-[200px] bg-gray-50 px-3 py-1 rounded">
-                      {logo.name}
-                    </span>
-                  ) : (
-                    <span className="text-sm text-gray-400">Henüz logo seçilmedi</span>
-                  )}
-                  {logoPreview && (
-                    <div className="relative w-16 h-16 rounded-lg border border-gray-200 overflow-hidden bg-gray-50">
-                      <img src={logoPreview} alt="Logo Önizleme" className="w-full h-full object-contain" />
-                    </div>
-                  )}
-                </div>
-              </div>
 
               {/* Main Image Upload */}
               <div className="mb-6">
@@ -767,8 +642,6 @@ export default function ReferencesManager() {
                 onClick={() => { 
                   setFormOpen(false); 
                   setEditing(null); 
-                  setLogo(null); 
-                  setLogoPreview(null);
                   setMainImage(null);
                   setMainImagePreview(null);
                   setGalleryImages([]);
@@ -804,18 +677,18 @@ export default function ReferencesManager() {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 p-6">
             {items.map((reference) => (
               <div key={reference.id} className="bg-white border border-gray-200 rounded-lg hover:shadow-md transition-shadow group overflow-hidden">
-                {/* Logo Area */}
+                {/* Main Image Area */}
                 <div className="relative h-32 bg-gray-50 border-b border-gray-200 flex items-center justify-center">
-                  {reference.logoUrl ? (
+                  {reference.mainImage ? (
                     <img 
-                      src={reference.logoUrl} 
-                      alt={reference.name} 
-                      className="max-h-20 max-w-28 object-contain"
+                      src={reference.mainImage} 
+                      alt={reference.title || 'Proje Görseli'} 
+                      className="w-full h-full object-cover"
                     />
                   ) : (
                     <div className="text-center">
                       <Building className="w-8 h-8 text-gray-400 mx-auto mb-2" />
-                      <span className="text-xs text-gray-400">Logo Yok</span>
+                      <span className="text-xs text-gray-400">Ana Görsel Yok</span>
                     </div>
                   )}
                   
@@ -836,12 +709,8 @@ export default function ReferencesManager() {
 
                 {/* Content */}
                 <div className="p-4">
-                  <h4 className="font-semibold text-gray-900 mb-1 line-clamp-1">{reference.name}</h4>
+                  <h4 className="font-semibold text-gray-900 mb-1 line-clamp-1">{reference.title || 'Başlıksız Proje'}</h4>
                   <p className="text-sm text-gray-600 mb-2">{reference.sector}</p>
-                  
-                  {reference.title && (
-                    <p className="text-sm font-medium text-blue-600 mb-2 line-clamp-1">{reference.title}</p>
-                  )}
                   
                   {reference.excerpt && (
                     <p className="text-xs text-gray-500 mb-3 line-clamp-2">{reference.excerpt}</p>
@@ -849,8 +718,6 @@ export default function ReferencesManager() {
                   
                   <div className="text-xs text-gray-500 mb-3 space-y-1">
                     {reference.location && <div>📍 {reference.location}</div>}
-                    {reference.projectValue && <div>💰 {reference.projectValue}</div>}
-                    {reference.duration && <div>⏱️ {reference.duration}</div>}
                   </div>
                   
                   <div className="text-xs text-gray-400 mb-4">
@@ -867,22 +734,16 @@ export default function ReferencesManager() {
                         setEditing(reference); 
                         setFormOpen(true); 
                         setForm({ 
-                          name: reference.name || '', 
                           sector: reference.sector || '', 
                           title: reference.title || '',
                           excerpt: reference.excerpt || '',
                           content: reference.content || '',
                           category: reference.category || '',
                           location: reference.location || '',
-                          client: reference.client || '',
-                          projectValue: reference.projectValue || '',
-                          duration: reference.duration || '',
                           tags: reference.tags ? reference.tags.join(', ') : '',
                           featured: reference.featured || false,
                           isActive: reference.isActive 
                         }); 
-                        setLogo(null); 
-                        setLogoPreview(reference.logoUrl || null);
                         setMainImage(null);
                         setMainImagePreview(reference.mainImage || null);
                         setGalleryImages([]);

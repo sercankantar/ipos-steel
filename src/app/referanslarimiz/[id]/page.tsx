@@ -10,17 +10,12 @@ import Image from 'next/image'
 // Referans interface'i
 interface Reference {
   id: string
-  name: string
   sector: string
-  logoUrl?: string
   title?: string
   excerpt?: string
   content?: string
   category?: string
   location?: string
-  client?: string
-  projectValue?: string
-  duration?: string
   slug?: string
   mainImage?: string
   gallery?: string[]
@@ -266,7 +261,7 @@ export default function ReferansDetayPage() {
               <span>/</span>
               <Link href='/referanslarimiz' className='hover:text-gray-700 transition-colors'>Referanslarımız</Link>
               <span>/</span>
-              <span className='text-gray-900'>{referans.title || referans.name}</span>
+              <span className='text-gray-900'>{referans.title || 'Başlıksız Proje'}</span>
             </nav>
             
             <Link
@@ -317,7 +312,7 @@ export default function ReferansDetayPage() {
                 </div>
                 
                 <h1 className='font-neuropol text-3xl lg:text-4xl font-bold text-slate-900 mb-4'>
-                  {referans.title || referans.name}
+                  {referans.title || 'Başlıksız Proje'}
                 </h1>
                 
                 {referans.excerpt && (
@@ -337,12 +332,6 @@ export default function ReferansDetayPage() {
                       <span>{referans.location}</span>
                     </div>
                   )}
-                  {referans.client && (
-                    <div className='flex items-center gap-1'>
-                      <Building className='h-4 w-4' />
-                      <span>{referans.client}</span>
-                    </div>
-                  )}
                 </div>
               </div>
 
@@ -355,7 +344,7 @@ export default function ReferansDetayPage() {
                   >
                     <Image
                       src={referans.mainImage || galleryImages[0] || 'https://images.unsplash.com/photo-1509391366360-2e959784a276?w=1200&h=800&fit=crop'}
-                      alt={referans.title || referans.name}
+                      alt={referans.title || 'Proje Görseli'}
                       fill
                       className='object-cover group-hover:scale-105 transition-transform duration-300'
                     />
@@ -381,7 +370,7 @@ export default function ReferansDetayPage() {
                       >
                         <Image
                           src={image}
-                          alt={`${referans.title || referans.name} - Görsel ${index + 2}`}
+                          alt={`${referans.title || 'Proje Görseli'} - Görsel ${index + 2}`}
                           fill
                           className='object-cover group-hover:scale-105 transition-transform duration-300'
                         />
@@ -464,16 +453,6 @@ export default function ReferansDetayPage() {
                 <div className='bg-white rounded-lg shadow-sm p-6'>
                   <h3 className='font-neuropol font-bold text-lg mb-4 text-slate-900'>Proje Bilgileri</h3>
                   <div className='space-y-4'>
-                    {referans.client && (
-                      <div>
-                        <div className='flex items-center gap-2 text-sm text-gray-500 mb-1'>
-                          <Building className='h-4 w-4' />
-                          <span>Müşteri</span>
-                        </div>
-                        <p className='font-medium text-gray-900'>{referans.client}</p>
-                      </div>
-                    )}
-                    
                     {referans.location && (
                       <div>
                         <div className='flex items-center gap-2 text-sm text-gray-500 mb-1'>
@@ -481,26 +460,6 @@ export default function ReferansDetayPage() {
                           <span>Konum</span>
                         </div>
                         <p className='font-medium text-gray-900'>{referans.location}</p>
-                      </div>
-                    )}
-                    
-                    {referans.projectValue && (
-                      <div>
-                        <div className='flex items-center gap-2 text-sm text-gray-500 mb-1'>
-                          <DollarSign className='h-4 w-4' />
-                          <span>Proje Değeri</span>
-                        </div>
-                        <p className='font-medium text-gray-900'>{referans.projectValue}</p>
-                      </div>
-                    )}
-                    
-                    {referans.duration && (
-                      <div>
-                        <div className='flex items-center gap-2 text-sm text-gray-500 mb-1'>
-                          <Clock className='h-4 w-4' />
-                          <span>Süre</span>
-                        </div>
-                        <p className='font-medium text-gray-900'>{referans.duration}</p>
                       </div>
                     )}
                     
