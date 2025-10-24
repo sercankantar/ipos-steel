@@ -19,6 +19,7 @@ interface Reference {
   content?: string
   category?: string
   location?: string
+  projectDate?: string
   
   // SEO
   slug?: string
@@ -66,6 +67,7 @@ export default function ReferencesManager() {
     content: '',
     category: '',
     location: '',
+    projectDate: '',
     tags: '',
     featured: false,
     isActive: true 
@@ -174,6 +176,7 @@ export default function ReferencesManager() {
         content: form.content,
         category: form.category,
         location: form.location,
+        projectDate: form.projectDate ? new Date(form.projectDate).toISOString() : null,
         slug: editing ? editing.slug : uniqueSlug, // Düzenlemede mevcut slug'ı koru, yenide unique slug kullan
         tags: tagsArray,
         featured: form.featured,
@@ -200,6 +203,7 @@ export default function ReferencesManager() {
           content: '',
           category: '',
           location: '',
+          projectDate: '',
           tags: '',
           featured: false,
           isActive: true 
@@ -461,7 +465,7 @@ export default function ReferencesManager() {
                   />
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                   <div>
                     <div className="flex items-center justify-between mb-1">
                       <Label htmlFor="category" className="text-sm font-medium text-gray-700">Kategori</Label>
@@ -500,6 +504,17 @@ export default function ReferencesManager() {
                       className="mt-1"
                     />
                     <p className="text-xs text-gray-500 mt-1">İl ve ülke yazılırken araya virgül (,) konulmalıdır</p>
+                  </div>
+                  <div>
+                    <Label htmlFor="projectDate" className="text-sm font-medium text-gray-700">Proje Tarihi</Label>
+                    <Input 
+                      id="projectDate" 
+                      type="date"
+                      value={form.projectDate} 
+                      onChange={(e) => setForm({ ...form, projectDate: e.target.value })} 
+                      className="mt-1"
+                    />
+                    <p className="text-xs text-gray-500 mt-1">Projenin gerçekleştirildiği tarih</p>
                   </div>
                 </div>
 
@@ -718,6 +733,7 @@ export default function ReferencesManager() {
                   
                   <div className="text-xs text-gray-500 mb-3 space-y-1">
                     {reference.location && <div>📍 {reference.location}</div>}
+                    {reference.projectDate && <div>📅 {new Date(reference.projectDate).toLocaleDateString('tr-TR')}</div>}
                   </div>
                   
                   <div className="text-xs text-gray-400 mb-4">
@@ -740,6 +756,7 @@ export default function ReferencesManager() {
                           content: reference.content || '',
                           category: reference.category || '',
                           location: reference.location || '',
+                          projectDate: reference.projectDate ? new Date(reference.projectDate).toISOString().split('T')[0] : '',
                           tags: reference.tags ? reference.tags.join(', ') : '',
                           featured: reference.featured || false,
                           isActive: reference.isActive 

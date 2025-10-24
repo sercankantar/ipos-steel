@@ -16,6 +16,7 @@ interface Reference {
   content?: string
   category?: string
   location?: string
+  projectDate?: string
   slug?: string
   mainImage?: string
   gallery?: string[]
@@ -322,10 +323,12 @@ export default function ReferansDetayPage() {
                 )}
                 
                 <div className='flex items-center gap-6 text-sm text-gray-500'>
-                  <div className='flex items-center gap-1'>
-                    <Calendar className='h-4 w-4' />
-                    <span>{new Date(referans.createdAt).toLocaleDateString('tr-TR')}</span>
-                  </div>
+                  {referans.projectDate && (
+                    <div className='flex items-center gap-1'>
+                      <Calendar className='h-4 w-4' />
+                      <span>{new Date(referans.projectDate).toLocaleDateString('tr-TR')}</span>
+                    </div>
+                  )}
                   {referans.location && (
                     <div className='flex items-center gap-1'>
                       <MapPin className='h-4 w-4' />
@@ -463,19 +466,21 @@ export default function ReferansDetayPage() {
                       </div>
                     )}
                     
-                    <div>
-                      <div className='flex items-center gap-2 text-sm text-gray-500 mb-1'>
-                        <Calendar className='h-4 w-4' />
-                        <span>Tamamlanma Tarihi</span>
+                    {referans.projectDate && (
+                      <div>
+                        <div className='flex items-center gap-2 text-sm text-gray-500 mb-1'>
+                          <Calendar className='h-4 w-4' />
+                          <span>Proje Tarihi</span>
+                        </div>
+                        <p className='font-medium text-gray-900'>
+                          {new Date(referans.projectDate).toLocaleDateString('tr-TR', {
+                            year: 'numeric',
+                            month: 'long',
+                            day: 'numeric'
+                          })}
+                        </p>
                       </div>
-                      <p className='font-medium text-gray-900'>
-                        {new Date(referans.createdAt).toLocaleDateString('tr-TR', {
-                          year: 'numeric',
-                          month: 'long',
-                          day: 'numeric'
-                        })}
-                      </p>
-                    </div>
+                    )}
                   </div>
                 </div>
 

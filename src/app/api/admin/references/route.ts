@@ -34,6 +34,7 @@ export async function POST(request: NextRequest) {
         content: data.content || null,
         category: data.category || null,
         location: data.location || null,
+        projectDate: data.projectDate ? new Date(data.projectDate) : null,
         slug: data.slug || null,
         mainImage: data.mainImage || null,
         mainImagePublicId: data.mainImagePublicId || null,

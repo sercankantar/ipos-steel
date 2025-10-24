@@ -18,6 +18,7 @@ export async function PUT(request: NextRequest, { params }: { params: { id: stri
         content: data.content,
         category: data.category,
         location: data.location,
+        projectDate: data.projectDate ? new Date(data.projectDate) : null,
         slug: data.slug,
         mainImage: data.mainImage,
         mainImagePublicId: data.mainImagePublicId,

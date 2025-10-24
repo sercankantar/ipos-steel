@@ -110,6 +110,7 @@ model Reference {
   content       String?
   category      String?
   location      String?
+  projectDate   DateTime? // Proje tarihi
   
   // SEO
   slug          String?  @unique
@@ -236,6 +237,7 @@ model Product {
   catalogId      String?          // Katalog referansı
   catalog        Catalog?         @relation(fields: [catalogId], references: [id])
   images         ProductImage[]   // Çoklu görseller
+  subProducts    SubProduct[]     // Alt ürünler
   
   isActive       Boolean          @default(true)
   categoryId     String
@@ -255,6 +257,42 @@ model ProductImage {
   updatedAt     DateTime @updatedAt
   
   @@index([productId])
+}
+
+model SubProduct {
+  id            String   @id @default(cuid())
+  name          String
+  imageUrl      String?
+  imagePublicId String?
+  height        String?
+  width         String?
+  isActive      Boolean  @default(true)
+  productId     String
+  product       Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  channels      Channel[] // Kanallar ilişkisi
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  
+  @@index([productId])
+}
+
+model Channel {
+  id            String   @id @default(cuid())
+  name          String
+  imageUrl      String?
+  imagePublicId String?
+  code          String
+  height        String?
+  width         String?
+  coatingType   String?  // Kaplama cinsi
+  sheetThickness String? // Sac kalınlığı
+  isActive      Boolean  @default(true)
+  subProductId  String
+  subProduct    SubProduct @relation(fields: [subProductId], references: [id], onDelete: Cascade)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  
+  @@index([subProductId])
 }
 
 model HumanResourcesPolicy {

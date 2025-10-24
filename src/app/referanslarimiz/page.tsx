@@ -15,6 +15,7 @@ interface Reference {
   content?: string
   category?: string
   location?: string
+  projectDate?: string
   slug?: string
   mainImage?: string
   gallery?: string[]
@@ -220,10 +221,12 @@ export default function ReferanslarimizPage() {
                               </span>
                             </div>
                             <div className="flex items-center gap-4 text-sm text-gray-500">
-                              <div className="flex items-center gap-1">
-                                <Calendar className="h-4 w-4" />
-                                <span>{new Date(referans.createdAt).toLocaleDateString('tr-TR')}</span>
-                              </div>
+                              {referans.projectDate && (
+                                <div className="flex items-center gap-1">
+                                  <Calendar className="h-4 w-4" />
+                                  <span>{new Date(referans.projectDate).toLocaleDateString('tr-TR')}</span>
+                                </div>
+                              )}
                             </div>
                           </div>
                           
