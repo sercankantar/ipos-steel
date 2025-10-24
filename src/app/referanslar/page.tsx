@@ -38,7 +38,22 @@ async function getReferences() {
     const base = process.env.NEXT_PUBLIC_SERVER_URL || getBaseUrl()
     const res = await fetch(`${base}/api/references`, { cache: 'no-store' })
     if (!res.ok) return []
-    return await res.json()
+    const references = await res.json()
+    
+    // Proje tarihine göre sırala (en yeni tarih önce)
+    return references.sort((a: Reference, b: Reference) => {
+      // Proje tarihi olanları önce getir
+      if (a.projectDate && !b.projectDate) return -1
+      if (!a.projectDate && b.projectDate) return 1
+      
+      // Her ikisinde de proje tarihi varsa, tarihe göre sırala
+      if (a.projectDate && b.projectDate) {
+        return new Date(b.projectDate).getTime() - new Date(a.projectDate).getTime()
+      }
+      
+      // Proje tarihi yoksa oluşturulma tarihine göre sırala
+      return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+    })
   } catch {
     return []
   }

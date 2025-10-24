@@ -107,9 +107,24 @@ export default function ReferanslarimizPage() {
     return ['Tümü', ...base]
   }, [items])
 
-  const filteredReferanslar = useMemo(() => (
-    selectedKategori === 'Tümü' ? items : items.filter(r => r.category === selectedKategori)
-  ), [items, selectedKategori])
+  const filteredReferanslar = useMemo(() => {
+    const filtered = selectedKategori === 'Tümü' ? items : items.filter(r => r.category === selectedKategori)
+    
+    // Proje tarihine göre sırala (en yeni tarih önce)
+    return filtered.sort((a, b) => {
+      // Proje tarihi olanları önce getir
+      if (a.projectDate && !b.projectDate) return -1
+      if (!a.projectDate && b.projectDate) return 1
+      
+      // Her ikisinde de proje tarihi varsa, tarihe göre sırala
+      if (a.projectDate && b.projectDate) {
+        return new Date(b.projectDate).getTime() - new Date(a.projectDate).getTime()
+      }
+      
+      // Proje tarihi yoksa oluşturulma tarihine göre sırala
+      return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+    })
+  }, [items, selectedKategori])
 
   
   return (
