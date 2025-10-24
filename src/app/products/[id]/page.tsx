@@ -486,6 +486,41 @@ export default function ProductDetail({ params }: { params: { id: string } }) {
     return Array.from(new Set(items.map(item => item[field]).filter(Boolean))).sort()
   }
 
+  // İstek listesi yönetimi
+  const addToRequestList = (item: any, type: 'channel' | 'module' | 'accessory' | 'cover') => {
+    const requestItem = {
+      id: `${type}-${item.id}`,
+      name: item.name,
+      code: item.code,
+      imageUrl: item.imageUrl,
+      type,
+      quantity: 1,
+      unit: type === 'channel' ? 'metre' : 'adet',
+      subProductName: selectedSubProduct?.name,
+      productName: product?.name
+    }
+
+    // LocalStorage'dan mevcut listeyi al
+    const existingItems = JSON.parse(localStorage.getItem('requestList') || '[]')
+    
+    // Aynı item zaten varsa miktarını artır
+    const existingItemIndex = existingItems.findIndex((existing: any) => existing.id === requestItem.id)
+    if (existingItemIndex !== -1) {
+      existingItems[existingItemIndex].quantity += 1
+    } else {
+      existingItems.push(requestItem)
+    }
+
+    // LocalStorage'a kaydet
+    localStorage.setItem('requestList', JSON.stringify(existingItems))
+    
+    // Navbar'ı güncellemek için custom event gönder
+    window.dispatchEvent(new CustomEvent('requestListUpdated'))
+
+    // Başarı mesajı göster
+    alert(`${item.name} istek listesine eklendi!`)
+  }
+
   const uniqueChannelWidths = getUniqueValues(channels, 'width')
   const uniqueChannelCoatingTypes = getUniqueValues(channels, 'coatingType')
   const uniqueChannelThicknesses = getUniqueValues(channels, 'sheetThickness')
@@ -1510,7 +1545,10 @@ export default function ProductDetail({ params }: { params: { id: string } }) {
                           <td className="py-4 px-4 text-gray-900">{channel.coatingType || '-'}</td>
                           <td className="py-4 px-4 text-gray-900">{channel.sheetThickness || '-'}</td>
                           <td className="py-4 px-4">
-                            <button className="inline-flex items-center px-3 py-1.5 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 transition-colors">
+                            <button 
+                              onClick={() => addToRequestList(channel, 'channel')}
+                              className="inline-flex items-center px-3 py-1.5 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 transition-colors"
+                            >
                               <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
                               </svg>
@@ -1603,7 +1641,10 @@ export default function ProductDetail({ params }: { params: { id: string } }) {
                               <td className="py-4 px-4 text-gray-900">{module.coatingType || '-'}</td>
                               <td className="py-4 px-4 text-gray-900">{module.sheetThickness || '-'}</td>
                               <td className="py-4 px-4">
-                                <button className="inline-flex items-center px-3 py-1.5 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 transition-colors">
+                                <button 
+                                  onClick={() => addToRequestList(module, 'module')}
+                                  className="inline-flex items-center px-3 py-1.5 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 transition-colors"
+                                >
                                   <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
                                   </svg>
@@ -1694,7 +1735,10 @@ export default function ProductDetail({ params }: { params: { id: string } }) {
                               <td className="py-4 px-4 text-gray-900">{accessory.coatingType || '-'}</td>
                               <td className="py-4 px-4 text-gray-900">{accessory.sheetThickness || '-'}</td>
                               <td className="py-4 px-4">
-                                <button className="inline-flex items-center px-3 py-1.5 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 transition-colors">
+                                <button 
+                                  onClick={() => addToRequestList(accessory, 'accessory')}
+                                  className="inline-flex items-center px-3 py-1.5 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 transition-colors"
+                                >
                                   <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
                                   </svg>
@@ -1785,7 +1829,10 @@ export default function ProductDetail({ params }: { params: { id: string } }) {
                               <td className="py-4 px-4 text-gray-900">{cover.coatingType || '-'}</td>
                               <td className="py-4 px-4 text-gray-900">{cover.sheetThickness || '-'}</td>
                               <td className="py-4 px-4">
-                                <button className="inline-flex items-center px-3 py-1.5 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 transition-colors">
+                                <button 
+                                  onClick={() => addToRequestList(cover, 'cover')}
+                                  className="inline-flex items-center px-3 py-1.5 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 transition-colors"
+                                >
                                   <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
                                   </svg>
