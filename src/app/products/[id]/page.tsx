@@ -32,6 +32,16 @@ export default function ProductDetail({ params }: { params: { id: string } }) {
   const [channels, setChannels] = useState<any[]>([])
   const [filteredChannels, setFilteredChannels] = useState<any[]>([])
   const [channelsLoading, setChannelsLoading] = useState(false)
+  const [modules, setModules] = useState<any[]>([])
+  const [filteredModules, setFilteredModules] = useState<any[]>([])
+  const [modulesLoading, setModulesLoading] = useState(false)
+  const [accessories, setAccessories] = useState<any[]>([])
+  const [filteredAccessories, setFilteredAccessories] = useState<any[]>([])
+  const [accessoriesLoading, setAccessoriesLoading] = useState(false)
+  const [covers, setCovers] = useState<any[]>([])
+  const [filteredCovers, setFilteredCovers] = useState<any[]>([])
+  const [coversLoading, setCoversLoading] = useState(false)
+  const [activeModalTab, setActiveModalTab] = useState<'channels' | 'modules' | 'accessories' | 'covers'>('channels')
   const [quoteForm, setQuoteForm] = useState({
     firstName: '',
     lastName: '',
@@ -45,6 +55,24 @@ export default function ProductDetail({ params }: { params: { id: string } }) {
     widths: [] as string[]
   })
   const [channelFilters, setChannelFilters] = useState({
+    search: '',
+    widths: [] as string[],
+    coatingTypes: [] as string[],
+    sheetThicknesses: [] as string[]
+  })
+  const [moduleFilters, setModuleFilters] = useState({
+    search: '',
+    widths: [] as string[],
+    coatingTypes: [] as string[],
+    sheetThicknesses: [] as string[]
+  })
+  const [accessoryFilters, setAccessoryFilters] = useState({
+    search: '',
+    widths: [] as string[],
+    coatingTypes: [] as string[],
+    sheetThicknesses: [] as string[]
+  })
+  const [coverFilters, setCoverFilters] = useState({
     search: '',
     widths: [] as string[],
     coatingTypes: [] as string[],
@@ -139,6 +167,102 @@ export default function ProductDetail({ params }: { params: { id: string } }) {
     setFilteredChannels(filtered)
   }, [channels, channelFilters])
 
+  // Modüller filtreleme mantığı
+  useEffect(() => {
+    let filtered = modules
+
+    if (moduleFilters.search) {
+      filtered = filtered.filter(module => 
+        module.name.toLowerCase().includes(moduleFilters.search.toLowerCase()) ||
+        module.code.toLowerCase().includes(moduleFilters.search.toLowerCase())
+      )
+    }
+
+    if (moduleFilters.widths.length > 0) {
+      filtered = filtered.filter(module => 
+        module.width && moduleFilters.widths.includes(module.width)
+      )
+    }
+
+    if (moduleFilters.coatingTypes.length > 0) {
+      filtered = filtered.filter(module => 
+        module.coatingType && moduleFilters.coatingTypes.includes(module.coatingType)
+      )
+    }
+
+    if (moduleFilters.sheetThicknesses.length > 0) {
+      filtered = filtered.filter(module => 
+        module.sheetThickness && moduleFilters.sheetThicknesses.includes(module.sheetThickness)
+      )
+    }
+
+    setFilteredModules(filtered)
+  }, [modules, moduleFilters])
+
+  // Aksesuarlar filtreleme mantığı
+  useEffect(() => {
+    let filtered = accessories
+
+    if (accessoryFilters.search) {
+      filtered = filtered.filter(accessory => 
+        accessory.name.toLowerCase().includes(accessoryFilters.search.toLowerCase()) ||
+        accessory.code.toLowerCase().includes(accessoryFilters.search.toLowerCase())
+      )
+    }
+
+    if (accessoryFilters.widths.length > 0) {
+      filtered = filtered.filter(accessory => 
+        accessory.width && accessoryFilters.widths.includes(accessory.width)
+      )
+    }
+
+    if (accessoryFilters.coatingTypes.length > 0) {
+      filtered = filtered.filter(accessory => 
+        accessory.coatingType && accessoryFilters.coatingTypes.includes(accessory.coatingType)
+      )
+    }
+
+    if (accessoryFilters.sheetThicknesses.length > 0) {
+      filtered = filtered.filter(accessory => 
+        accessory.sheetThickness && accessoryFilters.sheetThicknesses.includes(accessory.sheetThickness)
+      )
+    }
+
+    setFilteredAccessories(filtered)
+  }, [accessories, accessoryFilters])
+
+  // Kapaklar filtreleme mantığı
+  useEffect(() => {
+    let filtered = covers
+
+    if (coverFilters.search) {
+      filtered = filtered.filter(cover => 
+        cover.name.toLowerCase().includes(coverFilters.search.toLowerCase()) ||
+        cover.code.toLowerCase().includes(coverFilters.search.toLowerCase())
+      )
+    }
+
+    if (coverFilters.widths.length > 0) {
+      filtered = filtered.filter(cover => 
+        cover.width && coverFilters.widths.includes(cover.width)
+      )
+    }
+
+    if (coverFilters.coatingTypes.length > 0) {
+      filtered = filtered.filter(cover => 
+        cover.coatingType && coverFilters.coatingTypes.includes(cover.coatingType)
+      )
+    }
+
+    if (coverFilters.sheetThicknesses.length > 0) {
+      filtered = filtered.filter(cover => 
+        cover.sheetThickness && coverFilters.sheetThicknesses.includes(cover.sheetThickness)
+      )
+    }
+
+    setFilteredCovers(filtered)
+  }, [covers, coverFilters])
+
   // ESC tuşu ile modal'ları kapatma
   useEffect(() => {
     const handleEscape = (e: KeyboardEvent) => {
@@ -212,14 +336,25 @@ export default function ProductDetail({ params }: { params: { id: string } }) {
   const uniqueHeights = Array.from(new Set(subProducts.map(sp => sp.height).filter(Boolean))).sort()
   const uniqueWidths = Array.from(new Set(subProducts.map(sp => sp.width).filter(Boolean))).sort()
 
-  // Kanallar modal fonksiyonları
+  // Modal fonksiyonları
   const openChannelsModal = async (subProduct: any) => {
     setSelectedSubProduct(subProduct)
     setIsChannelsModalOpen(true)
-    setChannelsLoading(true)
+    setActiveModalTab('channels')
     
+    // Tüm verileri paralel olarak yükle
+    await Promise.all([
+      fetchChannels(subProduct.id),
+      fetchModules(subProduct.id),
+      fetchAccessories(subProduct.id),
+      fetchCovers(subProduct.id)
+    ])
+  }
+
+  const fetchChannels = async (subProductId: string) => {
+    setChannelsLoading(true)
     try {
-      const response = await fetch(`/api/channels?subProductId=${subProduct.id}`)
+      const response = await fetch(`/api/channels?subProductId=${subProductId}`)
       if (response.ok) {
         const data = await response.json()
         setChannels(data)
@@ -232,12 +367,85 @@ export default function ProductDetail({ params }: { params: { id: string } }) {
     }
   }
 
+  const fetchModules = async (subProductId: string) => {
+    setModulesLoading(true)
+    try {
+      const response = await fetch(`/api/modules?subProductId=${subProductId}`)
+      if (response.ok) {
+        const data = await response.json()
+        setModules(data)
+        setFilteredModules(data)
+      }
+    } catch (error) {
+      console.error('Modüller yüklenirken hata:', error)
+    } finally {
+      setModulesLoading(false)
+    }
+  }
+
+  const fetchAccessories = async (subProductId: string) => {
+    setAccessoriesLoading(true)
+    try {
+      const response = await fetch(`/api/accessories?subProductId=${subProductId}`)
+      if (response.ok) {
+        const data = await response.json()
+        setAccessories(data)
+        setFilteredAccessories(data)
+      }
+    } catch (error) {
+      console.error('Aksesuarlar yüklenirken hata:', error)
+    } finally {
+      setAccessoriesLoading(false)
+    }
+  }
+
+  const fetchCovers = async (subProductId: string) => {
+    setCoversLoading(true)
+    try {
+      const response = await fetch(`/api/covers?subProductId=${subProductId}`)
+      if (response.ok) {
+        const data = await response.json()
+        setCovers(data)
+        setFilteredCovers(data)
+      }
+    } catch (error) {
+      console.error('Kapaklar yüklenirken hata:', error)
+    } finally {
+      setCoversLoading(false)
+    }
+  }
+
   const closeChannelsModal = () => {
     setIsChannelsModalOpen(false)
     setSelectedSubProduct(null)
+    setActiveModalTab('channels')
     setChannels([])
     setFilteredChannels([])
+    setModules([])
+    setFilteredModules([])
+    setAccessories([])
+    setFilteredAccessories([])
+    setCovers([])
+    setFilteredCovers([])
     setChannelFilters({
+      search: '',
+      widths: [],
+      coatingTypes: [],
+      sheetThicknesses: []
+    })
+    setModuleFilters({
+      search: '',
+      widths: [],
+      coatingTypes: [],
+      sheetThicknesses: []
+    })
+    setAccessoryFilters({
+      search: '',
+      widths: [],
+      coatingTypes: [],
+      sheetThicknesses: []
+    })
+    setCoverFilters({
       search: '',
       widths: [],
       coatingTypes: [],
@@ -273,10 +481,26 @@ export default function ProductDetail({ params }: { params: { id: string } }) {
     }))
   }
 
-  // Benzersiz kanal filtre değerlerini al
-  const uniqueChannelWidths = Array.from(new Set(channels.map(c => c.width).filter(Boolean))).sort()
-  const uniqueChannelCoatingTypes = Array.from(new Set(channels.map(c => c.coatingType).filter(Boolean))).sort()
-  const uniqueChannelThicknesses = Array.from(new Set(channels.map(c => c.sheetThickness).filter(Boolean))).sort()
+  // Benzersiz filtre değerlerini al
+  const getUniqueValues = (items: any[], field: string) => {
+    return Array.from(new Set(items.map(item => item[field]).filter(Boolean))).sort()
+  }
+
+  const uniqueChannelWidths = getUniqueValues(channels, 'width')
+  const uniqueChannelCoatingTypes = getUniqueValues(channels, 'coatingType')
+  const uniqueChannelThicknesses = getUniqueValues(channels, 'sheetThickness')
+
+  const uniqueModuleWidths = getUniqueValues(modules, 'width')
+  const uniqueModuleCoatingTypes = getUniqueValues(modules, 'coatingType')
+  const uniqueModuleThicknesses = getUniqueValues(modules, 'sheetThickness')
+
+  const uniqueAccessoryWidths = getUniqueValues(accessories, 'width')
+  const uniqueAccessoryCoatingTypes = getUniqueValues(accessories, 'coatingType')
+  const uniqueAccessoryThicknesses = getUniqueValues(accessories, 'sheetThickness')
+
+  const uniqueCoverWidths = getUniqueValues(covers, 'width')
+  const uniqueCoverCoatingTypes = getUniqueValues(covers, 'coatingType')
+  const uniqueCoverThicknesses = getUniqueValues(covers, 'sheetThickness')
 
   const handleQuoteCancel = () => {
     setIsQuoteModalOpen(false)
@@ -768,32 +992,33 @@ export default function ProductDetail({ params }: { params: { id: string } }) {
             <div className="border-t border-gray-200 my-6"></div>
             
             {/* Katalog */}
-            <div>
-              <h3 className="text-lg font-semibold text-gray-800 mb-3">Katalog</h3>
-              <div className="bg-white border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow">
-                <div className="flex items-center space-x-4">
-                  <div className="w-16 h-16 bg-gray-100 rounded flex items-center justify-center">
-                    <FileText className="w-8 h-8 text-gray-400" />
-                  </div>
-                  <div className="flex-1">
-                    <h4 className="font-semibold text-gray-800">E-LINE SMART</h4>
-                    <p className="text-sm text-gray-600">Ürün kataloğu</p>
-                  </div>
-                  <div className="flex space-x-2">
-                    
-                    <button 
-                      onClick={() => product.catalog?.id && handleCatalogDownload(product.catalog.id)}
-                      className="text-sm transition-colors" 
-                      style={{color: '#1a3056'}} 
-                      onMouseEnter={(e) => (e.target as HTMLButtonElement).style.color = '#0f1f3a'} 
-                      onMouseLeave={(e) => (e.target as HTMLButtonElement).style.color = '#1a3056'}
-                    >
-                      İndir
-                    </button>
+            {product.catalog && (
+              <div>
+                <h3 className="text-lg font-semibold text-gray-800 mb-3">Katalog</h3>
+                <div className="bg-white border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow">
+                  <div className="flex items-center space-x-4">
+                    <div className="w-16 h-16 bg-gray-100 rounded flex items-center justify-center">
+                      <FileText className="w-8 h-8 text-gray-400" />
+                    </div>
+                    <div className="flex-1">
+                      <h4 className="font-semibold text-gray-800">{product.catalog.title}</h4>
+                      <p className="text-sm text-gray-600">Ürün kataloğu</p>
+                    </div>
+                    <div className="flex space-x-2">
+                      <button 
+                        onClick={() => handleCatalogDownload(product.catalog.id)}
+                        className="text-sm transition-colors" 
+                        style={{color: '#1a3056'}} 
+                        onMouseEnter={(e) => (e.target as HTMLButtonElement).style.color = '#0f1f3a'} 
+                        onMouseLeave={(e) => (e.target as HTMLButtonElement).style.color = '#1a3056'}
+                      >
+                        İndir
+                      </button>
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
+            )}
           </div>
         </div>
 
@@ -1044,8 +1269,8 @@ export default function ProductDetail({ params }: { params: { id: string } }) {
             {/* Modal Header */}
             <div className="flex items-center justify-between p-6 border-b border-gray-200">
               <div>
-                <h2 className="text-2xl font-bold text-gray-900">Kanallar</h2>
-                <p className="text-gray-600 mt-1">{selectedSubProduct.name} için mevcut kanallar</p>
+                <h2 className="text-2xl font-bold text-gray-900">Ürün Detayları</h2>
+                <p className="text-gray-600 mt-1">{selectedSubProduct.name} için mevcut ürünler</p>
               </div>
               <button
                 onClick={closeChannelsModal}
@@ -1055,25 +1280,74 @@ export default function ProductDetail({ params }: { params: { id: string } }) {
               </button>
             </div>
 
+            {/* Tab Navigation */}
+            <div className="border-b border-gray-200">
+              <nav className="flex space-x-8 px-6">
+                <button
+                  onClick={() => setActiveModalTab('channels')}
+                  className={`py-4 px-1 border-b-2 font-medium text-sm ${
+                    activeModalTab === 'channels'
+                      ? 'border-red-500 text-red-600'
+                      : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                  }`}
+                >
+                  Kanallar
+                </button>
+                <button
+                  onClick={() => setActiveModalTab('modules')}
+                  className={`py-4 px-1 border-b-2 font-medium text-sm ${
+                    activeModalTab === 'modules'
+                      ? 'border-red-500 text-red-600'
+                      : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                  }`}
+                >
+                  Modüller
+                </button>
+                <button
+                  onClick={() => setActiveModalTab('accessories')}
+                  className={`py-4 px-1 border-b-2 font-medium text-sm ${
+                    activeModalTab === 'accessories'
+                      ? 'border-red-500 text-red-600'
+                      : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                  }`}
+                >
+                  Aksesuarlar
+                </button>
+                <button
+                  onClick={() => setActiveModalTab('covers')}
+                  className={`py-4 px-1 border-b-2 font-medium text-sm ${
+                    activeModalTab === 'covers'
+                      ? 'border-red-500 text-red-600'
+                      : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                  }`}
+                >
+                  Kapaklar
+                </button>
+              </nav>
+            </div>
+
             {/* Modal Content */}
-            <div className="p-6 overflow-y-auto max-h-[calc(90vh-120px)]">
-              {/* Arama ve Filtreler */}
-              <div className="mb-6">
-                {/* Arama Çubuğu */}
-                <div className="mb-4">
-                  <div className="relative">
-                    <input
-                      type="text"
-                      placeholder="Tüm kanallarda ara..."
-                      value={channelFilters.search}
-                      onChange={(e) => setChannelFilters(prev => ({ ...prev, search: e.target.value }))}
-                      className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                    />
-                    <svg className="absolute left-3 top-2.5 w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                    </svg>
-                  </div>
-                </div>
+            <div className="p-6 overflow-y-auto max-h-[calc(90vh-200px)]">
+              {/* Tab Content */}
+              {activeModalTab === 'channels' && (
+                <div>
+                  {/* Arama ve Filtreler */}
+                  <div className="mb-6">
+                    {/* Arama Çubuğu */}
+                    <div className="mb-4">
+                      <div className="relative">
+                        <input
+                          type="text"
+                          placeholder="Tüm kanallarda ara..."
+                          value={channelFilters.search}
+                          onChange={(e) => setChannelFilters(prev => ({ ...prev, search: e.target.value }))}
+                          className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        />
+                        <svg className="absolute left-3 top-2.5 w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                        </svg>
+                      </div>
+                    </div>
 
                 {/* Filtre Dropdown'ları */}
                 <div className="flex flex-wrap gap-4 mb-4">
@@ -1257,6 +1531,283 @@ export default function ProductDetail({ params }: { params: { id: string } }) {
                   </div>
                   <h4 className="text-lg font-medium text-gray-900 mb-2">Kanal Bulunamadı</h4>
                   <p className="text-gray-500">Bu alt ürün için henüz kanal tanımlanmamış.</p>
+                </div>
+              )}
+                </div>
+              )}
+
+              {/* Modüller Tab */}
+              {activeModalTab === 'modules' && (
+                <div>
+                  {/* Arama ve Filtreler */}
+                  <div className="mb-6">
+                    <div className="mb-4">
+                      <div className="relative">
+                        <input
+                          type="text"
+                          placeholder="Tüm modüllerde ara..."
+                          value={moduleFilters.search}
+                          onChange={(e) => setModuleFilters(prev => ({ ...prev, search: e.target.value }))}
+                          className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        />
+                        <svg className="absolute left-3 top-2.5 w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                        </svg>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Modüller Tablosu */}
+                  {modulesLoading ? (
+                    <div className="text-center py-12">
+                      <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
+                      <p className="mt-4 text-gray-600">Modüller yükleniyor...</p>
+                    </div>
+                  ) : filteredModules.length > 0 ? (
+                    <div className="overflow-x-auto">
+                      <table className="w-full">
+                        <thead>
+                          <tr className="border-b border-gray-200">
+                            <th className="text-left py-3 px-4 font-medium text-gray-700">Ürün Tipi</th>
+                            <th className="text-left py-3 px-4 font-medium text-gray-700">Kod</th>
+                            <th className="text-left py-3 px-4 font-medium text-gray-700">Yükseklik</th>
+                            <th className="text-left py-3 px-4 font-medium text-gray-700">Genişlik</th>
+                            <th className="text-left py-3 px-4 font-medium text-gray-700">Kapl. Cinsi</th>
+                            <th className="text-left py-3 px-4 font-medium text-gray-700">Sac Kalınl.</th>
+                            <th className="text-left py-3 px-4 font-medium text-gray-700">İşlem</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {filteredModules.map((module) => (
+                            <tr key={module.id} className="border-b border-gray-100 hover:bg-gray-50">
+                              <td className="py-4 px-4">
+                                <div className="flex items-center">
+                                  <div className="w-8 h-8 bg-gray-200 rounded mr-3 flex items-center justify-center">
+                                    {module.imageUrl ? (
+                                      <img src={module.imageUrl} alt={module.name} className="w-6 h-6 object-cover rounded" />
+                                    ) : (
+                                      <svg className="w-4 h-4 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fillRule="evenodd" d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z" clipRule="evenodd" />
+                                      </svg>
+                                    )}
+                                  </div>
+                                  <div>
+                                    <div className="font-medium text-gray-900">{module.name}</div>
+                                    <div className="text-sm text-gray-500">({module.height}x{module.width}x{module.sheetThickness})</div>
+                                  </div>
+                                </div>
+                              </td>
+                              <td className="py-4 px-4 text-gray-900">{module.code}</td>
+                              <td className="py-4 px-4 text-gray-900">{module.height || '-'}</td>
+                              <td className="py-4 px-4 text-gray-900">{module.width || '-'}</td>
+                              <td className="py-4 px-4 text-gray-900">{module.coatingType || '-'}</td>
+                              <td className="py-4 px-4 text-gray-900">{module.sheetThickness || '-'}</td>
+                              <td className="py-4 px-4">
+                                <button className="inline-flex items-center px-3 py-1.5 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 transition-colors">
+                                  <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                                  </svg>
+                                  Listeye Ekle
+                                </button>
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  ) : (
+                    <div className="text-center py-12">
+                      <div className="text-gray-400 mb-4">
+                        <svg className="w-16 h-16 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
+                        </svg>
+                      </div>
+                      <h4 className="text-lg font-medium text-gray-900 mb-2">Modül Bulunamadı</h4>
+                      <p className="text-gray-500">Bu alt ürün için henüz modül tanımlanmamış.</p>
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {/* Aksesuarlar Tab */}
+              {activeModalTab === 'accessories' && (
+                <div>
+                  <div className="mb-6">
+                    <div className="mb-4">
+                      <div className="relative">
+                        <input
+                          type="text"
+                          placeholder="Tüm aksesuarlarda ara..."
+                          value={accessoryFilters.search}
+                          onChange={(e) => setAccessoryFilters(prev => ({ ...prev, search: e.target.value }))}
+                          className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        />
+                        <svg className="absolute left-3 top-2.5 w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                        </svg>
+                      </div>
+                    </div>
+                  </div>
+
+                  {accessoriesLoading ? (
+                    <div className="text-center py-12">
+                      <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
+                      <p className="mt-4 text-gray-600">Aksesuarlar yükleniyor...</p>
+                    </div>
+                  ) : filteredAccessories.length > 0 ? (
+                    <div className="overflow-x-auto">
+                      <table className="w-full">
+                        <thead>
+                          <tr className="border-b border-gray-200">
+                            <th className="text-left py-3 px-4 font-medium text-gray-700">Ürün Tipi</th>
+                            <th className="text-left py-3 px-4 font-medium text-gray-700">Kod</th>
+                            <th className="text-left py-3 px-4 font-medium text-gray-700">Yükseklik</th>
+                            <th className="text-left py-3 px-4 font-medium text-gray-700">Genişlik</th>
+                            <th className="text-left py-3 px-4 font-medium text-gray-700">Kapl. Cinsi</th>
+                            <th className="text-left py-3 px-4 font-medium text-gray-700">Sac Kalınl.</th>
+                            <th className="text-left py-3 px-4 font-medium text-gray-700">İşlem</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {filteredAccessories.map((accessory) => (
+                            <tr key={accessory.id} className="border-b border-gray-100 hover:bg-gray-50">
+                              <td className="py-4 px-4">
+                                <div className="flex items-center">
+                                  <div className="w-8 h-8 bg-gray-200 rounded mr-3 flex items-center justify-center">
+                                    {accessory.imageUrl ? (
+                                      <img src={accessory.imageUrl} alt={accessory.name} className="w-6 h-6 object-cover rounded" />
+                                    ) : (
+                                      <svg className="w-4 h-4 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fillRule="evenodd" d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z" clipRule="evenodd" />
+                                      </svg>
+                                    )}
+                                  </div>
+                                  <div>
+                                    <div className="font-medium text-gray-900">{accessory.name}</div>
+                                    <div className="text-sm text-gray-500">({accessory.height}x{accessory.width}x{accessory.sheetThickness})</div>
+                                  </div>
+                                </div>
+                              </td>
+                              <td className="py-4 px-4 text-gray-900">{accessory.code}</td>
+                              <td className="py-4 px-4 text-gray-900">{accessory.height || '-'}</td>
+                              <td className="py-4 px-4 text-gray-900">{accessory.width || '-'}</td>
+                              <td className="py-4 px-4 text-gray-900">{accessory.coatingType || '-'}</td>
+                              <td className="py-4 px-4 text-gray-900">{accessory.sheetThickness || '-'}</td>
+                              <td className="py-4 px-4">
+                                <button className="inline-flex items-center px-3 py-1.5 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 transition-colors">
+                                  <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                                  </svg>
+                                  Listeye Ekle
+                                </button>
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  ) : (
+                    <div className="text-center py-12">
+                      <div className="text-gray-400 mb-4">
+                        <svg className="w-16 h-16 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
+                        </svg>
+                      </div>
+                      <h4 className="text-lg font-medium text-gray-900 mb-2">Aksesuar Bulunamadı</h4>
+                      <p className="text-gray-500">Bu alt ürün için henüz aksesuar tanımlanmamış.</p>
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {/* Kapaklar Tab */}
+              {activeModalTab === 'covers' && (
+                <div>
+                  <div className="mb-6">
+                    <div className="mb-4">
+                      <div className="relative">
+                        <input
+                          type="text"
+                          placeholder="Tüm kapaklarda ara..."
+                          value={coverFilters.search}
+                          onChange={(e) => setCoverFilters(prev => ({ ...prev, search: e.target.value }))}
+                          className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        />
+                        <svg className="absolute left-3 top-2.5 w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                        </svg>
+                      </div>
+                    </div>
+                  </div>
+
+                  {coversLoading ? (
+                    <div className="text-center py-12">
+                      <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
+                      <p className="mt-4 text-gray-600">Kapaklar yükleniyor...</p>
+                    </div>
+                  ) : filteredCovers.length > 0 ? (
+                    <div className="overflow-x-auto">
+                      <table className="w-full">
+                        <thead>
+                          <tr className="border-b border-gray-200">
+                            <th className="text-left py-3 px-4 font-medium text-gray-700">Ürün Tipi</th>
+                            <th className="text-left py-3 px-4 font-medium text-gray-700">Kod</th>
+                            <th className="text-left py-3 px-4 font-medium text-gray-700">Yükseklik</th>
+                            <th className="text-left py-3 px-4 font-medium text-gray-700">Genişlik</th>
+                            <th className="text-left py-3 px-4 font-medium text-gray-700">Kapl. Cinsi</th>
+                            <th className="text-left py-3 px-4 font-medium text-gray-700">Sac Kalınl.</th>
+                            <th className="text-left py-3 px-4 font-medium text-gray-700">İşlem</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {filteredCovers.map((cover) => (
+                            <tr key={cover.id} className="border-b border-gray-100 hover:bg-gray-50">
+                              <td className="py-4 px-4">
+                                <div className="flex items-center">
+                                  <div className="w-8 h-8 bg-gray-200 rounded mr-3 flex items-center justify-center">
+                                    {cover.imageUrl ? (
+                                      <img src={cover.imageUrl} alt={cover.name} className="w-6 h-6 object-cover rounded" />
+                                    ) : (
+                                      <svg className="w-4 h-4 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fillRule="evenodd" d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z" clipRule="evenodd" />
+                                      </svg>
+                                    )}
+                                  </div>
+                                  <div>
+                                    <div className="font-medium text-gray-900">{cover.name}</div>
+                                    <div className="text-sm text-gray-500">({cover.height}x{cover.width}x{cover.sheetThickness})</div>
+                                  </div>
+                                </div>
+                              </td>
+                              <td className="py-4 px-4 text-gray-900">{cover.code}</td>
+                              <td className="py-4 px-4 text-gray-900">{cover.height || '-'}</td>
+                              <td className="py-4 px-4 text-gray-900">{cover.width || '-'}</td>
+                              <td className="py-4 px-4 text-gray-900">{cover.coatingType || '-'}</td>
+                              <td className="py-4 px-4 text-gray-900">{cover.sheetThickness || '-'}</td>
+                              <td className="py-4 px-4">
+                                <button className="inline-flex items-center px-3 py-1.5 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 transition-colors">
+                                  <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                                  </svg>
+                                  Listeye Ekle
+                                </button>
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  ) : (
+                    <div className="text-center py-12">
+                      <div className="text-gray-400 mb-4">
+                        <svg className="w-16 h-16 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
+                        </svg>
+                      </div>
+                      <h4 className="text-lg font-medium text-gray-900 mb-2">Kapak Bulunamadı</h4>
+                      <p className="text-gray-500">Bu alt ürün için henüz kapak tanımlanmamış.</p>
+                    </div>
+                  )}
                 </div>
               )}
             </div>

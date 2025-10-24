@@ -270,6 +270,9 @@ model SubProduct {
   productId     String
   product       Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
   channels      Channel[] // Kanallar ilişkisi
+  modules       Module[]  // Modüller ilişkisi
+  accessories   Accessory[] // Aksesuarlar ilişkisi
+  covers        Cover[]     // Kapaklar ilişkisi
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
   
@@ -277,6 +280,63 @@ model SubProduct {
 }
 
 model Channel {
+  id            String   @id @default(cuid())
+  name          String
+  imageUrl      String?
+  imagePublicId String?
+  code          String
+  height        String?
+  width         String?
+  coatingType   String?  // Kaplama cinsi
+  sheetThickness String? // Sac kalınlığı
+  isActive      Boolean  @default(true)
+  subProductId  String
+  subProduct    SubProduct @relation(fields: [subProductId], references: [id], onDelete: Cascade)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  
+  @@index([subProductId])
+}
+
+model Module {
+  id            String   @id @default(cuid())
+  name          String
+  imageUrl      String?
+  imagePublicId String?
+  code          String
+  height        String?
+  width         String?
+  coatingType   String?  // Kaplama cinsi
+  sheetThickness String? // Sac kalınlığı
+  isActive      Boolean  @default(true)
+  subProductId  String
+  subProduct    SubProduct @relation(fields: [subProductId], references: [id], onDelete: Cascade)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  
+  @@index([subProductId])
+}
+
+model Accessory {
+  id            String   @id @default(cuid())
+  name          String
+  imageUrl      String?
+  imagePublicId String?
+  code          String
+  height        String?
+  width         String?
+  coatingType   String?  // Kaplama cinsi
+  sheetThickness String? // Sac kalınlığı
+  isActive      Boolean  @default(true)
+  subProductId  String
+  subProduct    SubProduct @relation(fields: [subProductId], references: [id], onDelete: Cascade)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  
+  @@index([subProductId])
+}
+
+model Cover {
   id            String   @id @default(cuid())
   name          String
   imageUrl      String?

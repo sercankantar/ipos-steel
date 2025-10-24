@@ -79,20 +79,110 @@ interface ChannelItem {
   updatedAt: string
 }
 
+interface ModuleItem {
+  id: string
+  name: string
+  imageUrl?: string
+  imagePublicId?: string
+  code: string
+  height?: string
+  width?: string
+  coatingType?: string
+  sheetThickness?: string
+  isActive: boolean
+  subProductId: string
+  subProduct?: {
+    id: string
+    name: string
+    product?: {
+      id: string
+      name: string
+      category?: {
+        name: string
+      }
+    }
+  }
+  createdAt: string
+  updatedAt: string
+}
+
+interface AccessoryItem {
+  id: string
+  name: string
+  imageUrl?: string
+  imagePublicId?: string
+  code: string
+  height?: string
+  width?: string
+  coatingType?: string
+  sheetThickness?: string
+  isActive: boolean
+  subProductId: string
+  subProduct?: {
+    id: string
+    name: string
+    product?: {
+      id: string
+      name: string
+      category?: {
+        name: string
+      }
+    }
+  }
+  createdAt: string
+  updatedAt: string
+}
+
+interface CoverItem {
+  id: string
+  name: string
+  imageUrl?: string
+  imagePublicId?: string
+  code: string
+  height?: string
+  width?: string
+  coatingType?: string
+  sheetThickness?: string
+  isActive: boolean
+  subProductId: string
+  subProduct?: {
+    id: string
+    name: string
+    product?: {
+      id: string
+      name: string
+      category?: {
+        name: string
+      }
+    }
+  }
+  createdAt: string
+  updatedAt: string
+}
+
 export default function UrunIslemler() {
   const [products, setProducts] = useState<ProductItem[]>([])
   const [subProducts, setSubProducts] = useState<SubProductItem[]>([])
   const [channels, setChannels] = useState<ChannelItem[]>([])
+  const [modules, setModules] = useState<ModuleItem[]>([])
+  const [accessories, setAccessories] = useState<AccessoryItem[]>([])
+  const [covers, setCovers] = useState<CoverItem[]>([])
   const [loading, setLoading] = useState(true)
   const [showForm, setShowForm] = useState(false)
   const [showSubProductForm, setShowSubProductForm] = useState(false)
   const [showChannelForm, setShowChannelForm] = useState(false)
-  const [activeTab, setActiveTab] = useState<'products' | 'categories' | 'sub-products' | 'channels'>('products')
+  const [showModuleForm, setShowModuleForm] = useState(false)
+  const [showAccessoryForm, setShowAccessoryForm] = useState(false)
+  const [showCoverForm, setShowCoverForm] = useState(false)
+  const [activeTab, setActiveTab] = useState<'products' | 'categories' | 'sub-products' | 'channels' | 'modules' | 'accessories' | 'covers'>('products')
   const [categories, setCategories] = useState<{ id: string; name: string }[]>([])
   const [catalogs, setCatalogs] = useState<{ id: string; title: string }[]>([])
   const [editingProduct, setEditingProduct] = useState<ProductItem | null>(null)
   const [editingSubProduct, setEditingSubProduct] = useState<SubProductItem | null>(null)
   const [editingChannel, setEditingChannel] = useState<ChannelItem | null>(null)
+  const [editingModule, setEditingModule] = useState<ModuleItem | null>(null)
+  const [editingAccessory, setEditingAccessory] = useState<AccessoryItem | null>(null)
+  const [editingCover, setEditingCover] = useState<CoverItem | null>(null)
   const [formData, setFormData] = useState({
     name: '',
     description: '',
@@ -125,6 +215,36 @@ export default function UrunIslemler() {
     sheetThickness: '',
     subProductId: ''
   })
+  const [moduleFormData, setModuleFormData] = useState({
+    name: '',
+    imageUrl: '',
+    code: '',
+    height: '',
+    width: '',
+    coatingType: '',
+    sheetThickness: '',
+    subProductId: ''
+  })
+  const [accessoryFormData, setAccessoryFormData] = useState({
+    name: '',
+    imageUrl: '',
+    code: '',
+    height: '',
+    width: '',
+    coatingType: '',
+    sheetThickness: '',
+    subProductId: ''
+  })
+  const [coverFormData, setCoverFormData] = useState({
+    name: '',
+    imageUrl: '',
+    code: '',
+    height: '',
+    width: '',
+    coatingType: '',
+    sheetThickness: '',
+    subProductId: ''
+  })
   const [images, setImages] = useState<File[]>([])
   const [imagePreviews, setImagePreviews] = useState<string[]>([])
   const [subProductImage, setSubProductImage] = useState<File | null>(null)
@@ -132,6 +252,15 @@ export default function UrunIslemler() {
   const [channelImage, setChannelImage] = useState<File | null>(null)
   const [channelImagePreview, setChannelImagePreview] = useState<string>('')
   const fileRef = useRef<HTMLInputElement | null>(null)
+  const [moduleImage, setModuleImage] = useState<File | null>(null)
+  const [moduleImagePreview, setModuleImagePreview] = useState<string>('')
+  const moduleFileRef = useRef<HTMLInputElement | null>(null)
+  const [accessoryImage, setAccessoryImage] = useState<File | null>(null)
+  const [accessoryImagePreview, setAccessoryImagePreview] = useState<string>('')
+  const accessoryFileRef = useRef<HTMLInputElement | null>(null)
+  const [coverImage, setCoverImage] = useState<File | null>(null)
+  const [coverImagePreview, setCoverImagePreview] = useState<string>('')
+  const coverFileRef = useRef<HTMLInputElement | null>(null)
   const subProductFileRef = useRef<HTMLInputElement | null>(null)
   const channelFileRef = useRef<HTMLInputElement | null>(null)
 
@@ -139,6 +268,9 @@ export default function UrunIslemler() {
     fetchProducts()
     fetchSubProducts()
     fetchChannels()
+    fetchModules()
+    fetchAccessories()
+    fetchCovers()
     fetchCategories()
     fetchCatalogs()
   }, [])
@@ -192,6 +324,36 @@ export default function UrunIslemler() {
       setChannels(Array.isArray(data) ? data : [])
     } catch (error) {
       console.error('Kanallar yüklenirken hata:', error)
+    }
+  }
+
+  const fetchModules = async () => {
+    try {
+      const response = await fetch('/api/admin/modules')
+      const data = await response.json()
+      setModules(Array.isArray(data) ? data : [])
+    } catch (error) {
+      console.error('Modüller yüklenirken hata:', error)
+    }
+  }
+
+  const fetchAccessories = async () => {
+    try {
+      const response = await fetch('/api/admin/accessories')
+      const data = await response.json()
+      setAccessories(Array.isArray(data) ? data : [])
+    } catch (error) {
+      console.error('Aksesuarlar yüklenirken hata:', error)
+    }
+  }
+
+  const fetchCovers = async () => {
+    try {
+      const response = await fetch('/api/admin/covers')
+      const data = await response.json()
+      setCovers(Array.isArray(data) ? data : [])
+    } catch (error) {
+      console.error('Kapaklar yüklenirken hata:', error)
     }
   }
 
@@ -494,6 +656,300 @@ export default function UrunIslemler() {
     setShowChannelForm(false)
   }
 
+  const handleModuleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    
+    try {
+      const url = editingModule 
+        ? `/api/admin/modules/${editingModule.id}`
+        : '/api/admin/modules'
+      
+      const method = editingModule ? 'PUT' : 'POST'
+      
+      // Resim yükleme
+      let imageUrl = moduleFormData.imageUrl
+      let imagePublicId = ''
+      
+      if (moduleImage) {
+        const fd = new FormData()
+        fd.append('file', moduleImage)
+        fd.append('folder', 'ipos-steel/modules')
+        const uploadResponse = await fetch('/api/admin/upload', { method: 'POST', body: fd })
+        if (uploadResponse.ok) {
+          const upload = await uploadResponse.json()
+          imageUrl = upload.secure_url
+          imagePublicId = upload.public_id
+        }
+      }
+
+      const payload = {
+        ...moduleFormData,
+        imageUrl,
+        imagePublicId
+      }
+
+      const response = await fetch(url, {
+        method,
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(payload),
+      })
+
+      if (response.ok) {
+        fetchModules()
+        resetModuleForm()
+      }
+    } catch (error) {
+      console.error('Modül kaydedilirken hata:', error)
+    }
+  }
+
+  const handleModuleEdit = (module: ModuleItem) => {
+    setEditingModule(module)
+    setModuleFormData({
+      name: module.name,
+      imageUrl: module.imageUrl || '',
+      code: module.code,
+      height: module.height || '',
+      width: module.width || '',
+      coatingType: module.coatingType || '',
+      sheetThickness: module.sheetThickness || '',
+      subProductId: module.subProductId
+    })
+    setModuleImagePreview(module.imageUrl || '')
+    setShowModuleForm(true)
+  }
+
+  const handleModuleDelete = async (id: string) => {
+    if (confirm('Bu modülü silmek istediğinizden emin misiniz?')) {
+      try {
+        const response = await fetch(`/api/admin/modules/${id}`, {
+          method: 'DELETE',
+        })
+
+        if (response.ok) {
+          fetchModules()
+        }
+      } catch (error) {
+        console.error('Modül silinirken hata:', error)
+      }
+    }
+  }
+
+  const resetModuleForm = () => {
+    setModuleFormData({
+      name: '',
+      imageUrl: '',
+      code: '',
+      height: '',
+      width: '',
+      coatingType: '',
+      sheetThickness: '',
+      subProductId: ''
+    })
+    setModuleImage(null)
+    setModuleImagePreview('')
+    setEditingModule(null)
+    setShowModuleForm(false)
+  }
+
+  const handleAccessorySubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    
+    try {
+      const url = editingAccessory 
+        ? `/api/admin/accessories/${editingAccessory.id}`
+        : '/api/admin/accessories'
+      
+      const method = editingAccessory ? 'PUT' : 'POST'
+      
+      // Resim yükleme
+      let imageUrl = accessoryFormData.imageUrl
+      let imagePublicId = ''
+      
+      if (accessoryImage) {
+        const fd = new FormData()
+        fd.append('file', accessoryImage)
+        fd.append('folder', 'ipos-steel/accessories')
+        const uploadResponse = await fetch('/api/admin/upload', { method: 'POST', body: fd })
+        if (uploadResponse.ok) {
+          const upload = await uploadResponse.json()
+          imageUrl = upload.secure_url
+          imagePublicId = upload.public_id
+        }
+      }
+
+      const payload = {
+        ...accessoryFormData,
+        imageUrl,
+        imagePublicId
+      }
+
+      const response = await fetch(url, {
+        method,
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(payload),
+      })
+
+      if (response.ok) {
+        fetchAccessories()
+        resetAccessoryForm()
+      }
+    } catch (error) {
+      console.error('Aksesuar kaydedilirken hata:', error)
+    }
+  }
+
+  const handleAccessoryEdit = (accessory: AccessoryItem) => {
+    setEditingAccessory(accessory)
+    setAccessoryFormData({
+      name: accessory.name,
+      imageUrl: accessory.imageUrl || '',
+      code: accessory.code,
+      height: accessory.height || '',
+      width: accessory.width || '',
+      coatingType: accessory.coatingType || '',
+      sheetThickness: accessory.sheetThickness || '',
+      subProductId: accessory.subProductId
+    })
+    setAccessoryImagePreview(accessory.imageUrl || '')
+    setShowAccessoryForm(true)
+  }
+
+  const handleAccessoryDelete = async (id: string) => {
+    if (confirm('Bu aksesuarı silmek istediğinizden emin misiniz?')) {
+      try {
+        const response = await fetch(`/api/admin/accessories/${id}`, {
+          method: 'DELETE',
+        })
+
+        if (response.ok) {
+          fetchAccessories()
+        }
+      } catch (error) {
+        console.error('Aksesuar silinirken hata:', error)
+      }
+    }
+  }
+
+  const resetAccessoryForm = () => {
+    setAccessoryFormData({
+      name: '',
+      imageUrl: '',
+      code: '',
+      height: '',
+      width: '',
+      coatingType: '',
+      sheetThickness: '',
+      subProductId: ''
+    })
+    setAccessoryImage(null)
+    setAccessoryImagePreview('')
+    setEditingAccessory(null)
+    setShowAccessoryForm(false)
+  }
+
+  const handleCoverSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    
+    try {
+      const url = editingCover 
+        ? `/api/admin/covers/${editingCover.id}`
+        : '/api/admin/covers'
+      
+      const method = editingCover ? 'PUT' : 'POST'
+      
+      // Resim yükleme
+      let imageUrl = coverFormData.imageUrl
+      let imagePublicId = ''
+      
+      if (coverImage) {
+        const fd = new FormData()
+        fd.append('file', coverImage)
+        fd.append('folder', 'ipos-steel/covers')
+        const uploadResponse = await fetch('/api/admin/upload', { method: 'POST', body: fd })
+        if (uploadResponse.ok) {
+          const upload = await uploadResponse.json()
+          imageUrl = upload.secure_url
+          imagePublicId = upload.public_id
+        }
+      }
+
+      const payload = {
+        ...coverFormData,
+        imageUrl,
+        imagePublicId
+      }
+
+      const response = await fetch(url, {
+        method,
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(payload),
+      })
+
+      if (response.ok) {
+        fetchCovers()
+        resetCoverForm()
+      }
+    } catch (error) {
+      console.error('Kapak kaydedilirken hata:', error)
+    }
+  }
+
+  const handleCoverEdit = (cover: CoverItem) => {
+    setEditingCover(cover)
+    setCoverFormData({
+      name: cover.name,
+      imageUrl: cover.imageUrl || '',
+      code: cover.code,
+      height: cover.height || '',
+      width: cover.width || '',
+      coatingType: cover.coatingType || '',
+      sheetThickness: cover.sheetThickness || '',
+      subProductId: cover.subProductId
+    })
+    setCoverImagePreview(cover.imageUrl || '')
+    setShowCoverForm(true)
+  }
+
+  const handleCoverDelete = async (id: string) => {
+    if (confirm('Bu kapağı silmek istediğinizden emin misiniz?')) {
+      try {
+        const response = await fetch(`/api/admin/covers/${id}`, {
+          method: 'DELETE',
+        })
+
+        if (response.ok) {
+          fetchCovers()
+        }
+      } catch (error) {
+        console.error('Kapak silinirken hata:', error)
+      }
+    }
+  }
+
+  const resetCoverForm = () => {
+    setCoverFormData({
+      name: '',
+      imageUrl: '',
+      code: '',
+      height: '',
+      width: '',
+      coatingType: '',
+      sheetThickness: '',
+      subProductId: ''
+    })
+    setCoverImage(null)
+    setCoverImagePreview('')
+    setEditingCover(null)
+    setShowCoverForm(false)
+  }
+
   if (loading) {
     return <div className="p-8"><div className="h-6 w-40 bg-gray-200 rounded animate-pulse mb-4" /><div className="h-4 w-full bg-gray-200 rounded animate-pulse mb-2" /><div className="h-4 w-2/3 bg-gray-200 rounded animate-pulse" /></div>
   }
@@ -533,6 +989,30 @@ export default function UrunIslemler() {
           }`}
         >
           Kanallar
+        </button>
+        <button
+          onClick={() => setActiveTab('modules')}
+          className={`px-4 py-2 rounded-md text-sm font-medium border ${
+            activeTab === 'modules' ? 'bg-blue-600 text-white border-blue-600' : 'bg-white text-gray-700 border-gray-200'
+          }`}
+        >
+          Modüller
+        </button>
+        <button
+          onClick={() => setActiveTab('accessories')}
+          className={`px-4 py-2 rounded-md text-sm font-medium border ${
+            activeTab === 'accessories' ? 'bg-blue-600 text-white border-blue-600' : 'bg-white text-gray-700 border-gray-200'
+          }`}
+        >
+          Aksesuarlar
+        </button>
+        <button
+          onClick={() => setActiveTab('covers')}
+          className={`px-4 py-2 rounded-md text-sm font-medium border ${
+            activeTab === 'covers' ? 'bg-blue-600 text-white border-blue-600' : 'bg-white text-gray-700 border-gray-200'
+          }`}
+        >
+          Kapaklar
         </button>
         <button
           onClick={() => setActiveTab('categories')}
@@ -1208,6 +1688,702 @@ export default function UrunIslemler() {
                       <img
                         src={channel.imageUrl}
                         alt={channel.name}
+                        className="h-20 w-20 object-cover rounded"
+                      />
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+          </div>
+        </>
+      )}
+
+      {activeTab === 'modules' && (
+        <>
+          <div className="mb-8">
+            <Button onClick={() => setShowModuleForm(!showModuleForm)}>
+              <Plus className="w-4 h-4 mr-2" />
+              {showModuleForm ? 'Formu Gizle' : 'Yeni Modül Ekle'}
+            </Button>
+          </div>
+
+          {showModuleForm && (
+            <div className="mb-8 bg-white p-6 rounded-lg shadow">
+              <h2 className="text-xl font-semibold mb-4">
+                {editingModule ? 'Modül Düzenle' : 'Yeni Modül Ekle'}
+              </h2>
+              <form onSubmit={handleModuleSubmit} className="space-y-4">
+                <div>
+                  <Label htmlFor="moduleName">Modül Adı *</Label>
+                  <Input 
+                    id="moduleName" 
+                    value={moduleFormData.name} 
+                    onChange={(e) => setModuleFormData({ ...moduleFormData, name: e.target.value })} 
+                    required 
+                  />
+                </div>
+                
+                <div>
+                  <Label htmlFor="moduleCode">Modül Kodu *</Label>
+                  <Input 
+                    id="moduleCode" 
+                    value={moduleFormData.code} 
+                    onChange={(e) => setModuleFormData({ ...moduleFormData, code: e.target.value })} 
+                    required 
+                    placeholder="Örn: MOD-40-100"
+                  />
+                </div>
+                
+                <div>
+                  <Label htmlFor="moduleSubProductId">Alt Ürün *</Label>
+                  <select 
+                    id="moduleSubProductId" 
+                    className="w-full border rounded-md h-10 px-3"
+                    value={moduleFormData.subProductId}
+                    onChange={(e) => setModuleFormData({ ...moduleFormData, subProductId: e.target.value })}
+                    required
+                  >
+                    <option value="" disabled>Alt ürün seçiniz</option>
+                    {subProducts.map((subProduct) => (
+                      <option key={subProduct.id} value={subProduct.id}>
+                        {subProduct.name} {subProduct.product?.name && `(${subProduct.product.name})`}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <Label htmlFor="moduleHeight">Yükseklik</Label>
+                    <Input 
+                      id="moduleHeight" 
+                      value={moduleFormData.height} 
+                      onChange={(e) => setModuleFormData({ ...moduleFormData, height: e.target.value })} 
+                      placeholder="Örn: 40mm"
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="moduleWidth">Genişlik</Label>
+                    <Input 
+                      id="moduleWidth" 
+                      value={moduleFormData.width} 
+                      onChange={(e) => setModuleFormData({ ...moduleFormData, width: e.target.value })} 
+                      placeholder="Örn: 100mm"
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="moduleCoatingType">Kaplama Cinsi</Label>
+                    <Input 
+                      id="moduleCoatingType" 
+                      value={moduleFormData.coatingType} 
+                      onChange={(e) => setModuleFormData({ ...moduleFormData, coatingType: e.target.value })} 
+                      placeholder="Örn: Galvaniz"
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="moduleSheetThickness">Sac Kalınlığı</Label>
+                    <Input 
+                      id="moduleSheetThickness" 
+                      value={moduleFormData.sheetThickness} 
+                      onChange={(e) => setModuleFormData({ ...moduleFormData, sheetThickness: e.target.value })} 
+                      placeholder="Örn: 1.5mm"
+                    />
+                  </div>
+                </div>
+                
+                <div>
+                  <Label htmlFor="moduleImageUrl">Resim URL (Opsiyonel)</Label>
+                  <Input 
+                    id="moduleImageUrl" 
+                    value={moduleFormData.imageUrl} 
+                    onChange={(e) => setModuleFormData({ ...moduleFormData, imageUrl: e.target.value })} 
+                    placeholder="Manuel resim URL'i girebilirsiniz" 
+                  />
+                </div>
+
+                <div>
+                  <Label>Modül Fotoğrafı</Label>
+                  <div className="flex items-center gap-3">
+                    <input
+                      ref={moduleFileRef}
+                      type="file"
+                      accept="image/*"
+                      className="hidden"
+                      onChange={(e) => {
+                        const file = e.target.files?.[0]
+                        if (file) {
+                          setModuleImage(file)
+                          setModuleImagePreview(URL.createObjectURL(file))
+                        }
+                      }}
+                    />
+                    <Button type="button" variant="outline" onClick={() => moduleFileRef.current?.click()}>
+                      Fotoğraf Seç
+                    </Button>
+                    {moduleImage ? (
+                      <span className="text-sm text-gray-600">Dosya seçildi</span>
+                    ) : (
+                      <span className="text-sm text-gray-400">Dosya seçilmedi</span>
+                    )}
+                  </div>
+                  
+                  {moduleImagePreview && (
+                    <div className="mt-4">
+                      <img 
+                        src={moduleImagePreview} 
+                        alt="Önizleme" 
+                        className="h-32 w-32 object-cover rounded border"
+                      />
+                    </div>
+                  )}
+                </div>
+                
+                <div className="flex space-x-4">
+                  <Button type="submit">
+                    {editingModule ? 'Güncelle' : 'Ekle'}
+                  </Button>
+                  <Button type="button" variant="outline" onClick={resetModuleForm}>
+                    İptal
+                  </Button>
+                </div>
+              </form>
+            </div>
+          )}
+
+          <div className="bg-white shadow rounded-lg">
+            <div className="px-6 py-4 border-b border-gray-200">
+              <h3 className="text-lg font-medium text-gray-900">Modüller</h3>
+            </div>
+            <div className="divide-y divide-gray-200">
+              {modules.map((module) => (
+                <div key={module.id} className="px-6 py-4">
+                  <div className="flex items-center justify-between">
+                    <div className="flex-1">
+                      <h4 className="text-lg font-medium text-gray-900">{module.name}</h4>
+                      <div className="text-sm text-gray-500 mt-1">
+                        <div>Kod: <span className="font-medium">{module.code}</span></div>
+                        {module.subProduct && (
+                          <div>
+                            Alt Ürün: {module.subProduct.name}
+                            {module.subProduct.product?.name && ` (${module.subProduct.product.name})`}
+                          </div>
+                        )}
+                      </div>
+                      <div className="mt-2 flex flex-wrap gap-2">
+                        <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+                          module.isActive ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
+                        }`}>
+                          {module.isActive ? 'Aktif' : 'Pasif'}
+                        </span>
+                        {module.height && (
+                          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                            Y: {module.height}
+                          </span>
+                        )}
+                        {module.width && (
+                          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                            G: {module.width}
+                          </span>
+                        )}
+                        {module.coatingType && (
+                          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-purple-100 text-purple-800">
+                            Kaplama: {module.coatingType}
+                          </span>
+                        )}
+                        {module.sheetThickness && (
+                          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-orange-100 text-orange-800">
+                            Kalınlık: {module.sheetThickness}
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                    <div className="flex space-x-2">
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={() => handleModuleEdit(module)}
+                      >
+                        <Edit className="w-4 h-4" />
+                      </Button>
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={() => handleModuleDelete(module.id)}
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </Button>
+                    </div>
+                  </div>
+                  {module.imageUrl && (
+                    <div className="mt-4">
+                      <img
+                        src={module.imageUrl}
+                        alt={module.name}
+                        className="h-20 w-20 object-cover rounded"
+                      />
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+          </div>
+        </>
+      )}
+
+      {activeTab === 'accessories' && (
+        <>
+          <div className="mb-8">
+            <Button onClick={() => setShowAccessoryForm(!showAccessoryForm)}>
+              <Plus className="w-4 h-4 mr-2" />
+              {showAccessoryForm ? 'Formu Gizle' : 'Yeni Aksesuar Ekle'}
+            </Button>
+          </div>
+
+          {showAccessoryForm && (
+            <div className="mb-8 bg-white p-6 rounded-lg shadow">
+              <h2 className="text-xl font-semibold mb-4">
+                {editingAccessory ? 'Aksesuar Düzenle' : 'Yeni Aksesuar Ekle'}
+              </h2>
+              <form onSubmit={handleAccessorySubmit} className="space-y-4">
+                <div>
+                  <Label htmlFor="accessoryName">Aksesuar Adı *</Label>
+                  <Input 
+                    id="accessoryName" 
+                    value={accessoryFormData.name} 
+                    onChange={(e) => setAccessoryFormData({ ...accessoryFormData, name: e.target.value })} 
+                    required 
+                  />
+                </div>
+                
+                <div>
+                  <Label htmlFor="accessoryCode">Aksesuar Kodu *</Label>
+                  <Input 
+                    id="accessoryCode" 
+                    value={accessoryFormData.code} 
+                    onChange={(e) => setAccessoryFormData({ ...accessoryFormData, code: e.target.value })} 
+                    required 
+                    placeholder="Örn: AKS-40-100"
+                  />
+                </div>
+                
+                <div>
+                  <Label htmlFor="accessorySubProductId">Alt Ürün *</Label>
+                  <select 
+                    id="accessorySubProductId" 
+                    className="w-full border rounded-md h-10 px-3"
+                    value={accessoryFormData.subProductId}
+                    onChange={(e) => setAccessoryFormData({ ...accessoryFormData, subProductId: e.target.value })}
+                    required
+                  >
+                    <option value="" disabled>Alt ürün seçiniz</option>
+                    {subProducts.map((subProduct) => (
+                      <option key={subProduct.id} value={subProduct.id}>
+                        {subProduct.name} {subProduct.product?.name && `(${subProduct.product.name})`}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <Label htmlFor="accessoryHeight">Yükseklik</Label>
+                    <Input 
+                      id="accessoryHeight" 
+                      value={accessoryFormData.height} 
+                      onChange={(e) => setAccessoryFormData({ ...accessoryFormData, height: e.target.value })} 
+                      placeholder="Örn: 40mm"
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="accessoryWidth">Genişlik</Label>
+                    <Input 
+                      id="accessoryWidth" 
+                      value={accessoryFormData.width} 
+                      onChange={(e) => setAccessoryFormData({ ...accessoryFormData, width: e.target.value })} 
+                      placeholder="Örn: 100mm"
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="accessoryCoatingType">Kaplama Cinsi</Label>
+                    <Input 
+                      id="accessoryCoatingType" 
+                      value={accessoryFormData.coatingType} 
+                      onChange={(e) => setAccessoryFormData({ ...accessoryFormData, coatingType: e.target.value })} 
+                      placeholder="Örn: Galvaniz"
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="accessorySheetThickness">Sac Kalınlığı</Label>
+                    <Input 
+                      id="accessorySheetThickness" 
+                      value={accessoryFormData.sheetThickness} 
+                      onChange={(e) => setAccessoryFormData({ ...accessoryFormData, sheetThickness: e.target.value })} 
+                      placeholder="Örn: 1.5mm"
+                    />
+                  </div>
+                </div>
+                
+                <div>
+                  <Label htmlFor="accessoryImageUrl">Resim URL (Opsiyonel)</Label>
+                  <Input 
+                    id="accessoryImageUrl" 
+                    value={accessoryFormData.imageUrl} 
+                    onChange={(e) => setAccessoryFormData({ ...accessoryFormData, imageUrl: e.target.value })} 
+                    placeholder="Manuel resim URL'i girebilirsiniz" 
+                  />
+                </div>
+
+                <div>
+                  <Label>Aksesuar Fotoğrafı</Label>
+                  <div className="flex items-center gap-3">
+                    <input
+                      ref={accessoryFileRef}
+                      type="file"
+                      accept="image/*"
+                      className="hidden"
+                      onChange={(e) => {
+                        const file = e.target.files?.[0]
+                        if (file) {
+                          setAccessoryImage(file)
+                          setAccessoryImagePreview(URL.createObjectURL(file))
+                        }
+                      }}
+                    />
+                    <Button type="button" variant="outline" onClick={() => accessoryFileRef.current?.click()}>
+                      Fotoğraf Seç
+                    </Button>
+                    {accessoryImage ? (
+                      <span className="text-sm text-gray-600">Dosya seçildi</span>
+                    ) : (
+                      <span className="text-sm text-gray-400">Dosya seçilmedi</span>
+                    )}
+                  </div>
+                  
+                  {accessoryImagePreview && (
+                    <div className="mt-4">
+                      <img 
+                        src={accessoryImagePreview} 
+                        alt="Önizleme" 
+                        className="h-32 w-32 object-cover rounded border"
+                      />
+                    </div>
+                  )}
+                </div>
+                
+                <div className="flex space-x-4">
+                  <Button type="submit">
+                    {editingAccessory ? 'Güncelle' : 'Ekle'}
+                  </Button>
+                  <Button type="button" variant="outline" onClick={resetAccessoryForm}>
+                    İptal
+                  </Button>
+                </div>
+              </form>
+            </div>
+          )}
+
+          <div className="bg-white shadow rounded-lg">
+            <div className="px-6 py-4 border-b border-gray-200">
+              <h3 className="text-lg font-medium text-gray-900">Aksesuarlar</h3>
+            </div>
+            <div className="divide-y divide-gray-200">
+              {accessories.map((accessory) => (
+                <div key={accessory.id} className="px-6 py-4">
+                  <div className="flex items-center justify-between">
+                    <div className="flex-1">
+                      <h4 className="text-lg font-medium text-gray-900">{accessory.name}</h4>
+                      <div className="text-sm text-gray-500 mt-1">
+                        <div>Kod: <span className="font-medium">{accessory.code}</span></div>
+                        {accessory.subProduct && (
+                          <div>
+                            Alt Ürün: {accessory.subProduct.name}
+                            {accessory.subProduct.product?.name && ` (${accessory.subProduct.product.name})`}
+                          </div>
+                        )}
+                      </div>
+                      <div className="mt-2 flex flex-wrap gap-2">
+                        <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+                          accessory.isActive ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
+                        }`}>
+                          {accessory.isActive ? 'Aktif' : 'Pasif'}
+                        </span>
+                        {accessory.height && (
+                          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                            Y: {accessory.height}
+                          </span>
+                        )}
+                        {accessory.width && (
+                          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                            G: {accessory.width}
+                          </span>
+                        )}
+                        {accessory.coatingType && (
+                          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-purple-100 text-purple-800">
+                            Kaplama: {accessory.coatingType}
+                          </span>
+                        )}
+                        {accessory.sheetThickness && (
+                          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-orange-100 text-orange-800">
+                            Kalınlık: {accessory.sheetThickness}
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                    <div className="flex space-x-2">
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={() => handleAccessoryEdit(accessory)}
+                      >
+                        <Edit className="w-4 h-4" />
+                      </Button>
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={() => handleAccessoryDelete(accessory.id)}
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </Button>
+                    </div>
+                  </div>
+                  {accessory.imageUrl && (
+                    <div className="mt-4">
+                      <img
+                        src={accessory.imageUrl}
+                        alt={accessory.name}
+                        className="h-20 w-20 object-cover rounded"
+                      />
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+          </div>
+        </>
+      )}
+
+      {activeTab === 'covers' && (
+        <>
+          <div className="mb-8">
+            <Button onClick={() => setShowCoverForm(!showCoverForm)}>
+              <Plus className="w-4 h-4 mr-2" />
+              {showCoverForm ? 'Formu Gizle' : 'Yeni Kapak Ekle'}
+            </Button>
+          </div>
+
+          {showCoverForm && (
+            <div className="mb-8 bg-white p-6 rounded-lg shadow">
+              <h2 className="text-xl font-semibold mb-4">
+                {editingCover ? 'Kapak Düzenle' : 'Yeni Kapak Ekle'}
+              </h2>
+              <form onSubmit={handleCoverSubmit} className="space-y-4">
+                <div>
+                  <Label htmlFor="coverName">Kapak Adı *</Label>
+                  <Input 
+                    id="coverName" 
+                    value={coverFormData.name} 
+                    onChange={(e) => setCoverFormData({ ...coverFormData, name: e.target.value })} 
+                    required 
+                  />
+                </div>
+                
+                <div>
+                  <Label htmlFor="coverCode">Kapak Kodu *</Label>
+                  <Input 
+                    id="coverCode" 
+                    value={coverFormData.code} 
+                    onChange={(e) => setCoverFormData({ ...coverFormData, code: e.target.value })} 
+                    required 
+                    placeholder="Örn: KAP-40-100"
+                  />
+                </div>
+                
+                <div>
+                  <Label htmlFor="coverSubProductId">Alt Ürün *</Label>
+                  <select 
+                    id="coverSubProductId" 
+                    className="w-full border rounded-md h-10 px-3"
+                    value={coverFormData.subProductId}
+                    onChange={(e) => setCoverFormData({ ...coverFormData, subProductId: e.target.value })}
+                    required
+                  >
+                    <option value="" disabled>Alt ürün seçiniz</option>
+                    {subProducts.map((subProduct) => (
+                      <option key={subProduct.id} value={subProduct.id}>
+                        {subProduct.name} {subProduct.product?.name && `(${subProduct.product.name})`}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <Label htmlFor="coverHeight">Yükseklik</Label>
+                    <Input 
+                      id="coverHeight" 
+                      value={coverFormData.height} 
+                      onChange={(e) => setCoverFormData({ ...coverFormData, height: e.target.value })} 
+                      placeholder="Örn: 40mm"
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="coverWidth">Genişlik</Label>
+                    <Input 
+                      id="coverWidth" 
+                      value={coverFormData.width} 
+                      onChange={(e) => setCoverFormData({ ...coverFormData, width: e.target.value })} 
+                      placeholder="Örn: 100mm"
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="coverCoatingType">Kaplama Cinsi</Label>
+                    <Input 
+                      id="coverCoatingType" 
+                      value={coverFormData.coatingType} 
+                      onChange={(e) => setCoverFormData({ ...coverFormData, coatingType: e.target.value })} 
+                      placeholder="Örn: Galvaniz"
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="coverSheetThickness">Sac Kalınlığı</Label>
+                    <Input 
+                      id="coverSheetThickness" 
+                      value={coverFormData.sheetThickness} 
+                      onChange={(e) => setCoverFormData({ ...coverFormData, sheetThickness: e.target.value })} 
+                      placeholder="Örn: 1.5mm"
+                    />
+                  </div>
+                </div>
+                
+                <div>
+                  <Label htmlFor="coverImageUrl">Resim URL (Opsiyonel)</Label>
+                  <Input 
+                    id="coverImageUrl" 
+                    value={coverFormData.imageUrl} 
+                    onChange={(e) => setCoverFormData({ ...coverFormData, imageUrl: e.target.value })} 
+                    placeholder="Manuel resim URL'i girebilirsiniz" 
+                  />
+                </div>
+
+                <div>
+                  <Label>Kapak Fotoğrafı</Label>
+                  <div className="flex items-center gap-3">
+                    <input
+                      ref={coverFileRef}
+                      type="file"
+                      accept="image/*"
+                      className="hidden"
+                      onChange={(e) => {
+                        const file = e.target.files?.[0]
+                        if (file) {
+                          setCoverImage(file)
+                          setCoverImagePreview(URL.createObjectURL(file))
+                        }
+                      }}
+                    />
+                    <Button type="button" variant="outline" onClick={() => coverFileRef.current?.click()}>
+                      Fotoğraf Seç
+                    </Button>
+                    {coverImage ? (
+                      <span className="text-sm text-gray-600">Dosya seçildi</span>
+                    ) : (
+                      <span className="text-sm text-gray-400">Dosya seçilmedi</span>
+                    )}
+                  </div>
+                  
+                  {coverImagePreview && (
+                    <div className="mt-4">
+                      <img 
+                        src={coverImagePreview} 
+                        alt="Önizleme" 
+                        className="h-32 w-32 object-cover rounded border"
+                      />
+                    </div>
+                  )}
+                </div>
+                
+                <div className="flex space-x-4">
+                  <Button type="submit">
+                    {editingCover ? 'Güncelle' : 'Ekle'}
+                  </Button>
+                  <Button type="button" variant="outline" onClick={resetCoverForm}>
+                    İptal
+                  </Button>
+                </div>
+              </form>
+            </div>
+          )}
+
+          <div className="bg-white shadow rounded-lg">
+            <div className="px-6 py-4 border-b border-gray-200">
+              <h3 className="text-lg font-medium text-gray-900">Kapaklar</h3>
+            </div>
+            <div className="divide-y divide-gray-200">
+              {covers.map((cover) => (
+                <div key={cover.id} className="px-6 py-4">
+                  <div className="flex items-center justify-between">
+                    <div className="flex-1">
+                      <h4 className="text-lg font-medium text-gray-900">{cover.name}</h4>
+                      <div className="text-sm text-gray-500 mt-1">
+                        <div>Kod: <span className="font-medium">{cover.code}</span></div>
+                        {cover.subProduct && (
+                          <div>
+                            Alt Ürün: {cover.subProduct.name}
+                            {cover.subProduct.product?.name && ` (${cover.subProduct.product.name})`}
+                          </div>
+                        )}
+                      </div>
+                      <div className="mt-2 flex flex-wrap gap-2">
+                        <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+                          cover.isActive ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
+                        }`}>
+                          {cover.isActive ? 'Aktif' : 'Pasif'}
+                        </span>
+                        {cover.height && (
+                          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                            Y: {cover.height}
+                          </span>
+                        )}
+                        {cover.width && (
+                          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                            G: {cover.width}
+                          </span>
+                        )}
+                        {cover.coatingType && (
+                          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-purple-100 text-purple-800">
+                            Kaplama: {cover.coatingType}
+                          </span>
+                        )}
+                        {cover.sheetThickness && (
+                          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-orange-100 text-orange-800">
+                            Kalınlık: {cover.sheetThickness}
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                    <div className="flex space-x-2">
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={() => handleCoverEdit(cover)}
+                      >
+                        <Edit className="w-4 h-4" />
+                      </Button>
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={() => handleCoverDelete(cover.id)}
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </Button>
+                    </div>
+                  </div>
+                  {cover.imageUrl && (
+                    <div className="mt-4">
+                      <img
+                        src={cover.imageUrl}
+                        alt={cover.name}
                         className="h-20 w-20 object-cover rounded"
                       />
                     </div>
