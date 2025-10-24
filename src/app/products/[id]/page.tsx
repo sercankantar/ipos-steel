@@ -4,6 +4,7 @@ import MaxWidthWrapper from '@/components/MaxWidthWrapper'
 import { useState, useEffect } from 'react'
 import { ChevronLeft, ChevronRight, Download, FileText, Eye, X } from 'lucide-react'
 import Link from 'next/link'
+import { showToast } from '@/components/Toast'
 
 function getBaseUrl() {
   return typeof window !== 'undefined' 
@@ -13,7 +14,13 @@ function getBaseUrl() {
 
 async function getProduct(id: string) {
   const base = process.env.NEXT_PUBLIC_SERVER_URL || getBaseUrl()
-  const res = await fetch(`${base}/api/products/${id}`, { cache: 'no-store' })
+  const res = await fetch(`${base}/api/products/${id}`, { 
+    cache: 'no-store',
+    headers: {
+      'Cache-Control': 'no-cache',
+      'Pragma': 'no-cache'
+    }
+  })
   if (!res.ok) return null
   return res.json()
 }
@@ -80,37 +87,36 @@ export default function ProductDetail({ params }: { params: { id: string } }) {
   })
 
   useEffect(() => {
-    const fetchProduct = async () => {
+    const fetchData = async () => {
       try {
-        const data = await getProduct(params.id)
-        setProduct(data)
+        // Ana ürün ve alt ürünleri paralel olarak yükle
+        const [productData, subProductsResponse] = await Promise.all([
+          getProduct(params.id),
+          fetch(`/api/sub-products?productId=${params.id}`, {
+            cache: 'no-store',
+            headers: {
+              'Cache-Control': 'no-cache',
+              'Pragma': 'no-cache'
+            }
+          })
+        ])
+        
+        setProduct(productData)
+        
+        if (subProductsResponse.ok) {
+          const subProductsData = await subProductsResponse.json()
+          setSubProducts(subProductsData)
+          setFilteredSubProducts(subProductsData)
+        }
       } catch (error) {
-        console.error('Ürün yüklenirken hata:', error)
+        console.error('Veri yüklenirken hata:', error)
       } finally {
         setLoading(false)
       }
     }
-    fetchProduct()
-  }, [params.id])
-
-  useEffect(() => {
-    const fetchSubProducts = async () => {
-      if (!product?.id) return
-      
-      try {
-        const response = await fetch(`/api/sub-products?productId=${product.id}`)
-        if (response.ok) {
-          const data = await response.json()
-          setSubProducts(data)
-          setFilteredSubProducts(data)
-        }
-      } catch (error) {
-        console.error('Alt ürünler yüklenirken hata:', error)
-      }
-    }
     
-    fetchSubProducts()
-  }, [product?.id])
+    fetchData()
+  }, [params.id])
 
   // Filtreleme mantığı
   useEffect(() => {
@@ -342,19 +348,20 @@ export default function ProductDetail({ params }: { params: { id: string } }) {
     setIsChannelsModalOpen(true)
     setActiveModalTab('channels')
     
-    // Tüm verileri paralel olarak yükle
-    await Promise.all([
-      fetchChannels(subProduct.id),
-      fetchModules(subProduct.id),
-      fetchAccessories(subProduct.id),
-      fetchCovers(subProduct.id)
-    ])
+    // Sadece aktif tab'ın verilerini yükle
+    await fetchChannels(subProduct.id)
   }
 
   const fetchChannels = async (subProductId: string) => {
     setChannelsLoading(true)
     try {
-      const response = await fetch(`/api/channels?subProductId=${subProductId}`)
+      const response = await fetch(`/api/channels?subProductId=${subProductId}`, {
+        cache: 'no-store',
+        headers: {
+          'Cache-Control': 'no-cache',
+          'Pragma': 'no-cache'
+        }
+      })
       if (response.ok) {
         const data = await response.json()
         setChannels(data)
@@ -370,7 +377,13 @@ export default function ProductDetail({ params }: { params: { id: string } }) {
   const fetchModules = async (subProductId: string) => {
     setModulesLoading(true)
     try {
-      const response = await fetch(`/api/modules?subProductId=${subProductId}`)
+      const response = await fetch(`/api/modules?subProductId=${subProductId}`, {
+        cache: 'no-store',
+        headers: {
+          'Cache-Control': 'no-cache',
+          'Pragma': 'no-cache'
+        }
+      })
       if (response.ok) {
         const data = await response.json()
         setModules(data)
@@ -386,7 +399,13 @@ export default function ProductDetail({ params }: { params: { id: string } }) {
   const fetchAccessories = async (subProductId: string) => {
     setAccessoriesLoading(true)
     try {
-      const response = await fetch(`/api/accessories?subProductId=${subProductId}`)
+      const response = await fetch(`/api/accessories?subProductId=${subProductId}`, {
+        cache: 'no-store',
+        headers: {
+          'Cache-Control': 'no-cache',
+          'Pragma': 'no-cache'
+        }
+      })
       if (response.ok) {
         const data = await response.json()
         setAccessories(data)
@@ -402,7 +421,13 @@ export default function ProductDetail({ params }: { params: { id: string } }) {
   const fetchCovers = async (subProductId: string) => {
     setCoversLoading(true)
     try {
-      const response = await fetch(`/api/covers?subProductId=${subProductId}`)
+      const response = await fetch(`/api/covers?subProductId=${subProductId}`, {
+        cache: 'no-store',
+        headers: {
+          'Cache-Control': 'no-cache',
+          'Pragma': 'no-cache'
+        }
+      })
       if (response.ok) {
         const data = await response.json()
         setCovers(data)
@@ -451,6 +476,37 @@ export default function ProductDetail({ params }: { params: { id: string } }) {
       coatingTypes: [],
       sheetThicknesses: []
     })
+  }
+
+  // Tab değiştiğinde veri yükle
+  const handleTabChange = async (tab: 'channels' | 'modules' | 'accessories' | 'covers') => {
+    setActiveModalTab(tab)
+    
+    if (!selectedSubProduct) return
+    
+    // Sadece henüz yüklenmemiş verileri yükle
+    switch (tab) {
+      case 'channels':
+        if (channels.length === 0) {
+          await fetchChannels(selectedSubProduct.id)
+        }
+        break
+      case 'modules':
+        if (modules.length === 0) {
+          await fetchModules(selectedSubProduct.id)
+        }
+        break
+      case 'accessories':
+        if (accessories.length === 0) {
+          await fetchAccessories(selectedSubProduct.id)
+        }
+        break
+      case 'covers':
+        if (covers.length === 0) {
+          await fetchCovers(selectedSubProduct.id)
+        }
+        break
+    }
   }
 
   // Kanallar filtre fonksiyonları
@@ -517,8 +573,12 @@ export default function ProductDetail({ params }: { params: { id: string } }) {
     // Navbar'ı güncellemek için custom event gönder
     window.dispatchEvent(new CustomEvent('requestListUpdated'))
 
-    // Başarı mesajı göster
-    alert(`${item.name} istek listesine eklendi!`)
+    // Başarı toast'u göster
+    showToast({
+      message: `${item.name} istek listesine eklendi!`,
+      type: 'success',
+      duration: 3000
+    })
   }
 
   const uniqueChannelWidths = getUniqueValues(channels, 'width')
@@ -552,7 +612,12 @@ export default function ProductDetail({ params }: { params: { id: string } }) {
   const handleCatalogDownload = async (catalogId: string) => {
     try {
       const response = await fetch(`/api/catalogs/${catalogId}/download`, {
-        method: 'POST'
+        method: 'POST',
+        cache: 'no-store',
+        headers: {
+          'Cache-Control': 'no-cache',
+          'Pragma': 'no-cache'
+        }
       })
       
       if (response.ok) {
@@ -576,7 +641,45 @@ export default function ProductDetail({ params }: { params: { id: string } }) {
   if (loading) {
     return (
       <MaxWidthWrapper>
-        <div className="py-12 text-center text-gray-600">Yükleniyor...</div>
+        <div className="py-12">
+          <div className="animate-pulse">
+            {/* Breadcrumb skeleton */}
+            <div className="h-4 bg-gray-200 rounded w-1/3 mb-6"></div>
+            
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+              {/* Sol taraf - Görsel skeleton */}
+              <div className="space-y-4">
+                <div className="aspect-square bg-gray-200 rounded-lg"></div>
+                <div className="flex space-x-2">
+                  {[1, 2, 3].map((i) => (
+                    <div key={i} className="w-20 h-20 bg-gray-200 rounded-lg"></div>
+                  ))}
+                </div>
+              </div>
+              
+              {/* Sağ taraf - Bilgi skeleton */}
+              <div className="space-y-6">
+                <div className="h-8 bg-gray-200 rounded w-3/4"></div>
+                <div className="h-4 bg-gray-200 rounded w-1/2"></div>
+                <div className="space-y-2">
+                  <div className="h-4 bg-gray-200 rounded"></div>
+                  <div className="h-4 bg-gray-200 rounded w-5/6"></div>
+                  <div className="h-4 bg-gray-200 rounded w-4/6"></div>
+                </div>
+                <div className="h-12 bg-gray-200 rounded"></div>
+              </div>
+            </div>
+            
+            {/* Tab skeleton */}
+            <div className="border-t border-gray-200 pt-8">
+              <div className="flex space-x-1 bg-gray-50 p-1 rounded-lg mb-8">
+                {[1, 2, 3, 4].map((i) => (
+                  <div key={i} className="flex-1 h-12 bg-gray-200 rounded-md"></div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
       </MaxWidthWrapper>
     )
   }
@@ -1319,7 +1422,7 @@ export default function ProductDetail({ params }: { params: { id: string } }) {
             <div className="border-b border-gray-200">
               <nav className="flex space-x-8 px-6">
                 <button
-                  onClick={() => setActiveModalTab('channels')}
+                  onClick={() => handleTabChange('channels')}
                   className={`py-4 px-1 border-b-2 font-medium text-sm ${
                     activeModalTab === 'channels'
                       ? 'border-red-500 text-red-600'
@@ -1329,7 +1432,7 @@ export default function ProductDetail({ params }: { params: { id: string } }) {
                   Kanallar
                 </button>
                 <button
-                  onClick={() => setActiveModalTab('modules')}
+                  onClick={() => handleTabChange('modules')}
                   className={`py-4 px-1 border-b-2 font-medium text-sm ${
                     activeModalTab === 'modules'
                       ? 'border-red-500 text-red-600'
@@ -1339,7 +1442,7 @@ export default function ProductDetail({ params }: { params: { id: string } }) {
                   Modüller
                 </button>
                 <button
-                  onClick={() => setActiveModalTab('accessories')}
+                  onClick={() => handleTabChange('accessories')}
                   className={`py-4 px-1 border-b-2 font-medium text-sm ${
                     activeModalTab === 'accessories'
                       ? 'border-red-500 text-red-600'
@@ -1349,7 +1452,7 @@ export default function ProductDetail({ params }: { params: { id: string } }) {
                   Aksesuarlar
                 </button>
                 <button
-                  onClick={() => setActiveModalTab('covers')}
+                  onClick={() => handleTabChange('covers')}
                   className={`py-4 px-1 border-b-2 font-medium text-sm ${
                     activeModalTab === 'covers'
                       ? 'border-red-500 text-red-600'

@@ -18,19 +18,15 @@ export async function GET(request: NextRequest) {
         subProductId: subProductId,
         isActive: true
       },
-      include: {
-        subProduct: {
-          select: {
-            id: true,
-            name: true,
-            product: {
-              select: {
-                id: true,
-                name: true
-              }
-            }
-          }
-        }
+      select: {
+        id: true,
+        name: true,
+        imageUrl: true,
+        code: true,
+        height: true,
+        width: true,
+        coatingType: true,
+        sheetThickness: true
       },
       orderBy: {
         name: 'asc'

@@ -4,6 +4,7 @@ import MaxWidthWrapper from '@/components/MaxWidthWrapper'
 import { useState, useEffect } from 'react'
 import { ArrowLeft, Download, FileText, Trash2, Eye, Plus } from 'lucide-react'
 import Link from 'next/link'
+import { showToast } from '@/components/Toast'
 
 interface RequestItem {
   id: string
@@ -38,39 +39,102 @@ export default function RequestList() {
     )
     setRequestItems(updatedItems)
     localStorage.setItem('requestList', JSON.stringify(updatedItems))
+    
+    // Navbar'ı güncellemek için custom event gönder
+    window.dispatchEvent(new CustomEvent('requestListUpdated'))
+    
+    showToast({
+      message: 'Miktar güncellendi!',
+      type: 'success',
+      duration: 2000
+    })
   }
 
   const removeItem = (id: string) => {
+    const itemToRemove = requestItems.find(item => item.id === id)
     const updatedItems = requestItems.filter(item => item.id !== id)
     setRequestItems(updatedItems)
     localStorage.setItem('requestList', JSON.stringify(updatedItems))
+    
+    // Navbar'ı güncellemek için custom event gönder
+    window.dispatchEvent(new CustomEvent('requestListUpdated'))
+    
+    showToast({
+      message: `${itemToRemove?.name} listeden kaldırıldı!`,
+      type: 'error',
+      duration: 3000
+    })
   }
 
   const clearAll = () => {
+    if (requestItems.length === 0) {
+      showToast({
+        message: 'Liste zaten boş!',
+        type: 'info',
+        duration: 2000
+      })
+      return
+    }
+
     if (confirm('Tüm ürünleri listeden kaldırmak istediğinizden emin misiniz?')) {
       setRequestItems([])
       localStorage.removeItem('requestList')
+      
+      // Navbar'ı güncellemek için custom event gönder
+      window.dispatchEvent(new CustomEvent('requestListUpdated'))
+      
+      showToast({
+        message: 'Tüm ürünler listeden kaldırıldı!',
+        type: 'warning',
+        duration: 3000
+      })
+    } else {
+      showToast({
+        message: 'İşlem iptal edildi',
+        type: 'info',
+        duration: 2000
+      })
     }
   }
 
   const downloadPDF = () => {
     // PDF indirme işlemi
     console.log('PDF indiriliyor...')
+    showToast({
+      message: 'PDF indiriliyor...',
+      type: 'info',
+      duration: 2000
+    })
   }
 
   const downloadExcel = () => {
     // Excel indirme işlemi
     console.log('Excel indiriliyor...')
+    showToast({
+      message: 'Excel dosyası indiriliyor...',
+      type: 'success',
+      duration: 2000
+    })
   }
 
   const downloadAllDatasheets = () => {
     // Tüm datasheet'leri indirme işlemi
     console.log('Tüm datasheet\'ler indiriliyor...')
+    showToast({
+      message: 'Tüm datasheet\'ler indiriliyor...',
+      type: 'info',
+      duration: 2000
+    })
   }
 
   const requestQuote = () => {
     // Teklif talebi işlemi
     console.log('Teklif talebinde bulunuluyor...')
+    showToast({
+      message: 'Teklif talebiniz alındı! En kısa sürede size dönüş yapacağız.',
+      type: 'success',
+      duration: 4000
+    })
   }
 
   if (loading) {
