@@ -40,6 +40,7 @@ model ProductCategory {
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
   products      Product[]
+  gesProducts   GesProduct[]
 }
 
 model ReferenceCategory {
@@ -488,6 +489,7 @@ model Catalog {
   
   // İlişkiler
   products        Product[]       // Ürünlerle ilişki
+  gesProducts     GesProduct[]    // GES ürünleriyle ilişki
   
   isActive        Boolean         @default(true)
   createdAt       DateTime        @default(now())
@@ -957,4 +959,40 @@ model KvkkDisclosureText {
 
   createdAt            DateTime @default(now())
   updatedAt            DateTime @updatedAt
+}
+
+model GesProduct {
+  id                    String   @id @default(cuid())
+  
+  // Temel Bilgiler
+  name                  String   // Ürün adı
+  mainImageUrl          String?  // Ana fotoğraf
+  mainImagePublicId     String?  // Ana fotoğraf public ID
+  
+  // Kategori ve Katalog
+  categoryId            String   // Kategori (select option)
+  category              ProductCategory @relation(fields: [categoryId], references: [id])
+  catalogId             String?  // Katalog (select option)
+  catalog               Catalog? @relation(fields: [catalogId], references: [id])
+  
+  // Teknik Özellikler (özellik, value şeklinde)
+  technicalSpecs        Json     // Array of { property: string, value: string }
+  
+  // Açıklama yazıları ve fotoğraflar
+  description1          String?  // Açıklama yazısı 1 (HTML format)
+  image1Url             String?  // Fotoğraf ek 1
+  image1PublicId        String?  // Fotoğraf ek 1 public ID
+  
+  description2          String?  // Açıklama yazısı 2 (HTML format)
+  image2Url             String?  // Fotoğraf ek 2
+  image2PublicId        String?  // Fotoğraf ek 2 public ID
+  
+  description3          String?  // Açıklama yazısı 3 (HTML format)
+  image3Url             String?  // Fotoğraf ek 3
+  image3PublicId        String?  // Fotoğraf ek 3 public ID
+  
+  // Durum
+  isActive              Boolean  @default(true)
+  createdAt             DateTime @default(now())
+  updatedAt             DateTime @updatedAt
 }

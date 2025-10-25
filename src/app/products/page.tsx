@@ -21,6 +21,14 @@ function getBaseUrl() {
 
 async function getProducts(category?: string) {
   const base = process.env.NEXT_PUBLIC_SERVER_URL || getBaseUrl()
+  
+  // GES ürünleri için farklı endpoint kullan
+  if (category === 'solar-montaj-sistemleri') {
+    const res = await fetch(`${base}/api/ges-products`, { cache: 'no-store' })
+    if (!res.ok) return []
+    return res.json()
+  }
+  
   const url = category ? `${base}/api/products?category=${encodeURIComponent(category)}` : `${base}/api/products`
   const res = await fetch(url, { cache: 'no-store' })
   if (!res.ok) return []
@@ -1940,6 +1948,177 @@ const ProductsPage = ({ searchParams }: ProductsPageProps) => {
                       <div className="w-32 h-2 bg-orange-700 rounded absolute top-2 left-1/2 transform -translate-x-1/2 shadow-sm"></div>
                     </div>
                   </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </MaxWidthWrapper>
+      </div>
+    )
+  }
+
+  // Solar Montaj Sistemleri kategorisi için özel tasarım
+  if (category === 'solar-montaj-sistemleri') {
+    return (
+      <div className="min-h-screen bg-gray-50">
+        <div className="bg-white border-b">
+          <MaxWidthWrapper>
+            <div className="py-4">
+              <nav className="flex items-center space-x-2 text-sm text-gray-600">
+                <Link href="/" className="hover:text-[#1a3056]">Ana Sayfa</Link>
+                <ChevronRight className="h-4 w-4" />
+                <Link href="/products" className="hover:text-[#1a3056]">Ürünler</Link>
+                <ChevronRight className="h-4 w-4" />
+                <span className="text-[#1a3056] font-medium">Solar Montaj Sistemleri</span>
+              </nav>
+            </div>
+          </MaxWidthWrapper>
+        </div>
+
+        <div className="bg-gradient-to-r from-yellow-600 to-yellow-800 text-white">
+          <MaxWidthWrapper>
+            <div className="py-16">
+              <div className="max-w-4xl">
+                <h1 className="text-4xl md:text-5xl font-bold font-neuropol mb-6">
+                  Solar Montaj Sistemleri
+                </h1>
+                <p className="text-xl text-yellow-100 leading-relaxed">
+                  IPOS Solar montaj sistemleri; güneş enerjisi panellerinin güvenli ve verimli montajı için 
+                  tasarlanmış dayanıklı ve esnek çözümler sunar. Fotovoltaik paneller için en uygun montaj sistemini seçin.
+                </p>
+              </div>
+            </div>
+          </MaxWidthWrapper>
+        </div>
+
+        <MaxWidthWrapper>
+          <div className="py-16">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center mb-16">
+              <div>
+                <div className="mb-6">
+                  <span className="text-yellow-600 font-medium text-sm uppercase tracking-wide">Genel Bilgi</span>
+                  <h2 className="text-3xl font-bold font-neuropol text-gray-900 mt-2 mb-6">
+                    Solar Montaj Sistemleri Genel Bilgi
+                  </h2>
+                </div>
+                <div className="space-y-4 text-gray-700 leading-relaxed">
+                  <p>
+                    IPOS Solar montaj sistemleri; güneş enerjisi panellerinin çatı, zemin ve özel yapılara 
+                    güvenli montajı için tasarlanmış dayanıklı çelik konstrüksiyon sistemleridir.
+                  </p>
+                  <p>
+                    Galvanizli ve paslanmaz çelik seçenekleri ile uzun ömürlü, yüksek taşıma kapasiteli ve 
+                    kolay montajlı solar enerji çözümleri sunar.
+                  </p>
+                </div>
+              </div>
+              <div className="relative">
+                <div className="aspect-[4/3] bg-gradient-to-br from-yellow-50 to-yellow-100 rounded-lg overflow-hidden flex items-center justify-center">
+                  <div className="relative w-full h-full flex items-center justify-center p-8">
+                    <div className="relative transform rotate-6">
+                      <div className="w-80 h-40 bg-gradient-to-r from-yellow-400 to-yellow-600 rounded-lg shadow-xl relative">
+                        <div className="absolute top-0 left-0 right-0 h-3 bg-gradient-to-r from-yellow-500 to-yellow-700 rounded-t-lg"></div>
+                        <div className="absolute bottom-0 left-0 right-0 h-3 bg-gradient-to-r from-yellow-300 to-yellow-500 rounded-b-lg"></div>
+                        <div className="absolute top-2 left-2 right-2 bottom-2 border-2 border-yellow-700 rounded opacity-20"></div>
+                        <div className="flex justify-between items-center px-4 py-2 h-full">
+                          <div className="flex space-x-2">
+                            <div className="w-3 h-3 bg-yellow-800 rounded"></div>
+                            <div className="w-3 h-3 bg-yellow-800 rounded"></div>
+                            <div className="w-3 h-3 bg-yellow-800 rounded"></div>
+                            <div className="w-3 h-3 bg-yellow-800 rounded"></div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Ürün Çeşitleri Carousel */}
+            <div className="mb-16">
+              <div className="text-center mb-8">
+                <span className="text-yellow-600 font-medium text-sm uppercase tracking-wide">Ürünler</span>
+                <h2 className="text-3xl font-bold font-neuropol text-gray-900 mt-2 mb-6">
+                  Solar Montaj Sistemi Çeşitleri
+                </h2>
+              </div>
+
+              <div className="relative">
+                <button 
+                  onClick={prevSlide}
+                  className="absolute left-4 top-1/2 transform -translate-y-1/2 z-10 w-12 h-12 bg-white rounded-full shadow-lg flex items-center justify-center hover:bg-gray-50 transition-colors disabled:opacity-50"
+                  disabled={currentSlide === 0}
+                >
+                  <ChevronLeft className="h-6 w-6 text-gray-600" />
+                </button>
+                <button 
+                  onClick={nextSlide}
+                  className="absolute right-4 top-1/2 transform -translate-y-1/2 z-10 w-12 h-12 bg-white rounded-full shadow-lg flex items-center justify-center hover:bg-gray-50 transition-colors disabled:opacity-50"
+                  disabled={currentSlide === totalSlides - 1}
+                >
+                  <ChevronRight className="h-6 w-6 text-gray-600" />
+                </button>
+
+                <div className="overflow-hidden mx-16">
+                  <div 
+                    className="flex space-x-6 transition-transform duration-500 ease-in-out"
+                    style={{
+                      transform: `translateX(-${currentSlide * (100 / totalSlides)}%)`
+                    }}
+                  >
+                    {products.map((product: any, index: number) => (
+                      <Link key={product.id} href={`/ges-products/${product.id}`}>
+                        <div className="flex-none w-80 bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden group hover:shadow-lg transition-all duration-300">
+                          <div className="aspect-[4/3] bg-gray-50 relative overflow-hidden">
+                            {product.mainImageUrl ? (
+                              <img
+                                src={product.mainImageUrl}
+                                alt={product.name}
+                                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                              />
+                            ) : (
+                              <div className="w-full h-full bg-gradient-to-br from-yellow-100 to-yellow-200 flex items-center justify-center">
+                                <div className="relative w-full h-full flex items-center justify-center p-8">
+                                  <div className="w-48 h-32 bg-gradient-to-r from-yellow-500 to-yellow-600 rounded-lg shadow-lg">
+                                    <div className="flex justify-between items-center px-6 py-4 h-full">
+                                      <div className="w-2 h-2 bg-yellow-800 rounded"></div>
+                                      <div className="w-2 h-2 bg-yellow-800 rounded"></div>
+                                      <div className="w-2 h-2 bg-yellow-800 rounded"></div>
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                            )}
+                          </div>
+                          <div className="p-6">
+                            <h3 className="font-bold text-lg text-gray-900 mb-3 group-hover:text-yellow-600 transition-colors line-clamp-2">
+                              {product.name}
+                            </h3>
+                            <p className="text-gray-600 text-sm leading-relaxed mb-4 line-clamp-3">
+                              {product.description1 || `${product.name} serisi ürünlerimiz hakkında detaylı bilgi almak için ürünü görüntüleyin.`}
+                            </p>
+                            <div className="flex items-center text-yellow-600 text-sm font-medium group-hover:text-yellow-700 transition-colors">
+                              <span>Ürünü Görüntüle</span>
+                              <ArrowRight className="h-4 w-4 ml-1 transform group-hover:translate-x-1 transition-transform" />
+                            </div>
+                          </div>
+                        </div>
+                      </Link>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="flex justify-center mt-8 space-x-2">
+                  {Array.from({length: totalSlides}).map((_, index) => (
+                    <button
+                      key={index}
+                      onClick={() => goToSlide(index)}
+                      className={`w-3 h-3 rounded-full transition-colors ${
+                        index === currentSlide ? 'bg-gray-800' : 'bg-gray-300 hover:bg-gray-400'
+                      }`}
+                    />
+                  ))}
                 </div>
               </div>
             </div>

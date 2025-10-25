@@ -160,6 +160,30 @@ interface CoverItem {
   updatedAt: string
 }
 
+interface GesProductItem {
+  id: string
+  name: string
+  mainImageUrl?: string
+  mainImagePublicId?: string
+  categoryId: string
+  category?: { id: string; name: string }
+  catalogId?: string
+  catalog?: { id: string; title: string }
+  technicalSpecs: { property: string; value: string }[]
+  description1?: string
+  image1Url?: string
+  image1PublicId?: string
+  description2?: string
+  image2Url?: string
+  image2PublicId?: string
+  description3?: string
+  image3Url?: string
+  image3PublicId?: string
+  isActive: boolean
+  createdAt: string
+  updatedAt: string
+}
+
 export default function UrunIslemler() {
   const [products, setProducts] = useState<ProductItem[]>([])
   const [subProducts, setSubProducts] = useState<SubProductItem[]>([])
@@ -167,6 +191,7 @@ export default function UrunIslemler() {
   const [modules, setModules] = useState<ModuleItem[]>([])
   const [accessories, setAccessories] = useState<AccessoryItem[]>([])
   const [covers, setCovers] = useState<CoverItem[]>([])
+  const [gesProducts, setGesProducts] = useState<GesProductItem[]>([])
   const [loading, setLoading] = useState(true)
   const [showForm, setShowForm] = useState(false)
   const [showSubProductForm, setShowSubProductForm] = useState(false)
@@ -174,7 +199,8 @@ export default function UrunIslemler() {
   const [showModuleForm, setShowModuleForm] = useState(false)
   const [showAccessoryForm, setShowAccessoryForm] = useState(false)
   const [showCoverForm, setShowCoverForm] = useState(false)
-  const [activeTab, setActiveTab] = useState<'products' | 'categories' | 'sub-products' | 'channels' | 'modules' | 'accessories' | 'covers'>('products')
+  const [showGesProductForm, setShowGesProductForm] = useState(false)
+  const [activeTab, setActiveTab] = useState<'products' | 'categories' | 'sub-products' | 'channels' | 'modules' | 'accessories' | 'covers' | 'ges-products'>('products')
   const [categories, setCategories] = useState<{ id: string; name: string }[]>([])
   const [catalogs, setCatalogs] = useState<{ id: string; title: string }[]>([])
   const [editingProduct, setEditingProduct] = useState<ProductItem | null>(null)
@@ -183,6 +209,7 @@ export default function UrunIslemler() {
   const [editingModule, setEditingModule] = useState<ModuleItem | null>(null)
   const [editingAccessory, setEditingAccessory] = useState<AccessoryItem | null>(null)
   const [editingCover, setEditingCover] = useState<CoverItem | null>(null)
+  const [editingGesProduct, setEditingGesProduct] = useState<GesProductItem | null>(null)
   const [formData, setFormData] = useState({
     name: '',
     description: '',
@@ -245,6 +272,19 @@ export default function UrunIslemler() {
     sheetThickness: '',
     subProductId: ''
   })
+  const [gesProductFormData, setGesProductFormData] = useState({
+    name: '',
+    mainImageUrl: '',
+    categoryId: '',
+    catalogId: '',
+    technicalSpecs: [] as { property: string; value: string }[],
+    description1: '',
+    image1Url: '',
+    description2: '',
+    image2Url: '',
+    description3: '',
+    image3Url: ''
+  })
   const [images, setImages] = useState<File[]>([])
   const [imagePreviews, setImagePreviews] = useState<string[]>([])
   const [subProductImage, setSubProductImage] = useState<File | null>(null)
@@ -263,6 +303,20 @@ export default function UrunIslemler() {
   const coverFileRef = useRef<HTMLInputElement | null>(null)
   const subProductFileRef = useRef<HTMLInputElement | null>(null)
   const channelFileRef = useRef<HTMLInputElement | null>(null)
+  
+  // GES ürünleri için image state'leri
+  const [gesMainImage, setGesMainImage] = useState<File | null>(null)
+  const [gesMainImagePreview, setGesMainImagePreview] = useState<string>('')
+  const [gesImage1, setGesImage1] = useState<File | null>(null)
+  const [gesImage1Preview, setGesImage1Preview] = useState<string>('')
+  const [gesImage2, setGesImage2] = useState<File | null>(null)
+  const [gesImage2Preview, setGesImage2Preview] = useState<string>('')
+  const [gesImage3, setGesImage3] = useState<File | null>(null)
+  const [gesImage3Preview, setGesImage3Preview] = useState<string>('')
+  const gesMainFileRef = useRef<HTMLInputElement | null>(null)
+  const gesImage1FileRef = useRef<HTMLInputElement | null>(null)
+  const gesImage2FileRef = useRef<HTMLInputElement | null>(null)
+  const gesImage3FileRef = useRef<HTMLInputElement | null>(null)
 
   useEffect(() => {
     fetchProducts()
@@ -271,6 +325,7 @@ export default function UrunIslemler() {
     fetchModules()
     fetchAccessories()
     fetchCovers()
+    fetchGesProducts()
     fetchCategories()
     fetchCatalogs()
   }, [])
@@ -354,6 +409,16 @@ export default function UrunIslemler() {
       setCovers(Array.isArray(data) ? data : [])
     } catch (error) {
       console.error('Kapaklar yüklenirken hata:', error)
+    }
+  }
+
+  const fetchGesProducts = async () => {
+    try {
+      const response = await fetch('/api/admin/ges-products')
+      const data = await response.json()
+      setGesProducts(Array.isArray(data) ? data : [])
+    } catch (error) {
+      console.error('GES ürünleri yüklenirken hata:', error)
     }
   }
 
@@ -950,6 +1015,173 @@ export default function UrunIslemler() {
     setShowCoverForm(false)
   }
 
+  const handleGesProductSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    
+    try {
+      const url = editingGesProduct 
+        ? `/api/admin/ges-products/${editingGesProduct.id}`
+        : '/api/admin/ges-products'
+      
+      const method = editingGesProduct ? 'PUT' : 'POST'
+      
+      // Ana resim yükleme
+      let mainImageUrl = gesProductFormData.mainImageUrl
+      let mainImagePublicId = ''
+      
+      if (gesMainImage) {
+        const fd = new FormData()
+        fd.append('file', gesMainImage)
+        fd.append('folder', 'ipos-steel/ges-products')
+        const uploadResponse = await fetch('/api/admin/upload', { method: 'POST', body: fd })
+        if (uploadResponse.ok) {
+          const upload = await uploadResponse.json()
+          mainImageUrl = upload.secure_url
+          mainImagePublicId = upload.public_id
+        }
+      }
+
+      // Ek resim 1 yükleme
+      let image1Url = gesProductFormData.image1Url
+      let image1PublicId = ''
+      
+      if (gesImage1) {
+        const fd = new FormData()
+        fd.append('file', gesImage1)
+        fd.append('folder', 'ipos-steel/ges-products')
+        const uploadResponse = await fetch('/api/admin/upload', { method: 'POST', body: fd })
+        if (uploadResponse.ok) {
+          const upload = await uploadResponse.json()
+          image1Url = upload.secure_url
+          image1PublicId = upload.public_id
+        }
+      }
+
+      // Ek resim 2 yükleme
+      let image2Url = gesProductFormData.image2Url
+      let image2PublicId = ''
+      
+      if (gesImage2) {
+        const fd = new FormData()
+        fd.append('file', gesImage2)
+        fd.append('folder', 'ipos-steel/ges-products')
+        const uploadResponse = await fetch('/api/admin/upload', { method: 'POST', body: fd })
+        if (uploadResponse.ok) {
+          const upload = await uploadResponse.json()
+          image2Url = upload.secure_url
+          image2PublicId = upload.public_id
+        }
+      }
+
+      // Ek resim 3 yükleme
+      let image3Url = gesProductFormData.image3Url
+      let image3PublicId = ''
+      
+      if (gesImage3) {
+        const fd = new FormData()
+        fd.append('file', gesImage3)
+        fd.append('folder', 'ipos-steel/ges-products')
+        const uploadResponse = await fetch('/api/admin/upload', { method: 'POST', body: fd })
+        if (uploadResponse.ok) {
+          const upload = await uploadResponse.json()
+          image3Url = upload.secure_url
+          image3PublicId = upload.public_id
+        }
+      }
+
+      const payload = {
+        ...gesProductFormData,
+        mainImageUrl,
+        mainImagePublicId,
+        image1Url,
+        image1PublicId,
+        image2Url,
+        image2PublicId,
+        image3Url,
+        image3PublicId
+      }
+
+      const response = await fetch(url, {
+        method,
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(payload),
+      })
+
+      if (response.ok) {
+        fetchGesProducts()
+        resetGesProductForm()
+      }
+    } catch (error) {
+      console.error('GES ürünü kaydedilirken hata:', error)
+    }
+  }
+
+  const handleGesProductEdit = (gesProduct: GesProductItem) => {
+    setEditingGesProduct(gesProduct)
+    setGesProductFormData({
+      name: gesProduct.name,
+      mainImageUrl: gesProduct.mainImageUrl || '',
+      categoryId: gesProduct.categoryId,
+      catalogId: gesProduct.catalogId || '',
+      technicalSpecs: gesProduct.technicalSpecs || [],
+      description1: gesProduct.description1 || '',
+      image1Url: gesProduct.image1Url || '',
+      description2: gesProduct.description2 || '',
+      image2Url: gesProduct.image2Url || '',
+      description3: gesProduct.description3 || '',
+      image3Url: gesProduct.image3Url || ''
+    })
+    setGesMainImagePreview(gesProduct.mainImageUrl || '')
+    setGesImage1Preview(gesProduct.image1Url || '')
+    setGesImage2Preview(gesProduct.image2Url || '')
+    setGesImage3Preview(gesProduct.image3Url || '')
+    setShowGesProductForm(true)
+  }
+
+  const handleGesProductDelete = async (id: string) => {
+    if (confirm('Bu GES ürününü silmek istediğinizden emin misiniz?')) {
+      try {
+        const response = await fetch(`/api/admin/ges-products/${id}`, {
+          method: 'DELETE',
+        })
+
+        if (response.ok) {
+          fetchGesProducts()
+        }
+      } catch (error) {
+        console.error('GES ürünü silinirken hata:', error)
+      }
+    }
+  }
+
+  const resetGesProductForm = () => {
+    setGesProductFormData({
+      name: '',
+      mainImageUrl: '',
+      categoryId: '',
+      catalogId: '',
+      technicalSpecs: [],
+      description1: '',
+      image1Url: '',
+      description2: '',
+      image2Url: '',
+      description3: '',
+      image3Url: ''
+    })
+    setGesMainImage(null)
+    setGesMainImagePreview('')
+    setGesImage1(null)
+    setGesImage1Preview('')
+    setGesImage2(null)
+    setGesImage2Preview('')
+    setGesImage3(null)
+    setGesImage3Preview('')
+    setEditingGesProduct(null)
+    setShowGesProductForm(false)
+  }
+
   if (loading) {
     return <div className="p-8"><div className="h-6 w-40 bg-gray-200 rounded animate-pulse mb-4" /><div className="h-4 w-full bg-gray-200 rounded animate-pulse mb-2" /><div className="h-4 w-2/3 bg-gray-200 rounded animate-pulse" /></div>
   }
@@ -1013,6 +1245,14 @@ export default function UrunIslemler() {
           }`}
         >
           Kapaklar
+        </button>
+        <button
+          onClick={() => setActiveTab('ges-products')}
+          className={`px-4 py-2 rounded-md text-sm font-medium border ${
+            activeTab === 'ges-products' ? 'bg-blue-600 text-white border-blue-600' : 'bg-white text-gray-700 border-gray-200'
+          }`}
+        >
+          GES Ürünleri
         </button>
         <button
           onClick={() => setActiveTab('categories')}
@@ -2385,6 +2625,427 @@ export default function UrunIslemler() {
                         src={cover.imageUrl}
                         alt={cover.name}
                         className="h-20 w-20 object-cover rounded"
+                      />
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+          </div>
+        </>
+      )}
+
+      {activeTab === 'ges-products' && (
+        <>
+          <div className="mb-8">
+            <Button onClick={() => setShowGesProductForm(!showGesProductForm)}>
+              <Plus className="w-4 h-4 mr-2" />
+              {showGesProductForm ? 'Formu Gizle' : 'Yeni GES Ürünü Ekle'}
+            </Button>
+          </div>
+
+          {showGesProductForm && (
+            <div className="mb-8 bg-white p-6 rounded-lg shadow">
+              <h2 className="text-xl font-semibold mb-4">
+                {editingGesProduct ? 'GES Ürünü Düzenle' : 'Yeni GES Ürünü Ekle'}
+              </h2>
+              <form onSubmit={handleGesProductSubmit} className="space-y-4">
+                <div>
+                  <Label htmlFor="gesProductName">Ürün Adı *</Label>
+                  <Input 
+                    id="gesProductName" 
+                    value={gesProductFormData.name} 
+                    onChange={(e) => setGesProductFormData({ ...gesProductFormData, name: e.target.value })} 
+                    required 
+                  />
+                </div>
+                
+                <div>
+                  <Label htmlFor="gesProductCategoryId">Kategori *</Label>
+                  <select 
+                    id="gesProductCategoryId" 
+                    className="w-full border rounded-md h-10 px-3"
+                    value={gesProductFormData.categoryId}
+                    onChange={(e) => setGesProductFormData({ ...gesProductFormData, categoryId: e.target.value })}
+                    required
+                  >
+                    <option value="" disabled>Kategori seçiniz</option>
+                    {categories.map((c) => (
+                      <option key={c.id} value={c.id}>{c.name}</option>
+                    ))}
+                  </select>
+                </div>
+
+                <div>
+                  <Label htmlFor="gesProductCatalogId">Katalog</Label>
+                  <select 
+                    id="gesProductCatalogId" 
+                    className="w-full border rounded-md h-10 px-3"
+                    value={gesProductFormData.catalogId}
+                    onChange={(e) => setGesProductFormData({ ...gesProductFormData, catalogId: e.target.value })}
+                  >
+                    <option value="">Katalog seçiniz (opsiyonel)</option>
+                    {catalogs.map((c) => (
+                      <option key={c.id} value={c.id}>{c.title}</option>
+                    ))}
+                  </select>
+                </div>
+
+                <div>
+                  <Label>Teknik Özellikler</Label>
+                  <div className="space-y-2">
+                    {gesProductFormData.technicalSpecs.map((spec, index) => (
+                      <div key={index} className="flex gap-2">
+                        <Input
+                          placeholder="Özellik adı"
+                          value={spec.property}
+                          onChange={(e) => {
+                            const newSpecs = [...gesProductFormData.technicalSpecs]
+                            newSpecs[index].property = e.target.value
+                            setGesProductFormData({ ...gesProductFormData, technicalSpecs: newSpecs })
+                          }}
+                        />
+                        <Input
+                          placeholder="Değer"
+                          value={spec.value}
+                          onChange={(e) => {
+                            const newSpecs = [...gesProductFormData.technicalSpecs]
+                            newSpecs[index].value = e.target.value
+                            setGesProductFormData({ ...gesProductFormData, technicalSpecs: newSpecs })
+                          }}
+                        />
+                        <Button
+                          type="button"
+                          variant="outline"
+                          size="sm"
+                          onClick={() => {
+                            const newSpecs = gesProductFormData.technicalSpecs.filter((_, i) => i !== index)
+                            setGesProductFormData({ ...gesProductFormData, technicalSpecs: newSpecs })
+                          }}
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </Button>
+                      </div>
+                    ))}
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      onClick={() => {
+                        setGesProductFormData({
+                          ...gesProductFormData,
+                          technicalSpecs: [...gesProductFormData.technicalSpecs, { property: '', value: '' }]
+                        })
+                      }}
+                    >
+                      <Plus className="w-4 h-4 mr-2" />
+                      Özellik Ekle
+                    </Button>
+                  </div>
+                </div>
+
+                <div>
+                  <Label htmlFor="gesProductMainImageUrl">Ana Fotoğraf URL (Opsiyonel)</Label>
+                  <Input 
+                    id="gesProductMainImageUrl" 
+                    value={gesProductFormData.mainImageUrl} 
+                    onChange={(e) => setGesProductFormData({ ...gesProductFormData, mainImageUrl: e.target.value })} 
+                    placeholder="Manuel resim URL'i girebilirsiniz" 
+                  />
+                </div>
+
+                <div>
+                  <Label>Ana Fotoğraf</Label>
+                  <div className="flex items-center gap-3">
+                    <input
+                      ref={gesMainFileRef}
+                      type="file"
+                      accept="image/*"
+                      className="hidden"
+                      onChange={(e) => {
+                        const file = e.target.files?.[0]
+                        if (file) {
+                          setGesMainImage(file)
+                          setGesMainImagePreview(URL.createObjectURL(file))
+                        }
+                      }}
+                    />
+                    <Button type="button" variant="outline" onClick={() => gesMainFileRef.current?.click()}>
+                      Ana Fotoğraf Seç
+                    </Button>
+                    {gesMainImage ? (
+                      <span className="text-sm text-gray-600">Dosya seçildi</span>
+                    ) : (
+                      <span className="text-sm text-gray-400">Dosya seçilmedi</span>
+                    )}
+                  </div>
+                  
+                  {gesMainImagePreview && (
+                    <div className="mt-4">
+                      <img 
+                        src={gesMainImagePreview} 
+                        alt="Ana fotoğraf önizleme" 
+                        className="h-32 w-32 object-cover rounded border"
+                      />
+                    </div>
+                  )}
+                </div>
+
+                <div>
+                  <Label htmlFor="gesProductDescription1">Açıklama Yazısı 1</Label>
+                  <RichTextEditor
+                    value={gesProductFormData.description1}
+                    onChange={(value) => setGesProductFormData({ ...gesProductFormData, description1: value })}
+                    placeholder="İlk açıklama yazısı..."
+                    height={150}
+                  />
+                </div>
+
+                <div>
+                  <Label htmlFor="gesProductImage1Url">Fotoğraf Ek 1 URL (Opsiyonel)</Label>
+                  <Input 
+                    id="gesProductImage1Url" 
+                    value={gesProductFormData.image1Url} 
+                    onChange={(e) => setGesProductFormData({ ...gesProductFormData, image1Url: e.target.value })} 
+                    placeholder="Manuel resim URL'i girebilirsiniz" 
+                  />
+                </div>
+
+                <div>
+                  <Label>Fotoğraf Ek 1</Label>
+                  <div className="flex items-center gap-3">
+                    <input
+                      ref={gesImage1FileRef}
+                      type="file"
+                      accept="image/*"
+                      className="hidden"
+                      onChange={(e) => {
+                        const file = e.target.files?.[0]
+                        if (file) {
+                          setGesImage1(file)
+                          setGesImage1Preview(URL.createObjectURL(file))
+                        }
+                      }}
+                    />
+                    <Button type="button" variant="outline" onClick={() => gesImage1FileRef.current?.click()}>
+                      Fotoğraf Ek 1 Seç
+                    </Button>
+                    {gesImage1 ? (
+                      <span className="text-sm text-gray-600">Dosya seçildi</span>
+                    ) : (
+                      <span className="text-sm text-gray-400">Dosya seçilmedi</span>
+                    )}
+                  </div>
+                  
+                  {gesImage1Preview && (
+                    <div className="mt-4">
+                      <img 
+                        src={gesImage1Preview} 
+                        alt="Fotoğraf ek 1 önizleme" 
+                        className="h-32 w-32 object-cover rounded border"
+                      />
+                    </div>
+                  )}
+                </div>
+
+                <div>
+                  <Label htmlFor="gesProductDescription2">Açıklama Yazısı 2</Label>
+                  <RichTextEditor
+                    value={gesProductFormData.description2}
+                    onChange={(value) => setGesProductFormData({ ...gesProductFormData, description2: value })}
+                    placeholder="İkinci açıklama yazısı..."
+                    height={150}
+                  />
+                </div>
+
+                <div>
+                  <Label htmlFor="gesProductImage2Url">Fotoğraf Ek 2 URL (Opsiyonel)</Label>
+                  <Input 
+                    id="gesProductImage2Url" 
+                    value={gesProductFormData.image2Url} 
+                    onChange={(e) => setGesProductFormData({ ...gesProductFormData, image2Url: e.target.value })} 
+                    placeholder="Manuel resim URL'i girebilirsiniz" 
+                  />
+                </div>
+
+                <div>
+                  <Label>Fotoğraf Ek 2</Label>
+                  <div className="flex items-center gap-3">
+                    <input
+                      ref={gesImage2FileRef}
+                      type="file"
+                      accept="image/*"
+                      className="hidden"
+                      onChange={(e) => {
+                        const file = e.target.files?.[0]
+                        if (file) {
+                          setGesImage2(file)
+                          setGesImage2Preview(URL.createObjectURL(file))
+                        }
+                      }}
+                    />
+                    <Button type="button" variant="outline" onClick={() => gesImage2FileRef.current?.click()}>
+                      Fotoğraf Ek 2 Seç
+                    </Button>
+                    {gesImage2 ? (
+                      <span className="text-sm text-gray-600">Dosya seçildi</span>
+                    ) : (
+                      <span className="text-sm text-gray-400">Dosya seçilmedi</span>
+                    )}
+                  </div>
+                  
+                  {gesImage2Preview && (
+                    <div className="mt-4">
+                      <img 
+                        src={gesImage2Preview} 
+                        alt="Fotoğraf ek 2 önizleme" 
+                        className="h-32 w-32 object-cover rounded border"
+                      />
+                    </div>
+                  )}
+                </div>
+
+                <div>
+                  <Label htmlFor="gesProductDescription3">Açıklama Yazısı 3</Label>
+                  <RichTextEditor
+                    value={gesProductFormData.description3}
+                    onChange={(value) => setGesProductFormData({ ...gesProductFormData, description3: value })}
+                    placeholder="Üçüncü açıklama yazısı..."
+                    height={150}
+                  />
+                </div>
+
+                <div>
+                  <Label htmlFor="gesProductImage3Url">Fotoğraf Ek 3 URL (Opsiyonel)</Label>
+                  <Input 
+                    id="gesProductImage3Url" 
+                    value={gesProductFormData.image3Url} 
+                    onChange={(e) => setGesProductFormData({ ...gesProductFormData, image3Url: e.target.value })} 
+                    placeholder="Manuel resim URL'i girebilirsiniz" 
+                  />
+                </div>
+
+                <div>
+                  <Label>Fotoğraf Ek 3</Label>
+                  <div className="flex items-center gap-3">
+                    <input
+                      ref={gesImage3FileRef}
+                      type="file"
+                      accept="image/*"
+                      className="hidden"
+                      onChange={(e) => {
+                        const file = e.target.files?.[0]
+                        if (file) {
+                          setGesImage3(file)
+                          setGesImage3Preview(URL.createObjectURL(file))
+                        }
+                      }}
+                    />
+                    <Button type="button" variant="outline" onClick={() => gesImage3FileRef.current?.click()}>
+                      Fotoğraf Ek 3 Seç
+                    </Button>
+                    {gesImage3 ? (
+                      <span className="text-sm text-gray-600">Dosya seçildi</span>
+                    ) : (
+                      <span className="text-sm text-gray-400">Dosya seçilmedi</span>
+                    )}
+                  </div>
+                  
+                  {gesImage3Preview && (
+                    <div className="mt-4">
+                      <img 
+                        src={gesImage3Preview} 
+                        alt="Fotoğraf ek 3 önizleme" 
+                        className="h-32 w-32 object-cover rounded border"
+                      />
+                    </div>
+                  )}
+                </div>
+                
+                <div className="flex space-x-4">
+                  <Button type="submit">
+                    {editingGesProduct ? 'Güncelle' : 'Ekle'}
+                  </Button>
+                  <Button type="button" variant="outline" onClick={resetGesProductForm}>
+                    İptal
+                  </Button>
+                </div>
+              </form>
+            </div>
+          )}
+
+          <div className="bg-white shadow rounded-lg">
+            <div className="px-6 py-4 border-b border-gray-200">
+              <h3 className="text-lg font-medium text-gray-900">GES Ürünleri</h3>
+            </div>
+            <div className="divide-y divide-gray-200">
+              {gesProducts.map((gesProduct) => (
+                <div key={gesProduct.id} className="px-6 py-4">
+                  <div className="flex items-center justify-between">
+                    <div className="flex-1">
+                      <h4 className="text-lg font-medium text-gray-900">{gesProduct.name}</h4>
+                      {gesProduct.category?.name && (
+                        <div className="text-sm text-gray-500 mt-1">Kategori: {gesProduct.category.name}</div>
+                      )}
+                      {gesProduct.catalog?.title && (
+                        <div className="text-sm text-blue-600 mt-1">Katalog: {gesProduct.catalog.title}</div>
+                      )}
+                      {gesProduct.technicalSpecs && gesProduct.technicalSpecs.length > 0 && (
+                        <div className="text-sm text-gray-500 mt-1">
+                          Teknik Özellikler: {gesProduct.technicalSpecs.length} adet
+                        </div>
+                      )}
+                      <div className="mt-2 flex flex-wrap gap-2">
+                        <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+                          gesProduct.isActive ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
+                        }`}>
+                          {gesProduct.isActive ? 'Aktif' : 'Pasif'}
+                        </span>
+                        {gesProduct.mainImageUrl && (
+                          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                            Ana Fotoğraf
+                          </span>
+                        )}
+                        {gesProduct.image1Url && (
+                          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-purple-100 text-purple-800">
+                            Ek Fotoğraf 1
+                          </span>
+                        )}
+                        {gesProduct.image2Url && (
+                          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-purple-100 text-purple-800">
+                            Ek Fotoğraf 2
+                          </span>
+                        )}
+                        {gesProduct.image3Url && (
+                          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-purple-100 text-purple-800">
+                            Ek Fotoğraf 3
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                    <div className="flex space-x-2">
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={() => handleGesProductEdit(gesProduct)}
+                      >
+                        <Edit className="w-4 h-4" />
+                      </Button>
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={() => handleGesProductDelete(gesProduct.id)}
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </Button>
+                    </div>
+                  </div>
+                  {gesProduct.mainImageUrl && (
+                    <div className="mt-4">
+                      <img
+                        src={gesProduct.mainImageUrl}
+                        alt={gesProduct.name}
+                        className="h-32 w-32 object-cover rounded"
                       />
                     </div>
                   )}
