@@ -6,6 +6,7 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Plus, Edit, Trash2, Target, Eye } from 'lucide-react'
 import { toast } from 'sonner'
+import RichTextEditor from '@/components/ui/RichTextEditor'
 
 interface CareerOpportunitiesData {
   id: string
@@ -192,14 +193,14 @@ export default function CareerOpportunitiesManager() {
             </div>
             <div>
               <Label htmlFor="mainDescription">Ana Açıklama</Label>
-              <textarea
-                id="mainDescription"
-                value={formData.mainDescription}
-                onChange={(e) => setFormData({ ...formData, mainDescription: e.target.value })}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                rows={4}
-                required
-              />
+              <div className="mt-2">
+                <RichTextEditor
+                  value={formData.mainDescription}
+                  onChange={(value) => setFormData({ ...formData, mainDescription: value })}
+                  placeholder="Ana açıklama içeriğini girin..."
+                  height={200}
+                />
+              </div>
             </div>
           </div>
         </div>

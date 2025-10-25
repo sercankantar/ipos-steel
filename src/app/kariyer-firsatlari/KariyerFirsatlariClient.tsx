@@ -111,9 +111,10 @@ export default function KariyerFirsatlariClient() {
                   {data.mainSubtitle}
                 </h3>
               )}
-              <p className='text-gray-700 text-xl leading-relaxed max-w-4xl mx-auto'>
-                {data.mainDescription}
-              </p>
+              <div 
+                className='text-gray-700 text-xl leading-relaxed max-w-4xl mx-auto prose prose-lg prose-gray'
+                dangerouslySetInnerHTML={{ __html: data.mainDescription }}
+              />
             </div>
 
             {/* Açık Pozisyonlar Grid */}
