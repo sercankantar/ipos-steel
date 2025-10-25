@@ -939,16 +939,6 @@ export default function ProductDetail({ params }: { params: { id: string } }) {
                         <h4 className="font-medium text-gray-900 text-sm mb-2">
                           {subProduct.name}
                         </h4>
-                        {(subProduct.height || subProduct.width) && (
-                          <div className="text-xs text-gray-500 space-y-1">
-                            {subProduct.height && (
-                              <div>Y: {subProduct.height}</div>
-                            )}
-                            {subProduct.width && (
-                              <div>G: {subProduct.width}</div>
-                            )}
-                          </div>
-                        )}
                       </div>
                     ))}
                   </div>
