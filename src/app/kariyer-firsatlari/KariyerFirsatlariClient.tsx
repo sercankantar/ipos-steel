@@ -101,13 +101,13 @@ export default function KariyerFirsatlariClient() {
           {/* Ana İçerik */}
           <div className='mx-auto'>
             {/* Başlık ve Açıklama Bölümü */}
-            <div className='text-center mb-16'>
-              <h2 className='text-4xl lg:text-5xl font-bold text-gray-900 mb-6 font-neuropol'>
+            <div className='mb-16'>
+              <h2 className='text-4xl lg:text-5xl font-bold text-gray-900 mb-6 font-neuropol text-center'>
                 {data.mainTitle}
               </h2>
               <div className='w-24 h-1 bg-blue-600 mx-auto mb-8'></div>
               {data.mainSubtitle && (
-                <h3 className='text-2xl font-semibold text-gray-800 mb-6'>
+                <h3 className='text-2xl font-semibold text-gray-800 mb-6 text-center'>
                   {data.mainSubtitle}
                 </h3>
               )}
