@@ -106,13 +106,13 @@ export default function KariyerFirsatlariClient() {
                 {data.mainTitle}
               </h2>
               <div className='w-24 h-1 bg-blue-600 mx-auto mb-8'></div>
-              {data.mainSubtitle && (
-                <h3 className='text-2xl font-semibold text-gray-800 mb-6 text-center'>
+                                            {data.mainSubtitle && (
+                <h3 className='text-2xl font-semibold text-gray-800 mb-6'>
                   {data.mainSubtitle}
                 </h3>
               )}
               <div 
-                className='text-gray-700 text-xl leading-relaxed max-w-4xl mx-auto prose prose-lg prose-gray'
+                className='text-gray-700 text-xl leading-relaxed '
                 dangerouslySetInnerHTML={{ __html: data.mainDescription }}
               />
             </div>
