@@ -3,6 +3,7 @@
 import { Download, FileText, Calendar, Search } from 'lucide-react'
 import { useState, useMemo } from 'react'
 import Image from 'next/image'
+import Link from 'next/link'
 
 interface Catalog {
   id: string
@@ -194,23 +195,24 @@ export default function CatalogClient({ catalogs, categories }: CatalogClientPro
           </div>
           <div className='grid md:grid-cols-2 lg:grid-cols-3 gap-6'>
             {paginatedCatalogs.map((catalog) => (
-              <div key={catalog.id} className='bg-white rounded-lg shadow-md overflow-hidden hover:shadow-xl transition-shadow duration-300'>
-                <div className='relative h-48'>
-                  <Image
-                    src={catalog.imageUrl || 'https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=400&h=300&fit=crop'}
-                    alt={catalog.title}
-                    fill
-                    className='object-cover'
-                    sizes='(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw'
-                    priority={false}
-                    loading='lazy'
-                  />
-                  <div className='absolute top-3 right-3'>
-                    <span className={`px-2 py-1 rounded text-xs font-medium ${getCatalogCategoryColor(catalog.category.color)}`}>
-                      {catalog.category.name}
-                    </span>
+              <Link key={catalog.id} href={`/katalog-brosurler/${catalog.id}`}>
+                <div className='bg-white rounded-lg shadow-md overflow-hidden hover:shadow-xl transition-shadow duration-300 cursor-pointer'>
+                  <div className='relative h-48'>
+                    <Image
+                      src={catalog.imageUrl || 'https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=400&h=300&fit=crop'}
+                      alt={catalog.title}
+                      fill
+                      className='object-cover'
+                      sizes='(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw'
+                      priority={false}
+                      loading='lazy'
+                    />
+                    <div className='absolute top-3 right-3'>
+                      <span className={`px-2 py-1 rounded text-xs font-medium ${getCatalogCategoryColor(catalog.category.color)}`}>
+                        {catalog.category.name}
+                      </span>
+                    </div>
                   </div>
-                </div>
                 
                 <div className='p-6'>
                   <h3 className='text-lg font-bold text-gray-900 mb-2 line-clamp-2'>
@@ -239,7 +241,10 @@ export default function CatalogClient({ catalogs, categories }: CatalogClientPro
                   </div>
                   
                   <button
-                    onClick={() => handleDownload(catalog)}
+                    onClick={(e) => {
+                      e.preventDefault()
+                      handleDownload(catalog)
+                    }}
                     disabled={downloadingIds.has(catalog.id)}
                     className={`w-full py-2 px-3 rounded-lg font-medium transition-colors duration-200 flex items-center justify-center gap-2 ${
                       downloadingIds.has(catalog.id)
@@ -260,7 +265,8 @@ export default function CatalogClient({ catalogs, categories }: CatalogClientPro
                     )}
                   </button>
                 </div>
-              </div>
+                </div>
+              </Link>
             ))}
           </div>
           
