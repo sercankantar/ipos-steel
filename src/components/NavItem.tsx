@@ -109,7 +109,7 @@ const NavItem = ({
               // Modern ürünler menü - EAE tarzında
               <div className={cn(
                 'py-4 min-w-[1400px] bg-white shadow-lg',
-                selectedProductCategory === 'kablo-kanal-sistemleri' ? 'max-h-[650px]' : 'max-h-[500px]'
+                selectedProductCategory === 'kablo-kanal-sistemleri' ? 'max-h-[650px]' : 'max-h-[600px]'
               )}>
                 <div className='flex'>
                   {/* Sol taraf - Kategoriler */}
@@ -139,7 +139,7 @@ const NavItem = ({
                         </div>
                       </button>
 
-                      {/* Askı Sistemleri */}
+                      {/* Askı Sistemleri ve Taşıma Sistemleri */}
                       <button
                         onClick={() => setSelectedProductCategory('aski-sistemleri')}
                         className={cn(
@@ -152,22 +152,22 @@ const NavItem = ({
                         <div className='w-8 h-8 mr-3 flex items-center justify-center'>
                           <img 
                             src="https://res.cloudinary.com/dgixrs3gg/image/upload/v1760505076/ChatGPT_Image_15_Eki_2025_08_09_37-removebg-preview_bvgdyn.png"
-                            alt="Askı Sistemleri"
+                            alt="Askı Sistemleri ve Taşıma Sistemleri"
                             className="w-6 h-6 object-contain"
                           />
                         </div>
                         <div>
-                          <div className='font-semibold text-sm'>Askı Sistemleri</div>
-                          <div className='text-xs opacity-75 mt-1'>Montaj ve askı çözümleri</div>
+                          <div className='font-semibold text-sm'>Askı Sistemleri ve Taşıma Sistemleri</div>
+                          <div className='text-xs opacity-75 mt-1'>Montaj ve taşıma çözümleri</div>
                         </div>
                       </button>
 
-                      {/* Solar Montaj Sistemleri */}
+                      {/* GES Solar Sistemleri */}
                       <button
-                        onClick={() => setSelectedProductCategory('solar-montaj-sistemleri')}
+                        onClick={() => setSelectedProductCategory('ges-solar-sistemleri')}
                         className={cn(
                           'w-full flex items-center p-3 rounded-lg transition-all duration-200 text-left',
-                          selectedProductCategory === 'solar-montaj-sistemleri'
+                          selectedProductCategory === 'ges-solar-sistemleri'
                             ? 'bg-blue-600 text-white'
                             : 'bg-white text-gray-700 hover:bg-blue-50 hover:text-blue-600'
                         )}
@@ -175,13 +175,36 @@ const NavItem = ({
                         <div className='w-8 h-8 mr-3 flex items-center justify-center'>
                           <img 
                             src="https://res.cloudinary.com/dgixrs3gg/image/upload/v1760505076/ChatGPT_Image_15_Eki_2025_08_09_37-removebg-preview_bvgdyn.png"
-                            alt="Solar Montaj Sistemleri"
+                            alt="GES Solar Sistemleri"
                             className="w-6 h-6 object-contain"
                           />
                         </div>
                         <div>
-                          <div className='font-semibold text-sm'>Solar Montaj Sistemleri</div>
-                          <div className='text-xs opacity-75 mt-1'>Güneş enerjisi montajı</div>
+                          <div className='font-semibold text-sm'>GES Solar Sistemleri</div>
+                          <div className='text-xs opacity-75 mt-1'>Güneş enerjisi çözümleri</div>
+                        </div>
+                      </button>
+
+                      {/* Topraklama Sistemleri */}
+                      <button
+                        onClick={() => setSelectedProductCategory('topraklama-sistemleri')}
+                        className={cn(
+                          'w-full flex items-center p-3 rounded-lg transition-all duration-200 text-left',
+                          selectedProductCategory === 'topraklama-sistemleri'
+                            ? 'bg-blue-600 text-white'
+                            : 'bg-white text-gray-700 hover:bg-blue-50 hover:text-blue-600'
+                        )}
+                      >
+                        <div className='w-8 h-8 mr-3 flex items-center justify-center'>
+                          <img 
+                            src="https://res.cloudinary.com/dgixrs3gg/image/upload/v1760505076/ChatGPT_Image_15_Eki_2025_08_09_37-removebg-preview_bvgdyn.png"
+                            alt="Topraklama Sistemleri"
+                            className="w-6 h-6 object-contain"
+                          />
+                        </div>
+                        <div>
+                          <div className='font-semibold text-sm'>Topraklama Sistemleri</div>
+                          <div className='text-xs opacity-75 mt-1'>Elektriksel güvenlik</div>
                         </div>
                       </button>
                     </div>
@@ -297,9 +320,9 @@ const NavItem = ({
 
                             <div className='bg-white border border-gray-200 rounded-lg p-3 hover:shadow-md transition-shadow flex items-start gap-3'>
                               <div className='flex-1'>
-                                <h5 className='font-semibold text-gray-900 mb-1 text-sm'>GRP Kablo Kanalı</h5>
+                                <h5 className='font-semibold text-gray-900 mb-1 text-sm'>Trunking Kablo Kanalları</h5>
                                 <Link
-                                  href='/products?category=grp-kablo-kanali'
+                                  href='/products?category=trunking-kablo-kanallari'
                                   onClick={() => {
                                     setIsClicked(false)
                                     close()
@@ -311,7 +334,7 @@ const NavItem = ({
                               <div className='w-16 h-16 bg-gradient-to-br from-orange-100 to-orange-200 rounded-md flex items-center justify-center flex-shrink-0 overflow-hidden'>
                                 <img 
                                   src="https://res.cloudinary.com/dgixrs3gg/image/upload/v1759309035/ipos-steel/product-categories/h0zcbatsj6yzjb5lz9sa.webp"
-                                  alt="GRP Kablo Kanalı"
+                                  alt="Trunking Kablo Kanalları"
                                   className="w-full h-full object-cover"
                                 />
                               </div>
@@ -319,9 +342,9 @@ const NavItem = ({
 
                             <div className='bg-white border border-gray-200 rounded-lg p-3 hover:shadow-md transition-shadow flex items-start gap-3'>
                               <div className='flex-1'>
-                                <h5 className='font-semibold text-gray-900 mb-1 text-sm'>TKS Kablo Kanalları</h5>
+                                <h5 className='font-semibold text-gray-900 mb-1 text-sm'>Paslanmaz Kablo Kanalları</h5>
                                 <Link
-                                  href='/products?category=tks-kablo-kanallari'
+                                  href='/products?category=paslanmaz-kablo-kanallari'
                                   onClick={() => {
                                     setIsClicked(false)
                                     close()
@@ -333,7 +356,7 @@ const NavItem = ({
                               <div className='w-16 h-16 bg-gradient-to-br from-red-100 to-red-200 rounded-md flex items-center justify-center flex-shrink-0 overflow-hidden'>
                                 <img 
                                   src="https://res.cloudinary.com/dgixrs3gg/image/upload/v1759309035/ipos-steel/product-categories/h0zcbatsj6yzjb5lz9sa.webp"
-                                  alt="TKS Kablo Kanalları"
+                                  alt="Paslanmaz Kablo Kanalları"
                                   className="w-full h-full object-cover"
                                 />
                               </div>
@@ -403,13 +426,13 @@ const NavItem = ({
                         </div>
 
                         <div>
-                          <h4 className='text-base font-bold text-gray-900 mb-3'>Askı Sistemleri Kategorileri</h4>
+                          <h4 className='text-base font-bold text-gray-900 mb-3'>Askı Sistemleri ve Taşıma Sistemleri Kategorileri</h4>
                           <div className='grid grid-cols-3 gap-3'>
                             <div className='bg-white border border-gray-200 rounded-lg p-3 hover:shadow-md transition-shadow flex items-start gap-3'>
                               <div className='flex-1'>
-                                <h5 className='font-semibold text-gray-900 mb-1 text-sm'>Dübel Askı Sistemleri</h5>
+                                <h5 className='font-semibold text-gray-900 mb-1 text-sm'>Askı Ürünleri</h5>
                                 <Link
-                                  href='/products?category=dubel-aski-sistemleri'
+                                  href='/products?category=aski-urunleri'
                                   onClick={() => {
                                     setIsClicked(false)
                                     close()
@@ -421,51 +444,7 @@ const NavItem = ({
                               <div className='w-16 h-16 bg-gradient-to-br from-blue-100 to-blue-200 rounded-md flex items-center justify-center flex-shrink-0 overflow-hidden'>
                                 <img 
                                   src="https://res.cloudinary.com/dgixrs3gg/image/upload/v1759309138/ipos-steel/product-categories/zrgnrwrlitykkjpql7ut.png"
-                                  alt="Dübel Askı Sistemleri"
-                                  className="w-full h-full object-cover"
-                                />
-                              </div>
-                            </div>
-
-                            <div className='bg-white border border-gray-200 rounded-lg p-3 hover:shadow-md transition-shadow flex items-start gap-3'>
-                              <div className='flex-1'>
-                                <h5 className='font-semibold text-gray-900 mb-1 text-sm'>Konstrüksiyon Askı Sistemleri</h5>
-                                <Link
-                                  href='/products?category=konstruksiyon-aski-sistemleri'
-                                  onClick={() => {
-                                    setIsClicked(false)
-                                    close()
-                                  }}
-                                  className='text-blue-600 hover:text-blue-800 text-sm font-medium'>
-                                  Hakkında daha fazlası →
-                                </Link>
-                              </div>
-                              <div className='w-16 h-16 bg-gradient-to-br from-green-100 to-green-200 rounded-md flex items-center justify-center flex-shrink-0 overflow-hidden'>
-                                <img 
-                                  src="https://res.cloudinary.com/dgixrs3gg/image/upload/v1759309138/ipos-steel/product-categories/zrgnrwrlitykkjpql7ut.png"
-                                  alt="Konstrüksiyon Askı Sistemleri"
-                                  className="w-full h-full object-cover"
-                                />
-                              </div>
-                            </div>
-
-                            <div className='bg-white border border-gray-200 rounded-lg p-3 hover:shadow-md transition-shadow flex items-start gap-3'>
-                              <div className='flex-1'>
-                                <h5 className='font-semibold text-gray-900 mb-1 text-sm'>Ankraj Askı Sistemleri</h5>
-                                <Link
-                                  href='/products?category=ankraj-aski-sistemleri'
-                                  onClick={() => {
-                                    setIsClicked(false)
-                                    close()
-                                  }}
-                                  className='text-blue-600 hover:text-blue-800 text-sm font-medium'>
-                                  Hakkında daha fazlası →
-                                </Link>
-                              </div>
-                              <div className='w-16 h-16 bg-gradient-to-br from-purple-100 to-purple-200 rounded-md flex items-center justify-center flex-shrink-0 overflow-hidden'>
-                                <img 
-                                  src="https://res.cloudinary.com/dgixrs3gg/image/upload/v1759309138/ipos-steel/product-categories/zrgnrwrlitykkjpql7ut.png"
-                                  alt="Ankraj Askı Sistemleri"
+                                  alt="Askı Ürünleri"
                                   className="w-full h-full object-cover"
                                 />
                               </div>
@@ -475,10 +454,10 @@ const NavItem = ({
                       </>
                     )}
 
-                    {selectedProductCategory === 'solar-montaj-sistemleri' && (
+                    {selectedProductCategory === 'ges-solar-sistemleri' && (
                       <>
                         <div className='mb-6'>
-                          <h3 className='text-lg font-bold text-gray-900 mb-3'>Solar Montaj Sistemleri Genel Bilgi</h3>
+                          <h3 className='text-lg font-bold text-gray-900 mb-3'>GES Solar Sistemleri Genel Bilgi</h3>
                           <div className='flex items-start space-x-4'>
                             <div className='w-48 h-32 rounded-lg overflow-hidden'>
                               <video 
@@ -496,11 +475,11 @@ const NavItem = ({
                             </div>
                             <div className='flex-1'>
                               <p className='text-gray-600 leading-relaxed mb-3 text-sm'>
-                                IPOS solar montaj sistemleri; güneş enerjisi panellerinin güvenli ve verimli montajı için 
+                                IPOS GES solar sistemleri; güneş enerjisi panellerinin güvenli ve verimli montajı için 
                                 özel olarak tasarlanmış çözümler sunar. Dayanıklı alüminyum ve galvanizli çelik malzemelerden üretilir.
                               </p>
                               <Link
-                                href='/products?category=solar-montaj-sistemleri'
+                                href='/products?category=ges-solar-sistemleri'
                                 onClick={() => {
                                   setIsClicked(false)
                                   close()
@@ -513,13 +492,13 @@ const NavItem = ({
                         </div>
 
                         <div>
-                          <h4 className='text-base font-bold text-gray-900 mb-3'>Solar Montaj Sistemleri Kategorileri</h4>
+                          <h4 className='text-base font-bold text-gray-900 mb-3'>GES Solar Sistemleri Kategorileri</h4>
                           <div className='grid grid-cols-3 gap-3'>
                             <div className='bg-white border border-gray-200 rounded-lg p-3 hover:shadow-md transition-shadow flex items-start gap-3'>
                               <div className='flex-1'>
-                                <h5 className='font-semibold text-gray-900 mb-1 text-sm'>Çatı Montaj Sistemleri</h5>
+                                <h5 className='font-semibold text-gray-900 mb-1 text-sm'>Arazi</h5>
                                 <Link
-                                  href='/products?category=cati-montaj-sistemleri'
+                                  href='/products?category=ges-arazi'
                                   onClick={() => {
                                     setIsClicked(false)
                                     close()
@@ -531,7 +510,7 @@ const NavItem = ({
                               <div className='w-16 h-16 bg-gradient-to-br from-yellow-100 to-yellow-200 rounded-md flex items-center justify-center flex-shrink-0 overflow-hidden'>
                                 <img 
                                   src="https://res.cloudinary.com/dgixrs3gg/image/upload/v1759309222/ipos-steel/product-categories/fr4qhk3qtu59gne1cqgb.jpg"
-                                  alt="Çatı Montaj Sistemleri"
+                                  alt="Arazi"
                                   className="w-full h-full object-cover"
                                 />
                               </div>
@@ -539,9 +518,9 @@ const NavItem = ({
 
                             <div className='bg-white border border-gray-200 rounded-lg p-3 hover:shadow-md transition-shadow flex items-start gap-3'>
                               <div className='flex-1'>
-                                <h5 className='font-semibold text-gray-900 mb-1 text-sm'>Karakol Montaj Sistemleri</h5>
+                                <h5 className='font-semibold text-gray-900 mb-1 text-sm'>Çatı</h5>
                                 <Link
-                                  href='/products?category=karakol-montaj-sistemleri'
+                                  href='/products?category=ges-cati'
                                   onClick={() => {
                                     setIsClicked(false)
                                     close()
@@ -553,7 +532,7 @@ const NavItem = ({
                               <div className='w-16 h-16 bg-gradient-to-br from-orange-100 to-orange-200 rounded-md flex items-center justify-center flex-shrink-0 overflow-hidden'>
                                 <img 
                                   src="https://res.cloudinary.com/dgixrs3gg/image/upload/v1759309222/ipos-steel/product-categories/fr4qhk3qtu59gne1cqgb.jpg"
-                                  alt="Karakol Montaj Sistemleri"
+                                  alt="Çatı"
                                   className="w-full h-full object-cover"
                                 />
                               </div>
@@ -561,9 +540,9 @@ const NavItem = ({
 
                             <div className='bg-white border border-gray-200 rounded-lg p-3 hover:shadow-md transition-shadow flex items-start gap-3'>
                               <div className='flex-1'>
-                                <h5 className='font-semibold text-gray-900 mb-1 text-sm'>Toprak Montaj Sistemleri</h5>
+                                <h5 className='font-semibold text-gray-900 mb-1 text-sm'>K port</h5>
                                 <Link
-                                  href='/products?category=toprak-montaj-sistemleri'
+                                  href='/products?category=ges-k-port'
                                   onClick={() => {
                                     setIsClicked(false)
                                     close()
@@ -575,7 +554,95 @@ const NavItem = ({
                               <div className='w-16 h-16 bg-gradient-to-br from-red-100 to-red-200 rounded-md flex items-center justify-center flex-shrink-0 overflow-hidden'>
                                 <img 
                                   src="https://res.cloudinary.com/dgixrs3gg/image/upload/v1759309222/ipos-steel/product-categories/fr4qhk3qtu59gne1cqgb.jpg"
-                                  alt="Toprak Montaj Sistemleri"
+                                  alt="K port"
+                                  className="w-full h-full object-cover"
+                                />
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </>
+                    )}
+
+                    {selectedProductCategory === 'topraklama-sistemleri' && (
+                      <>
+                        <div className='mb-6'>
+                          <h3 className='text-lg font-bold text-gray-900 mb-3'>Topraklama Sistemleri Genel Bilgi</h3>
+                          <div className='flex items-start space-x-4'>
+                            <div className='w-48 h-32 rounded-lg overflow-hidden'>
+                              <video 
+                                autoPlay 
+                                loop 
+                                muted 
+                                playsInline
+                                className='w-full h-full object-cover'
+                              >
+                                <source src="https://eae-dokuman.s3.eu-west-1.amazonaws.com/menu/e-line-ccr-busbar.mp4" type="video/mp4" />
+                                <div className='w-full h-full bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center'>
+                                  <div className='text-gray-400 text-3xl'>⚡</div>
+                                </div>
+                              </video>
+                            </div>
+                            <div className='flex-1'>
+                              <p className='text-gray-600 leading-relaxed mb-3 text-sm'>
+                                IPOS topraklama sistemleri; endüstriyel tesislerde elektriksel güvenliği sağlayan 
+                                yüksek kaliteli topraklama çözümleri sunar. Dayanıklı malzemelerden üretilir.
+                              </p>
+                              <Link
+                                href='/products?category=topraklama-sistemleri'
+                                onClick={() => {
+                                  setIsClicked(false)
+                                  close()
+                                }}
+                                className='inline-flex items-center text-blue-600 hover:text-blue-800 font-medium'>
+                                Hakkında daha fazlası →
+                              </Link>
+                            </div>
+                          </div>
+                        </div>
+
+                        <div>
+                          <h4 className='text-base font-bold text-gray-900 mb-3'>Topraklama Sistemleri Kategorileri</h4>
+                          <div className='grid grid-cols-3 gap-3'>
+                            <div className='bg-white border border-gray-200 rounded-lg p-3 hover:shadow-md transition-shadow flex items-start gap-3'>
+                              <div className='flex-1'>
+                                <h5 className='font-semibold text-gray-900 mb-1 text-sm'>Topraklama Şeritleri</h5>
+                                <Link
+                                  href='/products?category=topraklama-seritleri'
+                                  onClick={() => {
+                                    setIsClicked(false)
+                                    close()
+                                  }}
+                                  className='text-blue-600 hover:text-blue-800 text-sm font-medium'>
+                                  Hakkında daha fazlası →
+                                </Link>
+                              </div>
+                              <div className='w-16 h-16 bg-gradient-to-br from-blue-100 to-blue-200 rounded-md flex items-center justify-center flex-shrink-0 overflow-hidden'>
+                                <img 
+                                  src="https://res.cloudinary.com/dgixrs3gg/image/upload/v1759309138/ipos-steel/product-categories/zrgnrwrlitykkjpql7ut.png"
+                                  alt="Topraklama Şeritleri"
+                                  className="w-full h-full object-cover"
+                                />
+                              </div>
+                            </div>
+
+                            <div className='bg-white border border-gray-200 rounded-lg p-3 hover:shadow-md transition-shadow flex items-start gap-3'>
+                              <div className='flex-1'>
+                                <h5 className='font-semibold text-gray-900 mb-1 text-sm'>Klemanslar ve Aksesuar</h5>
+                                <Link
+                                  href='/products?category=klemanslar-ve-aksesuar'
+                                  onClick={() => {
+                                    setIsClicked(false)
+                                    close()
+                                  }}
+                                  className='text-blue-600 hover:text-blue-800 text-sm font-medium'>
+                                  Hakkında daha fazlası →
+                                </Link>
+                              </div>
+                              <div className='w-16 h-16 bg-gradient-to-br from-green-100 to-green-200 rounded-md flex items-center justify-center flex-shrink-0 overflow-hidden'>
+                                <img 
+                                  src="https://res.cloudinary.com/dgixrs3gg/image/upload/v1759309138/ipos-steel/product-categories/zrgnrwrlitykkjpql7ut.png"
+                                  alt="Klemanslar ve Aksesuar"
                                   className="w-full h-full object-cover"
                                 />
                               </div>

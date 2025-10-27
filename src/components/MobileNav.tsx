@@ -10,7 +10,7 @@ import LanguageSwitcher from './LanguageSwitcher'
 const MobileNav = () => {
   const [isOpen, setIsOpen] = useState<boolean>(false)
   const [expanded, setExpanded] = useState<Record<string, boolean>>({})
-  const [productItems, setProductItems] = useState<{ name: string; href: string }[]>([])
+  const [productSubCategories, setProductSubCategories] = useState<Record<string, { name: string; href: string }[]>>({})
 
   const pathname = usePathname()
 
@@ -27,25 +27,67 @@ const MobileNav = () => {
     }
   }
 
-  // Allow background scrolling when mobile menu is open
-
-  // load product categories for mobile menu
+  // Load product categories for mobile menu
   useEffect(() => {
     const load = async () => {
       try {
         const res = await fetch('/api/product-categories', { cache: 'no-store' })
         if (!res.ok) return
         const data: { name: string; slug: string }[] = await res.json()
-        setProductItems(
-          data.map((c) => ({
-            name: c.name,
-            href: `/products?category=${encodeURIComponent(c.slug)}`,
-          }))
-        )
+        
+        // Organize categories into main categories
+        const categories = {
+          'kablo-kanal-sistemleri': [
+            { name: 'Kablo Kanalları', href: '/products?category=kablo-kanallari' },
+            { name: 'Kablo Merdivenleri', href: '/products?category=kablo-merdivenleri' },
+            { name: 'Tel Kablo Kanalları', href: '/products?category=tel-kablo-kanallari' },
+            { name: 'Trunking Kablo Kanalları', href: '/products?category=trunking-kablo-kanallari' },
+            { name: 'Paslanmaz Kablo Kanalları', href: '/products?category=paslanmaz-kablo-kanallari' },
+            { name: 'Alüminyum Kablo Kanalları', href: '/products?category=aluminyum-kablo-kanallari' },
+          ],
+          'aski-sistemleri': [
+            { name: 'Askı Ürünleri', href: '/products?category=aski-urunleri' },
+          ],
+          'ges-solar-sistemleri': [
+            { name: 'Arazi', href: '/products?category=ges-arazi' },
+            { name: 'Çatı', href: '/products?category=ges-cati' },
+            { name: 'K port', href: '/products?category=ges-k-port' },
+          ],
+          'topraklama-sistemleri': [
+            { name: 'Topraklama Şeritleri', href: '/products?category=topraklama-seritleri' },
+            { name: 'Klemanslar ve Aksesuar', href: '/products?category=klemanslar-ve-aksesuar' },
+          ],
+        }
+        
+        setProductSubCategories(categories)
       } catch {}
     }
     load()
   }, [])
+
+  // Product categories structure
+  const productCategories = [
+    { 
+      label: 'Kablo Kanal Sistemleri', 
+      key: 'kablo-kanal-sistemleri',
+      subItems: productSubCategories['kablo-kanal-sistemleri'] || []
+    },
+    { 
+      label: 'Askı Sistemleri ve Taşıma Sistemleri', 
+      key: 'aski-sistemleri',
+      subItems: productSubCategories['aski-sistemleri'] || []
+    },
+    { 
+      label: 'GES Solar Sistemleri', 
+      key: 'ges-solar-sistemleri',
+      subItems: productSubCategories['ges-solar-sistemleri'] || []
+    },
+    { 
+      label: 'Topraklama Sistemleri', 
+      key: 'topraklama-sistemleri',
+      subItems: productSubCategories['topraklama-sistemleri'] || []
+    },
+  ]
 
   if (!isOpen)
     return (
@@ -80,7 +122,71 @@ const MobileNav = () => {
 
         <nav className='mt-6'>
           <ul className='space-y-4'>
-            {PRODUCT_CATEGORIES.map((category) => {
+            {/* Ürünler Ana Kategorisi */}
+            <li>
+              <button
+                type='button'
+                onClick={() =>
+                  setExpanded((prev) => ({
+                    ...prev,
+                    'Ürünler': !prev['Ürünler'],
+                  }))
+                }
+                className='w-full flex items-center justify-between py-3 text-base font-neuropol'>
+                <span className='font-semibold'>Ürünler</span>
+                {expanded['Ürünler'] ? (
+                  <ChevronDown className='h-5 w-5' />
+                ) : (
+                  <ChevronRight className='h-5 w-5' />
+                )}
+              </button>
+
+              {expanded['Ürünler'] && (
+                <ul className='mt-2 pl-3 space-y-3 border-l border-white/30'>
+                  {productCategories.map((category) => {
+                    const isExpanded = expanded[category.key]
+                    return (
+                      <li key={category.key}>
+                        <button
+                          type='button'
+                          onClick={() =>
+                            setExpanded((prev) => ({
+                              ...prev,
+                              [category.key]: !prev[category.key],
+                            }))
+                          }
+                          className='w-full flex items-center justify-between py-2 text-sm font-neuropol'>
+                          <span className='font-medium'>{category.label}</span>
+                          {isExpanded ? (
+                            <ChevronDown className='h-4 w-4' />
+                          ) : (
+                            <ChevronRight className='h-4 w-4' />
+                          )}
+                        </button>
+
+                        {isExpanded && category.subItems.length > 0 && (
+                          <ul className='mt-2 pl-4 space-y-2 border-l border-white/20'>
+                            {category.subItems.map((item) => (
+                              <li key={item.name}>
+                                <Link
+                                  href={item.href}
+                                  onClick={() => setIsOpen(false)}
+                                  className='block py-1.5 text-white/80 hover:text-white transition-colors text-sm'>
+                                  {item.name}
+                                </Link>
+                              </li>
+                            ))}
+                          </ul>
+                        )}
+                      </li>
+                    )
+                  })}
+                </ul>
+              )}
+            </li>
+
+            {/* Diğer Ana Kategoriler */}
+            {PRODUCT_CATEGORIES.filter(cat => cat.label !== 'Ürünler').map((category) => {
               const isExpanded = expanded[category.label]
               return (
                 <li key={category.label}>
@@ -103,10 +209,7 @@ const MobileNav = () => {
 
                   {isExpanded && (
                     <ul className='mt-2 pl-3 space-y-3 border-l border-white/30'>
-                      {(category.label === 'Ürünler'
-                        ? (productItems.length ? productItems : [])
-                        : category.featured
-                      ).map((item) => (
+                      {category.featured.map((item) => (
                         <li key={item.name}>
                           {item.isHeader ? (
                             <div className='text-sm font-bold text-white uppercase tracking-wider py-3 px-2 bg-white/10 rounded-md border border-white/30 mb-2 mt-3'>
