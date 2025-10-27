@@ -96,9 +96,10 @@ export default async function HakkimizdaPage() {
               <div className="w-16 h-16 bg-slate-100 rounded-lg flex items-center justify-center mx-auto mb-6">
                 <Award className="h-8 w-8 text-slate-700" />
               </div>
-              <h3 className="font-neuropol text-xl font-bold text-slate-900 mb-4">Kalite</h3>
+              <h3 className="font-neuropol text-xl font-bold text-slate-900 mb-4">Güven, Kalite ve Mükemmellik</h3>
               <p className="text-gray-600 leading-relaxed">
-                Üretimden teslimat aşamasına kadar her süreçte en yüksek kalite standartlarını korumak.
+              IPOS Steel’de her üretim adımı, dürüstlük ve kalite disipliniyle yönetilir.
+              Bizim için güven, sadece bir ilke değil — her işimizin temelidir.
               </p>
             </div>
 
@@ -107,9 +108,10 @@ export default async function HakkimizdaPage() {
               <div className="w-16 h-16 bg-slate-100 rounded-lg flex items-center justify-center mx-auto mb-6">
                 <Shield className="h-8 w-8 text-slate-700" />
               </div>
-              <h3 className="font-neuropol text-xl font-bold text-slate-900 mb-4">Güvenilirlik</h3>
+              <h3 className="font-neuropol text-xl font-bold text-slate-900 mb-4">İnovasyon</h3>
               <p className="text-gray-600 leading-relaxed">
-                Verilen sözleri tutmak, zamanında teslimat ve uzun vadeli iş ortaklıkları kurmak.
+              IPOS Steel, teknolojiyi üretimin kalbine yerleştirir.
+              Yenilikle büyür, geleceği mühendislikle şekillendirir.
               </p>
             </div>
 
@@ -120,7 +122,8 @@ export default async function HakkimizdaPage() {
               </div>
               <h3 className="font-neuropol text-xl font-bold text-slate-900 mb-4">Sürdürülebilirlik</h3>
               <p className="text-gray-600 leading-relaxed">
-                Çevre dostu üretim yaklaşımı ve gelecek nesillere karşı sorumlu davranış.
+              Üretim gücümüzü çevreye ve geleceğe duyarlılıkla yönetiriz.
+              Her adımda kalıcı değer ve sorumluluk hedefleriz.
               </p>
             </div>
           </div>
