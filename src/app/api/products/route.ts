@@ -14,7 +14,18 @@ export async function GET(req: NextRequest) {
         ...(categorySlug ? { category: { slug: categorySlug, isActive: true } } : {}),
       },
       orderBy: { createdAt: 'desc' },
-      include: { category: true },
+      include: { 
+        category: true,
+        images: {
+          select: {
+            id: true,
+            imageUrl: true,
+            imagePublicId: true,
+            order: true
+          },
+          orderBy: { order: 'asc' }
+        }
+      },
     })
 
     return NextResponse.json(products, {

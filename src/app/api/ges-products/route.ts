@@ -4,11 +4,15 @@ import { prisma } from '@/lib/prisma'
 export const dynamic = 'force-dynamic'
 export const revalidate = 0
 
-export async function GET() {
+export async function GET(req: NextRequest) {
   try {
+    const { searchParams } = new URL(req.url)
+    const categorySlug = searchParams.get('category') || undefined
+
     const gesProducts = await prisma.gesProduct.findMany({
       where: {
-        isActive: true
+        isActive: true,
+        ...(categorySlug ? { category: { slug: categorySlug, isActive: true } } : {}),
       },
       include: { 
         category: true,

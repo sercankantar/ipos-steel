@@ -2,7 +2,7 @@
 
 import MaxWidthWrapper from '@/components/MaxWidthWrapper'
 import { useState, useEffect } from 'react'
-import { ArrowLeft, Download, FileText, Trash2, Eye, Plus } from 'lucide-react'
+import { ArrowLeft, Download, FileText, Trash2, Eye, Plus, X } from 'lucide-react'
 import Link from 'next/link'
 import { showToast } from '@/components/Toast'
 
@@ -21,6 +21,15 @@ interface RequestItem {
 export default function RequestList() {
   const [requestItems, setRequestItems] = useState<RequestItem[]>([])
   const [loading, setLoading] = useState(true)
+  const [isQuoteModalOpen, setIsQuoteModalOpen] = useState(false)
+  const [quoteForm, setQuoteForm] = useState({
+    firstName: '',
+    lastName: '',
+    phone: '',
+    city: '',
+    email: '',
+    description: ''
+  })
 
   useEffect(() => {
     // LocalStorage'dan istek listesini yükle
@@ -30,6 +39,26 @@ export default function RequestList() {
     }
     setLoading(false)
   }, [])
+
+  useEffect(() => {
+    const handleEscape = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        if (isQuoteModalOpen) {
+          setIsQuoteModalOpen(false)
+        }
+      }
+    }
+
+    if (isQuoteModalOpen) {
+      document.addEventListener('keydown', handleEscape)
+      document.body.style.overflow = 'hidden'
+    }
+
+    return () => {
+      document.removeEventListener('keydown', handleEscape)
+      document.body.style.overflow = 'unset'
+    }
+  }, [isQuoteModalOpen])
 
   const updateQuantity = (id: string, quantity: number) => {
     if (quantity < 1) return
@@ -128,13 +157,93 @@ export default function RequestList() {
   }
 
   const requestQuote = () => {
-    // Teklif talebi işlemi
-    console.log('Teklif talebinde bulunuluyor...')
-    showToast({
-      message: 'Teklif talebiniz alındı! En kısa sürede size dönüş yapacağız.',
-      type: 'success',
-      duration: 4000
+    setIsQuoteModalOpen(true)
+  }
+
+  const handleQuoteFormChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const { name, value } = e.target
+    setQuoteForm(prev => ({
+      ...prev,
+      [name]: value
+    }))
+  }
+
+  const handleQuoteCancel = () => {
+    setIsQuoteModalOpen(false)
+    setQuoteForm({
+      firstName: '',
+      lastName: '',
+      phone: '',
+      city: '',
+      email: '',
+      description: ''
     })
+  }
+
+  const handleQuoteSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+
+    try {
+      const items = requestItems.map(item => ({
+        name: item.name,
+        code: item.code,
+        type: item.type,
+        quantity: item.quantity,
+        unit: item.unit,
+        subProductName: item.subProductName,
+        productName: item.productName
+      }))
+
+      const response = await fetch('/api/request-list-submissions', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          items,
+          firstName: quoteForm.firstName,
+          lastName: quoteForm.lastName,
+          phone: quoteForm.phone,
+          city: quoteForm.city,
+          email: quoteForm.email,
+          description: quoteForm.description
+        })
+      })
+
+      if (response.ok) {
+        showToast({
+          message: 'İstek listeniz başarıyla gönderildi!',
+          type: 'success',
+          duration: 4000
+        })
+        setIsQuoteModalOpen(false)
+        setQuoteForm({
+          firstName: '',
+          lastName: '',
+          phone: '',
+          city: '',
+          email: '',
+          description: ''
+        })
+        // Sepeti temizle
+        setRequestItems([])
+        localStorage.removeItem('requestList')
+        window.dispatchEvent(new CustomEvent('requestListUpdated'))
+      } else {
+        showToast({
+          message: 'İstek listesi gönderilemedi. Lütfen tekrar deneyin.',
+          type: 'error',
+          duration: 3000
+        })
+      }
+    } catch (error) {
+      console.error('İstek listesi gönderme hatası:', error)
+      showToast({
+        message: 'İstek listesi gönderilemedi. Lütfen tekrar deneyin.',
+        type: 'error',
+        duration: 3000
+      })
+    }
   }
 
   if (loading) {
@@ -306,6 +415,160 @@ export default function RequestList() {
           </div>
         )}
       </div>
+
+      {/* İstek Listesi Teklif Talebi Modal'ı */}
+      {isQuoteModalOpen && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+          <div className="bg-white rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+            <div className="flex items-center justify-between p-6 border-b border-gray-200">
+              <h2 className="text-xl font-semibold text-gray-800">Talep Et</h2>
+              <button
+                onClick={handleQuoteCancel}
+                className="text-gray-400 hover:text-gray-600 transition-colors"
+              >
+                <X className="w-6 h-6" />
+              </button>
+            </div>
+
+            <form onSubmit={handleQuoteSubmit} className="p-6 space-y-4">
+              {/* Sepetteki Ürünler */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  İstediğiniz Ürünler
+                </label>
+                <div className="border border-gray-300 rounded-md p-4 bg-gray-50 max-h-64 overflow-y-auto">
+                  {requestItems.map((item, index) => (
+                    <div key={item.id} className={index !== requestItems.length - 1 ? 'mb-3 pb-3 border-b border-gray-200' : ''}>
+                      <div className="flex items-center justify-between">
+                        <div className="flex-1">
+                          <p className="font-medium text-sm text-gray-900">{item.name}</p>
+                          <p className="text-xs text-gray-500">Order Code: {item.code}</p>
+                          {item.subProductName && (
+                            <p className="text-xs text-gray-500">Alt Ürün: {item.subProductName}</p>
+                          )}
+                          {item.productName && (
+                            <p className="text-xs text-gray-500">Ürün: {item.productName}</p>
+                          )}
+                        </div>
+                        <div className="text-right">
+                          <p className="font-semibold text-sm text-gray-900">
+                            {item.quantity} {item.unit}
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Ad *
+                </label>
+                <input
+                  type="text"
+                  name="firstName"
+                  value={quoteForm.firstName}
+                  onChange={handleQuoteFormChange}
+                  required
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  placeholder="Adınızı girin"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Soyad *
+                </label>
+                <input
+                  type="text"
+                  name="lastName"
+                  value={quoteForm.lastName}
+                  onChange={handleQuoteFormChange}
+                  required
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  placeholder="Soyadınızı girin"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Telefon No *
+                </label>
+                <input
+                  type="tel"
+                  name="phone"
+                  value={quoteForm.phone}
+                  onChange={handleQuoteFormChange}
+                  required
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  placeholder="0555 123 45 67"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Şehir *
+                </label>
+                <input
+                  type="text"
+                  name="city"
+                  value={quoteForm.city}
+                  onChange={handleQuoteFormChange}
+                  required
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  placeholder="Şehrinizi girin"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  E-posta *
+                </label>
+                <input
+                  type="email"
+                  name="email"
+                  value={quoteForm.email}
+                  onChange={handleQuoteFormChange}
+                  required
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  placeholder="ornek@email.com"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Açıklama
+                </label>
+                <textarea
+                  name="description"
+                  value={quoteForm.description}
+                  onChange={handleQuoteFormChange}
+                  rows={4}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
+                  placeholder="Ürünler hakkında detaylı bilgi veya özel isteklerinizi yazabilirsiniz..."
+                />
+              </div>
+
+              <div className="flex space-x-3 pt-4">
+                <button
+                  type="button"
+                  onClick={handleQuoteCancel}
+                  className="flex-1 py-2 px-4 border border-gray-300 text-gray-700 rounded-md hover:bg-gray-50 transition-colors"
+                >
+                  Vazgeç
+                </button>
+                <button
+                  type="submit"
+                  className="flex-1 py-2 px-4 text-white bg-blue-600 rounded-md hover:bg-blue-700 transition-colors"
+                >
+                  Talep Et
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </MaxWidthWrapper>
   )
 }

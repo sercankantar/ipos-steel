@@ -23,8 +23,10 @@ async function getProducts(category?: string) {
   const base = process.env.NEXT_PUBLIC_SERVER_URL || getBaseUrl()
   
   // GES ürünleri için farklı endpoint kullan
-  if (category === 'solar-montaj-sistemleri') {
-    const res = await fetch(`${base}/api/ges-products`, { cache: 'no-store' })
+  const gesCategories = ['solar-montaj-sistemleri', 'ges-arazi', 'ges-cati', 'ges-k-port']
+  if (gesCategories.includes(category || '')) {
+    const url = category ? `${base}/api/ges-products?category=${encodeURIComponent(category)}` : `${base}/api/ges-products`
+    const res = await fetch(url, { cache: 'no-store' })
     if (!res.ok) return []
     return res.json()
   }
@@ -52,6 +54,7 @@ const ProductsPage = ({ searchParams }: ProductsPageProps) => {
   
   useEffect(() => {
     const fetchData = async () => {
+      setLoading(true)
       try {
         const [productsData, categoriesData] = await Promise.all([
           getProducts(category),
@@ -415,13 +418,19 @@ const ProductsPage = ({ searchParams }: ProductsPageProps) => {
                       transform: `translateX(-${currentSlide * (100 / totalSlides)}%)`
                     }}
                   >
-                    {products.map((product: any, index: number) => (
+                    {products.map((product: any, index: number) => {
+                      // Önce images dizisinden ilk resmi, yoksa imageUrl'i kullan
+                      const productImage = (product.images && product.images.length > 0) 
+                        ? product.images[0].imageUrl 
+                        : product.imageUrl;
+                      
+                      return (
                       <div key={product.id} className="flex-none w-80 bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden group hover:shadow-lg transition-all duration-300">
                         {/* Product Image */}
                         <div className="aspect-[4/3] bg-gray-50 relative overflow-hidden">
-                          {product.imageUrl ? (
+                          {productImage ? (
                             <img
-                              src={product.imageUrl}
+                              src={productImage}
                               alt={product.name}
                               className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                             />
@@ -525,7 +534,7 @@ const ProductsPage = ({ searchParams }: ProductsPageProps) => {
                           </div>
                         </div>
                       </div>
-                    ))}
+                    )})}
                   </div>
                 </div>
 
@@ -546,13 +555,19 @@ const ProductsPage = ({ searchParams }: ProductsPageProps) => {
               {/* Mobile Grid Layout */}
               <div className="lg:hidden">
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 px-4">
-                  {products.map((product: any, index: number) => (
+                  {products.map((product: any, index: number) => {
+                    // Önce images dizisinden ilk resmi, yoksa imageUrl'i kullan
+                    const productImage = (product.images && product.images.length > 0) 
+                      ? product.images[0].imageUrl 
+                      : product.imageUrl;
+                    
+                    return (
                     <div key={product.id} className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden group hover:shadow-lg transition-all duration-300">
                       {/* Product Image */}
                       <div className="aspect-[4/3] bg-gray-50 relative overflow-hidden">
-                        {product.imageUrl ? (
+                        {productImage ? (
                           <img
-                            src={product.imageUrl}
+                            src={productImage}
                             alt={product.name}
                             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                           />
@@ -742,7 +757,7 @@ const ProductsPage = ({ searchParams }: ProductsPageProps) => {
                         </div>
                       </div>
                     </div>
-                  ))}
+                  )})}
                 </div>
               </div>
             </div>
@@ -1235,12 +1250,18 @@ const ProductsPage = ({ searchParams }: ProductsPageProps) => {
                       transform: `translateX(-${currentSlide * (100 / totalSlides)}%)`
                     }}
                   >
-                    {products.map((product: any, index: number) => (
+                    {products.map((product: any, index: number) => {
+                      // Önce images dizisinden ilk resmi, yoksa imageUrl'i kullan
+                      const productImage = (product.images && product.images.length > 0) 
+                        ? product.images[0].imageUrl 
+                        : product.imageUrl;
+                      
+                      return (
                       <div key={product.id} className="flex-none w-80 bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden group hover:shadow-lg transition-all duration-300">
                         <div className="aspect-[4/3] bg-gray-50 relative overflow-hidden">
-                          {product.imageUrl ? (
+                          {productImage ? (
                             <img
-                              src={product.imageUrl}
+                              src={productImage}
                               alt={product.name}
                               className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                             />
@@ -1272,7 +1293,7 @@ const ProductsPage = ({ searchParams }: ProductsPageProps) => {
                           </div>
                         </div>
                       </div>
-                    ))}
+                    )})}
                   </div>
                 </div>
 
@@ -2168,17 +2189,29 @@ const ProductsPage = ({ searchParams }: ProductsPageProps) => {
                 </h1>
 
                 {/* Ürünler */}
-                {products.length > 0 && (
+                {products.length > 0 ? (
                   <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                    {products.map((product: any) => (
+                    {products.map((product: any) => {
+                      // Önce images dizisinden ilk resmi, yoksa imageUrl veya mainImageUrl'i kullan
+                      const productImage = (product.images && product.images.length > 0) 
+                        ? product.images[0].imageUrl 
+                        : (product.imageUrl || product.mainImageUrl);
+                      
+                      // GES ürünleri için farklı link
+                      const gesCategories = ['ges-arazi', 'ges-cati', 'solar-montaj-sistemleri'];
+                      const productLink = gesCategories.includes(category || '') 
+                        ? `/ges-products/${product.id}` 
+                        : `/products/${product.id}`;
+                      
+                      return (
                       <Link
                         key={product.id}
-                        href={`/products/${product.id}`}
+                        href={productLink}
                         className="block p-4 border border-gray-200 rounded-lg hover:border-gray-300 hover:shadow-sm transition-all duration-200 text-center"
                       >
-                        {product.imageUrl && (
+                        {productImage && (
                           <img
-                            src={product.imageUrl}
+                            src={productImage}
                             alt={product.name}
                             className="w-full h-32 object-contain rounded mb-3"
                           />
@@ -2187,7 +2220,17 @@ const ProductsPage = ({ searchParams }: ProductsPageProps) => {
                           {product.name}
                         </h3>
                       </Link>
-                    ))}
+                    )})}
+                  </div>
+                ) : (
+                  <div className="bg-white border border-gray-200 rounded-lg p-12 text-center">
+                    <svg className="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4" />
+                    </svg>
+                    <h3 className="mt-4 text-lg font-medium text-gray-900">Bu kategoride ürün bulunamadı</h3>
+                    <p className="mt-2 text-sm text-gray-500">
+                      Bu kategoride henüz ürün eklenmemiştir.
+                    </p>
                   </div>
                 )}
 

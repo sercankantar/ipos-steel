@@ -179,6 +179,14 @@ interface GesProductItem {
   description3?: string
   image3Url?: string
   image3PublicId?: string
+  bonusImage1Url?: string
+  bonusImage1PublicId?: string
+  bonusImage2Url?: string
+  bonusImage2PublicId?: string
+  bonusImage3Url?: string
+  bonusImage3PublicId?: string
+  bonusImage4Url?: string
+  bonusImage4PublicId?: string
   isActive: boolean
   createdAt: string
   updatedAt: string
@@ -283,7 +291,11 @@ export default function UrunIslemler() {
     description2: '',
     image2Url: '',
     description3: '',
-    image3Url: ''
+    image3Url: '',
+    bonusImage1Url: '',
+    bonusImage2Url: '',
+    bonusImage3Url: '',
+    bonusImage4Url: ''
   })
   const [images, setImages] = useState<File[]>([])
   const [imagePreviews, setImagePreviews] = useState<string[]>([])
@@ -317,6 +329,20 @@ export default function UrunIslemler() {
   const gesImage1FileRef = useRef<HTMLInputElement | null>(null)
   const gesImage2FileRef = useRef<HTMLInputElement | null>(null)
   const gesImage3FileRef = useRef<HTMLInputElement | null>(null)
+  
+  // Bonus fotoğraflar için state'ler
+  const [gesBonusImage1, setGesBonusImage1] = useState<File | null>(null)
+  const [gesBonusImage1Preview, setGesBonusImage1Preview] = useState<string>('')
+  const [gesBonusImage2, setGesBonusImage2] = useState<File | null>(null)
+  const [gesBonusImage2Preview, setGesBonusImage2Preview] = useState<string>('')
+  const [gesBonusImage3, setGesBonusImage3] = useState<File | null>(null)
+  const [gesBonusImage3Preview, setGesBonusImage3Preview] = useState<string>('')
+  const [gesBonusImage4, setGesBonusImage4] = useState<File | null>(null)
+  const [gesBonusImage4Preview, setGesBonusImage4Preview] = useState<string>('')
+  const gesBonusImage1FileRef = useRef<HTMLInputElement | null>(null)
+  const gesBonusImage2FileRef = useRef<HTMLInputElement | null>(null)
+  const gesBonusImage3FileRef = useRef<HTMLInputElement | null>(null)
+  const gesBonusImage4FileRef = useRef<HTMLInputElement | null>(null)
 
   useEffect(() => {
     fetchProducts()
@@ -1089,6 +1115,70 @@ export default function UrunIslemler() {
         }
       }
 
+      // Bonus resim 1 yükleme
+      let bonusImage1Url = gesProductFormData.bonusImage1Url
+      let bonusImage1PublicId = ''
+      
+      if (gesBonusImage1) {
+        const fd = new FormData()
+        fd.append('file', gesBonusImage1)
+        fd.append('folder', 'ipos-steel/ges-products/bonus')
+        const uploadResponse = await fetch('/api/admin/upload', { method: 'POST', body: fd })
+        if (uploadResponse.ok) {
+          const upload = await uploadResponse.json()
+          bonusImage1Url = upload.secure_url
+          bonusImage1PublicId = upload.public_id
+        }
+      }
+
+      // Bonus resim 2 yükleme
+      let bonusImage2Url = gesProductFormData.bonusImage2Url
+      let bonusImage2PublicId = ''
+      
+      if (gesBonusImage2) {
+        const fd = new FormData()
+        fd.append('file', gesBonusImage2)
+        fd.append('folder', 'ipos-steel/ges-products/bonus')
+        const uploadResponse = await fetch('/api/admin/upload', { method: 'POST', body: fd })
+        if (uploadResponse.ok) {
+          const upload = await uploadResponse.json()
+          bonusImage2Url = upload.secure_url
+          bonusImage2PublicId = upload.public_id
+        }
+      }
+
+      // Bonus resim 3 yükleme
+      let bonusImage3Url = gesProductFormData.bonusImage3Url
+      let bonusImage3PublicId = ''
+      
+      if (gesBonusImage3) {
+        const fd = new FormData()
+        fd.append('file', gesBonusImage3)
+        fd.append('folder', 'ipos-steel/ges-products/bonus')
+        const uploadResponse = await fetch('/api/admin/upload', { method: 'POST', body: fd })
+        if (uploadResponse.ok) {
+          const upload = await uploadResponse.json()
+          bonusImage3Url = upload.secure_url
+          bonusImage3PublicId = upload.public_id
+        }
+      }
+
+      // Bonus resim 4 yükleme
+      let bonusImage4Url = gesProductFormData.bonusImage4Url
+      let bonusImage4PublicId = ''
+      
+      if (gesBonusImage4) {
+        const fd = new FormData()
+        fd.append('file', gesBonusImage4)
+        fd.append('folder', 'ipos-steel/ges-products/bonus')
+        const uploadResponse = await fetch('/api/admin/upload', { method: 'POST', body: fd })
+        if (uploadResponse.ok) {
+          const upload = await uploadResponse.json()
+          bonusImage4Url = upload.secure_url
+          bonusImage4PublicId = upload.public_id
+        }
+      }
+
       const payload = {
         ...gesProductFormData,
         mainImageUrl,
@@ -1098,7 +1188,15 @@ export default function UrunIslemler() {
         image2Url,
         image2PublicId,
         image3Url,
-        image3PublicId
+        image3PublicId,
+        bonusImage1Url,
+        bonusImage1PublicId,
+        bonusImage2Url,
+        bonusImage2PublicId,
+        bonusImage3Url,
+        bonusImage3PublicId,
+        bonusImage4Url,
+        bonusImage4PublicId
       }
 
       const response = await fetch(url, {
@@ -1131,12 +1229,20 @@ export default function UrunIslemler() {
       description2: gesProduct.description2 || '',
       image2Url: gesProduct.image2Url || '',
       description3: gesProduct.description3 || '',
-      image3Url: gesProduct.image3Url || ''
+      image3Url: gesProduct.image3Url || '',
+      bonusImage1Url: gesProduct.bonusImage1Url || '',
+      bonusImage2Url: gesProduct.bonusImage2Url || '',
+      bonusImage3Url: gesProduct.bonusImage3Url || '',
+      bonusImage4Url: gesProduct.bonusImage4Url || ''
     })
     setGesMainImagePreview(gesProduct.mainImageUrl || '')
     setGesImage1Preview(gesProduct.image1Url || '')
     setGesImage2Preview(gesProduct.image2Url || '')
     setGesImage3Preview(gesProduct.image3Url || '')
+    setGesBonusImage1Preview(gesProduct.bonusImage1Url || '')
+    setGesBonusImage2Preview(gesProduct.bonusImage2Url || '')
+    setGesBonusImage3Preview(gesProduct.bonusImage3Url || '')
+    setGesBonusImage4Preview(gesProduct.bonusImage4Url || '')
     setShowGesProductForm(true)
   }
 
@@ -1168,7 +1274,11 @@ export default function UrunIslemler() {
       description2: '',
       image2Url: '',
       description3: '',
-      image3Url: ''
+      image3Url: '',
+      bonusImage1Url: '',
+      bonusImage2Url: '',
+      bonusImage3Url: '',
+      bonusImage4Url: ''
     })
     setGesMainImage(null)
     setGesMainImagePreview('')
@@ -1178,6 +1288,14 @@ export default function UrunIslemler() {
     setGesImage2Preview('')
     setGesImage3(null)
     setGesImage3Preview('')
+    setGesBonusImage1(null)
+    setGesBonusImage1Preview('')
+    setGesBonusImage2(null)
+    setGesBonusImage2Preview('')
+    setGesBonusImage3(null)
+    setGesBonusImage3Preview('')
+    setGesBonusImage4(null)
+    setGesBonusImage4Preview('')
     setEditingGesProduct(null)
     setShowGesProductForm(false)
   }
@@ -2959,7 +3077,156 @@ export default function UrunIslemler() {
                         className="h-32 w-32 object-cover rounded border"
                       />
                     </div>
-                  )}
+                  )} 
+                </div>
+
+                {/* Bonus Fotoğraflar Bölümü */}
+                <div className="border-t pt-6">
+                  <h3 className="text-lg font-semibold mb-4">Bonus Fotoğraflar</h3>
+                  
+                  {/* Bonus Fotoğraf 1 */}
+                  <div className="mb-6">
+                    <Label htmlFor="gesProductBonusImage1Url">Bonus Fotoğraf 1 URL (Opsiyonel)</Label>
+                    <Input 
+                      id="gesProductBonusImage1Url" 
+                      value={gesProductFormData.bonusImage1Url} 
+                      onChange={(e) => setGesProductFormData({ ...gesProductFormData, bonusImage1Url: e.target.value })} 
+                      placeholder="Manuel resim URL'i girebilirsiniz" 
+                    />
+                    <div className="flex items-center gap-3 mt-2">
+                      <input
+                        ref={gesBonusImage1FileRef}
+                        type="file"
+                        accept="image/*"
+                        className="hidden"
+                        onChange={(e) => {
+                          const file = e.target.files?.[0]
+                          if (file) {
+                            setGesBonusImage1(file)
+                            setGesBonusImage1Preview(URL.createObjectURL(file))
+                          }
+                        }}
+                      />
+                      <Button type="button" variant="outline" onClick={() => gesBonusImage1FileRef.current?.click()}>
+                        Bonus Fotoğraf 1 Seç
+                      </Button>
+                      {gesBonusImage1Preview && (
+                        <img 
+                          src={gesBonusImage1Preview} 
+                          alt="Bonus fotoğraf 1 önizleme" 
+                          className="h-20 w-20 object-cover rounded border"
+                        />
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Bonus Fotoğraf 2 */}
+                  <div className="mb-6">
+                    <Label htmlFor="gesProductBonusImage2Url">Bonus Fotoğraf 2 URL (Opsiyonel)</Label>
+                    <Input 
+                      id="gesProductBonusImage2Url" 
+                      value={gesProductFormData.bonusImage2Url} 
+                      onChange={(e) => setGesProductFormData({ ...gesProductFormData, bonusImage2Url: e.target.value })} 
+                      placeholder="Manuel resim URL'i girebilirsiniz" 
+                    />
+                    <div className="flex items-center gap-3 mt-2">
+                      <input
+                        ref={gesBonusImage2FileRef}
+                        type="file"
+                        accept="image/*"
+                        className="hidden"
+                        onChange={(e) => {
+                          const file = e.target.files?.[0]
+                          if (file) {
+                            setGesBonusImage2(file)
+                            setGesBonusImage2Preview(URL.createObjectURL(file))
+                          }
+                        }}
+                      />
+                      <Button type="button" variant="outline" onClick={() => gesBonusImage2FileRef.current?.click()}>
+                        Bonus Fotoğraf 2 Seç
+                      </Button>
+                      {gesBonusImage2Preview && (
+                        <img 
+                          src={gesBonusImage2Preview} 
+                          alt="Bonus fotoğraf 2 önizleme" 
+                          className="h-20 w-20 object-cover rounded border"
+                        />
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Bonus Fotoğraf 3 */}
+                  <div className="mb-6">
+                    <Label htmlFor="gesProductBonusImage3Url">Bonus Fotoğraf 3 URL (Opsiyonel)</Label>
+                    <Input 
+                      id="gesProductBonusImage3Url" 
+                      value={gesProductFormData.bonusImage3Url} 
+                      onChange={(e) => setGesProductFormData({ ...gesProductFormData, bonusImage3Url: e.target.value })} 
+                      placeholder="Manuel resim URL'i girebilirsiniz" 
+                    />
+                    <div className="flex items-center gap-3 mt-2">
+                      <input
+                        ref={gesBonusImage3FileRef}
+                        type="file"
+                        accept="image/*"
+                        className="hidden"
+                        onChange={(e) => {
+                          const file = e.target.files?.[0]
+                          if (file) {
+                            setGesBonusImage3(file)
+                            setGesBonusImage3Preview(URL.createObjectURL(file))
+                          }
+                        }}
+                      />
+                      <Button type="button" variant="outline" onClick={() => gesBonusImage3FileRef.current?.click()}>
+                        Bonus Fotoğraf 3 Seç
+                      </Button>
+                      {gesBonusImage3Preview && (
+                        <img 
+                          src={gesBonusImage3Preview} 
+                          alt="Bonus fotoğraf 3 önizleme" 
+                          className="h-20 w-20 object-cover rounded border"
+                        />
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Bonus Fotoğraf 4 */}
+                  <div className="mb-6">
+                    <Label htmlFor="gesProductBonusImage4Url">Bonus Fotoğraf 4 URL (Opsiyonel)</Label>
+                    <Input 
+                      id="gesProductBonusImage4Url" 
+                      value={gesProductFormData.bonusImage4Url} 
+                      onChange={(e) => setGesProductFormData({ ...gesProductFormData, bonusImage4Url: e.target.value })} 
+                      placeholder="Manuel resim URL'i girebilirsiniz" 
+                    />
+                    <div className="flex items-center gap-3 mt-2">
+                      <input
+                        ref={gesBonusImage4FileRef}
+                        type="file"
+                        accept="image/*"
+                        className="hidden"
+                        onChange={(e) => {
+                          const file = e.target.files?.[0]
+                          if (file) {
+                            setGesBonusImage4(file)
+                            setGesBonusImage4Preview(URL.createObjectURL(file))
+                          }
+                        }}
+                      />
+                      <Button type="button" variant="outline" onClick={() => gesBonusImage4FileRef.current?.click()}>
+                        Bonus Fotoğraf 4 Seç
+                      </Button>
+                      {gesBonusImage4Preview && (
+                        <img 
+                          src={gesBonusImage4Preview} 
+                          alt="Bonus fotoğraf 4 önizleme" 
+                          className="h-20 w-20 object-cover rounded border"
+                        />
+                      )}
+                    </div>
+                  </div>
                 </div>
                 
                 <div className="flex space-x-4">

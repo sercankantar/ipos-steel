@@ -43,38 +43,52 @@ const perks = [
 const countryData = {
   germany: {
     name: 'ALMANYA',
-    company: 'IPOS-Steel Deutschland GmbH',
-    address: 'Musterstraße 123, 12345 Berlin, Deutschland',
+    company: 'IPOS Gruppe',
+    address: 'Robert-Bosch-Stra e 3 β89250 Senden GERMANY',
     phone: '+49 30 12345678',
-    email: 'info@ipos-steel.de'
+    email: 'germany@ipos-steel.com'
   },
-  uk: {
-    name: 'İNGİLTERE',
-    company: 'IPOS-Steel UK Ltd',
-    address: 'Durham Business Centre, Abbey Road, Durham, DH1 5J',
-    phone: '+44 (0) 191 3753986 / +44 (0) 7394 399988',
-    email: 'ukinfo@ipos-steel.com'
+  dubai: {
+    name: 'DUBAI',
+    company: 'IPOS-Steel UAE LLC',
+    address: 'Dubai Business Bay, Dubai, UAE',
+    phone: '+971 50 123 4567',
+    email: 'dubai@ipos-steel.com'
   },
-  usa: {
-    name: 'AMERİKA BİRLEŞİK DEVLETLERİ',
-    company: 'IPOS-Steel USA Inc.',
-    address: '123 Business Ave, New York, NY 10001, USA',
-    phone: '+1 555 123 4567',
-    email: 'info@ipos-steel.com'
+  egypt: {
+    name: 'MİSİR',
+    company: 'IPOS-Steel Egypt Ltd',
+    address: 'Cairo Business Park, Cairo, Egypt',
+    phone: '+20 123 456 7890',
+    email: 'egypt@ipos-steel.com'
   },
-  turkey: {
-    name: 'TÜRKİYE',
-    company: 'IPOS-Steel Dış. Tic. A.Ş.',
-    address: 'Merkez Ofis, İstanbul, Türkiye',
-    phone: '+90 212 123 45 67',
-    email: 'info@ipos-steel.com'
+  tanzania: {
+    name: 'TANZANYA',
+    company: 'IPOS-Steel Tanzania Ltd',
+    address: 'Dar es Salaam, Tanzania',
+    phone: '+255 123 456 7890',
+    email: 'tanzania@ipos-steel.com'
   },
-  australia: {
-    name: 'AVUSTRALYA',
-    company: 'IPOS-Steel Australia Pty Ltd',
-    address: '123 Business Street, Sydney, NSW 2000, Australia',
-    phone: '+61 2 1234 5678',
-    email: 'info@ipos-steel.com.au'
+  arabia: {
+    name: 'SUUDI ARABISTAN',
+    company: 'IPOS-Steel Arabia Ltd',
+    address: 'Riyadh, Saudi Arabia',
+    phone: '+966 123 456 7890',
+    email: 'arabia@ipos-steel.com'
+  },
+  ankara: {
+    name: 'TÜRKİYE(ANKARA)',
+    company: 'IPOS-Steel Ankara Ltd',
+    address: 'Ankara, Turkey',
+    phone: '+90 312 123 4567',
+    email: 'ankara@ipos-steel.com'
+  },
+  kocaeli: {
+    name: 'TURKIYE(KOCAELI)',
+    company: 'IPOS-Steel Kocaeli Ltd',
+    address: 'Kocaeli, Turkey',
+    phone: '+90 312 123 4567',
+    email: 'kocaeli@ipos-steel.com'
   }
 }
 
@@ -349,10 +363,12 @@ export default function Home() {
               >
                 <option value=''>Ülke Seçiniz</option>
                 <option value='germany'>ALMANYA</option>
-                <option value='uk'>İNGİLTERE</option>
-                <option value='usa'>AMERİKA BİRLEŞİK DEVLETLERİ</option>
-                <option value='australia'>AVUSTRALYA</option>
-                <option value='turkey'>TÜRKİYE</option>
+                <option value='dubai'>DUBAI</option>
+                <option value='egypt'>MISIR</option>
+                <option value='tanzania'>TANZANYA</option>
+                <option value='arabia'>SUUDI ARABISTAN</option>
+                <option value='ankara'>TÜRKİYE(ANKARA)</option>
+                <option value='kocaeli'>TURKIYE(KOCAELI)</option>
               </select>
               <div className='absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none'>
                 <svg className='w-5 h-5 text-gray-400' fill='none' stroke='currentColor' viewBox='0 0 24 24'>
@@ -376,15 +392,15 @@ export default function Home() {
                      {/* Amerika - New York */}
                      <div 
                        className="absolute cursor-pointer group"
-                       style={{ top: '25%', left: '15%' }}
-                       onClick={() => setSelectedCountry('usa')}
+                       style={{ top: '40%', left: '55%' }}
+                       onClick={() => setSelectedCountry('egypt')}
                      >
                        <div className="relative">
                          <div className="w-6 h-6 bg-red-500 rounded-full border-2 border-white shadow-lg flex items-center justify-center group-hover:scale-110 transition-transform">
                            <div className="w-2 h-2 bg-white rounded-full"></div>
                          </div>
                          <div className="absolute -top-8 left-1/2 transform -translate-x-1/2 bg-gray-900 text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
-                           Amerika
+                           Mısır
                          </div>
                        </div>
                      </div>
@@ -408,15 +424,15 @@ export default function Home() {
                      {/* İngiltere - London */}
                      <div 
                        className="absolute cursor-pointer group"
-                       style={{ top: '22%', left: '45%' }}
-                       onClick={() => setSelectedCountry('uk')}
+                       style={{ top: '40%', left: '63%' }}
+                       onClick={() => setSelectedCountry('dubai')}
                      >
                        <div className="relative">
                          <div className="w-6 h-6 bg-red-500 rounded-full border-2 border-white shadow-lg flex items-center justify-center group-hover:scale-110 transition-transform">
                            <div className="w-2 h-2 bg-white rounded-full"></div>
                          </div>
                          <div className="absolute -top-8 left-1/2 transform -translate-x-1/2 bg-gray-900 text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
-                           İngiltere
+                           Dubai
                          </div>
                        </div>
                      </div>
@@ -424,15 +440,43 @@ export default function Home() {
                      {/* Türkiye - İstanbul */}
                      <div 
                        className="absolute cursor-pointer group"
-                       style={{ top: '32%', left: '56%' }}
-                       onClick={() => setSelectedCountry('turkey')}
+                       style={{ top: '60%', left: '59%' }}
+                       onClick={() => setSelectedCountry('tanzania')}
                      >
                        <div className="relative">
                          <div className="w-6 h-6 bg-red-500 rounded-full border-2 border-white shadow-lg flex items-center justify-center group-hover:scale-110 transition-transform">
                            <div className="w-2 h-2 bg-white rounded-full"></div>
                          </div>
                          <div className="absolute -top-8 left-1/2 transform -translate-x-1/2 bg-gray-900 text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
-                           Türkiye
+                           Tanzanya
+                         </div>
+                       </div>
+                     </div>
+                     <div 
+                       className="absolute cursor-pointer group"
+                       style={{ top: '32%', left: '57%' }}
+                       onClick={() => setSelectedCountry('ankara')}
+                     >
+                       <div className="relative">
+                         <div className="w-6 h-6 bg-red-500 rounded-full border-2 border-white shadow-lg flex items-center justify-center group-hover:scale-110 transition-transform">
+                           <div className="w-2 h-2 bg-white rounded-full"></div>
+                         </div>
+                         <div className="absolute -top-8 left-1/2 transform -translate-x-1/2 bg-gray-900 text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
+                           Ankara
+                         </div>
+                       </div>
+                     </div>
+                     <div 
+                       className="absolute cursor-pointer group"
+                       style={{ top: '31%', left: '55%' }}
+                       onClick={() => setSelectedCountry('kocaeli')}
+                     >
+                       <div className="relative">
+                         <div className="w-6 h-6 bg-red-500 rounded-full border-2 border-white shadow-lg flex items-center justify-center group-hover:scale-110 transition-transform">
+                           <div className="w-2 h-2 bg-white rounded-full"></div>
+                         </div>
+                         <div className="absolute -top-8 left-1/2 transform -translate-x-1/2 bg-gray-900 text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
+                           Kocaeli
                          </div>
                        </div>
                      </div>
@@ -440,15 +484,15 @@ export default function Home() {
                      {/* Avustralya - Sydney */}
                      <div 
                        className="absolute cursor-pointer group"
-                       style={{ top: '70%', left: '88%' }}
-                       onClick={() => setSelectedCountry('australia')}
+                       style={{ top: '40%', left: '60%' }}
+                       onClick={() => setSelectedCountry('arabia')}
                      >
                        <div className="relative">
                          <div className="w-6 h-6 bg-red-500 rounded-full border-2 border-white shadow-lg flex items-center justify-center group-hover:scale-110 transition-transform">
                            <div className="w-2 h-2 bg-white rounded-full"></div>
                          </div>
                          <div className="absolute -top-8 left-1/2 transform -translate-x-1/2 bg-gray-900 text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
-                           Avustralya
+                           Suudi Arabistan
                          </div>
                        </div>
                      </div>

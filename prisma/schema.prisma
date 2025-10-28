@@ -991,8 +991,66 @@ model GesProduct {
   image3Url             String?  // Fotoğraf ek 3
   image3PublicId        String?  // Fotoğraf ek 3 public ID
   
+  // Bonus fotoğraflar
+  bonusImage1Url        String?
+  bonusImage1PublicId   String?
+  bonusImage2Url        String?
+  bonusImage2PublicId   String?
+  bonusImage3Url        String?
+  bonusImage3PublicId   String?
+  bonusImage4Url        String?
+  bonusImage4PublicId   String?
+  
   // Durum
   isActive              Boolean  @default(true)
   createdAt             DateTime @default(now())
   updatedAt             DateTime @updatedAt
+}
+
+model QuoteRequest {
+  id                    String   @id @default(cuid())
+  
+  // Ürün bilgileri
+  productName           String   // Ürün adı
+  productId             String?  // Ürün ID (opsiyonel)
+  productType           String?  // "Product" veya "GesProduct"
+  
+  // Kişisel bilgiler
+  firstName             String
+  lastName              String
+  phone                 String
+  city                  String
+  email                 String
+  description           String?
+  
+  // Durum
+  isRead                Boolean  @default(false)
+  createdAt             DateTime @default(now())
+  updatedAt             DateTime @updatedAt
+  
+  @@index([createdAt])
+  @@index([isRead])
+}
+
+model RequestListSubmission {
+  id                    String   @id @default(cuid())
+  
+  // Ürün bilgileri (JSON array)
+  items                 Json     // Array of items
+  
+  // Kişisel bilgiler
+  firstName             String
+  lastName              String
+  phone                 String
+  city                  String
+  email                 String
+  description           String?
+  
+  // Durum
+  isRead                Boolean  @default(false)
+  createdAt             DateTime @default(now())
+  updatedAt             DateTime @updatedAt
+  
+  @@index([createdAt])
+  @@index([isRead])
 }

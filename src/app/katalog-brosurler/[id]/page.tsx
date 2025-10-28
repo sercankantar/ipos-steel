@@ -6,17 +6,7 @@ import Link from 'next/link'
 import { useParams } from 'next/navigation'
 import { useState, useEffect } from 'react'
 import dynamic from 'next/dynamic'
-
-// PDF Flipbook Viewer'ı dynamic import ile yükle (sadece client-side)
-const PdfFlipbookViewer = dynamic(() => import('@/components/PdfFlipbookViewer'), {
-  ssr: false,
-  loading: () => (
-    <div className="flex flex-col items-center justify-center p-12">
-      <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mb-4"></div>
-      <p className="text-gray-600">PDF flipbook yükleniyor...</p>
-    </div>
-  ),
-})
+import CanvasBookViewer from '@/components/CanvasBookViewer'
 
 interface Catalog {
   id: string
@@ -38,7 +28,6 @@ interface Catalog {
   featured: boolean
   fileUrl?: string
   fileData?: string
-  heyzineUrl?: string
 }
 
 export default function KatalogDetayPage() {
@@ -70,18 +59,14 @@ export default function KatalogDetayPage() {
             const url = pdfData.dataUrl || pdfData.fileUrl || ''
             console.log('PDF URL:', url)
             
-            // TEST: Heyzine URL'si - Geçici
             setCatalog({
               ...catalogData,
-              fileUrl: url,
-              heyzineUrl: 'https://heyzine.com/flip-book/17a7e63991.html'
+              fileUrl: url
             })
             setPdfUrl(url)
           } else {
-            // TEST: Heyzine URL'si - Geçici
             setCatalog({
-              ...catalogData,
-              heyzineUrl: 'https://heyzine.com/flip-book/17a7e63991.html'
+              ...catalogData
             })
           }
         }
@@ -209,42 +194,32 @@ export default function KatalogDetayPage() {
       {/* PDF Viewer */}
       <MaxWidthWrapper>
         <div className="py-8">
-          {(pdfUrl || catalog.heyzineUrl) && (
-            <PdfFlipbookViewer 
-              pdfUrl={pdfUrl} 
-              heyzineUrl={catalog.heyzineUrl}
-            />
-          )}
-
-          {/* PDF URL Yoksa Uyarı */}
-          {!pdfUrl && !catalog.heyzineUrl && (
-            <div className="bg-white rounded-lg shadow-lg p-12 text-center">
-              <div className="text-gray-400 mb-4">
-                <FileText className="w-16 h-16 mx-auto" />
-              </div>
-              <h3 className="text-xl font-semibold text-gray-900 mb-2">
-                PDF Görüntülenemiyor
-              </h3>
-              <p className="text-gray-600 mb-6">
-                PDF dosyası mevcut değil veya yüklenemedi.
-              </p>
-              <div className="flex items-center justify-center gap-3">
-                <button
-                  onClick={downloadPdf}
-                  className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-medium transition-colors"
-                >
-                  <Download className="w-4 h-4" />
-                  PDF'yi İndir
-                </button>
-                <Link
-                  href="/katalog-brosurler"
-                  className="inline-flex items-center gap-2 px-4 py-2 rounded-lg text-gray-700 hover:text-gray-900 font-medium transition-colors border border-gray-200 hover:border-gray-300"
-                >
-                  Kataloglar Sayfasına Dön
-                </Link>
-              </div>
-            </div>
-          )}
+          <CanvasBookViewer
+            imagePrefix="IPOS STEEL 2025 E-KATALOG R1"
+            totalPages={9}
+            chapters={[
+              { title: "Kapak", startPage: 1 },
+              { title: "Bölüm 1: IPOS Steel", startPage: 2 },
+              { title: "Bölüm 2: Ürün Kataloğu", startPage: 4 },
+              { title: "Bölüm 3: Özellikler", startPage: 6 },
+            ]}
+          />
+          
+          <div className="mt-6 flex items-center justify-center gap-3">
+            <button
+              onClick={downloadPdf}
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-medium transition-colors"
+            >
+              <Download className="w-4 h-4" />
+              PDF'yi İndir
+            </button>
+            <Link
+              href="/katalog-brosurler"
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-lg text-gray-700 hover:text-gray-900 font-medium transition-colors border border-gray-200 hover:border-gray-300"
+            >
+              Kataloglar Sayfasına Dön
+            </Link>
+          </div>
         </div>
       </MaxWidthWrapper>
 

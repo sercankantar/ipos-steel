@@ -53,6 +53,14 @@ export async function POST(request: NextRequest) {
       description3,
       image3Url,
       image3PublicId,
+      bonusImage1Url,
+      bonusImage1PublicId,
+      bonusImage2Url,
+      bonusImage2PublicId,
+      bonusImage3Url,
+      bonusImage3PublicId,
+      bonusImage4Url,
+      bonusImage4PublicId,
       isActive
     } = await request.json()
 
@@ -73,6 +81,14 @@ export async function POST(request: NextRequest) {
         description3: description3 || null,
         image3Url: image3Url || null,
         image3PublicId: image3PublicId || null,
+        bonusImage1Url: bonusImage1Url || null,
+        bonusImage1PublicId: bonusImage1PublicId || null,
+        bonusImage2Url: bonusImage2Url || null,
+        bonusImage2PublicId: bonusImage2PublicId || null,
+        bonusImage3Url: bonusImage3Url || null,
+        bonusImage3PublicId: bonusImage3PublicId || null,
+        bonusImage4Url: bonusImage4Url || null,
+        bonusImage4PublicId: bonusImage4PublicId || null,
         isActive: typeof isActive === 'boolean' ? isActive : true
       },
       include: {

@@ -63,18 +63,46 @@ export default function GesProductDetail({ params }: { params: { id: string } })
     }))
   }
 
-  const handleQuoteSubmit = (e: React.FormEvent) => {
+  const handleQuoteSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    console.log('Teklif formu:', { ...quoteForm, productName: product?.name })
-    setIsQuoteModalOpen(false)
-    setQuoteForm({
-      firstName: '',
-      lastName: '',
-      phone: '',
-      city: '',
-      email: '',
-      description: ''
-    })
+    
+    try {
+      const response = await fetch('/api/quote-requests', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          productName: product?.name,
+          productId: product?.id,
+          productType: 'GesProduct',
+          firstName: quoteForm.firstName,
+          lastName: quoteForm.lastName,
+          phone: quoteForm.phone,
+          city: quoteForm.city,
+          email: quoteForm.email,
+          description: quoteForm.description
+        })
+      })
+
+      if (response.ok) {
+        showToast('Teklif talebiniz başarıyla gönderildi!', 'success')
+        setIsQuoteModalOpen(false)
+        setQuoteForm({
+          firstName: '',
+          lastName: '',
+          phone: '',
+          city: '',
+          email: '',
+          description: ''
+        })
+      } else {
+        showToast('Teklif talebi gönderilemedi. Lütfen tekrar deneyin.', 'error')
+      }
+    } catch (error) {
+      console.error('Teklif talebi gönderme hatası:', error)
+      showToast('Teklif talebi gönderilemedi. Lütfen tekrar deneyin.', 'error')
+    }
   }
 
   const handleQuoteCancel = () => {
@@ -171,7 +199,13 @@ export default function GesProductDetail({ params }: { params: { id: string } })
 
   // Görselleri topla
   const images = []
-  if (product.mainImageUrl) images.push(product.mainImageUrl)
+  if (product.mainImageUrl) images.push(product.mainImageUrl)  // Ana fotoğraf
+  // Bonus fotoğraflar (2-5. sıra)
+  if (product.bonusImage1Url) images.push(product.bonusImage1Url)
+  if (product.bonusImage2Url) images.push(product.bonusImage2Url)
+  if (product.bonusImage3Url) images.push(product.bonusImage3Url)
+  if (product.bonusImage4Url) images.push(product.bonusImage4Url)
+  // Diğer fotoğraflar (6-8. sıra)
   if (product.image1Url) images.push(product.image1Url)
   if (product.image2Url) images.push(product.image2Url)
   if (product.image3Url) images.push(product.image3Url)

@@ -15,7 +15,8 @@ import {
   X,
   Briefcase,
   Shield,
-  Download
+  Download,
+  ClipboardList
 } from 'lucide-react'
 import { Toaster } from 'sonner'
 
@@ -28,6 +29,7 @@ const menuItems = [
   { href: '/admin/kurumsal', label: 'Kurumsal İşlemler', icon: Building2 },
   { href: '/admin/medya', label: 'Medya İşlemleri', icon: Video },
   { href: '/admin/urunler', label: 'Ürün İşlemleri', icon: Package },
+  { href: '/admin/talepler', label: 'Talepler', icon: ClipboardList },
   { href: '/admin/kariyer', label: 'Kariyer İşlemleri', icon: Briefcase },
   { href: '/admin/indirme-merkezi', label: 'İndirme Merkezi', icon: Download },
   { href: '/admin/kvkk', label: 'KVKK İşlemleri', icon: Shield },
