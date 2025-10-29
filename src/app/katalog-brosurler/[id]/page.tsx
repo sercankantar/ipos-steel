@@ -6,7 +6,7 @@ import Link from 'next/link'
 import { useParams } from 'next/navigation'
 import { useState, useEffect } from 'react'
 import dynamic from 'next/dynamic'
-import CanvasBookViewer from '@/components/CanvasBookViewer'
+import ImageFlipbook from '@/components/ImageFlipbook'
 
 interface Catalog {
   id: string
@@ -136,11 +136,11 @@ export default function KatalogDetayPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
+    <div className="bg-white">
       {/* Header */}
       <div className="bg-white shadow-sm border-b border-gray-200">
         <MaxWidthWrapper>
-          <div className="py-6">
+          <div className="py-2 lg:py-1">
             {/* Breadcrumb */}
             <div className="flex items-center gap-2 text-sm mb-4">
               <Link href="/" className="text-gray-500 hover:text-gray-700">Ana Sayfa</Link>
@@ -191,21 +191,15 @@ export default function KatalogDetayPage() {
         </MaxWidthWrapper>
       </div>
 
-      {/* PDF Viewer */}
+      {/* Flipbook Görüntüleyici (Görseller ile) */}
       <MaxWidthWrapper>
-        <div className="py-8">
-          <CanvasBookViewer
+        <div className="pt-1 md:pt-2 lg:pt-0 lg:-mt-4">
+          <ImageFlipbook
             imagePrefix="IPOS STEEL 2025 E-KATALOG R1"
             totalPages={9}
-            chapters={[
-              { title: "Kapak", startPage: 1 },
-              { title: "Bölüm 1: IPOS Steel", startPage: 2 },
-              { title: "Bölüm 2: Ürün Kataloğu", startPage: 4 },
-              { title: "Bölüm 3: Özellikler", startPage: 6 },
-            ]}
           />
           
-          <div className="mt-6 flex items-center justify-center gap-3">
+          <div className="mt-4 md:mt-3 lg:mt-2 flex items-center justify-center gap-3">
             <button
               onClick={downloadPdf}
               className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-medium transition-colors"
