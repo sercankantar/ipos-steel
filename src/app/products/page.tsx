@@ -30,6 +30,102 @@ async function getProducts(category?: string) {
     if (!res.ok) return []
     return res.json()
   }
+
+  // GES Solar Sistemleri: Arazi/Çatı/K-Port alt kategorilerini birlikte getir
+  if (category === 'ges-solar-sistemleri') {
+    try {
+      const gesSlugs = ['ges-arazi', 'ges-cati', 'ges-k-port']
+      const productLists = await Promise.all(
+        gesSlugs.map(async (slug) => {
+          const url = `${base}/api/ges-products?category=${encodeURIComponent(slug)}`
+          const res = await fetch(url, { cache: 'no-store' })
+          if (!res.ok) return []
+          return res.json()
+        })
+      )
+      const merged = productLists.flat()
+      const uniqueById = Array.from(new Map(merged.map((p: any) => [p.id, p])).values())
+      return uniqueById
+    } catch (_e) {
+      return []
+    }
+  }
+
+  // Kablo Kanal Sistemleri: birden fazla alt kategoriyi birlikte getir
+  if (category === 'kablo-kanal-sistemleri') {
+    try {
+      // İstenen alt kategori isimleri
+      const wantedNames = [
+        'Kablo Kanalları',
+        'Kablo Merdivenleri',
+        'Tel Kablo Kanalları',
+        'Trunking Kablo Kanalları',
+        'Paslanmaz Kablo Kanalları',
+        'Alüminyum Kablo Kanalları'
+      ]
+
+      // Aktif kategori listesinden slug'ları bul
+      const categoriesRes = await fetch(`${base}/api/product-categories`, { cache: 'no-store' })
+      if (!categoriesRes.ok) return []
+      const allCategories = await categoriesRes.json()
+      const targetSlugs: string[] = allCategories
+        .filter((c: any) => wantedNames.includes(c.name))
+        .map((c: any) => c.slug)
+
+      if (targetSlugs.length === 0) return []
+
+      // Her alt kategori için ürünleri çek ve birleştir
+      const productLists = await Promise.all(
+        targetSlugs.map(async (slug) => {
+          const url = `${base}/api/products?category=${encodeURIComponent(slug)}`
+          const res = await fetch(url, { cache: 'no-store' })
+          if (!res.ok) return []
+          return res.json()
+        })
+      )
+
+      // Düzleştir ve olası tekrarları kaldır (id bazlı)
+      const merged = productLists.flat()
+      const uniqueById = Array.from(new Map(merged.map((p: any) => [p.id, p])).values())
+      return uniqueById
+    } catch (_e) {
+      return []
+    }
+  }
+  
+  // Topraklama Sistemleri: belirli alt kategorileri birlikte getir
+  if (category === 'topraklama-sistemleri') {
+    try {
+      const wantedNames = [
+        'Topraklama Şeritleri',
+        'Klemanslar ve Aksesuar'
+      ]
+
+      const categoriesRes = await fetch(`${base}/api/product-categories`, { cache: 'no-store' })
+      if (!categoriesRes.ok) return []
+      const allCategories = await categoriesRes.json()
+      const targetSlugs: string[] = allCategories
+        .filter((c: any) => wantedNames.includes(c.name))
+        .map((c: any) => c.slug)
+
+      if (targetSlugs.length === 0) return []
+
+      const productLists = await Promise.all(
+        targetSlugs.map(async (slug) => {
+          const url = `${base}/api/products?category=${encodeURIComponent(slug)}`
+          const res = await fetch(url, { cache: 'no-store' })
+          if (!res.ok) return []
+          return res.json()
+        })
+      )
+
+      const merged = productLists.flat()
+      const uniqueById = Array.from(new Map(merged.map((p: any) => [p.id, p])).values())
+      return uniqueById
+    } catch (_e) {
+      return []
+    }
+  }
   
   const url = category ? `${base}/api/products?category=${encodeURIComponent(category)}` : `${base}/api/products`
   const res = await fetch(url, { cache: 'no-store' })
@@ -49,6 +145,14 @@ const ProductsPage = ({ searchParams }: ProductsPageProps) => {
   const [categories, setCategories] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
   const [currentSlide, setCurrentSlide] = useState(0)
+  const [accordion, setAccordion] = useState<Record<string, boolean>>({
+    malzeme_paslanmaz: true,
+    tasarim_kenar_bukumlu: true,
+    aski_montaj: true,
+    aski_malzeme: false,
+    topraklama_baglanti: true,
+    topraklama_malzeme: false
+  })
   
   const category = parse(searchParams.category)
   
@@ -145,37 +249,11 @@ const ProductsPage = ({ searchParams }: ProductsPageProps) => {
                 <div className="py-12">
                   <div className="flex justify-center items-center">
                     <div className="flex items-center space-x-12 overflow-x-auto pb-4">
-                      {/* Busbar Sistemleri */}
-                      <Link href="/products?category=busbar-sistemleri" className="flex flex-col items-center text-center group cursor-pointer min-w-[140px]">
-                        <div className="w-20 h-16 mb-3 flex items-center justify-center group-hover:scale-105 transition-transform duration-200">
-                          {/* Busbar İkonu - 3D Görünüm */}
-                          <svg width="80" height="64" viewBox="0 0 80 64" className="drop-shadow-sm">
-                            <defs>
-                              <linearGradient id="busbarGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-                                <stop offset="0%" stopColor="#e5e7eb" />
-                                <stop offset="100%" stopColor="#9ca3af" />
-                              </linearGradient>
-                            </defs>
-                            {/* Ana Busbar Gövdesi */}
-                            <rect x="10" y="20" width="60" height="24" fill="url(#busbarGrad)" rx="2" />
-                            {/* Üst Kenar */}
-                            <rect x="10" y="20" width="60" height="4" fill="#d1d5db" rx="2" />
-                            {/* Alt Gölge */}
-                            <rect x="12" y="42" width="60" height="4" fill="#6b7280" opacity="0.3" rx="2" />
-                            {/* Bağlantı Noktaları */}
-                            <circle cx="20" cy="32" r="3" fill="#374151" />
-                            <circle cx="35" cy="32" r="3" fill="#374151" />
-                            <circle cx="50" cy="32" r="3" fill="#374151" />
-                            <circle cx="65" cy="32" r="3" fill="#374151" />
-                          </svg>
-                        </div>
-                        <h3 className="font-medium text-gray-700 text-sm mb-1 group-hover:text-gray-900 transition-colors">
-                          Busbar Sistemleri
-                        </h3>
-                        <p className="text-xs text-gray-500">
-                          Güç dağıtım çözümleri
-                        </p>
-                      </Link>
+                      {/* Busbar Sistemleri (kaldırıldı) */}
+                      {/* <Link href="/products?category=busbar-sistemleri" className="flex flex-col items-center text-center group cursor-pointer min-w-[140px]"> */}
+                        
+                       
+                      {/* </Link> */}
 
                       {/* Askı Sistemleri */}
                       <Link href="/products?category=aski-sistemleri" className="flex flex-col items-center text-center group cursor-pointer min-w-[140px]">
@@ -240,71 +318,33 @@ const ProductsPage = ({ searchParams }: ProductsPageProps) => {
                         </p>
                       </Link>
 
-                      {/* İç Tesisat Çözümleri */}
-                      <Link href="/products?category=ic-tesisat-cozumleri" className="flex flex-col items-center text-center group cursor-pointer min-w-[140px]">
-                        <div className="w-20 h-16 mb-3 flex items-center justify-center group-hover:scale-105 transition-transform duration-200">
-                          {/* İç Tesisat İkonu */}
+                      {/* GES Solar Sistemleri */}
+                      <Link href="/products?category=ges-solar-sistemleri" className="flex flex-col items-center text-center group cursor-pointer min-w-[140px]">
+                       <div className="w-20 h-16 mb-3 flex items-center justify-center group-hover:scale-105 transition-transform duration-200">
                           <svg width="80" height="64" viewBox="0 0 80 64" className="drop-shadow-sm">
-                            <defs>
-                              <linearGradient id="tesisatGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-                                <stop offset="0%" stopColor="#e5e7eb" />
-                                <stop offset="100%" stopColor="#9ca3af" />
-                              </linearGradient>
-                            </defs>
-                            {/* Ana Panel */}
-                            <rect x="20" y="15" width="40" height="34" fill="url(#tesisatGrad)" rx="3" stroke="#6b7280" strokeWidth="2" />
-                            {/* İç Bölümler */}
-                            <rect x="25" y="20" width="12" height="8" fill="#374151" rx="1" />
-                            <rect x="43" y="20" width="12" height="8" fill="#374151" rx="1" />
-                            <rect x="25" y="33" width="12" height="8" fill="#374151" rx="1" />
-                            <rect x="43" y="33" width="12" height="8" fill="#374151" rx="1" />
-                            {/* Etiket */}
-                            <rect x="30" y="12" width="20" height="4" fill="#6b7280" rx="1" />
-                          </svg>
-                        </div>
-                        <h3 className="font-medium text-gray-700 text-sm mb-1 group-hover:text-gray-900 transition-colors">
-                          İç Tesisat Çözümleri
-                        </h3>
-                        <p className="text-xs text-gray-500">
-                          İç mekan elektrik sistemleri
-                        </p>
+                           <rect x="18" y="18" width="44" height="26" fill="#f59e0b" rx="4" />
+                            <rect x="20" y="22" width="40" height="18" fill="#fcd34d" rx="2" />
+                         </svg>
+
+                    </div>
+                        <h3 className="font-medium text-yellow-600 text-sm mb-1 group-hover:text-yellow-700 transition-colors">GES Solar Sistemleri</h3>
+                       <p className="text-xs text-yellow-600">Arazi / Çatı / K-Port</p>
                       </Link>
 
-                      {/* Trolley Busbar Sistemleri */}
-                      <Link href="/products?category=trolley-busbar-sistemleri" className="flex flex-col items-center text-center group cursor-pointer min-w-[140px]">
+                      {/* Topraklama Sistemleri */}
+                      <Link href="/products?category=topraklama-sistemleri" className="flex flex-col items-center text-center group cursor-pointer min-w-[140px]">
                         <div className="w-20 h-16 mb-3 flex items-center justify-center group-hover:scale-105 transition-transform duration-200">
-                          {/* Trolley İkonu */}
                           <svg width="80" height="64" viewBox="0 0 80 64" className="drop-shadow-sm">
-                            <defs>
-                              <linearGradient id="trolleyGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-                                <stop offset="0%" stopColor="#e5e7eb" />
-                                <stop offset="100%" stopColor="#9ca3af" />
-                              </linearGradient>
-                            </defs>
-                            {/* Ana Ray */}
-                            <rect x="15" y="25" width="50" height="8" fill="url(#trolleyGrad)" rx="4" />
-                            {/* Trolley Gövdesi */}
-                            <rect x="30" y="18" width="20" height="12" fill="#6b7280" rx="2" />
-                            {/* Tekerlekler */}
-                            <circle cx="25" cy="42" r="6" fill="#374151" />
-                            <circle cx="55" cy="42" r="6" fill="#374151" />
-                            {/* Tekerlek İçi */}
-                            <circle cx="25" cy="42" r="3" fill="#9ca3af" />
-                            <circle cx="55" cy="42" r="3" fill="#9ca3af" />
-                            {/* Bağlantı Çubukları */}
-                            <rect x="23" y="33" width="4" height="6" fill="#6b7280" />
-                            <rect x="53" y="33" width="4" height="6" fill="#6b7280" />
+                            <circle cx="40" cy="32" r="16" fill="#16a34a" opacity="0.15" />
+                            <rect x="36" y="18" width="8" height="24" rx="2" fill="#16a34a" />
+                            <rect x="39" y="42" width="2" height="6" rx="1" fill="#15803d" />
                           </svg>
                         </div>
-                        <h3 className="font-medium text-gray-700 text-sm mb-1 group-hover:text-gray-900 transition-colors">
-                          Trolley Busbar Sistemleri
-                        </h3>
-                        <p className="text-xs text-gray-500">
-                          Mobil güç dağıtım çözümleri
-                        </p>
+                        <h3 className="font-medium text-gray-700 text-sm mb-1 group-hover:text-gray-900 transition-colors">Topraklama Sistemleri</h3>
+                        <p className="text-xs text-gray-500">Güvenli topraklama çözümleri</p>
                       </Link>
-                    </div>
                   </div>
+                </div>
                 </div>
               </MaxWidthWrapper>
             </div>
@@ -425,7 +465,7 @@ const ProductsPage = ({ searchParams }: ProductsPageProps) => {
                         : product.imageUrl;
                       
                       return (
-                      <div key={product.id} className="flex-none w-80 bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden group hover:shadow-lg transition-all duration-300">
+                      <Link key={product.id} href={`/products/${product.id}`} className="flex-none w-80 bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden group hover:shadow-lg transition-all duration-300">
                         {/* Product Image */}
                         <div className="aspect-[4/3] bg-gray-50 relative overflow-hidden">
                           {productImage ? (
@@ -533,7 +573,7 @@ const ProductsPage = ({ searchParams }: ProductsPageProps) => {
                             <ArrowRight className="h-4 w-4 ml-1 transform group-hover:translate-x-1 transition-transform" />
                           </div>
                         </div>
-                      </div>
+                      </Link>
                     )})}
                   </div>
                 </div>
@@ -562,7 +602,7 @@ const ProductsPage = ({ searchParams }: ProductsPageProps) => {
                       : product.imageUrl;
                     
                     return (
-                    <div key={product.id} className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden group hover:shadow-lg transition-all duration-300">
+                    <Link key={product.id} href={`/products/${product.id}`} className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden group hover:shadow-lg transition-all duration-300 block">
                       {/* Product Image */}
                       <div className="aspect-[4/3] bg-gray-50 relative overflow-hidden">
                         {productImage ? (
@@ -756,7 +796,7 @@ const ProductsPage = ({ searchParams }: ProductsPageProps) => {
                           <ArrowRight className="h-4 w-4 ml-1 transform group-hover:translate-x-1 transition-transform" />
                         </div>
                       </div>
-                    </div>
+                    </Link>
                   )})}
                 </div>
               </div>
@@ -821,32 +861,71 @@ const ProductsPage = ({ searchParams }: ProductsPageProps) => {
               <div className="space-y-4">
                 {/* Pregalvaniz Kablo Kanalı */}
                 <div className="border border-gray-200 rounded-lg">
-                  <button className="w-full px-6 py-4 text-left flex items-center justify-between hover:bg-gray-50 transition-colors">
-                    <h3 className="text-lg font-medium text-gray-900">Pregalvaniz Kablo Kanalı Nedir?</h3>
-                    <div className="w-8 h-8 rounded-full border-2 border-gray-300 flex items-center justify-center">
-                      <span className="text-gray-600 text-xl">+</span>
+                  <button
+                    onClick={() => setAccordion(a => ({ ...a, faq_pregalvaniz: !a.faq_pregalvaniz }))}
+                    className={`w-full px-6 py-4 text-left flex items-center justify-between transition-colors ${accordion.faq_pregalvaniz ? 'bg-gray-50 hover:bg-gray-100' : 'hover:bg-gray-50'}`}
+                    aria-expanded={accordion.faq_pregalvaniz ? 'true' : 'false'}
+                  >
+                    <h3 className={`text-lg font-medium ${accordion.faq_pregalvaniz ? 'text-red-600' : 'text-gray-900'}`}>Pregalvaniz Kablo Kanalı Nedir?</h3>
+                    <div className={`w-8 h-8 rounded-full border-2 flex items-center justify-center ${accordion.faq_pregalvaniz ? 'border-red-600' : 'border-gray-300'}`}>
+                      <span className={`text-xl ${accordion.faq_pregalvaniz ? 'text-red-600' : 'text-gray-600'}`}>{accordion.faq_pregalvaniz ? '−' : '+'}</span>
                     </div>
                   </button>
+                  {accordion.faq_pregalvaniz && (
+                    <div className="px-6 pb-6">
+                      <div className="pt-4 text-gray-700 leading-relaxed">
+                        <p>
+                          Pregalvaniz kablo kanalları, rulo sacın sürekli galvaniz kaplama hattında çinko ile kaplanmasıyla elde edilir. İç ortamlarda ve düşük korozyonlu sahalarda yaygın kullanılır.
+                        </p>
+                      </div>
+                    </div>
+                  )}
                 </div>
 
                 {/* Sıcak Daldırma Kablo Kanalı */}
                 <div className="border border-gray-200 rounded-lg">
-                  <button className="w-full px-6 py-4 text-left flex items-center justify-between hover:bg-gray-50 transition-colors">
-                    <h3 className="text-lg font-medium text-gray-900">Sıcak Daldırma Kablo Kanalı Nedir?</h3>
-                    <div className="w-8 h-8 rounded-full border-2 border-gray-300 flex items-center justify-center">
-                      <span className="text-gray-600 text-xl">+</span>
+                  <button
+                    onClick={() => setAccordion(a => ({ ...a, faq_sicak: !a.faq_sicak }))}
+                    className={`w-full px-6 py-4 text-left flex items-center justify-between transition-colors ${accordion.faq_sicak ? 'bg-gray-50 hover:bg-gray-100' : 'hover:bg-gray-50'}`}
+                    aria-expanded={accordion.faq_sicak ? 'true' : 'false'}
+                  >
+                    <h3 className={`text-lg font-medium ${accordion.faq_sicak ? 'text-red-600' : 'text-gray-900'}`}>Sıcak Daldırma Kablo Kanalı Nedir?</h3>
+                    <div className={`w-8 h-8 rounded-full border-2 flex items-center justify-center ${accordion.faq_sicak ? 'border-red-600' : 'border-gray-300'}`}>
+                      <span className={`text-xl ${accordion.faq_sicak ? 'text-red-600' : 'text-gray-600'}`}>{accordion.faq_sicak ? '−' : '+'}</span>
                     </div>
                   </button>
+                  {accordion.faq_sicak && (
+                    <div className="px-6 pb-6">
+                      <div className="pt-4 text-gray-700 leading-relaxed">
+                        <p>
+                          Sıcak daldırma galvaniz kaplama, çelik parçanın çinko banyosuna batırılmasıyla yapılır. Yüksek korozyon dayanımı gerektiren dış saha uygulamaları için uygundur.
+                        </p>
+                      </div>
+                    </div>
+                  )}
                 </div>
 
                 {/* Elektro Galvaniz Kablo Kanalı */}
                 <div className="border border-gray-200 rounded-lg">
-                  <button className="w-full px-6 py-4 text-left flex items-center justify-between hover:bg-gray-50 transition-colors">
-                    <h3 className="text-lg font-medium text-gray-900">Elektro Galvaniz Kablo Kanalı Nedir?</h3>
-                    <div className="w-8 h-8 rounded-full border-2 border-gray-300 flex items-center justify-center">
-                      <span className="text-gray-600 text-xl">+</span>
+                  <button
+                    onClick={() => setAccordion(a => ({ ...a, faq_elektro: !a.faq_elektro }))}
+                    className={`w-full px-6 py-4 text-left flex items-center justify-between transition-colors ${accordion.faq_elektro ? 'bg-gray-50 hover:bg-gray-100' : 'hover:bg-gray-50'}`}
+                    aria-expanded={accordion.faq_elektro ? 'true' : 'false'}
+                  >
+                    <h3 className={`text-lg font-medium ${accordion.faq_elektro ? 'text-red-600' : 'text-gray-900'}`}>Elektro Galvaniz Kablo Kanalı Nedir?</h3>
+                    <div className={`w-8 h-8 rounded-full border-2 flex items-center justify-center ${accordion.faq_elektro ? 'border-red-600' : 'border-gray-300'}`}>
+                      <span className={`text-xl ${accordion.faq_elektro ? 'text-red-600' : 'text-gray-600'}`}>{accordion.faq_elektro ? '−' : '+'}</span>
                     </div>
                   </button>
+                  {accordion.faq_elektro && (
+                    <div className="px-6 pb-6">
+                      <div className="pt-4 text-gray-700 leading-relaxed">
+                        <p>
+                          Elektro galvaniz kaplama, elektroliz yöntemiyle ince ve homojen bir çinko tabakası sağlar. İç mekân ve düşük korozyon koşullarında tercih edilir.
+                        </p>
+                      </div>
+                    </div>
+                  )}
                 </div>
               </div>
             </div>
@@ -865,14 +944,19 @@ const ProductsPage = ({ searchParams }: ProductsPageProps) => {
 
                   {/* FAQ Bölümü */}
                   <div className="space-y-4">
-                    {/* Paslanmaz Kablo Kanalı - Açık */}
+                    {/* Paslanmaz Kablo Kanalı - Açık/Kapalı */}
                     <div className="border border-gray-200 rounded-lg">
-                      <button className="w-full px-6 py-4 text-left flex items-center justify-between bg-gray-50 hover:bg-gray-100 transition-colors">
-                        <h3 className="text-lg font-medium text-red-600">Paslanmaz Kablo Kanalı Nedir?</h3>
-                        <div className="w-8 h-8 rounded-full border-2 border-red-600 flex items-center justify-center">
-                          <span className="text-red-600 text-xl">−</span>
+                      <button
+                        onClick={() => setAccordion(a => ({ ...a, malzeme_paslanmaz: !a.malzeme_paslanmaz }))}
+                        className={`w-full px-6 py-4 text-left flex items-center justify-between transition-colors ${accordion.malzeme_paslanmaz ? 'bg-gray-50 hover:bg-gray-100' : 'hover:bg-gray-50'}`}
+                        aria-expanded={accordion.malzeme_paslanmaz ? 'true' : 'false'}
+                      >
+                        <h3 className={`text-lg font-medium ${accordion.malzeme_paslanmaz ? 'text-red-600' : 'text-gray-900'}`}>Paslanmaz Kablo Kanalı Nedir?</h3>
+                        <div className={`w-8 h-8 rounded-full border-2 flex items-center justify-center ${accordion.malzeme_paslanmaz ? 'border-red-600' : 'border-gray-300'}`}>
+                          <span className={`text-xl ${accordion.malzeme_paslanmaz ? 'text-red-600' : 'text-gray-600'}`}>{accordion.malzeme_paslanmaz ? '−' : '+'}</span>
                         </div>
                       </button>
+                      {accordion.malzeme_paslanmaz && (
                       <div className="px-6 pb-6">
                         <div className="pt-4 space-y-4 text-gray-700 leading-relaxed">
                           <p>
@@ -891,26 +975,53 @@ const ProductsPage = ({ searchParams }: ProductsPageProps) => {
                           </p>
                         </div>
                       </div>
+                      )}
                     </div>
 
                     {/* Alüminyum Kablo Kanalı */}
                     <div className="border border-gray-200 rounded-lg">
-                      <button className="w-full px-6 py-4 text-left flex items-center justify-between hover:bg-gray-50 transition-colors">
-                        <h3 className="text-lg font-medium text-gray-900">Alüminyum Kablo Kanalı Nedir?</h3>
-                        <div className="w-8 h-8 rounded-full border-2 border-gray-300 flex items-center justify-center">
-                          <span className="text-gray-600 text-xl">+</span>
+                      <button
+                        onClick={() => setAccordion(a => ({ ...a, malzeme_aluminyum: !a.malzeme_aluminyum }))}
+                        className={`w-full px-6 py-4 text-left flex items-center justify-between transition-colors ${accordion.malzeme_aluminyum ? 'bg-gray-50 hover:bg-gray-100' : 'hover:bg-gray-50'}`}
+                        aria-expanded={accordion.malzeme_aluminyum ? 'true' : 'false'}
+                      >
+                        <h3 className={`text-lg font-medium ${accordion.malzeme_aluminyum ? 'text-red-600' : 'text-gray-900'}`}>Alüminyum Kablo Kanalı Nedir?</h3>
+                        <div className={`w-8 h-8 rounded-full border-2 flex items-center justify-center ${accordion.malzeme_aluminyum ? 'border-red-600' : 'border-gray-300'}`}>
+                          <span className={`text-xl ${accordion.malzeme_aluminyum ? 'text-red-600' : 'text-gray-600'}`}>{accordion.malzeme_aluminyum ? '−' : '+'}</span>
                         </div>
                       </button>
+                      {accordion.malzeme_aluminyum && (
+                        <div className="px-6 pb-6">
+                          <div className="pt-4 text-gray-700 leading-relaxed">
+                            <p>
+                              Alüminyum kablo kanalları düşük ağırlık ve yüksek korozyon direnci avantajı ile gıda, kimya ve denizcilik gibi alanlarda tercih edilir.
+                            </p>
+                          </div>
+                        </div>
+                      )}
                     </div>
 
                     {/* Fiber Glass Kablo Kanalı */}
                     <div className="border border-gray-200 rounded-lg">
-                      <button className="w-full px-6 py-4 text-left flex items-center justify-between hover:bg-gray-50 transition-colors">
-                        <h3 className="text-lg font-medium text-gray-900">Fiber Glass Kablo Kanalı Nedir?</h3>
-                        <div className="w-8 h-8 rounded-full border-2 border-gray-300 flex items-center justify-center">
-                          <span className="text-gray-600 text-xl">+</span>
+                      <button
+                        onClick={() => setAccordion(a => ({ ...a, malzeme_fiber: !a.malzeme_fiber }))}
+                        className={`w-full px-6 py-4 text-left flex items-center justify-between transition-colors ${accordion.malzeme_fiber ? 'bg-gray-50 hover:bg-gray-100' : 'hover:bg-gray-50'}`}
+                        aria-expanded={accordion.malzeme_fiber ? 'true' : 'false'}
+                      >
+                        <h3 className={`text-lg font-medium ${accordion.malzeme_fiber ? 'text-red-600' : 'text-gray-900'}`}>Fiber Glass Kablo Kanalı Nedir?</h3>
+                        <div className={`w-8 h-8 rounded-full border-2 flex items-center justify-center ${accordion.malzeme_fiber ? 'border-red-600' : 'border-gray-300'}`}>
+                          <span className={`text-xl ${accordion.malzeme_fiber ? 'text-red-600' : 'text-gray-600'}`}>{accordion.malzeme_fiber ? '−' : '+'}</span>
                         </div>
                       </button>
+                      {accordion.malzeme_fiber && (
+                        <div className="px-6 pb-6">
+                          <div className="pt-4 text-gray-700 leading-relaxed">
+                            <p>
+                              Fiber glass (GRP) kablo kanalları kimyasal dayanım, elektriksel yalıtım ve hafiflik gerektiğinde çözüm sunar.
+                            </p>
+                          </div>
+                        </div>
+                      )}
                     </div>
                   </div>
                 </div>
@@ -953,14 +1064,19 @@ const ProductsPage = ({ searchParams }: ProductsPageProps) => {
 
                   {/* FAQ Bölümü */}
                   <div className="space-y-4">
-                    {/* Kenar Bükümlü Kablo Kanalı - Açık */}
+                    {/* Kenar Bükümlü Kablo Kanalı */}
                     <div className="border border-gray-200 rounded-lg">
-                      <button className="w-full px-6 py-4 text-left flex items-center justify-between bg-gray-50 hover:bg-gray-100 transition-colors">
-                        <h3 className="text-lg font-medium text-red-600">Kenar Bükümlü Kablo Kanalı Nedir?</h3>
-                        <div className="w-8 h-8 rounded-full border-2 border-red-600 flex items-center justify-center">
-                          <span className="text-red-600 text-xl">−</span>
+                      <button
+                        onClick={() => setAccordion(a => ({ ...a, tasarim_kenar_bukumlu: !a.tasarim_kenar_bukumlu }))}
+                        className={`w-full px-6 py-4 text-left flex items-center justify-between transition-colors ${accordion.tasarim_kenar_bukumlu ? 'bg-gray-50 hover:bg-gray-100' : 'hover:bg-gray-50'}`}
+                        aria-expanded={accordion.tasarim_kenar_bukumlu ? 'true' : 'false'}
+                      >
+                        <h3 className={`text-lg font-medium ${accordion.tasarim_kenar_bukumlu ? 'text-red-600' : 'text-gray-900'}`}>Kenar Bükümlü Kablo Kanalı Nedir?</h3>
+                        <div className={`w-8 h-8 rounded-full border-2 flex items-center justify-center ${accordion.tasarim_kenar_bukumlu ? 'border-red-600' : 'border-gray-300'}`}>
+                          <span className={`text-xl ${accordion.tasarim_kenar_bukumlu ? 'text-red-600' : 'text-gray-600'}`}>{accordion.tasarim_kenar_bukumlu ? '−' : '+'}</span>
                         </div>
                       </button>
+                      {accordion.tasarim_kenar_bukumlu && (
                       <div className="px-6 pb-6">
                         <div className="pt-4 text-gray-700 leading-relaxed">
                           <p>
@@ -971,16 +1087,30 @@ const ProductsPage = ({ searchParams }: ProductsPageProps) => {
                           </p>
                         </div>
                       </div>
+                      )}
                     </div>
 
                     {/* Kenar Bükümlü Olmayan Kablo Kanalı */}
                     <div className="border border-gray-200 rounded-lg">
-                      <button className="w-full px-6 py-4 text-left flex items-center justify-between hover:bg-gray-50 transition-colors">
-                        <h3 className="text-lg font-medium text-gray-900">Kenar Bükümlü Olmayan Kablo Kanalı Nedir?</h3>
-                        <div className="w-8 h-8 rounded-full border-2 border-gray-300 flex items-center justify-center">
-                          <span className="text-gray-600 text-xl">+</span>
+                      <button
+                        onClick={() => setAccordion(a => ({ ...a, tasarim_kenar_bukumsuz: !a.tasarim_kenar_bukumsuz }))}
+                        className={`w-full px-6 py-4 text-left flex items-center justify-between transition-colors ${accordion.tasarim_kenar_bukumsuz ? 'bg-gray-50 hover:bg-gray-100' : 'hover:bg-gray-50'}`}
+                        aria-expanded={accordion.tasarim_kenar_bukumsuz ? 'true' : 'false'}
+                      >
+                        <h3 className={`text-lg font-medium ${accordion.tasarim_kenar_bukumsuz ? 'text-red-600' : 'text-gray-900'}`}>Kenar Bükümlü Olmayan Kablo Kanalı Nedir?</h3>
+                        <div className={`w-8 h-8 rounded-full border-2 flex items-center justify-center ${accordion.tasarim_kenar_bukumsuz ? 'border-red-600' : 'border-gray-300'}`}>
+                          <span className={`text-xl ${accordion.tasarim_kenar_bukumsuz ? 'text-red-600' : 'text-gray-600'}`}>{accordion.tasarim_kenar_bukumsuz ? '−' : '+'}</span>
                         </div>
                       </button>
+                      {accordion.tasarim_kenar_bukumsuz && (
+                        <div className="px-6 pb-6">
+                          <div className="pt-4 text-gray-700 leading-relaxed">
+                            <p>
+                              Kenar bükümü olmayan tasarımlar maliyet ve üretim tercihleri doğrultusunda seçilebilir; kenar güvenliği için uygun kapak ve aksesuarlar önerilir.
+                            </p>
+                          </div>
+                        </div>
+                      )}
                     </div>
                   </div>
                 </div>
@@ -993,7 +1123,7 @@ const ProductsPage = ({ searchParams }: ProductsPageProps) => {
     )
   }
 
-  // Busbar Sistemleri kategorisi için özel tasarım
+  // Busbar özel sayfası kaldırıldı (redirect benzeri boş render)
   if (category === 'busbar-sistemleri') {
     return (
       <div className="min-h-screen bg-gray-50">
@@ -1006,62 +1136,35 @@ const ProductsPage = ({ searchParams }: ProductsPageProps) => {
                 <ChevronRight className="h-4 w-4" />
                 <Link href="/products" className="hover:text-[#1a3056]">Ürünler</Link>
                 <ChevronRight className="h-4 w-4" />
-                <span className="text-[#1a3056] font-medium">Busbar Sistemleri</span>
+                <span className="text-[#1a3056] font-medium">Busbar Sistemleri (pasif)</span>
               </nav>
             </div>
           </MaxWidthWrapper>
         </div>
 
-        {/* Hero Section */}
-        <div className="bg-gradient-to-r from-blue-600 to-blue-800 text-white">
+        {/* Hero Section (pasif) */}
+        <div className="bg-gradient-to-r from-gray-200 to-gray-300 text-white">
           <MaxWidthWrapper>
             <div className="py-16">
               <div className="max-w-4xl">
                 <h1 className="text-4xl md:text-5xl font-bold font-neuropol mb-6">
-                  Busbar Sistemleri
+                  Busbar Sistemleri Kaldırıldı
                 </h1>
                 <p className="text-xl text-blue-100 leading-relaxed">
-                  IPOS Busbar sistemleri; güç dağıtımında yüksek akım taşıma kapasitesi ile endüstriyel tesislerde 
-                  güvenli ve verimli elektrik dağıtımı sağlar. Bakır ve alüminyum busbar çözümlerimiz ile 
-                  enerji kayıplarını minimize ederiz.
+                  Bu sayfa kullanımdan kaldırıldı. Lütfen diğer kategorileri kullanın.
                 </p>
               </div>
             </div>
           </MaxWidthWrapper>
         </div>
 
-        {/* Ürün Kategorileri - Sade Horizontal Tasarım */}
+        {/* Ürün Kategorileri - Sade Horizontal Tasarım (Busbar öğesi kaldırıldı) */}
         <div className="bg-white border-b border-gray-100">
           <MaxWidthWrapper>
             <div className="py-12">
               <div className="flex justify-center items-center">
                 <div className="flex items-center space-x-12 overflow-x-auto pb-4">
-                  {/* Busbar Sistemleri - Aktif */}
-                  <Link href="/products?category=busbar-sistemleri" className="flex flex-col items-center text-center group cursor-pointer min-w-[140px]">
-                    <div className="w-20 h-16 mb-3 flex items-center justify-center group-hover:scale-105 transition-transform duration-200">
-                      <svg width="80" height="64" viewBox="0 0 80 64" className="drop-shadow-sm">
-                        <defs>
-                          <linearGradient id="busbarGradActive" x1="0%" y1="0%" x2="100%" y2="100%">
-                            <stop offset="0%" stopColor="#3b82f6" />
-                            <stop offset="100%" stopColor="#1d4ed8" />
-                          </linearGradient>
-                        </defs>
-                        <rect x="10" y="20" width="60" height="24" fill="url(#busbarGradActive)" rx="2" />
-                        <rect x="10" y="20" width="60" height="4" fill="#2563eb" rx="2" />
-                        <rect x="12" y="42" width="60" height="4" fill="#1e40af" opacity="0.3" rx="2" />
-                        <circle cx="20" cy="32" r="3" fill="#1e3a8a" />
-                        <circle cx="35" cy="32" r="3" fill="#1e3a8a" />
-                        <circle cx="50" cy="32" r="3" fill="#1e3a8a" />
-                        <circle cx="65" cy="32" r="3" fill="#1e3a8a" />
-                      </svg>
-                    </div>
-                    <h3 className="font-medium text-blue-600 text-sm mb-1 group-hover:text-blue-700 transition-colors">
-                      Busbar Sistemleri
-                    </h3>
-                    <p className="text-xs text-blue-500">
-                      Güç dağıtım çözümleri
-                    </p>
-                  </Link>
+                  {/* Busbar Sistemleri çıkarıldı */}
 
                   {/* Askı Sistemleri */}
                   <Link href="/products?category=aski-sistemleri" className="flex flex-col items-center text-center group cursor-pointer min-w-[140px]">
@@ -1143,32 +1246,142 @@ const ProductsPage = ({ searchParams }: ProductsPageProps) => {
                   </Link>
 
                   {/* Trolley Busbar Sistemleri */}
-                  <Link href="/products?category=trolley-busbar-sistemleri" className="flex flex-col items-center text-center group cursor-pointer min-w-[140px]">
+                  
+                </div>
+              </div>
+            </div>
+          </MaxWidthWrapper>
+        </div>
+
+        {/* Ürün Kategorileri - Yatay Menü (GES için) */}
+        <div className="bg-white border-b border-gray-100">
+          <MaxWidthWrapper>
+            <div className="py-12">
+              <div className="flex justify-center items-center">
+                <div className="flex items-center space-x-12 overflow-x-auto pb-4">
+                  {/* Busbar Sistemleri (kaldırıldı) */}
+                  {/* <Link href="/products?category=busbar-sistemleri" className="flex flex-col items-center text-center group cursor-pointer min-w-[140px]"> */}
                     <div className="w-20 h-16 mb-3 flex items-center justify-center group-hover:scale-105 transition-transform duration-200">
                       <svg width="80" height="64" viewBox="0 0 80 64" className="drop-shadow-sm">
                         <defs>
-                          <linearGradient id="trolleyGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                          <linearGradient id="busbarGradGes" x1="0%" y1="0%" x2="100%" y2="100%">
                             <stop offset="0%" stopColor="#e5e7eb" />
                             <stop offset="100%" stopColor="#9ca3af" />
                           </linearGradient>
                         </defs>
-                        <rect x="15" y="25" width="50" height="8" fill="url(#trolleyGrad)" rx="4" />
-                        <rect x="30" y="18" width="20" height="12" fill="#6b7280" rx="2" />
-                        <circle cx="25" cy="42" r="6" fill="#374151" />
-                        <circle cx="55" cy="42" r="6" fill="#374151" />
-                        <circle cx="25" cy="42" r="3" fill="#9ca3af" />
-                        <circle cx="55" cy="42" r="3" fill="#9ca3af" />
-                        <rect x="23" y="33" width="4" height="6" fill="#6b7280" />
-                        <rect x="53" y="33" width="4" height="6" fill="#6b7280" />
+                        <rect x="10" y="20" width="60" height="24" fill="url(#busbarGradGes)" rx="2" />
+                        <rect x="10" y="20" width="60" height="4" fill="#d1d5db" rx="2" />
+                        <rect x="12" y="42" width="60" height="4" fill="#6b7280" opacity="0.3" rx="2" />
                       </svg>
                     </div>
-                    <h3 className="font-medium text-gray-700 text-sm mb-1 group-hover:text-gray-900 transition-colors">
-                      Trolley Busbar Sistemleri
-                    </h3>
-                    <p className="text-xs text-gray-500">
-                      Mobil güç dağıtım çözümleri
-                    </p>
+                    <h3 className="font-medium text-gray-700 text-sm mb-1 group-hover:text-gray-900 transition-colors">Busbar Sistemleri</h3>
+                    <p className="text-xs text-gray-500">Güç dağıtım çözümleri</p>
+                  {/* </Link> */}
+
+                  {/* Askı Sistemleri */}
+                  <Link href="/products?category=aski-sistemleri" className="flex flex-col items-center text-center group cursor-pointer min-w-[140px]">
+                    <div className="w-20 h-16 mb-3 flex items-center justify-center group-hover:scale-105 transition-transform duration-200">
+                      <svg width="80" height="64" viewBox="0 0 80 64" className="drop-shadow-sm">
+                        <rect x="20" y="15" width="40" height="6" fill="#9ca3af" rx="3" />
+                        <rect x="37" y="21" width="6" height="25" fill="#9ca3af" rx="3" />
+                        <rect x="30" y="43" width="20" height="4" fill="#6b7280" rx="2" />
+                      </svg>
+                    </div>
+                    <h3 className="font-medium text-gray-700 text-sm mb-1 group-hover:text-gray-900 transition-colors">Askı Sistemleri</h3>
+                    <p className="text-xs text-gray-500">Taşıyıcı destek çözümleri</p>
                   </Link>
+
+                  {/* Kablo Kanalları */}
+                  <Link href="/products?category=kablo-kanal-sistemleri" className="flex flex-col items-center text-center group cursor-pointer min-w-[140px]">
+                    <div className="w-20 h-16 mb-3 flex items-center justify-center group-hover:scale-105 transition-transform duration-200">
+                      <svg width="80" height="64" viewBox="0 0 80 64" className="drop-shadow-sm">
+                        <rect x="8" y="22" width="64" height="20" fill="#fca5a5" rx="2" />
+                        <rect x="8" y="22" width="64" height="3" fill="#f87171" rx="2" />
+                        <rect x="10" y="40" width="64" height="3" fill="#991b1b" opacity="0.4" rx="2" />
+                      </svg>
+                    </div>
+                    <h3 className="font-medium text-red-600 text-sm mb-1 group-hover:text-red-700 transition-colors">Kablo Kanalları</h3>
+                    <p className="text-xs text-red-500">Kablo koruma sistemleri</p>
+                  </Link>
+
+                  {/* GES Solar Sistemleri - Aktif */}
+                  <Link href="/products?category=ges-solar-sistemleri" className="flex flex-col items-center text-center group cursor-pointer min-w-[140px]">
+                       <div className="w-20 h-16 mb-3 flex items-center justify-center group-hover:scale-105 transition-transform duration-200">
+                        <svg width="80" height="64" viewBox="0 0 80 64" className="drop-shadow-sm">
+                           <rect x="18" y="18" width="44" height="26" fill="#f59e0b" rx="4" />
+                            <rect x="20" y="22" width="40" height="18" fill="#fcd34d" rx="2" />
+                         </svg>
+                        </div>
+                        <h3 className="font-medium text-yellow-600 text-sm mb-1 group-hover:text-yellow-700 transition-colors">GES Solar Sistemleri</h3>
+                        <p className="text-xs text-yellow-600">Arazi / Çatı / K-Port</p>
+                      </Link>
+
+                  {/* Topraklama Sistemleri */}
+                  <Link href="/products?category=topraklama-sistemleri" className="flex flex-col items-center text-center group cursor-pointer min-w-[140px]">
+                    <div className="w-20 h-16 mb-3 flex items-center justify-center group-hover:scale-105 transition-transform duration-200">
+                      <svg width="80" height="64" viewBox="0 0 80 64" className="drop-shadow-sm">
+                        <circle cx="40" cy="32" r="16" fill="#16a34a" opacity="0.15" />
+                        <rect x="36" y="18" width="8" height="24" rx="2" fill="#16a34a" />
+                        <rect x="39" y="42" width="2" height="6" rx="1" fill="#15803d" />
+                      </svg>
+                    </div>
+                    <h3 className="font-medium text-gray-700 text-sm mb-1 group-hover:text-gray-900 transition-colors">Topraklama Sistemleri</h3>
+                    <p className="text-xs text-gray-500">Güvenli topraklama çözümleri</p>
+                  </Link>
+                </div>
+              </div>
+            </div>
+          </MaxWidthWrapper>
+        </div>
+
+        {/* Ürün Kategorileri - Yatay Menü (GES) */}
+        <div className="bg-white border-b border-gray-100">
+          <MaxWidthWrapper>
+            <div className="py-12">
+              <div className="flex justify-center items-center">
+                <div className="flex items-center space-x-12 overflow-x-auto pb-4">
+                  {/* Busbar Sistemleri kaldırıldı */}
+
+                  {/* Askı Sistemleri */}
+                  <Link href="/products?category=aski-sistemleri" className="flex flex-col items-center text-center group cursor-pointer min-w-[140px]">
+                    <div className="w-20 h-16 mb-3 flex items-center justify-center group-hover:scale-105 transition-transform duration-200">
+                      <svg width="80" height="64" viewBox="0 0 80 64" className="drop-shadow-sm">
+                        <rect x="20" y="15" width="40" height="6" fill="#9ca3af" rx="3" />
+                        <rect x="37" y="21" width="6" height="25" fill="#9ca3af" rx="3" />
+                        <rect x="30" y="43" width="20" height="4" fill="#6b7280" rx="2" />
+                      </svg>
+                    </div>
+                    <h3 className="font-medium text-gray-700 text-sm mb-1 group-hover:text-gray-900 transition-colors">Askı Sistemleri</h3>
+                    <p className="text-xs text-gray-500">Taşıyıcı destek çözümleri</p>
+                  </Link>
+
+                  {/* Kablo Kanalları */}
+                  <Link href="/products?category=kablo-kanal-sistemleri" className="flex flex-col items-center text-center group cursor-pointer min-w-[140px]">
+                    <div className="w-20 h-16 mb-3 flex items-center justify-center group-hover:scale-105 transition-transform duration-200">
+                      <svg width="80" height="64" viewBox="0 0 80 64" className="drop-shadow-sm">
+                        <rect x="8" y="22" width="64" height="20" fill="#fca5a5" rx="2" />
+                        <rect x="8" y="22" width="64" height="3" fill="#f87171" rx="2" />
+                        <rect x="10" y="40" width="64" height="3" fill="#991b1b" opacity="0.4" rx="2" />
+                      </svg>
+                    </div>
+                    <h3 className="font-medium text-red-600 text-sm mb-1 group-hover:text-red-700 transition-colors">Kablo Kanalları</h3>
+                    <p className="text-xs text-red-500">Kablo koruma sistemleri</p>
+                  </Link>
+
+                  {/* GES Solar Sistemleri - Aktif */}
+                 <Link href="/products?category=ges-solar-sistemleri" className="flex flex-col items-center text-center group cursor-pointer min-w-[140px]">
+                        <div className="w-20 h-16 mb-3 flex items-center justify-center group-hover:scale-105 transition-transform duration-200">
+                          <svg width="80" height="64" viewBox="0 0 80 64" className="drop-shadow-sm">
+                            <rect x="18" y="18" width="44" height="26" fill="#f59e0b" rx="4" />
+                           <rect x="20" y="22" width="40" height="18" fill="#fcd34d" rx="2" />
+                          </svg>
+                        </div>
+                        <h3 className="font-medium text-yellow-600 text-sm mb-1 group-hover:text-yellow-700 transition-colors">GES Solar Sistemleri</h3>
+                        <p className="text-xs text-yellow-600">Arazi / Çatı / K-Port</p>
+                      </Link>
+
+                  {/* Trolley Busbar Sistemleri */}
+                  
                 </div>
               </div>
             </div>
@@ -1358,31 +1571,10 @@ const ProductsPage = ({ searchParams }: ProductsPageProps) => {
               <div className="flex justify-center items-center">
                 <div className="flex items-center space-x-12 overflow-x-auto pb-4">
                   {/* Busbar Sistemleri */}
-                  <Link href="/products?category=busbar-sistemleri" className="flex flex-col items-center text-center group cursor-pointer min-w-[140px]">
-                    <div className="w-20 h-16 mb-3 flex items-center justify-center group-hover:scale-105 transition-transform duration-200">
-                      <svg width="80" height="64" viewBox="0 0 80 64" className="drop-shadow-sm">
-                        <defs>
-                          <linearGradient id="busbarGrad2" x1="0%" y1="0%" x2="100%" y2="100%">
-                            <stop offset="0%" stopColor="#e5e7eb" />
-                            <stop offset="100%" stopColor="#9ca3af" />
-                          </linearGradient>
-                        </defs>
-                        <rect x="10" y="20" width="60" height="24" fill="url(#busbarGrad2)" rx="2" />
-                        <rect x="10" y="20" width="60" height="4" fill="#d1d5db" rx="2" />
-                        <rect x="12" y="42" width="60" height="4" fill="#6b7280" opacity="0.3" rx="2" />
-                        <circle cx="20" cy="32" r="3" fill="#374151" />
-                        <circle cx="35" cy="32" r="3" fill="#374151" />
-                        <circle cx="50" cy="32" r="3" fill="#374151" />
-                        <circle cx="65" cy="32" r="3" fill="#374151" />
-                      </svg>
-                    </div>
-                    <h3 className="font-medium text-gray-700 text-sm mb-1 group-hover:text-gray-900 transition-colors">
-                      Busbar Sistemleri
-                    </h3>
-                    <p className="text-xs text-gray-500">
-                      Güç dağıtım çözümleri
-                    </p>
-                  </Link>
+                  {/* <Link href="/products?category=busbar-sistemleri" className="flex flex-col items-center text-center group cursor-pointer min-w-[140px]"> */}
+                    
+                    
+                  {/* </Link> */}
 
                   {/* Askı Sistemleri - Aktif */}
                   <Link href="/products?category=aski-sistemleri" className="flex flex-col items-center text-center group cursor-pointer min-w-[140px]">
@@ -1437,59 +1629,32 @@ const ProductsPage = ({ searchParams }: ProductsPageProps) => {
                     </p>
                   </Link>
 
-                  {/* İç Tesisat Çözümleri */}
-                  <Link href="/products?category=ic-tesisat-cozumleri" className="flex flex-col items-center text-center group cursor-pointer min-w-[140px]">
+                  {/* GES Solar Sistemleri */}
+                  <Link href="/products?category=ges-solar-sistemleri" className="flex flex-col items-center text-center group cursor-pointer min-w-[140px]">
+                      <div className="w-20 h-16 mb-3 flex items-center justify-center group-hover:scale-105 transition-transform duration-200">
+                        <svg width="80" height="64" viewBox="0 0 80 64" className="drop-shadow-sm">
+                           <rect x="18" y="18" width="44" height="26" fill="#f59e0b" rx="4" />
+                          </svg>
+                        </div>
+                        <h3 className="font-medium text-yellow-600 text-sm mb-1 group-hover:text-yellow-700 transition-colors">GES Solar Sistemleri</h3>
+                       <p className="text-xs text-yellow-600">Arazi / Çatı / K-Port</p>
+                     </Link>
+
+                  {/* Topraklama Sistemleri */}
+                  <Link href="/products?category=topraklama-sistemleri" className="flex flex-col items-center text-center group cursor-pointer min-w-[140px]">
                     <div className="w-20 h-16 mb-3 flex items-center justify-center group-hover:scale-105 transition-transform duration-200">
                       <svg width="80" height="64" viewBox="0 0 80 64" className="drop-shadow-sm">
-                        <defs>
-                          <linearGradient id="tesisatGrad2" x1="0%" y1="0%" x2="100%" y2="100%">
-                            <stop offset="0%" stopColor="#e5e7eb" />
-                            <stop offset="100%" stopColor="#9ca3af" />
-                          </linearGradient>
-                        </defs>
-                        <rect x="20" y="15" width="40" height="34" fill="url(#tesisatGrad2)" rx="3" stroke="#6b7280" strokeWidth="2" />
-                        <rect x="25" y="20" width="12" height="8" fill="#374151" rx="1" />
-                        <rect x="43" y="20" width="12" height="8" fill="#374151" rx="1" />
-                        <rect x="25" y="33" width="12" height="8" fill="#374151" rx="1" />
-                        <rect x="43" y="33" width="12" height="8" fill="#374151" rx="1" />
-                        <rect x="30" y="12" width="20" height="4" fill="#6b7280" rx="1" />
+                        <circle cx="40" cy="32" r="16" fill="#16a34a" opacity="0.15" />
+                        <rect x="36" y="18" width="8" height="24" rx="2" fill="#16a34a" />
+                        <rect x="39" y="42" width="2" height="6" rx="1" fill="#15803d" />
                       </svg>
                     </div>
-                    <h3 className="font-medium text-gray-700 text-sm mb-1 group-hover:text-gray-900 transition-colors">
-                      İç Tesisat Çözümleri
-                    </h3>
-                    <p className="text-xs text-gray-500">
-                      İç mekan elektrik sistemleri
-                    </p>
+                    <h3 className="font-medium text-gray-700 text-sm mb-1 group-hover:text-gray-900 transition-colors">Topraklama Sistemleri</h3>
+                    <p className="text-xs text-gray-500">Güvenli topraklama çözümleri</p>
                   </Link>
 
                   {/* Trolley Busbar Sistemleri */}
-                  <Link href="/products?category=trolley-busbar-sistemleri" className="flex flex-col items-center text-center group cursor-pointer min-w-[140px]">
-                    <div className="w-20 h-16 mb-3 flex items-center justify-center group-hover:scale-105 transition-transform duration-200">
-                      <svg width="80" height="64" viewBox="0 0 80 64" className="drop-shadow-sm">
-                        <defs>
-                          <linearGradient id="trolleyGrad2" x1="0%" y1="0%" x2="100%" y2="100%">
-                            <stop offset="0%" stopColor="#e5e7eb" />
-                            <stop offset="100%" stopColor="#9ca3af" />
-                          </linearGradient>
-                        </defs>
-                        <rect x="15" y="25" width="50" height="8" fill="url(#trolleyGrad2)" rx="4" />
-                        <rect x="30" y="18" width="20" height="12" fill="#6b7280" rx="2" />
-                        <circle cx="25" cy="42" r="6" fill="#374151" />
-                        <circle cx="55" cy="42" r="6" fill="#374151" />
-                        <circle cx="25" cy="42" r="3" fill="#9ca3af" />
-                        <circle cx="55" cy="42" r="3" fill="#9ca3af" />
-                        <rect x="23" y="33" width="4" height="6" fill="#6b7280" />
-                        <rect x="53" y="33" width="4" height="6" fill="#6b7280" />
-                      </svg>
-                    </div>
-                    <h3 className="font-medium text-gray-700 text-sm mb-1 group-hover:text-gray-900 transition-colors">
-                      Trolley Busbar Sistemleri
-                    </h3>
-                    <p className="text-xs text-gray-500">
-                      Mobil güç dağıtım çözümleri
-                    </p>
-                  </Link>
+                  
                 </div>
               </div>
             </div>
@@ -1529,6 +1694,300 @@ const ProductsPage = ({ searchParams }: ProductsPageProps) => {
                     </div>
                   </div>
                 </div>
+              </div>
+            </div>
+
+            {/* Askı Ürünleri */}
+            <div className="mb-12">
+              <div className="flex items-center justify-between mb-6">
+                <h2 className="text-2xl font-bold font-neuropol text-gray-900">Askı Ürünleri</h2>
+              </div>
+
+              {products.length > 0 ? (
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                  {products.map((product: any) => {
+                    const productImage = (product.images && product.images.length > 0)
+                      ? product.images[0].imageUrl
+                      : (product.imageUrl || product.mainImageUrl)
+
+                    return (
+                      <Link
+                        key={product.id}
+                        href={`/products/${product.id}`}
+                        className="block p-4 border border-gray-200 rounded-lg hover:border-gray-300 hover:shadow-sm transition-all duration-200 text-center"
+                      >
+                        {productImage && (
+                          <img
+                            src={productImage}
+                            alt={product.name}
+                            className="w-full h-32 object-contain rounded mb-3"
+                          />
+                        )}
+                        <h3 className="font-medium text-gray-900 text-sm">{product.name}</h3>
+                      </Link>
+                    )
+                  })}
+                </div>
+              ) : (
+                <div className="bg-white border border-gray-200 rounded-lg p-12 text-center">
+                  <svg className="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4" />
+                  </svg>
+                  <h3 className="mt-4 text-lg font-medium text-gray-900">Bu kategoride ürün bulunamadı</h3>
+                  <p className="mt-2 text-sm text-gray-500">Askı Sistemleri kategorisinde henüz ürün eklenmemiştir.</p>
+                </div>
+              )}
+            </div>
+
+            {/* SSS / Akordeon */}
+            <div className="space-y-4">
+              <div className="border border-gray-200 rounded-lg">
+                <button
+                  onClick={() => setAccordion(a => ({ ...a, aski_montaj: !a.aski_montaj }))}
+                  className={`w-full px-6 py-4 text-left flex items-center justify-between transition-colors ${accordion.aski_montaj ? 'bg-gray-50 hover:bg-gray-100' : 'hover:bg-gray-50'}`}
+                  aria-expanded={accordion.aski_montaj ? 'true' : 'false'}
+                >
+                  <h3 className={`text-lg font-medium ${accordion.aski_montaj ? 'text-green-700' : 'text-gray-900'}`}>Askı Sistemleri Montajı Nasıl Yapılır?</h3>
+                  <div className={`w-8 h-8 rounded-full border-2 flex items-center justify-center ${accordion.aski_montaj ? 'border-green-600' : 'border-gray-300'}`}>
+                    <span className={`text-xl ${accordion.aski_montaj ? 'text-green-700' : 'text-gray-600'}`}>{accordion.aski_montaj ? '−' : '+'}</span>
+                  </div>
+                </button>
+                {accordion.aski_montaj && (
+                  <div className="px-6 pb-6">
+                    <div className="pt-4 text-gray-700 leading-relaxed">
+                      <p>Askı çubukları ve konsollar; uygun dübel ve ankraj elemanları ile tavana/duvara sabitlenir, ardından kablo kanalı veya taşıyıcı raylar seviyelenip sıkılır.</p>
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              <div className="border border-gray-200 rounded-lg">
+                <button
+                  onClick={() => setAccordion(a => ({ ...a, aski_malzeme: !a.aski_malzeme }))}
+                  className={`w-full px-6 py-4 text-left flex items-center justify-between transition-colors ${accordion.aski_malzeme ? 'bg-gray-50 hover:bg-gray-100' : 'hover:bg-gray-50'}`}
+                  aria-expanded={accordion.aski_malzeme ? 'true' : 'false'}
+                >
+                  <h3 className={`text-lg font-medium ${accordion.aski_malzeme ? 'text-green-700' : 'text-gray-900'}`}>Hangi Malzeme Seçilmeli?</h3>
+                  <div className={`w-8 h-8 rounded-full border-2 flex items-center justify-center ${accordion.aski_malzeme ? 'border-green-600' : 'border-gray-300'}`}>
+                    <span className={`text-xl ${accordion.aski_malzeme ? 'text-green-700' : 'text-gray-600'}`}>{accordion.aski_malzeme ? '−' : '+'}</span>
+                  </div>
+                </button>
+                {accordion.aski_malzeme && (
+                  <div className="px-6 pb-6">
+                    <div className="pt-4 text-gray-700 leading-relaxed">
+                      <p>İç ortam ve düşük korozyon için pregalvaniz, dış ortam ve yüksek korozyon için sıcak daldırma galvaniz veya paslanmaz tercih edilmelidir.</p>
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        </MaxWidthWrapper>
+      </div>
+    )
+  }
+
+  // Topraklama Sistemleri kategorisi için özel tasarım
+  if (category === 'topraklama-sistemleri') {
+    return (
+      <div className="min-h-screen bg-gray-50">
+        <div className="bg-white border-b">
+          <MaxWidthWrapper>
+            <div className="py-4">
+              <nav className="flex items-center space-x-2 text-sm text-gray-600">
+                <Link href="/" className="hover:text-[#1a3056]">Ana Sayfa</Link>
+                <ChevronRight className="h-4 w-4" />
+                <Link href="/products" className="hover:text-[#1a3056]">Ürünler</Link>
+                <ChevronRight className="h-4 w-4" />
+                <span className="text-[#1a3056] font-medium">Topraklama Sistemleri</span>
+              </nav>
+            </div>
+          </MaxWidthWrapper>
+        </div>
+
+        <div className="bg-gradient-to-r from-emerald-600 to-emerald-800 text-white">
+          <MaxWidthWrapper>
+            <div className="py-16">
+              <div className="max-w-4xl">
+                <h1 className="text-4xl md:text-5xl font-bold font-neuropol mb-6">Topraklama Sistemleri</h1>
+                <p className="text-xl text-emerald-100 leading-relaxed">
+                  IPOS Topraklama çözümleri; güvenli enerji iletimi ve ekipman koruması için şeritler, klemensler ve aksesuarlarla eksiksiz bir ürün yelpazesi sunar.
+                </p>
+              </div>
+            </div>
+          </MaxWidthWrapper>
+        </div>
+
+        {/* Ürün Kategorileri - Dört Öğeli Yatay Menü */}
+        <div className="bg-white border-b border-gray-100">
+          <MaxWidthWrapper>
+            <div className="py-12">
+              <div className="flex justify-center items-center">
+                <div className="flex items-center space-x-12 overflow-x-auto pb-4">
+                  {/* Askı Sistemleri */}
+                  <Link href="/products?category=aski-sistemleri" className="flex flex-col items-center text-center group cursor-pointer min-w-[140px]">
+                    <div className="w-20 h-16 mb-3 flex items-center justify-center group-hover:scale-105 transition-transform duration-200">
+                      <svg width="80" height="64" viewBox="0 0 80 64" className="drop-shadow-sm">
+                        <rect x="20" y="15" width="40" height="6" fill="#9ca3af" rx="3" />
+                        <rect x="37" y="21" width="6" height="25" fill="#9ca3af" rx="3" />
+                        <rect x="30" y="43" width="20" height="4" fill="#6b7280" rx="2" />
+                      </svg>
+                    </div>
+                    <h3 className="font-medium text-gray-700 text-sm mb-1 group-hover:text-gray-900 transition-colors">Askı Sistemleri</h3>
+                    <p className="text-xs text-gray-500">Taşıyıcı destek çözümleri</p>
+                  </Link>
+
+                  {/* Kablo Kanal Sistemleri */}
+                  <Link href="/products?category=kablo-kanal-sistemleri" className="flex flex-col items-center text-center group cursor-pointer min-w-[140px]">
+                    <div className="w-20 h-16 mb-3 flex items-center justify-center group-hover:scale-105 transition-transform duration-200">
+                      <svg width="80" height="64" viewBox="0 0 80 64" className="drop-shadow-sm">
+                        <rect x="8" y="22" width="64" height="20" fill="#fca5a5" rx="2" />
+                        <rect x="8" y="22" width="64" height="3" fill="#f87171" rx="2" />
+                        <rect x="10" y="40" width="64" height="3" fill="#991b1b" opacity="0.4" rx="2" />
+                      </svg>
+                    </div>
+                    <h3 className="font-medium text-gray-700 text-sm mb-1 group-hover:text-gray-900 transition-colors">Kablo Kanalları</h3>
+                    <p className="text-xs text-gray-500">Kablo koruma sistemleri</p>
+                  </Link>
+
+                  {/* GES Solar Sistemleri */}
+                  <Link href="/products?category=ges-solar-sistemleri" className="flex flex-col items-center text-center group cursor-pointer min-w-[140px]">
+                    <div className="w-20 h-16 mb-3 flex items-center justify-center group-hover:scale-105 transition-transform duration-200">
+                      <svg width="80" height="64" viewBox="0 0 80 64" className="drop-shadow-sm">
+                        <rect x="18" y="18" width="44" height="26" fill="#f59e0b" rx="4" />
+                        <rect x="20" y="22" width="40" height="18" fill="#fcd34d" rx="2" />
+                      </svg>
+                    </div>
+                    <h3 className="font-medium text-gray-700 text-sm mb-1 group-hover:text-gray-900 transition-colors">GES Solar Sistemleri</h3>
+                    <p className="text-xs text-gray-500">Arazi / Çatı / K-Port</p>
+                  </Link>
+
+                  {/* Topraklama Sistemleri - Aktif */}
+                  <Link href="/products?category=topraklama-sistemleri" className="flex flex-col items-center text-center group cursor-pointer min-w-[140px]">
+                    <div className="w-20 h-16 mb-3 flex items-center justify-center group-hover:scale-105 transition-transform duration-200">
+                      <svg width="80" height="64" viewBox="0 0 80 64" className="drop-shadow-sm">
+                        <circle cx="40" cy="32" r="16" fill="#10b981" opacity="0.25" />
+                        <rect x="36" y="18" width="8" height="24" rx="2" fill="#10b981" />
+                        <rect x="39" y="42" width="2" height="6" rx="1" fill="#059669" />
+                      </svg>
+                    </div>
+                    <h3 className="font-medium text-emerald-600 text-sm mb-1 group-hover:text-emerald-700 transition-colors">Topraklama Sistemleri</h3>
+                    <p className="text-xs text-emerald-600">Topraklama şeritleri ve aksesuarlar</p>
+                  </Link>
+                </div>
+              </div>
+            </div>
+          </MaxWidthWrapper>
+        </div>
+
+        <MaxWidthWrapper>
+          <div className="py-16">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center mb-16">
+              <div>
+                <div className="mb-6">
+                  <span className="text-emerald-600 font-medium text-sm uppercase tracking-wide">Genel Bilgi</span>
+                  <h2 className="text-3xl font-bold font-neuropol text-gray-900 mt-2 mb-6">Topraklama Sistemleri Genel Bilgi</h2>
+                </div>
+                <div className="space-y-4 text-gray-700 leading-relaxed">
+                  <p>Topraklama; güvenlik ve ekipman koruması için elektrik sistemlerinin vazgeçilmez bir parçasıdır. IPOS, farklı saha koşulları için uygun şerit, klemens ve aksesuar çözümleri sunar.</p>
+                </div>
+              </div>
+              <div className="relative">
+                <div className="aspect-[4/3] bg-gradient-to-br from-emerald-50 to-emerald-100 rounded-lg overflow-hidden flex items-center justify-center">
+                  <div className="relative w-full h-full flex items-center justify-center p-8">
+                    <div className="relative">
+                      <div className="w-56 h-6 bg-gradient-to-r from-emerald-500 to-emerald-600 rounded-full shadow-lg"></div>
+                      <div className="w-10 h-24 bg-gradient-to-b from-emerald-500 to-emerald-600 rounded-lg mx-auto mt-2 shadow-lg"></div>
+                      <div className="w-8 h-8 bg-emerald-700 rounded-full absolute -top-4 left-1/2 transform -translate-x-1/2 shadow-md"></div>
+                      <div className="w-32 h-4 bg-emerald-600 rounded absolute -bottom-6 left-1/2 transform -translate-x-1/2 shadow-sm"></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Topraklama Ürünleri */}
+            <div className="mb-12">
+              <div className="flex items-center justify-between mb-6">
+                <h2 className="text-2xl font-bold font-neuropol text-gray-900">Topraklama Ürünleri</h2>
+              </div>
+
+              {products.length > 0 ? (
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                  {products.map((product: any) => {
+                    const productImage = (product.images && product.images.length > 0)
+                      ? product.images[0].imageUrl
+                      : (product.imageUrl || product.mainImageUrl)
+
+                    return (
+                      <Link
+                        key={product.id}
+                        href={`/products/${product.id}`}
+                        className="block p-4 border border-gray-200 rounded-lg hover:border-gray-300 hover:shadow-sm transition-all duration-200 text-center"
+                      >
+                        {productImage && (
+                          <img
+                            src={productImage}
+                            alt={product.name}
+                            className="w-full h-32 object-contain rounded mb-3"
+                          />
+                        )}
+                        <h3 className="font-medium text-gray-900 text-sm">{product.name}</h3>
+                      </Link>
+                    )
+                  })}
+                </div>
+              ) : (
+                <div className="bg-white border border-gray-200 rounded-lg p-12 text-center">
+                  <svg className="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4" />
+                  </svg>
+                  <h3 className="mt-4 text-lg font-medium text-gray-900">Bu kategoride ürün bulunamadı</h3>
+                  <p className="mt-2 text-sm text-gray-500">Topraklama Sistemleri kategorisinde henüz ürün eklenmemiştir.</p>
+                </div>
+              )}
+            </div>
+
+            {/* SSS / Akordeon */}
+            <div className="space-y-4">
+              <div className="border border-gray-200 rounded-lg">
+                <button
+                  onClick={() => setAccordion(a => ({ ...a, topraklama_baglanti: !a.topraklama_baglanti }))}
+                  className={`w-full px-6 py-4 text-left flex items-center justify-between transition-colors ${accordion.topraklama_baglanti ? 'bg-gray-50 hover:bg-gray-100' : 'hover:bg-gray-50'}`}
+                  aria-expanded={accordion.topraklama_baglanti ? 'true' : 'false'}
+                >
+                  <h3 className={`text-lg font-medium ${accordion.topraklama_baglanti ? 'text-emerald-700' : 'text-gray-900'}`}>Topraklama Bağlantıları Nasıl Yapılır?</h3>
+                  <div className={`w-8 h-8 rounded-full border-2 flex items-center justify-center ${accordion.topraklama_baglanti ? 'border-emerald-600' : 'border-gray-300'}`}>
+                    <span className={`text-xl ${accordion.topraklama_baglanti ? 'text-emerald-700' : 'text-gray-600'}`}>{accordion.topraklama_baglanti ? '−' : '+'}</span>
+                  </div>
+                </button>
+                {accordion.topraklama_baglanti && (
+                  <div className="px-6 pb-6">
+                    <div className="pt-4 text-gray-700 leading-relaxed">
+                      <p>Şeritler ve iletkenler, uygun klemenslerle sıkılarak ve korozyona karşı koruyucu kaplamalar ile desteklenerek bağlanmalıdır.</p>
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              <div className="border border-gray-200 rounded-lg">
+                <button
+                  onClick={() => setAccordion(a => ({ ...a, topraklama_malzeme: !a.topraklama_malzeme }))}
+                  className={`w-full px-6 py-4 text-left flex items-center justify-between transition-colors ${accordion.topraklama_malzeme ? 'bg-gray-50 hover:bg-gray-100' : 'hover:bg-gray-50'}`}
+                  aria-expanded={accordion.topraklama_malzeme ? 'true' : 'false'}
+                >
+                  <h3 className={`text-lg font-medium ${accordion.topraklama_malzeme ? 'text-emerald-700' : 'text-gray-900'}`}>Hangi Malzeme Seçilmeli?</h3>
+                  <div className={`w-8 h-8 rounded-full border-2 flex items-center justify-center ${accordion.topraklama_malzeme ? 'border-emerald-600' : 'border-gray-300'}`}>
+                    <span className={`text-xl ${accordion.topraklama_malzeme ? 'text-emerald-700' : 'text-gray-600'}`}>{accordion.topraklama_malzeme ? '−' : '+'}</span>
+                  </div>
+                </button>
+                {accordion.topraklama_malzeme && (
+                  <div className="px-6 pb-6">
+                    <div className="pt-4 text-gray-700 leading-relaxed">
+                      <p>Toprak özgül direncine ve çevresel koşullara göre sıcak daldırma galvanizli veya paslanmaz malzemeler tercih edilmelidir.</p>
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
           </div>
@@ -1579,7 +2038,7 @@ const ProductsPage = ({ searchParams }: ProductsPageProps) => {
               <div className="flex justify-center items-center">
                 <div className="flex items-center space-x-12 overflow-x-auto pb-4">
                   {/* Busbar Sistemleri */}
-                  <Link href="/products?category=busbar-sistemleri" className="flex flex-col items-center text-center group cursor-pointer min-w-[140px]">
+                  {/* <Link href="/products?category=busbar-sistemleri" className="flex flex-col items-center text-center group cursor-pointer min-w-[140px]"> */}
                     <div className="w-20 h-16 mb-3 flex items-center justify-center group-hover:scale-105 transition-transform duration-200">
                       <svg width="80" height="64" viewBox="0 0 80 64" className="drop-shadow-sm">
                         <defs>
@@ -1597,13 +2056,8 @@ const ProductsPage = ({ searchParams }: ProductsPageProps) => {
                         <circle cx="65" cy="32" r="3" fill="#374151" />
                       </svg>
                     </div>
-                    <h3 className="font-medium text-gray-700 text-sm mb-1 group-hover:text-gray-900 transition-colors">
-                      Busbar Sistemleri
-                    </h3>
-                    <p className="text-xs text-gray-500">
-                      Güç dağıtım çözümleri
-                    </p>
-                  </Link>
+                    
+                  {/* </Link> */}
 
                   {/* Askı Sistemleri */}
                   <Link href="/products?category=aski-sistemleri" className="flex flex-col items-center text-center group cursor-pointer min-w-[140px]">
@@ -1685,32 +2139,7 @@ const ProductsPage = ({ searchParams }: ProductsPageProps) => {
                   </Link>
 
                   {/* Trolley Busbar Sistemleri */}
-                  <Link href="/products?category=trolley-busbar-sistemleri" className="flex flex-col items-center text-center group cursor-pointer min-w-[140px]">
-                    <div className="w-20 h-16 mb-3 flex items-center justify-center group-hover:scale-105 transition-transform duration-200">
-                      <svg width="80" height="64" viewBox="0 0 80 64" className="drop-shadow-sm">
-                        <defs>
-                          <linearGradient id="trolleyGrad3" x1="0%" y1="0%" x2="100%" y2="100%">
-                            <stop offset="0%" stopColor="#e5e7eb" />
-                            <stop offset="100%" stopColor="#9ca3af" />
-                          </linearGradient>
-                        </defs>
-                        <rect x="15" y="25" width="50" height="8" fill="url(#trolleyGrad3)" rx="4" />
-                        <rect x="30" y="18" width="20" height="12" fill="#6b7280" rx="2" />
-                        <circle cx="25" cy="42" r="6" fill="#374151" />
-                        <circle cx="55" cy="42" r="6" fill="#374151" />
-                        <circle cx="25" cy="42" r="3" fill="#9ca3af" />
-                        <circle cx="55" cy="42" r="3" fill="#9ca3af" />
-                        <rect x="23" y="33" width="4" height="6" fill="#6b7280" />
-                        <rect x="53" y="33" width="4" height="6" fill="#6b7280" />
-                      </svg>
-                    </div>
-                    <h3 className="font-medium text-gray-700 text-sm mb-1 group-hover:text-gray-900 transition-colors">
-                      Trolley Busbar Sistemleri
-                    </h3>
-                    <p className="text-xs text-gray-500">
-                      Mobil güç dağıtım çözümleri
-                    </p>
-                  </Link>
+                 
                 </div>
               </div>
             </div>
@@ -1817,12 +2246,7 @@ const ProductsPage = ({ searchParams }: ProductsPageProps) => {
                         <circle cx="65" cy="32" r="3" fill="#374151" />
                       </svg>
                     </div>
-                    <h3 className="font-medium text-gray-700 text-sm mb-1 group-hover:text-gray-900 transition-colors">
-                      Busbar Sistemleri
-                    </h3>
-                    <p className="text-xs text-gray-500">
-                      Güç dağıtım çözümleri
-                    </p>
+                   
                   </Link>
 
                   {/* Askı Sistemleri */}
@@ -1905,32 +2329,7 @@ const ProductsPage = ({ searchParams }: ProductsPageProps) => {
                   </Link>
 
                   {/* Trolley Busbar Sistemleri - Aktif */}
-                  <Link href="/products?category=trolley-busbar-sistemleri" className="flex flex-col items-center text-center group cursor-pointer min-w-[140px]">
-                    <div className="w-20 h-16 mb-3 flex items-center justify-center group-hover:scale-105 transition-transform duration-200">
-                      <svg width="80" height="64" viewBox="0 0 80 64" className="drop-shadow-sm">
-                        <defs>
-                          <linearGradient id="trolleyGradActive" x1="0%" y1="0%" x2="100%" y2="100%">
-                            <stop offset="0%" stopColor="#f97316" />
-                            <stop offset="100%" stopColor="#ea580c" />
-                          </linearGradient>
-                        </defs>
-                        <rect x="15" y="25" width="50" height="8" fill="url(#trolleyGradActive)" rx="4" />
-                        <rect x="30" y="18" width="20" height="12" fill="#c2410c" rx="2" />
-                        <circle cx="25" cy="42" r="6" fill="#9a3412" />
-                        <circle cx="55" cy="42" r="6" fill="#9a3412" />
-                        <circle cx="25" cy="42" r="3" fill="#fed7aa" />
-                        <circle cx="55" cy="42" r="3" fill="#fed7aa" />
-                        <rect x="23" y="33" width="4" height="6" fill="#c2410c" />
-                        <rect x="53" y="33" width="4" height="6" fill="#c2410c" />
-                      </svg>
-                    </div>
-                    <h3 className="font-medium text-orange-600 text-sm mb-1 group-hover:text-orange-700 transition-colors">
-                      Trolley Busbar Sistemleri
-                    </h3>
-                    <p className="text-xs text-orange-500">
-                      Mobil güç dağıtım çözümleri
-                    </p>
-                  </Link>
+                 
                 </div>
               </div>
             </div>
@@ -1979,7 +2378,7 @@ const ProductsPage = ({ searchParams }: ProductsPageProps) => {
   }
 
   // Solar Montaj Sistemleri kategorisi için özel tasarım
-  if (category === 'solar-montaj-sistemleri') {
+  if (category === 'solar-montaj-sistemleri' || category === 'ges-solar-sistemleri') {
     return (
       <div className="min-h-screen bg-gray-50">
         <div className="bg-white border-b">
@@ -1990,7 +2389,7 @@ const ProductsPage = ({ searchParams }: ProductsPageProps) => {
                 <ChevronRight className="h-4 w-4" />
                 <Link href="/products" className="hover:text-[#1a3056]">Ürünler</Link>
                 <ChevronRight className="h-4 w-4" />
-                <span className="text-[#1a3056] font-medium">Solar Montaj Sistemleri</span>
+                <span className="text-[#1a3056] font-medium">GES Solar Sistemleri</span>
               </nav>
             </div>
           </MaxWidthWrapper>
@@ -2001,16 +2400,121 @@ const ProductsPage = ({ searchParams }: ProductsPageProps) => {
             <div className="py-16">
               <div className="max-w-4xl">
                 <h1 className="text-4xl md:text-5xl font-bold font-neuropol mb-6">
-                  Solar Montaj Sistemleri
+                  GES Solar Sistemleri
                 </h1>
                 <p className="text-xl text-yellow-100 leading-relaxed">
-                  IPOS Solar montaj sistemleri; güneş enerjisi panellerinin güvenli ve verimli montajı için 
-                  tasarlanmış dayanıklı ve esnek çözümler sunar. Fotovoltaik paneller için en uygun montaj sistemini seçin.
+                  IPOS güneş enerji çözümleri; arazi, çatı ve K-Port uygulamalarında verimli, dayanıklı ve hızlı montaj sunar.
                 </p>
               </div>
             </div>
           </MaxWidthWrapper>
         </div>
+        {/* Buraya dön*/}
+         {/* Ürün Kategorileri - Sade Horizontal Tasarım */}
+         <div className="bg-white border-b border-gray-100">
+              <MaxWidthWrapper>
+                <div className="py-12">
+                  <div className="flex justify-center items-center">
+                    <div className="flex items-center space-x-12 overflow-x-auto pb-4">
+                      {/* Busbar Sistemleri (kaldırıldı) */}
+                      {/* <Link href="/products?category=busbar-sistemleri" className="flex flex-col items-center text-center group cursor-pointer min-w-[140px]"> */}
+                        
+                       
+                      {/* </Link> */}
+
+                      {/* Askı Sistemleri */}
+                      <Link href="/products?category=aski-sistemleri" className="flex flex-col items-center text-center group cursor-pointer min-w-[140px]">
+                        <div className="w-20 h-16 mb-3 flex items-center justify-center group-hover:scale-105 transition-transform duration-200">
+                          {/* Askı İkonu */}
+                          <svg width="80" height="64" viewBox="0 0 80 64" className="drop-shadow-sm">
+                            <defs>
+                              <linearGradient id="askiGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" stopColor="#e5e7eb" />
+                                <stop offset="100%" stopColor="#9ca3af" />
+                              </linearGradient>
+                            </defs>
+                            {/* Askı Çubuğu */}
+                            <rect x="20" y="15" width="40" height="6" fill="url(#askiGrad)" rx="3" />
+                            {/* Dikey Destek */}
+                            <rect x="37" y="21" width="6" height="25" fill="url(#askiGrad)" rx="3" />
+                            {/* Bağlantı Halkası */}
+                            <circle cx="40" cy="18" r="4" fill="none" stroke="#6b7280" strokeWidth="2" />
+                            {/* Alt Bağlantı */}
+                            <rect x="30" y="43" width="20" height="4" fill="#6b7280" rx="2" />
+                          </svg>
+                        </div>
+                        <h3 className="font-medium text-gray-700 text-sm mb-1 group-hover:text-gray-900 transition-colors">
+                          Askı Sistemleri
+                        </h3>
+                        <p className="text-xs text-gray-500">
+                          Taşıyıcı destek çözümleri
+                        </p>
+                      </Link>
+
+                      {/* Kablo Kanalları - Aktif */}
+                      <Link href="/products?category=kablo-kanal-sistemleri" className="flex flex-col items-center text-center group cursor-pointer min-w-[140px]">
+                        <div className="w-20 h-16 mb-3 flex items-center justify-center group-hover:scale-105 transition-transform duration-200">
+                          {/* Kablo Kanalı İkonu - Kırmızı */}
+                          <svg width="80" height="64" viewBox="0 0 80 64" className="drop-shadow-sm">
+                            <defs>
+                              <linearGradient id="kanalGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" stopColor="#fca5a5" />
+                                <stop offset="100%" stopColor="#dc2626" />
+                              </linearGradient>
+                            </defs>
+                            {/* Ana Kanal Gövdesi */}
+                            <rect x="8" y="22" width="64" height="20" fill="url(#kanalGrad)" rx="2" />
+                            {/* Üst Kenar */}
+                            <rect x="8" y="22" width="64" height="3" fill="#f87171" rx="2" />
+                            {/* Alt Gölge */}
+            <rect x="10" y="40" width="64" height="3" fill="#991b1b" opacity="0.4" rx="2" />
+                            {/* Delikler */}
+                            <circle cx="18" cy="32" r="2" fill="#991b1b" opacity="0.6" />
+                            <circle cx="28" cy="32" r="2" fill="#991b1b" opacity="0.6" />
+                            <circle cx="38" cy="32" r="2" fill="#991b1b" opacity="0.6" />
+                            <circle cx="48" cy="32" r="2" fill="#991b1b" opacity="0.6" />
+                            <circle cx="58" cy="32" r="2" fill="#991b1b" opacity="0.6" />
+                            <circle cx="68" cy="32" r="2" fill="#991b1b" opacity="0.6" />
+                          </svg>
+                        </div>
+                        <h3 className="font-medium text-red-600 text-sm mb-1 group-hover:text-red-700 transition-colors">
+                          Kablo Kanalları
+                        </h3>
+                        <p className="text-xs text-red-500">
+                          Kablo koruma sistemleri
+                        </p>
+                      </Link>
+
+                      {/* GES Solar Sistemleri */}
+                      <Link href="/products?category=ges-solar-sistemleri" className="flex flex-col items-center text-center group cursor-pointer min-w-[140px]">
+                       <div className="w-20 h-16 mb-3 flex items-center justify-center group-hover:scale-105 transition-transform duration-200">
+                          <svg width="80" height="64" viewBox="0 0 80 64" className="drop-shadow-sm">
+                           <rect x="18" y="18" width="44" height="26" fill="#f59e0b" rx="4" />
+                            <rect x="20" y="22" width="40" height="18" fill="#fcd34d" rx="2" />
+                         </svg>
+
+                    </div>
+                        <h3 className="font-medium text-yellow-600 text-sm mb-1 group-hover:text-yellow-700 transition-colors">GES Solar Sistemleri</h3>
+                       <p className="text-xs text-yellow-600">Arazi / Çatı / K-Port</p>
+                      </Link>
+
+                      {/* Topraklama Sistemleri */}
+                      <Link href="/products?category=topraklama-sistemleri" className="flex flex-col items-center text-center group cursor-pointer min-w-[140px]">
+                        <div className="w-20 h-16 mb-3 flex items-center justify-center group-hover:scale-105 transition-transform duration-200">
+                          <svg width="80" height="64" viewBox="0 0 80 64" className="drop-shadow-sm">
+                            <circle cx="40" cy="32" r="16" fill="#16a34a" opacity="0.15" />
+                            <rect x="36" y="18" width="8" height="24" rx="2" fill="#16a34a" />
+                            <rect x="39" y="42" width="2" height="6" rx="1" fill="#15803d" />
+                          </svg>
+                        </div>
+                        <h3 className="font-medium text-gray-700 text-sm mb-1 group-hover:text-gray-900 transition-colors">Topraklama Sistemleri</h3>
+                        <p className="text-xs text-gray-500">Güvenli topraklama çözümleri</p>
+                      </Link>
+                  </div>
+                </div>
+                </div>
+              </MaxWidthWrapper>
+            </div>
 
         <MaxWidthWrapper>
           <div className="py-16">
@@ -2019,17 +2523,15 @@ const ProductsPage = ({ searchParams }: ProductsPageProps) => {
                 <div className="mb-6">
                   <span className="text-yellow-600 font-medium text-sm uppercase tracking-wide">Genel Bilgi</span>
                   <h2 className="text-3xl font-bold font-neuropol text-gray-900 mt-2 mb-6">
-                    Solar Montaj Sistemleri Genel Bilgi
+                    GES Solar Sistemleri Genel Bilgi
                   </h2>
                 </div>
                 <div className="space-y-4 text-gray-700 leading-relaxed">
                   <p>
-                    IPOS Solar montaj sistemleri; güneş enerjisi panellerinin çatı, zemin ve özel yapılara 
-                    güvenli montajı için tasarlanmış dayanıklı çelik konstrüksiyon sistemleridir.
+                    IPOS GES çözümleri; güneş panellerinin çatı, arazi ve K-Port gibi farklı yapılara güvenli montajı için tasarlanmış sistemlerdir.
                   </p>
                   <p>
-                    Galvanizli ve paslanmaz çelik seçenekleri ile uzun ömürlü, yüksek taşıma kapasiteli ve 
-                    kolay montajlı solar enerji çözümleri sunar.
+                    Galvanizli ve paslanmaz seçenekleriyle uzun ömür, yüksek taşıma kapasitesi ve hızlı montaj imkânı sağlar.
                   </p>
                 </div>
               </div>
@@ -2116,9 +2618,6 @@ const ProductsPage = ({ searchParams }: ProductsPageProps) => {
                             <h3 className="font-bold text-lg text-gray-900 mb-3 group-hover:text-yellow-600 transition-colors line-clamp-2">
                               {product.name}
                             </h3>
-                            <p className="text-gray-600 text-sm leading-relaxed mb-4 line-clamp-3">
-                              {product.description1 || `${product.name} serisi ürünlerimiz hakkında detaylı bilgi almak için ürünü görüntüleyin.`}
-                            </p>
                             <div className="flex items-center text-yellow-600 text-sm font-medium group-hover:text-yellow-700 transition-colors">
                               <span>Ürünü Görüntüle</span>
                               <ArrowRight className="h-4 w-4 ml-1 transform group-hover:translate-x-1 transition-transform" />
@@ -2140,6 +2639,100 @@ const ProductsPage = ({ searchParams }: ProductsPageProps) => {
                       }`}
                     />
                   ))}
+                </div>
+              </div>
+            </div>
+          </div>
+        </MaxWidthWrapper>
+
+        {/* GES Alt Kategorileri Şerit */}
+        <div className="bg-white border-y border-gray-100">
+          <MaxWidthWrapper>
+            <div className="py-8">
+              <div className="flex items-center justify-center space-x-6 overflow-x-auto">
+                <Link href="/products?category=ges-arazi" className="px-4 py-2 rounded-full border border-gray-200 hover:border-gray-300 text-sm font-medium">Arazi Sistemleri</Link>
+                <Link href="/products?category=ges-cati" className="px-4 py-2 rounded-full border border-gray-200 hover:border-gray-300 text-sm font-medium">Çatı Sistemleri</Link>
+                <Link href="/products?category=ges-k-port" className="px-4 py-2 rounded-full border border-gray-200 hover:border-gray-300 text-sm font-medium">K-Port Sistemleri</Link>
+                <Link href="/products?category=ges-solar-sistemleri" className="px-4 py-2 rounded-full border border-yellow-500 text-yellow-700 bg-yellow-50 text-sm font-semibold">Tümü</Link>
+              </div>
+            </div>
+          </MaxWidthWrapper>
+        </div>
+
+        {/* Akordeon Bilgilendirme */}
+        <MaxWidthWrapper>
+          <div className="py-12">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
+              <div>
+                <div className="mb-6">
+                  <span className="text-yellow-600 font-medium text-sm uppercase tracking-wide">GES Sistemleri</span>
+                  <h2 className="text-2xl font-bold text-gray-900">Arazi / Çatı / K-Port</h2>
+                </div>
+                <div className="space-y-4">
+                  <div className="border border-gray-200 rounded-lg">
+                    <button
+                      onClick={() => setAccordion(a => ({ ...a, ges_arazi: !a.ges_arazi }))}
+                      className={`w-full px-6 py-4 text-left flex items-center justify-between transition-colors ${accordion.ges_arazi ? 'bg-gray-50 hover:bg-gray-100' : 'hover:bg-gray-50'}`}
+                      aria-expanded={accordion.ges_arazi ? 'true' : 'false'}
+                    >
+                      <h3 className={`text-lg font-medium ${accordion.ges_arazi ? 'text-yellow-700' : 'text-gray-900'}`}>Arazi GES Sistemleri</h3>
+                      <div className={`w-8 h-8 rounded-full border-2 flex items-center justify-center ${accordion.ges_arazi ? 'border-yellow-600' : 'border-gray-300'}`}>
+                        <span className={`text-xl ${accordion.ges_arazi ? 'text-yellow-700' : 'text-gray-600'}`}>{accordion.ges_arazi ? '−' : '+'}</span>
+                      </div>
+                    </button>
+                    {accordion.ges_arazi && (
+                      <div className="px-6 pb-6">
+                        <div className="pt-4 text-gray-700 leading-relaxed">
+                          <p>Arazi montajları için zemin ankrajına uygun, yüksek dayanımlı çelik konstrüksiyon çözümleri.</p>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+
+                  <div className="border border-gray-200 rounded-lg">
+                    <button
+                      onClick={() => setAccordion(a => ({ ...a, ges_cati: !a.ges_cati }))}
+                      className={`w-full px-6 py-4 text-left flex items-center justify-between transition-colors ${accordion.ges_cati ? 'bg-gray-50 hover:bg-gray-100' : 'hover:bg-gray-50'}`}
+                      aria-expanded={accordion.ges_cati ? 'true' : 'false'}
+                    >
+                      <h3 className={`text-lg font-medium ${accordion.ges_cati ? 'text-yellow-700' : 'text-gray-900'}`}>Çatı GES Sistemleri</h3>
+                      <div className={`w-8 h-8 rounded-full border-2 flex items-center justify-center ${accordion.ges_cati ? 'border-yellow-600' : 'border-gray-300'}`}>
+                        <span className={`text-xl ${accordion.ges_cati ? 'text-yellow-700' : 'text-gray-600'}`}>{accordion.ges_cati ? '−' : '+'}</span>
+                      </div>
+                    </button>
+                    {accordion.ges_cati && (
+                      <div className="px-6 pb-6">
+                        <div className="pt-4 text-gray-700 leading-relaxed">
+                          <p>Metal ve membran çatı tiplerine uygun kelepçe ve profilli hafif çözümler.</p>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+
+                  <div className="border border-gray-200 rounded-lg">
+                    <button
+                      onClick={() => setAccordion(a => ({ ...a, ges_kport: !a.ges_kport }))}
+                      className={`w-full px-6 py-4 text-left flex items-center justify-between transition-colors ${accordion.ges_kport ? 'bg-gray-50 hover:bg-gray-100' : 'hover:bg-gray-50'}`}
+                      aria-expanded={accordion.ges_kport ? 'true' : 'false'}
+                    >
+                      <h3 className={`text-lg font-medium ${accordion.ges_kport ? 'text-yellow-700' : 'text-gray-900'}`}>K-Port Sistemleri</h3>
+                      <div className={`w-8 h-8 rounded-full border-2 flex items-center justify-center ${accordion.ges_kport ? 'border-yellow-600' : 'border-gray-300'}`}>
+                        <span className={`text-xl ${accordion.ges_kport ? 'text-yellow-700' : 'text-gray-600'}`}>{accordion.ges_kport ? '−' : '+'}</span>
+                      </div>
+                    </button>
+                    {accordion.ges_kport && (
+                      <div className="px-6 pb-6">
+                        <div className="pt-4 text-gray-700 leading-relaxed">
+                          <p>Gölgelendirme ve enerji üretimini birleştiren K-Port yapısal çözümleri.</p>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
+              <div className="relative">
+                <div className="aspect-[4/3] bg-gradient-to-br from-yellow-50 to-yellow-100 rounded-xl overflow-hidden shadow-lg">
+                  <img src="https://images.unsplash.com/photo-1509395176047-4a66953fd231?q=80&w=1600&auto=format&fit=crop" alt="GES Solar Sistemleri" className="w-full h-full object-cover"/>
                 </div>
               </div>
             </div>
