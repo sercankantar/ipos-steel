@@ -3,7 +3,7 @@
 import MaxWidthWrapper from '@/components/MaxWidthWrapper'
 import Link from 'next/link'
 import { ChevronRight, ChevronLeft, ArrowRight } from 'lucide-react'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 
 type Param = string | string[] | undefined
 
@@ -178,6 +178,43 @@ const ProductsPage = ({ searchParams }: ProductsPageProps) => {
   
   // Seçili kategorinin bilgilerini bul
   const selectedCategory = categories.find((cat: any) => cat.slug === category)
+  
+  // Kablo Kanalları için menüde sadece ilgili alt kategorileri göster
+  const filteredCategories = useMemo(() => {
+    const cableCategorySlugs = [
+      'kablo-kanallari',
+      'kablo-merdivenleri',
+      'tel-kablo-kanallari',
+      'trunking-kablo-kanallari',
+      'paslanmaz-kablo-kanallari',
+      'aluminyum-kablo-kanallari',
+    ]
+    if (cableCategorySlugs.includes(category || '')) {
+      const allowedSlugs = [
+        'aluminyum-kablo-kanallari',
+        'paslanmaz-kablo-kanallari',
+        'trunking-kablo-kanallari',
+        'tel-kablo-kanallari',
+        'kablo-kanallari',
+        'kablo-merdivenleri',
+      ]
+      return categories.filter((c: any) => allowedSlugs.includes(c.slug))
+    }
+    if (category === 'aski-urunleri') {
+      return categories.filter((c: any) => c.slug === 'aski-urunleri')
+    }
+    const gesCategorySlugs = ['ges-arazi', 'ges-cati', 'ges-k-port']
+    if (gesCategorySlugs.includes(category || '')) {
+      const allowedGesSlugs = ['ges-arazi', 'ges-cati', 'ges-k-port']
+      return categories.filter((c: any) => allowedGesSlugs.includes(c.slug))
+    }
+    const groundingCategorySlugs = ['topraklama-seritleri', 'klemanslar-ve-aksesuar']
+    if (groundingCategorySlugs.includes(category || '')) {
+      const allowedGroundingSlugs = ['topraklama-seritleri', 'klemanslar-ve-aksesuar']
+      return categories.filter((c: any) => allowedGroundingSlugs.includes(c.slug))
+    }
+    return categories
+  }, [category, categories])
   
   // Carousel fonksiyonları
   const itemsPerSlide = 3
@@ -2754,7 +2791,7 @@ const ProductsPage = ({ searchParams }: ProductsPageProps) => {
                 Ürün Grupları
               </h2>
               <div className="space-y-2">
-                {categories.map((cat: any) => (
+                {filteredCategories.map((cat: any) => (
                   <Link
                     key={cat.slug}
                     href={`/products?category=${cat.slug}`}
