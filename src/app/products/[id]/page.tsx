@@ -1096,8 +1096,12 @@ export default function ProductDetail({ params }: { params: { id: string } }) {
       <nav className="py-4 text-sm text-gray-600">
         <div className="flex items-center space-x-2">
           <Link href="/" className="hover:text-gray-800">Ana Sayfa</Link>
-          <ChevronRight className="w-4 h-4" />
-          <span>Masaüstü Priz Kutusu Çözümleri</span>
+          {product.category?.name && (
+            <>
+              <ChevronRight className="w-4 h-4" />
+              <span>{product.category.name}</span>
+            </>
+          )}
           <ChevronRight className="w-4 h-4" />
           <span className="text-gray-800">{product.name}</span>
         </div>
@@ -1148,7 +1152,9 @@ export default function ProductDetail({ params }: { params: { id: string } }) {
             <h1 className="text-3xl font-bold text-gray-900">{product.name}</h1>
             
             {/* Kategori */}
-            <p className="text-gray-600">{product.category?.name || 'Masaüstü Priz - Bürotik Priz Blokları'}</p>
+            {product.category?.name && (
+              <p className="text-gray-600">{product.category.name}</p>
+            )}
             
             {/* Açıklama */}
             <p className="text-gray-700 leading-relaxed">
