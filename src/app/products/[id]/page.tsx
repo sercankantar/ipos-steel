@@ -1158,7 +1158,7 @@ export default function ProductDetail({ params }: { params: { id: string } }) {
             
             {/* Açıklama */}
             <p className="text-gray-700 leading-relaxed">
-              {product.description || 'Enerji (şebeke/UPS), veri, telefon ve multimedya prizleri ile donatılmış modüler, esnek, sağlam, ergonomik, güvenli ve estetik tasarım özelliklerine sahip masaüstü priz çözümleri.'}
+              {product.description || 'Ürün açıklaması girilmemiştir.'}
             </p>
             
             {/* Teklif Al butonu */}
