@@ -62,18 +62,24 @@ export default function RequestListSubmissionsManager() {
         body: JSON.stringify({ isRead: !isRead })
       })
 
-      if (!res.ok) throw new Error('Durum güncellenemedi')
+      if (!res.ok) {
+        const errorData = await res.json().catch(() => ({}))
+        throw new Error(errorData.error || 'Durum güncellenemedi')
+      }
 
+      const updatedSubmission = await res.json()
+
+      // API'den dönen güncel veriyi kullan
       setSubmissions(prev =>
-        prev.map(sub => (sub.id === id ? { ...sub, isRead: !isRead } : sub))
+        prev.map(sub => (sub.id === id ? updatedSubmission : sub))
       )
       if (selectedSubmission?.id === id) {
-        setSelectedSubmission({ ...selectedSubmission, isRead: !isRead })
+        setSelectedSubmission(updatedSubmission)
       }
       showToast('Durum güncellendi', 'success')
     } catch (error) {
       console.error('Durum güncelleme hatası:', error)
-      showToast('Durum güncellenirken hata oluştu', 'error')
+      showToast(error instanceof Error ? error.message : 'Durum güncellenirken hata oluştu', 'error')
     }
   }
 

@@ -1,16 +1,24 @@
-import { NextResponse } from 'next/server'
+import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
+import { isAdminAuthenticated } from '@/lib/auth'
 
 export async function PATCH(
-  request: Request,
-  { params }: { params: { id: string } }
+  request: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const isAuthenticated = await isAdminAuthenticated()
+    
+    if (!isAuthenticated) {
+      return NextResponse.json({ error: 'Yetkisiz erişim' }, { status: 401 })
+    }
+
+    const { id } = await params
     const body = await request.json()
     const { isRead } = body
 
     const quoteRequest = await prisma.quoteRequest.update({
-      where: { id: params.id },
+      where: { id },
       data: { isRead }
     })
 
@@ -25,12 +33,19 @@ export async function PATCH(
 }
 
 export async function DELETE(
-  request: Request,
-  { params }: { params: { id: string } }
+  request: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const isAuthenticated = await isAdminAuthenticated()
+    
+    if (!isAuthenticated) {
+      return NextResponse.json({ error: 'Yetkisiz erişim' }, { status: 401 })
+    }
+
+    const { id } = await params
     await prisma.quoteRequest.delete({
-      where: { id: params.id }
+      where: { id }
     })
 
     return NextResponse.json({ success: true })

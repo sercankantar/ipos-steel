@@ -54,18 +54,24 @@ export default function QuoteRequestsManager() {
         body: JSON.stringify({ isRead: !isRead })
       })
 
-      if (!res.ok) throw new Error('Durum güncellenemedi')
+      if (!res.ok) {
+        const errorData = await res.json().catch(() => ({}))
+        throw new Error(errorData.error || 'Durum güncellenemedi')
+      }
 
+      const updatedRequest = await res.json()
+
+      // API'den dönen güncel veriyi kullan
       setQuoteRequests(prev =>
-        prev.map(req => (req.id === id ? { ...req, isRead: !isRead } : req))
+        prev.map(req => (req.id === id ? updatedRequest : req))
       )
       if (selectedRequest?.id === id) {
-        setSelectedRequest({ ...selectedRequest, isRead: !isRead })
+        setSelectedRequest(updatedRequest)
       }
       showToast('Durum güncellendi', 'success')
     } catch (error) {
       console.error('Durum güncelleme hatası:', error)
-      showToast('Durum güncellenirken hata oluştu', 'error')
+      showToast(error instanceof Error ? error.message : 'Durum güncellenirken hata oluştu', 'error')
     }
   }
 
