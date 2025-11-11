@@ -34,7 +34,13 @@ export default function QuoteRequestsManager() {
   const fetchQuoteRequests = async () => {
     try {
       setLoading(true)
-      const res = await fetch('/api/admin/quote-requests')
+      const res = await fetch('/api/admin/quote-requests', {
+        cache: 'no-store',
+        headers: {
+          'Cache-Control': 'no-cache',
+          'Pragma': 'no-cache',
+        },
+      })
       if (!res.ok) throw new Error('Talepler yüklenemedi')
       const data = await res.json()
       setQuoteRequests(data)
@@ -50,8 +56,13 @@ export default function QuoteRequestsManager() {
     try {
       const res = await fetch(`/api/admin/quote-requests/${id}`, {
         method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ isRead: !isRead })
+        headers: { 
+          'Content-Type': 'application/json',
+          'Cache-Control': 'no-cache',
+          'Pragma': 'no-cache',
+        },
+        body: JSON.stringify({ isRead: !isRead }),
+        cache: 'no-store',
       })
 
       if (!res.ok) {
@@ -69,6 +80,9 @@ export default function QuoteRequestsManager() {
         setSelectedRequest(updatedRequest)
       }
       showToast('Durum güncellendi', 'success')
+      
+      // Listeyi yeniden yükle (production'da cache sorunlarını önlemek için)
+      await fetchQuoteRequests()
     } catch (error) {
       console.error('Durum güncelleme hatası:', error)
       showToast(error instanceof Error ? error.message : 'Durum güncellenirken hata oluştu', 'error')

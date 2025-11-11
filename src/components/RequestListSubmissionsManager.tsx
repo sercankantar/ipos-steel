@@ -42,7 +42,13 @@ export default function RequestListSubmissionsManager() {
   const fetchSubmissions = async () => {
     try {
       setLoading(true)
-      const res = await fetch('/api/admin/request-list-submissions')
+      const res = await fetch('/api/admin/request-list-submissions', {
+        cache: 'no-store',
+        headers: {
+          'Cache-Control': 'no-cache',
+          'Pragma': 'no-cache',
+        },
+      })
       if (!res.ok) throw new Error('Talepler yüklenemedi')
       const data = await res.json()
       setSubmissions(data)
@@ -58,8 +64,13 @@ export default function RequestListSubmissionsManager() {
     try {
       const res = await fetch(`/api/admin/request-list-submissions/${id}`, {
         method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ isRead: !isRead })
+        headers: { 
+          'Content-Type': 'application/json',
+          'Cache-Control': 'no-cache',
+          'Pragma': 'no-cache',
+        },
+        body: JSON.stringify({ isRead: !isRead }),
+        cache: 'no-store',
       })
 
       if (!res.ok) {
@@ -77,6 +88,9 @@ export default function RequestListSubmissionsManager() {
         setSelectedSubmission(updatedSubmission)
       }
       showToast('Durum güncellendi', 'success')
+      
+      // Listeyi yeniden yükle (production'da cache sorunlarını önlemek için)
+      await fetchSubmissions()
     } catch (error) {
       console.error('Durum güncelleme hatası:', error)
       showToast(error instanceof Error ? error.message : 'Durum güncellenirken hata oluştu', 'error')

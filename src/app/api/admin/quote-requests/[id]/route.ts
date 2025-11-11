@@ -2,9 +2,12 @@ import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { isAdminAuthenticated } from '@/lib/auth'
 
+export const dynamic = 'force-dynamic'
+export const revalidate = 0
+
 export async function PATCH(
   request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
+  { params }: { params: { id: string } }
 ) {
   try {
     const isAuthenticated = await isAdminAuthenticated()
@@ -13,16 +16,21 @@ export async function PATCH(
       return NextResponse.json({ error: 'Yetkisiz erişim' }, { status: 401 })
     }
 
-    const { id } = await params
     const body = await request.json()
     const { isRead } = body
 
     const quoteRequest = await prisma.quoteRequest.update({
-      where: { id },
-      data: { isRead }
+      where: { id: params.id },
+      data: { isRead: Boolean(isRead) }
     })
 
-    return NextResponse.json(quoteRequest)
+    return NextResponse.json(quoteRequest, {
+      headers: {
+        'Cache-Control': 'no-store, no-cache, must-revalidate, proxy-revalidate',
+        'Pragma': 'no-cache',
+        'Expires': '0',
+      },
+    })
   } catch (error) {
     console.error('Teklif talebi güncelleme hatası:', error)
     return NextResponse.json(
@@ -34,7 +42,7 @@ export async function PATCH(
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
+  { params }: { params: { id: string } }
 ) {
   try {
     const isAuthenticated = await isAdminAuthenticated()
@@ -43,12 +51,17 @@ export async function DELETE(
       return NextResponse.json({ error: 'Yetkisiz erişim' }, { status: 401 })
     }
 
-    const { id } = await params
     await prisma.quoteRequest.delete({
-      where: { id }
+      where: { id: params.id }
     })
 
-    return NextResponse.json({ success: true })
+    return NextResponse.json({ success: true }, {
+      headers: {
+        'Cache-Control': 'no-store, no-cache, must-revalidate, proxy-revalidate',
+        'Pragma': 'no-cache',
+        'Expires': '0',
+      },
+    })
   } catch (error) {
     console.error('Teklif talebi silme hatası:', error)
     return NextResponse.json(
