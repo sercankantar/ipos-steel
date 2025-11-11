@@ -222,6 +222,7 @@ model Product {
   series         String?
   material       String?
   coatingType    String?
+  surfaceTreatment String?  // Yüzey işleme: sıcak daldırma, pregalvaniz, boyalı, elektro
   thickness      String?
   width          String?
   height         String?

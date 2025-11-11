@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import RichTextEditor from '@/components/ui/RichTextEditor'
-import { Plus, Edit, Trash2 } from 'lucide-react'
+import { Plus, Edit, Trash2, X } from 'lucide-react'
 import CategoriesManager from '@/components/CategoriesManager'
 
 interface ProductItem {
@@ -15,6 +15,7 @@ interface ProductItem {
   series?: string
   material?: string
   coatingType?: string
+  surfaceTreatment?: string
   thickness?: string
   width?: string
   height?: string
@@ -224,6 +225,7 @@ export default function UrunIslemler() {
     series: '',
     material: '',
     coatingType: '',
+    surfaceTreatment: '',
     thickness: '',
     width: '',
     height: '',
@@ -355,6 +357,27 @@ export default function UrunIslemler() {
     fetchCategories()
     fetchCatalogs()
   }, [])
+
+  // ESC tuşu ile modal'ı kapatma ve body scroll kontrolü
+  useEffect(() => {
+    const handleEscape = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && showForm) {
+        resetForm()
+      }
+    }
+
+    if (showForm) {
+      document.addEventListener('keydown', handleEscape)
+      document.body.style.overflow = 'hidden'
+    } else {
+      document.body.style.overflow = 'unset'
+    }
+
+    return () => {
+      document.removeEventListener('keydown', handleEscape)
+      document.body.style.overflow = 'unset'
+    }
+  }, [showForm])
 
   const fetchProducts = async () => {
     try {
@@ -507,6 +530,7 @@ export default function UrunIslemler() {
       series: product.series || '',
       material: product.material || '',
       coatingType: product.coatingType || '',
+      surfaceTreatment: product.surfaceTreatment || '',
       thickness: product.thickness || '',
       width: product.width || '',
       height: product.height || '',
@@ -620,6 +644,7 @@ export default function UrunIslemler() {
       series: '',
       material: '',
       coatingType: '',
+      surfaceTreatment: '',
       thickness: '',
       width: '',
       height: '',
@@ -1385,18 +1410,36 @@ export default function UrunIslemler() {
       {activeTab === 'products' && (
         <>
           <div className="mb-8">
-            <Button onClick={() => setShowForm(!showForm)}>
+            <Button onClick={() => setShowForm(true)}>
               <Plus className="w-4 h-4 mr-2" />
-              {showForm ? 'Formu Gizle' : 'Yeni Ürün Ekle'}
+              Yeni Ürün Ekle
             </Button>
           </div>
 
+          {/* Modal */}
           {showForm && (
-            <div className="mb-8 bg-white p-6 rounded-lg shadow">
-              <h2 className="text-xl font-semibold mb-4">
-                {editingProduct ? 'Ürün Düzenle' : 'Yeni Ürün Ekle'}
-              </h2>
-              <form onSubmit={handleSubmit} className="space-y-4">
+            <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4" onClick={(e) => {
+              if (e.target === e.currentTarget) {
+                resetForm()
+              }
+            }}>
+              <div className="bg-white rounded-lg w-full max-w-4xl max-h-[90vh] overflow-hidden flex flex-col">
+                {/* Modal Header */}
+                <div className="flex items-center justify-between p-6 border-b border-gray-200">
+                  <h2 className="text-xl font-semibold">
+                    {editingProduct ? 'Ürün Düzenle' : 'Yeni Ürün Ekle'}
+                  </h2>
+                  <button
+                    onClick={resetForm}
+                    className="text-gray-400 hover:text-gray-600 transition-colors"
+                  >
+                    <X className="w-6 h-6" />
+                  </button>
+                </div>
+                
+                {/* Modal Body - Scrollable */}
+                <div className="overflow-y-auto flex-1 p-6">
+                  <form onSubmit={handleSubmit} className="space-y-4">
             <div>
               <Label htmlFor="name">Ürün Adı *</Label>
               <Input id="name" value={formData.name} onChange={(e) => setFormData({ ...formData, name: e.target.value })} required />
@@ -1406,13 +1449,75 @@ export default function UrunIslemler() {
               <Label htmlFor="categoryId">Kategori *</Label>
               <select id="categoryId" className="w-full border rounded-md h-10 px-3"
                 value={formData.categoryId}
-                onChange={(e) => setFormData({ ...formData, categoryId: e.target.value })}
+                onChange={(e) => {
+                  const newCategoryId = e.target.value
+                  const newCategory = categories.find(c => c.id === newCategoryId)
+                  const categoryName = newCategory?.name || ''
+                  
+                  // Kategori değiştiğinde, yeni kategori yüzey işleme seçeneklerine sahip değilse surfaceTreatment'ı temizle
+                  const hasSurfaceTreatmentOptions = 
+                    categoryName === 'Kablo Kanalları' || 
+                    categoryName === 'Kablo Merdivenleri' || 
+                    categoryName === 'Trunking Kablo Kanalları' ||
+                    categoryName === 'Tel Kablo Kanalları'
+                  
+                  setFormData({ 
+                    ...formData, 
+                    categoryId: newCategoryId,
+                    surfaceTreatment: hasSurfaceTreatmentOptions ? formData.surfaceTreatment : ''
+                  })
+                }}
                 required>
                 <option value="" disabled>Seçiniz</option>
                 {categories.map((c) => (
                   <option key={c.id} value={c.id}>{c.name}</option>
                 ))}
               </select>
+            </div>
+
+            <div>
+              <Label htmlFor="surfaceTreatment">Yüzey İşleme</Label>
+              {(() => {
+                const selectedCategory = categories.find(c => c.id === formData.categoryId)
+                const categoryName = selectedCategory?.name || ''
+                
+                // Kategoriye göre seçenekleri belirle
+                let options: string[] = []
+                if (categoryName === 'Kablo Kanalları' || categoryName === 'Kablo Merdivenleri' || categoryName === 'Trunking Kablo Kanalları') {
+                  options = ['sıcak daldırma', 'pregalvaniz', 'boyalı']
+                } else if (categoryName === 'Tel Kablo Kanalları') {
+                  options = ['elektro', 'sıcak daldırma', 'boyalı']
+                }
+                
+                // Eğer kategori seçilmemişse veya bu kategorilerden biri değilse select'i gösterme
+                if (options.length === 0) {
+                  return (
+                    <Input 
+                      id="surfaceTreatment" 
+                      value={formData.surfaceTreatment} 
+                      onChange={(e) => setFormData({ ...formData, surfaceTreatment: e.target.value })} 
+                      placeholder="Kategori seçildiğinde seçenekler görünecek"
+                      disabled
+                    />
+                  )
+                }
+                
+                return (
+                  <select
+                    id="surfaceTreatment"
+                    className="w-full border rounded-md h-10 px-3"
+                    value={formData.surfaceTreatment}
+                    onChange={(e) => setFormData({ ...formData, surfaceTreatment: e.target.value })}
+                  >
+                    <option value="">Seçiniz</option>
+                    {options.map((option) => (
+                      <option key={option} value={option}>
+                        {option}
+                      </option>
+                    ))}
+                  </select>
+                )
+              })()}
             </div>
             
             <div>
@@ -1542,15 +1647,17 @@ export default function UrunIslemler() {
               )}
             </div>
             
-                <div className="flex space-x-4">
-                  <Button type="submit">
-                    {editingProduct ? 'Güncelle' : 'Ekle'}
-                  </Button>
-                  <Button type="button" variant="outline" onClick={resetForm}>
-                    İptal
-                  </Button>
+                    <div className="flex space-x-4 pt-4 border-t border-gray-200">
+                      <Button type="submit">
+                        {editingProduct ? 'Güncelle' : 'Ekle'}
+                      </Button>
+                      <Button type="button" variant="outline" onClick={resetForm}>
+                        İptal
+                      </Button>
+                    </div>
+                  </form>
                 </div>
-              </form>
+              </div>
             </div>
           )}
 

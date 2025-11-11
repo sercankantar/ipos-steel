@@ -603,27 +603,22 @@ export default function ProductDetail({ params }: { params: { id: string } }) {
   const toggleChannelWidthFilter = (width: string) => {
     setChannelFilters(prev => ({
       ...prev,
-      widths: prev.widths.includes(width)
-        ? prev.widths.filter(w => w !== width)
-        : [...prev.widths, width]
+      // Tek seçim: aynıysa temizle, farklıysa yalnızca bu değeri ayarla
+      widths: prev.widths[0] === width ? [] : [width]
     }))
   }
 
   const toggleChannelCoatingFilter = (coatingType: string) => {
     setChannelFilters(prev => ({
       ...prev,
-      coatingTypes: prev.coatingTypes.includes(coatingType)
-        ? prev.coatingTypes.filter(c => c !== coatingType)
-        : [...prev.coatingTypes, coatingType]
+      coatingTypes: prev.coatingTypes[0] === coatingType ? [] : [coatingType]
     }))
   }
 
   const toggleChannelThicknessFilter = (thickness: string) => {
     setChannelFilters(prev => ({
       ...prev,
-      sheetThicknesses: prev.sheetThicknesses.includes(thickness)
-        ? prev.sheetThicknesses.filter(t => t !== thickness)
-        : [...prev.sheetThicknesses, thickness]
+      sheetThicknesses: prev.sheetThicknesses[0] === thickness ? [] : [thickness]
     }))
   }
 
@@ -631,27 +626,21 @@ export default function ProductDetail({ params }: { params: { id: string } }) {
   const toggleModuleWidthFilter = (width: string) => {
     setModuleFilters(prev => ({
       ...prev,
-      widths: prev.widths.includes(width)
-        ? prev.widths.filter(w => w !== width)
-        : [...prev.widths, width]
+      widths: prev.widths[0] === width ? [] : [width]
     }))
   }
 
   const toggleModuleCoatingFilter = (coatingType: string) => {
     setModuleFilters(prev => ({
       ...prev,
-      coatingTypes: prev.coatingTypes.includes(coatingType)
-        ? prev.coatingTypes.filter(c => c !== coatingType)
-        : [...prev.coatingTypes, coatingType]
+      coatingTypes: prev.coatingTypes[0] === coatingType ? [] : [coatingType]
     }))
   }
 
   const toggleModuleThicknessFilter = (thickness: string) => {
     setModuleFilters(prev => ({
       ...prev,
-      sheetThicknesses: prev.sheetThicknesses.includes(thickness)
-        ? prev.sheetThicknesses.filter(t => t !== thickness)
-        : [...prev.sheetThicknesses, thickness]
+      sheetThicknesses: prev.sheetThicknesses[0] === thickness ? [] : [thickness]
     }))
   }
 
@@ -659,27 +648,21 @@ export default function ProductDetail({ params }: { params: { id: string } }) {
   const toggleAccessoryWidthFilter = (width: string) => {
     setAccessoryFilters(prev => ({
       ...prev,
-      widths: prev.widths.includes(width)
-        ? prev.widths.filter(w => w !== width)
-        : [...prev.widths, width]
+      widths: prev.widths[0] === width ? [] : [width]
     }))
   }
 
   const toggleAccessoryCoatingFilter = (coatingType: string) => {
     setAccessoryFilters(prev => ({
       ...prev,
-      coatingTypes: prev.coatingTypes.includes(coatingType)
-        ? prev.coatingTypes.filter(c => c !== coatingType)
-        : [...prev.coatingTypes, coatingType]
+      coatingTypes: prev.coatingTypes[0] === coatingType ? [] : [coatingType]
     }))
   }
 
   const toggleAccessoryThicknessFilter = (thickness: string) => {
     setAccessoryFilters(prev => ({
       ...prev,
-      sheetThicknesses: prev.sheetThicknesses.includes(thickness)
-        ? prev.sheetThicknesses.filter(t => t !== thickness)
-        : [...prev.sheetThicknesses, thickness]
+      sheetThicknesses: prev.sheetThicknesses[0] === thickness ? [] : [thickness]
     }))
   }
 
@@ -687,27 +670,21 @@ export default function ProductDetail({ params }: { params: { id: string } }) {
   const toggleCoverWidthFilter = (width: string) => {
     setCoverFilters(prev => ({
       ...prev,
-      widths: prev.widths.includes(width)
-        ? prev.widths.filter(w => w !== width)
-        : [...prev.widths, width]
+      widths: prev.widths[0] === width ? [] : [width]
     }))
   }
 
   const toggleCoverCoatingFilter = (coatingType: string) => {
     setCoverFilters(prev => ({
       ...prev,
-      coatingTypes: prev.coatingTypes.includes(coatingType)
-        ? prev.coatingTypes.filter(c => c !== coatingType)
-        : [...prev.coatingTypes, coatingType]
+      coatingTypes: prev.coatingTypes[0] === coatingType ? [] : [coatingType]
     }))
   }
 
   const toggleCoverThicknessFilter = (thickness: string) => {
     setCoverFilters(prev => ({
       ...prev,
-      sheetThicknesses: prev.sheetThicknesses.includes(thickness)
-        ? prev.sheetThicknesses.filter(t => t !== thickness)
-        : [...prev.sheetThicknesses, thickness]
+      sheetThicknesses: prev.sheetThicknesses[0] === thickness ? [] : [thickness]
     }))
   }
 
@@ -871,7 +848,7 @@ export default function ProductDetail({ params }: { params: { id: string } }) {
     ? product.images.map((img: any) => img.imageUrl)
     : product.imageUrl 
     ? [product.imageUrl]
-    : ['/placeholder-product-1.jpg']
+    : ['/default-urun-foto/default-urun.png']
 
   const tabs = [
     ...(subProducts.length > 0 ? [{ id: 'urunler', label: 'Ürünler' }] : []),
@@ -1047,15 +1024,11 @@ export default function ProductDetail({ params }: { params: { id: string } }) {
               {product.catalog ? (
                 <div className="bg-white border border-gray-200 rounded-lg overflow-hidden hover:shadow-lg transition-shadow">
                   <div className="aspect-video bg-gray-100 flex items-center justify-center">
-                    {product.catalog.imageUrl ? (
-                      <img 
-                        src={product.catalog.imageUrl} 
-                        alt={product.catalog.title}
-                        className="w-full h-full object-cover"
-                      />
-                    ) : (
-                      <FileText className="w-12 h-12 text-gray-400" />
-                    )}
+                    <img 
+                      src={product.catalog.imageUrl || '/default-urun-foto/default-urun.png'} 
+                      alt={product.catalog.title}
+                      className="w-full h-full object-cover"
+                    />
                   </div>
                   <div className="p-4">
                     <h4 className="font-semibold text-gray-800 mb-2">{product.catalog.title}</h4>
@@ -1099,7 +1072,11 @@ export default function ProductDetail({ params }: { params: { id: string } }) {
           {product.category?.name && (
             <>
               <ChevronRight className="w-4 h-4" />
-              <span>{product.category.name}</span>
+              <span>
+                {product.surfaceTreatment 
+                  ? `${product.surfaceTreatment.charAt(0).toUpperCase() + product.surfaceTreatment.slice(1)} ${product.category.name}`
+                  : product.category.name}
+              </span>
             </>
           )}
           <ChevronRight className="w-4 h-4" />
@@ -1117,7 +1094,7 @@ export default function ProductDetail({ params }: { params: { id: string } }) {
               onClick={() => setIsModalOpen(true)}
             >
               <img 
-                src={productImages[selectedImageIndex]} 
+                src={productImages[selectedImageIndex] || '/default-urun-foto/default-urun.png'} 
                 alt={product.name}
                 className="w-full h-full object-cover"
               />
@@ -1136,7 +1113,7 @@ export default function ProductDetail({ params }: { params: { id: string } }) {
                   }`}
                 >
                   <img 
-                    src={image} 
+                    src={image || '/default-urun-foto/default-urun.png'} 
                     alt={`Ürün görseli ${index + 1}`}
                     className="w-full h-full object-cover"
                   />
@@ -1153,7 +1130,11 @@ export default function ProductDetail({ params }: { params: { id: string } }) {
             
             {/* Kategori */}
             {product.category?.name && (
-              <p className="text-gray-600">{product.category.name}</p>
+              <p className="text-gray-600">
+                {product.surfaceTreatment 
+                  ? `${product.surfaceTreatment.charAt(0).toUpperCase() + product.surfaceTreatment.slice(1)} ${product.category.name}`
+                  : product.category.name}
+              </p>
             )}
             
             {/* Açıklama */}
@@ -1249,7 +1230,7 @@ export default function ProductDetail({ params }: { params: { id: string } }) {
             
             {/* Ana görsel */}
             <img
-              src={productImages[selectedImageIndex]}
+              src={productImages[selectedImageIndex] || '/default-urun-foto/default-urun.png'}
               alt={product.name}
               className="max-w-full max-h-full object-contain"
             />
@@ -1287,7 +1268,7 @@ export default function ProductDetail({ params }: { params: { id: string } }) {
                   }`}
                 >
                   <img 
-                    src={image} 
+                    src={image || '/default-urun-foto/default-urun.png'} 
                     alt={`Ürün görseli ${index + 1}`}
                     className="w-full h-full object-cover"
                   />
@@ -1590,97 +1571,49 @@ export default function ProductDetail({ params }: { params: { id: string } }) {
                         <th className="text-left py-3 px-4 font-medium text-gray-700">Kod</th>
                         <th className="text-left py-3 px-4 font-medium text-gray-700">Yükseklik</th>
                         <th className="text-left py-3 px-4 font-medium text-gray-700">
-                          <div className="relative dropdown-container">
-                            <button
-                              onClick={() => setChannelDropdowns(prev => ({ ...prev, width: !prev.width }))}
-                              className="flex items-center space-x-1 hover:text-blue-600 transition-colors"
-                            >
-                              <span>Genişlik</span>
-                              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                              </svg>
-                            </button>
-                            {channelDropdowns.width && uniqueChannelWidths.length > 0 && (
-                              <div className="absolute left-0 mt-2 w-40 bg-white border border-gray-300 rounded-lg shadow-lg z-10 max-h-60 overflow-y-auto">
-                                {uniqueChannelWidths.map(width => (
-                                  <button
-                                    key={width}
-                                    onClick={() => {
-                                      toggleChannelWidthFilter(width)
-                                      setChannelDropdowns(prev => ({ ...prev, width: false }))
-                                    }}
-                                    className={`w-full text-left px-4 py-2 hover:bg-blue-50 transition-colors ${
-                                      channelFilters.widths.includes(width) ? 'bg-blue-50 font-medium' : ''
-                                    }`}
-                                  >
-                                    {width}
-                                  </button>
-                                ))}
-                              </div>
-                            )}
-                          </div>
+                          <select
+                            value={channelFilters.widths[0] || ''}
+                            onChange={(e) => {
+                              const val = e.target.value
+                              setChannelFilters(prev => ({ ...prev, widths: val ? [val] : [] }))
+                            }}
+                            className="border border-gray-300 rounded-md px-2 py-1 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                          >
+                            <option value="">{channelFilters.widths[0] ? `Genişlik: ${channelFilters.widths[0]}` : 'Genişlik'}</option>
+                            {uniqueChannelWidths.map(width => (
+                              <option key={width} value={width}>{width}</option>
+                            ))}
+                          </select>
                         </th>
                         <th className="text-left py-3 px-4 font-medium text-gray-700">
-                          <div className="relative dropdown-container">
-                            <button
-                              onClick={() => setChannelDropdowns(prev => ({ ...prev, coating: !prev.coating }))}
-                              className="flex items-center space-x-1 hover:text-blue-600 transition-colors"
-                            >
-                              <span>Kapl. Cinsi</span>
-                              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                              </svg>
-                            </button>
-                            {channelDropdowns.coating && uniqueChannelCoatingTypes.length > 0 && (
-                              <div className="absolute left-0 mt-2 w-40 bg-white border border-gray-300 rounded-lg shadow-lg z-10 max-h-60 overflow-y-auto">
-                                {uniqueChannelCoatingTypes.map(coating => (
-                                  <button
-                                    key={coating}
-                                    onClick={() => {
-                                      toggleChannelCoatingFilter(coating)
-                                      setChannelDropdowns(prev => ({ ...prev, coating: false }))
-                                    }}
-                                    className={`w-full text-left px-4 py-2 hover:bg-blue-50 transition-colors ${
-                                      channelFilters.coatingTypes.includes(coating) ? 'bg-blue-50 font-medium' : ''
-                                    }`}
-                                  >
-                                    {coating}
-                                  </button>
-                                ))}
-                              </div>
-                            )}
-                          </div>
+                          <select
+                            value={channelFilters.coatingTypes[0] || ''}
+                            onChange={(e) => {
+                              const val = e.target.value
+                              setChannelFilters(prev => ({ ...prev, coatingTypes: val ? [val] : [] }))
+                            }}
+                            className="border border-gray-300 rounded-md px-2 py-1 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                          >
+                            <option value="">{channelFilters.coatingTypes[0] ? `Kapl. Cinsi: ${channelFilters.coatingTypes[0]}` : 'Kapl. Cinsi'}</option>
+                            {uniqueChannelCoatingTypes.map(coating => (
+                              <option key={coating} value={coating}>{coating}</option>
+                            ))}
+                          </select>
                         </th>
                         <th className="text-left py-3 px-4 font-medium text-gray-700">
-                          <div className="relative dropdown-container">
-                            <button
-                              onClick={() => setChannelDropdowns(prev => ({ ...prev, thickness: !prev.thickness }))}
-                              className="flex items-center space-x-1 hover:text-blue-600 transition-colors"
-                            >
-                              <span>Sac Kalınl.</span>
-                              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                              </svg>
-                            </button>
-                            {channelDropdowns.thickness && uniqueChannelThicknesses.length > 0 && (
-                              <div className="absolute left-0 mt-2 w-40 bg-white border border-gray-300 rounded-lg shadow-lg z-10 max-h-60 overflow-y-auto">
-                                {uniqueChannelThicknesses.map(thickness => (
-                                  <button
-                                    key={thickness}
-                                    onClick={() => {
-                                      toggleChannelThicknessFilter(thickness)
-                                      setChannelDropdowns(prev => ({ ...prev, thickness: false }))
-                                    }}
-                                    className={`w-full text-left px-4 py-2 hover:bg-blue-50 transition-colors ${
-                                      channelFilters.sheetThicknesses.includes(thickness) ? 'bg-blue-50 font-medium' : ''
-                                    }`}
-                                  >
-                                    {thickness}
-                                  </button>
-                                ))}
-                              </div>
-                            )}
-                          </div>
+                          <select
+                            value={channelFilters.sheetThicknesses[0] || ''}
+                            onChange={(e) => {
+                              const val = e.target.value
+                              setChannelFilters(prev => ({ ...prev, sheetThicknesses: val ? [val] : [] }))
+                            }}
+                            className="border border-gray-300 rounded-md px-2 py-1 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                          >
+                            <option value="">{channelFilters.sheetThicknesses[0] ? `Sac Kalınl.: ${channelFilters.sheetThicknesses[0]}` : 'Sac Kalınl.'}</option>
+                            {uniqueChannelThicknesses.map(thickness => (
+                              <option key={thickness} value={thickness}>{thickness}</option>
+                            ))}
+                          </select>
                         </th>
                         <th className="text-left py-3 px-4 font-medium text-gray-700">İşlem</th>
                       </tr>
@@ -1691,13 +1624,7 @@ export default function ProductDetail({ params }: { params: { id: string } }) {
                           <td className="py-4 px-4">
                             <div className="flex items-center">
                               <div className="w-8 h-8 bg-gray-200 rounded mr-3 flex items-center justify-center">
-                                {channel.imageUrl ? (
-                                  <img src={channel.imageUrl} alt={channel.name} className="w-6 h-6 object-cover rounded" />
-                                ) : (
-                                  <svg className="w-4 h-4 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
-                                    <path fillRule="evenodd" d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z" clipRule="evenodd" />
-                                  </svg>
-                                )}
+                                <img src={channel.imageUrl || '/default-urun-foto/default-urun.png'} alt={channel.name} className="w-6 h-6 object-cover rounded" />
                               </div>
                               <div>
                                 <div className="font-medium text-gray-900">{channel.name}</div>
@@ -1776,97 +1703,49 @@ export default function ProductDetail({ params }: { params: { id: string } }) {
                             <th className="text-left py-3 px-4 font-medium text-gray-700">Kod</th>
                             <th className="text-left py-3 px-4 font-medium text-gray-700">Yükseklik</th>
                             <th className="text-left py-3 px-4 font-medium text-gray-700">
-                              <div className="relative dropdown-container">
-                                <button
-                                  onClick={() => setModuleDropdowns(prev => ({ ...prev, width: !prev.width }))}
-                                  className="flex items-center space-x-1 hover:text-blue-600 transition-colors"
-                                >
-                                  <span>Genişlik</span>
-                                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                                  </svg>
-                                </button>
-                                {moduleDropdowns.width && uniqueModuleWidths.length > 0 && (
-                                  <div className="absolute left-0 mt-2 w-40 bg-white border border-gray-300 rounded-lg shadow-lg z-10 max-h-60 overflow-y-auto">
-                                    {uniqueModuleWidths.map(width => (
-                                      <button
-                                        key={width}
-                                        onClick={() => {
-                                          toggleModuleWidthFilter(width)
-                                          setModuleDropdowns(prev => ({ ...prev, width: false }))
-                                        }}
-                                        className={`w-full text-left px-4 py-2 hover:bg-blue-50 transition-colors ${
-                                          moduleFilters.widths.includes(width) ? 'bg-blue-50 font-medium' : ''
-                                        }`}
-                                      >
-                                        {width}
-                                      </button>
-                                    ))}
-                                  </div>
-                                )}
-                              </div>
+                              <select
+                                value={moduleFilters.widths[0] || ''}
+                                onChange={(e) => {
+                                  const val = e.target.value
+                                  setModuleFilters(prev => ({ ...prev, widths: val ? [val] : [] }))
+                                }}
+                                className="border border-gray-300 rounded-md px-2 py-1 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                              >
+                                <option value="">{moduleFilters.widths[0] ? `Genişlik: ${moduleFilters.widths[0]}` : 'Genişlik'}</option>
+                                {uniqueModuleWidths.map(width => (
+                                  <option key={width} value={width}>{width}</option>
+                                ))}
+                              </select>
                             </th>
                             <th className="text-left py-3 px-4 font-medium text-gray-700">
-                              <div className="relative dropdown-container">
-                                <button
-                                  onClick={() => setModuleDropdowns(prev => ({ ...prev, coating: !prev.coating }))}
-                                  className="flex items-center space-x-1 hover:text-blue-600 transition-colors"
-                                >
-                                  <span>Kapl. Cinsi</span>
-                                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                                  </svg>
-                                </button>
-                                {moduleDropdowns.coating && uniqueModuleCoatingTypes.length > 0 && (
-                                  <div className="absolute left-0 mt-2 w-40 bg-white border border-gray-300 rounded-lg shadow-lg z-10 max-h-60 overflow-y-auto">
-                                    {uniqueModuleCoatingTypes.map(coating => (
-                                      <button
-                                        key={coating}
-                                        onClick={() => {
-                                          toggleModuleCoatingFilter(coating)
-                                          setModuleDropdowns(prev => ({ ...prev, coating: false }))
-                                        }}
-                                        className={`w-full text-left px-4 py-2 hover:bg-blue-50 transition-colors ${
-                                          moduleFilters.coatingTypes.includes(coating) ? 'bg-blue-50 font-medium' : ''
-                                        }`}
-                                      >
-                                        {coating}
-                                      </button>
-                                    ))}
-                                  </div>
-                                )}
-                              </div>
+                              <select
+                                value={moduleFilters.coatingTypes[0] || ''}
+                                onChange={(e) => {
+                                  const val = e.target.value
+                                  setModuleFilters(prev => ({ ...prev, coatingTypes: val ? [val] : [] }))
+                                }}
+                                className="border border-gray-300 rounded-md px-2 py-1 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                              >
+                                <option value="">{moduleFilters.coatingTypes[0] ? `Kapl. Cinsi: ${moduleFilters.coatingTypes[0]}` : 'Kapl. Cinsi'}</option>
+                                {uniqueModuleCoatingTypes.map(coating => (
+                                  <option key={coating} value={coating}>{coating}</option>
+                                ))}
+                              </select>
                             </th>
                             <th className="text-left py-3 px-4 font-medium text-gray-700">
-                              <div className="relative dropdown-container">
-                                <button
-                                  onClick={() => setModuleDropdowns(prev => ({ ...prev, thickness: !prev.thickness }))}
-                                  className="flex items-center space-x-1 hover:text-blue-600 transition-colors"
-                                >
-                                  <span>Sac Kalınl.</span>
-                                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                                  </svg>
-                                </button>
-                                {moduleDropdowns.thickness && uniqueModuleThicknesses.length > 0 && (
-                                  <div className="absolute left-0 mt-2 w-40 bg-white border border-gray-300 rounded-lg shadow-lg z-10 max-h-60 overflow-y-auto">
-                                    {uniqueModuleThicknesses.map(thickness => (
-                                      <button
-                                        key={thickness}
-                                        onClick={() => {
-                                          toggleModuleThicknessFilter(thickness)
-                                          setModuleDropdowns(prev => ({ ...prev, thickness: false }))
-                                        }}
-                                        className={`w-full text-left px-4 py-2 hover:bg-blue-50 transition-colors ${
-                                          moduleFilters.sheetThicknesses.includes(thickness) ? 'bg-blue-50 font-medium' : ''
-                                        }`}
-                                      >
-                                        {thickness}
-                                      </button>
-                                    ))}
-                                  </div>
-                                )}
-                              </div>
+                              <select
+                                value={moduleFilters.sheetThicknesses[0] || ''}
+                                onChange={(e) => {
+                                  const val = e.target.value
+                                  setModuleFilters(prev => ({ ...prev, sheetThicknesses: val ? [val] : [] }))
+                                }}
+                                className="border border-gray-300 rounded-md px-2 py-1 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                              >
+                                <option value="">{moduleFilters.sheetThicknesses[0] ? `Sac Kalınl.: ${moduleFilters.sheetThicknesses[0]}` : 'Sac Kalınl.'}</option>
+                                {uniqueModuleThicknesses.map(thickness => (
+                                  <option key={thickness} value={thickness}>{thickness}</option>
+                                ))}
+                              </select>
                             </th>
                             <th className="text-left py-3 px-4 font-medium text-gray-700">İşlem</th>
                           </tr>
@@ -1877,13 +1756,7 @@ export default function ProductDetail({ params }: { params: { id: string } }) {
                               <td className="py-4 px-4">
                                 <div className="flex items-center">
                                   <div className="w-8 h-8 bg-gray-200 rounded mr-3 flex items-center justify-center">
-                                    {module.imageUrl ? (
-                                      <img src={module.imageUrl} alt={module.name} className="w-6 h-6 object-cover rounded" />
-                                    ) : (
-                                      <svg className="w-4 h-4 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
-                                        <path fillRule="evenodd" d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z" clipRule="evenodd" />
-                                      </svg>
-                                    )}
+                                    <img src={module.imageUrl || '/default-urun-foto/default-urun.png'} alt={module.name} className="w-6 h-6 object-cover rounded" />
                                   </div>
                                   <div>
                                     <div className="font-medium text-gray-900">{module.name}</div>
@@ -1960,97 +1833,49 @@ export default function ProductDetail({ params }: { params: { id: string } }) {
                             <th className="text-left py-3 px-4 font-medium text-gray-700">Kod</th>
                             <th className="text-left py-3 px-4 font-medium text-gray-700">Yükseklik</th>
                             <th className="text-left py-3 px-4 font-medium text-gray-700">
-                              <div className="relative dropdown-container">
-                                <button
-                                  onClick={() => setAccessoryDropdowns(prev => ({ ...prev, width: !prev.width }))}
-                                  className="flex items-center space-x-1 hover:text-blue-600 transition-colors"
-                                >
-                                  <span>Genişlik</span>
-                                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                                  </svg>
-                                </button>
-                                {accessoryDropdowns.width && uniqueAccessoryWidths.length > 0 && (
-                                  <div className="absolute left-0 mt-2 w-40 bg-white border border-gray-300 rounded-lg shadow-lg z-10 max-h-60 overflow-y-auto">
-                                    {uniqueAccessoryWidths.map(width => (
-                                      <button
-                                        key={width}
-                                        onClick={() => {
-                                          toggleAccessoryWidthFilter(width)
-                                          setAccessoryDropdowns(prev => ({ ...prev, width: false }))
-                                        }}
-                                        className={`w-full text-left px-4 py-2 hover:bg-blue-50 transition-colors ${
-                                          accessoryFilters.widths.includes(width) ? 'bg-blue-50 font-medium' : ''
-                                        }`}
-                                      >
-                                        {width}
-                                      </button>
-                                    ))}
-                                  </div>
-                                )}
-                              </div>
+                              <select
+                                value={accessoryFilters.widths[0] || ''}
+                                onChange={(e) => {
+                                  const val = e.target.value
+                                  setAccessoryFilters(prev => ({ ...prev, widths: val ? [val] : [] }))
+                                }}
+                                className="border border-gray-300 rounded-md px-2 py-1 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                              >
+                                <option value="">{accessoryFilters.widths[0] ? `Genişlik: ${accessoryFilters.widths[0]}` : 'Genişlik'}</option>
+                                {uniqueAccessoryWidths.map(width => (
+                                  <option key={width} value={width}>{width}</option>
+                                ))}
+                              </select>
                             </th>
                             <th className="text-left py-3 px-4 font-medium text-gray-700">
-                              <div className="relative dropdown-container">
-                                <button
-                                  onClick={() => setAccessoryDropdowns(prev => ({ ...prev, coating: !prev.coating }))}
-                                  className="flex items-center space-x-1 hover:text-blue-600 transition-colors"
-                                >
-                                  <span>Kapl. Cinsi</span>
-                                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                                  </svg>
-                                </button>
-                                {accessoryDropdowns.coating && uniqueAccessoryCoatingTypes.length > 0 && (
-                                  <div className="absolute left-0 mt-2 w-40 bg-white border border-gray-300 rounded-lg shadow-lg z-10 max-h-60 overflow-y-auto">
-                                    {uniqueAccessoryCoatingTypes.map(coating => (
-                                      <button
-                                        key={coating}
-                                        onClick={() => {
-                                          toggleAccessoryCoatingFilter(coating)
-                                          setAccessoryDropdowns(prev => ({ ...prev, coating: false }))
-                                        }}
-                                        className={`w-full text-left px-4 py-2 hover:bg-blue-50 transition-colors ${
-                                          accessoryFilters.coatingTypes.includes(coating) ? 'bg-blue-50 font-medium' : ''
-                                        }`}
-                                      >
-                                        {coating}
-                                      </button>
-                                    ))}
-                                  </div>
-                                )}
-                              </div>
+                              <select
+                                value={accessoryFilters.coatingTypes[0] || ''}
+                                onChange={(e) => {
+                                  const val = e.target.value
+                                  setAccessoryFilters(prev => ({ ...prev, coatingTypes: val ? [val] : [] }))
+                                }}
+                                className="border border-gray-300 rounded-md px-2 py-1 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                              >
+                                <option value="">{accessoryFilters.coatingTypes[0] ? `Kapl. Cinsi: ${accessoryFilters.coatingTypes[0]}` : 'Kapl. Cinsi'}</option>
+                                {uniqueAccessoryCoatingTypes.map(coating => (
+                                  <option key={coating} value={coating}>{coating}</option>
+                                ))}
+                              </select>
                             </th>
                             <th className="text-left py-3 px-4 font-medium text-gray-700">
-                              <div className="relative dropdown-container">
-                                <button
-                                  onClick={() => setAccessoryDropdowns(prev => ({ ...prev, thickness: !prev.thickness }))}
-                                  className="flex items-center space-x-1 hover:text-blue-600 transition-colors"
-                                >
-                                  <span>Sac Kalınl.</span>
-                                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                                  </svg>
-                                </button>
-                                {accessoryDropdowns.thickness && uniqueAccessoryThicknesses.length > 0 && (
-                                  <div className="absolute left-0 mt-2 w-40 bg-white border border-gray-300 rounded-lg shadow-lg z-10 max-h-60 overflow-y-auto">
-                                    {uniqueAccessoryThicknesses.map(thickness => (
-                                      <button
-                                        key={thickness}
-                                        onClick={() => {
-                                          toggleAccessoryThicknessFilter(thickness)
-                                          setAccessoryDropdowns(prev => ({ ...prev, thickness: false }))
-                                        }}
-                                        className={`w-full text-left px-4 py-2 hover:bg-blue-50 transition-colors ${
-                                          accessoryFilters.sheetThicknesses.includes(thickness) ? 'bg-blue-50 font-medium' : ''
-                                        }`}
-                                      >
-                                        {thickness}
-                                      </button>
-                                    ))}
-                                  </div>
-                                )}
-                              </div>
+                              <select
+                                value={accessoryFilters.sheetThicknesses[0] || ''}
+                                onChange={(e) => {
+                                  const val = e.target.value
+                                  setAccessoryFilters(prev => ({ ...prev, sheetThicknesses: val ? [val] : [] }))
+                                }}
+                                className="border border-gray-300 rounded-md px-2 py-1 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                              >
+                                <option value="">{accessoryFilters.sheetThicknesses[0] ? `Sac Kalınl.: ${accessoryFilters.sheetThicknesses[0]}` : 'Sac Kalınl.'}</option>
+                                {uniqueAccessoryThicknesses.map(thickness => (
+                                  <option key={thickness} value={thickness}>{thickness}</option>
+                                ))}
+                              </select>
                             </th>
                             <th className="text-left py-3 px-4 font-medium text-gray-700">İşlem</th>
                           </tr>
@@ -2061,13 +1886,7 @@ export default function ProductDetail({ params }: { params: { id: string } }) {
                               <td className="py-4 px-4">
                                 <div className="flex items-center">
                                   <div className="w-8 h-8 bg-gray-200 rounded mr-3 flex items-center justify-center">
-                                    {accessory.imageUrl ? (
-                                      <img src={accessory.imageUrl} alt={accessory.name} className="w-6 h-6 object-cover rounded" />
-                                    ) : (
-                                      <svg className="w-4 h-4 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
-                                        <path fillRule="evenodd" d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z" clipRule="evenodd" />
-                                      </svg>
-                                    )}
+                                    <img src={accessory.imageUrl || '/default-urun-foto/default-urun.png'} alt={accessory.name} className="w-6 h-6 object-cover rounded" />
                                   </div>
                                   <div>
                                     <div className="font-medium text-gray-900">{accessory.name}</div>
@@ -2144,97 +1963,49 @@ export default function ProductDetail({ params }: { params: { id: string } }) {
                             <th className="text-left py-3 px-4 font-medium text-gray-700">Kod</th>
                             <th className="text-left py-3 px-4 font-medium text-gray-700">Yükseklik</th>
                             <th className="text-left py-3 px-4 font-medium text-gray-700">
-                              <div className="relative dropdown-container">
-                                <button
-                                  onClick={() => setCoverDropdowns(prev => ({ ...prev, width: !prev.width }))}
-                                  className="flex items-center space-x-1 hover:text-blue-600 transition-colors"
-                                >
-                                  <span>Genişlik</span>
-                                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                                  </svg>
-                                </button>
-                                {coverDropdowns.width && uniqueCoverWidths.length > 0 && (
-                                  <div className="absolute left-0 mt-2 w-40 bg-white border border-gray-300 rounded-lg shadow-lg z-10 max-h-60 overflow-y-auto">
-                                    {uniqueCoverWidths.map(width => (
-                                      <button
-                                        key={width}
-                                        onClick={() => {
-                                          toggleCoverWidthFilter(width)
-                                          setCoverDropdowns(prev => ({ ...prev, width: false }))
-                                        }}
-                                        className={`w-full text-left px-4 py-2 hover:bg-blue-50 transition-colors ${
-                                          coverFilters.widths.includes(width) ? 'bg-blue-50 font-medium' : ''
-                                        }`}
-                                      >
-                                        {width}
-                                      </button>
-                                    ))}
-                                  </div>
-                                )}
-                              </div>
+                              <select
+                                value={coverFilters.widths[0] || ''}
+                                onChange={(e) => {
+                                  const val = e.target.value
+                                  setCoverFilters(prev => ({ ...prev, widths: val ? [val] : [] }))
+                                }}
+                                className="border border-gray-300 rounded-md px-2 py-1 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                              >
+                                <option value="">{coverFilters.widths[0] ? `Genişlik: ${coverFilters.widths[0]}` : 'Genişlik'}</option>
+                                {uniqueCoverWidths.map(width => (
+                                  <option key={width} value={width}>{width}</option>
+                                ))}
+                              </select>
                             </th>
                             <th className="text-left py-3 px-4 font-medium text-gray-700">
-                              <div className="relative dropdown-container">
-                                <button
-                                  onClick={() => setCoverDropdowns(prev => ({ ...prev, coating: !prev.coating }))}
-                                  className="flex items-center space-x-1 hover:text-blue-600 transition-colors"
-                                >
-                                  <span>Kapl. Cinsi</span>
-                                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                                  </svg>
-                                </button>
-                                {coverDropdowns.coating && uniqueCoverCoatingTypes.length > 0 && (
-                                  <div className="absolute left-0 mt-2 w-40 bg-white border border-gray-300 rounded-lg shadow-lg z-10 max-h-60 overflow-y-auto">
-                                    {uniqueCoverCoatingTypes.map(coating => (
-                                      <button
-                                        key={coating}
-                                        onClick={() => {
-                                          toggleCoverCoatingFilter(coating)
-                                          setCoverDropdowns(prev => ({ ...prev, coating: false }))
-                                        }}
-                                        className={`w-full text-left px-4 py-2 hover:bg-blue-50 transition-colors ${
-                                          coverFilters.coatingTypes.includes(coating) ? 'bg-blue-50 font-medium' : ''
-                                        }`}
-                                      >
-                                        {coating}
-                                      </button>
-                                    ))}
-                                  </div>
-                                )}
-                              </div>
+                              <select
+                                value={coverFilters.coatingTypes[0] || ''}
+                                onChange={(e) => {
+                                  const val = e.target.value
+                                  setCoverFilters(prev => ({ ...prev, coatingTypes: val ? [val] : [] }))
+                                }}
+                                className="border border-gray-300 rounded-md px-2 py-1 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                              >
+                                <option value="">{coverFilters.coatingTypes[0] ? `Kapl. Cinsi: ${coverFilters.coatingTypes[0]}` : 'Kapl. Cinsi'}</option>
+                                {uniqueCoverCoatingTypes.map(coating => (
+                                  <option key={coating} value={coating}>{coating}</option>
+                                ))}
+                              </select>
                             </th>
                             <th className="text-left py-3 px-4 font-medium text-gray-700">
-                              <div className="relative dropdown-container">
-                                <button
-                                  onClick={() => setCoverDropdowns(prev => ({ ...prev, thickness: !prev.thickness }))}
-                                  className="flex items-center space-x-1 hover:text-blue-600 transition-colors"
-                                >
-                                  <span>Sac Kalınl.</span>
-                                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                                  </svg>
-                                </button>
-                                {coverDropdowns.thickness && uniqueCoverThicknesses.length > 0 && (
-                                  <div className="absolute left-0 mt-2 w-40 bg-white border border-gray-300 rounded-lg shadow-lg z-10 max-h-60 overflow-y-auto">
-                                    {uniqueCoverThicknesses.map(thickness => (
-                                      <button
-                                        key={thickness}
-                                        onClick={() => {
-                                          toggleCoverThicknessFilter(thickness)
-                                          setCoverDropdowns(prev => ({ ...prev, thickness: false }))
-                                        }}
-                                        className={`w-full text-left px-4 py-2 hover:bg-blue-50 transition-colors ${
-                                          coverFilters.sheetThicknesses.includes(thickness) ? 'bg-blue-50 font-medium' : ''
-                                        }`}
-                                      >
-                                        {thickness}
-                                      </button>
-                                    ))}
-                                  </div>
-                                )}
-                              </div>
+                              <select
+                                value={coverFilters.sheetThicknesses[0] || ''}
+                                onChange={(e) => {
+                                  const val = e.target.value
+                                  setCoverFilters(prev => ({ ...prev, sheetThicknesses: val ? [val] : [] }))
+                                }}
+                                className="border border-gray-300 rounded-md px-2 py-1 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                              >
+                                <option value="">{coverFilters.sheetThicknesses[0] ? `Sac Kalınl.: ${coverFilters.sheetThicknesses[0]}` : 'Sac Kalınl.'}</option>
+                                {uniqueCoverThicknesses.map(thickness => (
+                                  <option key={thickness} value={thickness}>{thickness}</option>
+                                ))}
+                              </select>
                             </th>
                             <th className="text-left py-3 px-4 font-medium text-gray-700">İşlem</th>
                           </tr>
@@ -2245,13 +2016,7 @@ export default function ProductDetail({ params }: { params: { id: string } }) {
                               <td className="py-4 px-4">
                                 <div className="flex items-center">
                                   <div className="w-8 h-8 bg-gray-200 rounded mr-3 flex items-center justify-center">
-                                    {cover.imageUrl ? (
-                                      <img src={cover.imageUrl} alt={cover.name} className="w-6 h-6 object-cover rounded" />
-                                    ) : (
-                                      <svg className="w-4 h-4 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
-                                        <path fillRule="evenodd" d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z" clipRule="evenodd" />
-                                      </svg>
-                                    )}
+                                    <img src={cover.imageUrl || '/default-urun-foto/default-urun.png'} alt={cover.name} className="w-6 h-6 object-cover rounded" />
                                   </div>
                                   <div>
                                     <div className="font-medium text-gray-900">{cover.name}</div>

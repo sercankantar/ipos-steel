@@ -145,6 +145,7 @@ const ProductsPage = ({ searchParams }: ProductsPageProps) => {
   const [categories, setCategories] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
   const [currentSlide, setCurrentSlide] = useState(0)
+  const [selectedSurfaceTreatment, setSelectedSurfaceTreatment] = useState<string | null>(null)
   const [accordion, setAccordion] = useState<Record<string, boolean>>({
     malzeme_paslanmaz: true,
     tasarim_kenar_bukumlu: true,
@@ -166,6 +167,8 @@ const ProductsPage = ({ searchParams }: ProductsPageProps) => {
         ])
         setProducts(productsData)
         setCategories(categoriesData)
+        // Kategori değiştiğinde yüzey işleme seçimini sıfırla
+        setSelectedSurfaceTreatment(null)
       } catch (error) {
         console.error('Error fetching data:', error)
       } finally {
@@ -178,6 +181,37 @@ const ProductsPage = ({ searchParams }: ProductsPageProps) => {
   
   // Seçili kategorinin bilgilerini bul
   const selectedCategory = categories.find((cat: any) => cat.slug === category)
+  
+  // Yüzey işleme seçeneklerine sahip kategoriler
+  const getSurfaceTreatmentOptions = (categoryName: string | undefined): string[] => {
+    if (!categoryName) return []
+    
+    if (categoryName === 'Kablo Kanalları' || categoryName === 'Kablo Merdivenleri' || categoryName === 'Trunking Kablo Kanalları') {
+      return ['sıcak daldırma', 'pregalvaniz', 'boyalı']
+    } else if (categoryName === 'Tel Kablo Kanalları') {
+      return ['elektro', 'sıcak daldırma', 'boyalı']
+    }
+    return []
+  }
+  
+  // Kategorinin yüzey işleme seçeneklerine sahip olup olmadığını kontrol et
+  const hasSurfaceTreatmentOptions = useMemo(() => {
+    if (!selectedCategory) return false
+    const options = getSurfaceTreatmentOptions(selectedCategory.name)
+    // Eğer kategoride yüzey işleme seçenekleri varsa ve ürünlerde surfaceTreatment alanı olan ürünler varsa true döndür
+    if (options.length > 0) {
+      return products.some((p: any) => p.surfaceTreatment)
+    }
+    return false
+  }, [selectedCategory, products])
+  
+  // Filtrelenmiş ürünler
+  const filteredProducts = useMemo(() => {
+    if (!selectedSurfaceTreatment || !hasSurfaceTreatmentOptions) {
+      return products
+    }
+    return products.filter((p: any) => p.surfaceTreatment === selectedSurfaceTreatment)
+  }, [products, selectedSurfaceTreatment, hasSurfaceTreatmentOptions])
   
   // Kablo Kanalları için menüde sadece ilgili alt kategorileri göster
   const filteredCategories = useMemo(() => {
@@ -496,107 +530,21 @@ const ProductsPage = ({ searchParams }: ProductsPageProps) => {
                     }}
                   >
                     {products.map((product: any, index: number) => {
-                      // Önce images dizisinden ilk resmi, yoksa imageUrl'i kullan
+                      // Önce images dizisinden ilk resmi, yoksa imageUrl, yoksa default kullan
                       const productImage = (product.images && product.images.length > 0) 
                         ? product.images[0].imageUrl 
-                        : product.imageUrl;
+                        : (product.imageUrl || '/default-urun-foto/default-urun.png');
                       
                       return (
                       <Link key={product.id} href={`/products/${product.id}`} className="flex-none w-80 bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden group hover:shadow-lg transition-all duration-300">
                         {/* Product Image */}
                         <div className="aspect-[4/3] bg-gray-50 relative overflow-hidden">
-                          {productImage ? (
-                            <img
-                              src={productImage}
-                              alt={product.name}
-                              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                            />
-                          ) : (
-                            // Placeholder ürün görselleri
-                            <div className="w-full h-full bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center">
-                              {index === 0 && (
-                                // E-Line KCA AL Serisi: Alüminyum Kablo Merdiveni
-                                <div className="relative w-full h-full flex items-center justify-center p-8">
-                                  <div className="relative">
-                                    <div className="w-48 h-16 bg-gradient-to-r from-gray-300 to-gray-400 rounded shadow-lg">
-                                      {/* Alüminyum merdiven yapısı */}
-                                      <div className="flex justify-between items-center h-full px-2">
-                                        {Array.from({length: 8}).map((_, i) => (
-                                          <div key={i} className="w-1 h-12 bg-gray-600 rounded"></div>
-                                        ))}
-                                      </div>
-                                      {/* Üst ve alt kenarlar - alüminyum görünümü */}
-                                      <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-gray-400 to-gray-500 rounded-t"></div>
-                                      <div className="absolute bottom-0 left-0 w-full h-2 bg-gradient-to-r from-gray-400 to-gray-500 rounded-b"></div>
-                                    </div>
-                                  </div>
-                                </div>
-                              )}
-                              {index === 1 && (
-                                // Aksesuar Ürünleri: Kablo taşıma sistemleri ve taşıyıcı destek
-                                <div className="relative w-full h-full flex items-center justify-center p-8">
-                                  <div className="relative flex items-center space-x-4">
-                                    {/* Çeşitli aksesuar parçaları */}
-                                    <div className="w-4 h-12 bg-gradient-to-b from-gray-400 to-gray-600 rounded"></div>
-                                    <div className="w-6 h-8 bg-gradient-to-b from-red-500 to-red-600 rounded"></div>
-                                    <div className="w-8 h-16 bg-gradient-to-b from-gray-500 to-gray-700 rounded-lg"></div>
-                                    <div className="w-4 h-10 bg-gradient-to-b from-gray-400 to-gray-600 rounded"></div>
-                                    <div className="w-6 h-6 bg-gradient-to-br from-red-400 to-red-500 rounded-full"></div>
-                                  </div>
-                                </div>
-                              )}
-                              {index === 2 && (
-                                // E-Line KM: Sıcak Daldırma Kablo Merdivenleri
-                                <div className="relative w-full h-full flex items-center justify-center p-8">
-                                  <div className="relative">
-                                    <div className="w-48 h-16 bg-gradient-to-r from-gray-400 to-gray-600 rounded shadow-lg">
-                                      <div className="flex justify-between items-center h-full px-2">
-                                        {Array.from({length: 8}).map((_, i) => (
-                                          <div key={i} className="w-1 h-12 bg-gray-700 rounded"></div>
-                                        ))}
-                                      </div>
-                                      <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-gray-500 to-gray-700 rounded-t"></div>
-                                      <div className="absolute bottom-0 left-0 w-full h-2 bg-gradient-to-r from-gray-500 to-gray-700 rounded-b"></div>
-                                    </div>
-                                  </div>
-                                </div>
-                              )}
-                              {index === 3 && (
-                                // E-LINE CT: Sıcak Daldırma Galvanizli Kablo Kanalları
-                                <div className="relative w-full h-full flex items-center justify-center p-8">
-                                  <div className="relative">
-                                    <div className="w-56 h-16 bg-gradient-to-r from-gray-400 to-gray-600 rounded-lg shadow-lg border-2 border-gray-700">
-                                      <div className="grid grid-cols-14 gap-1 p-2 h-full">
-                                        {Array.from({length: 42}).map((_, i) => (
-                                          <div key={i} className="w-1.5 h-1.5 bg-gray-700 rounded-full opacity-60"></div>
-                                        ))}
-                                      </div>
-                                    </div>
-                                  </div>
-                                </div>
-                              )}
-                              {index === 4 && (
-                                // E-Line TLS Serisi: Paslanmaz Çelik veya Elektro Galvaniz Tel Kablo Kanalları
-                                <div className="relative w-full h-full flex items-center justify-center p-8">
-                                  <div className="relative">
-                                    <div className="w-48 h-4 bg-gradient-to-r from-gray-400 to-gray-600 rounded-full shadow-lg"></div>
-                                    <div className="w-40 h-3 bg-gradient-to-r from-gray-300 to-gray-500 rounded-full mt-2 mx-auto shadow-md"></div>
-                                    <div className="w-32 h-2 bg-gradient-to-r from-gray-200 to-gray-400 rounded-full mt-2 mx-auto shadow-sm"></div>
-                                  </div>
-                                </div>
-                              )}
-                              {index >= 5 && (
-                                // Diğer ürünler için genel görsel
-                                <div className="text-gray-400">
-                                  <svg className="w-16 h-16" fill="currentColor" viewBox="0 0 20 20">
-                                    <path fillRule="evenodd" d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z" clipRule="evenodd" />
-                                  </svg>
-                                </div>
-                              )}
-                            </div>
-                          )}
+                          <img
+                            src={productImage}
+                            alt={product.name}
+                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                          />
                         </div>
-
                         {/* Product Content */}
                         <div className="p-6">
                           <h3 className="font-bold text-lg text-gray-900 mb-3 group-hover:text-red-600 transition-colors line-clamp-2">
@@ -633,208 +581,34 @@ const ProductsPage = ({ searchParams }: ProductsPageProps) => {
               <div className="lg:hidden">
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 px-4">
                   {products.map((product: any, index: number) => {
-                    // Önce images dizisinden ilk resmi, yoksa imageUrl'i kullan
+                    // Önce images dizisinden ilk resmi, yoksa imageUrl, yoksa default kullan
                     const productImage = (product.images && product.images.length > 0) 
                       ? product.images[0].imageUrl 
-                      : product.imageUrl;
+                      : (product.imageUrl || '/default-urun-foto/default-urun.png');
                     
                     return (
                     <Link key={product.id} href={`/products/${product.id}`} className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden group hover:shadow-lg transition-all duration-300 block">
                       {/* Product Image */}
                       <div className="aspect-[4/3] bg-gray-50 relative overflow-hidden">
-                        {productImage ? (
-                          <img
-                            src={productImage}
-                            alt={product.name}
-                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                          />
-                        ) : (
-                          // Placeholder ürün görselleri
-                          <div className="w-full h-full bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center">
-                            {index === 0 && (
-                              // E-Line KCA AL Serisi: Alüminyum Kablo Merdiveni
-                              <div className="relative w-full h-full flex items-center justify-center p-6">
-                                <div className="relative">
-                                  <div className="w-40 h-12 bg-gradient-to-r from-gray-300 to-gray-400 rounded shadow-lg">
-                                    {/* Alüminyum merdiven yapısı */}
-                                    <div className="flex justify-between items-center h-full px-2">
-                                      {Array.from({length: 8}).map((_, i) => (
-                                        <div key={i} className="w-1 h-8 bg-gray-600 rounded"></div>
-                                      ))}
-                                    </div>
-                                    {/* Üst ve alt kenarlar - alüminyum görünümü */}
-                                    <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-gray-400 to-gray-500 rounded-t"></div>
-                                    <div className="absolute bottom-0 left-0 w-full h-2 bg-gradient-to-r from-gray-400 to-gray-500 rounded-b"></div>
-                                  </div>
-                                </div>
-                              </div>
-                            )}
-                            {index === 1 && (
-                              // Aksesuar Ürünleri: Kablo taşıma sistemleri ve taşıyıcı destek
-                              <div className="relative w-full h-full flex items-center justify-center p-6">
-                                <div className="relative flex items-center space-x-3">
-                                  {/* Çeşitli aksesuar parçaları */}
-                                  <div className="w-3 h-8 bg-gradient-to-b from-gray-400 to-gray-600 rounded"></div>
-                                  <div className="w-4 h-6 bg-gradient-to-b from-red-500 to-red-600 rounded"></div>
-                                  <div className="w-6 h-10 bg-gradient-to-b from-gray-500 to-gray-700 rounded-lg"></div>
-                                  <div className="w-3 h-7 bg-gradient-to-b from-gray-400 to-gray-600 rounded"></div>
-                                  <div className="w-5 h-5 bg-gradient-to-br from-red-400 to-red-500 rounded-full"></div>
-                                </div>
-                              </div>
-                            )}
-                            {index === 2 && (
-                              // E-Line KM: Sıcak Daldırma Kablo Merdivenleri
-                              <div className="relative w-full h-full flex items-center justify-center p-6">
-                                <div className="relative">
-                                  <div className="w-40 h-12 bg-gradient-to-r from-gray-400 to-gray-600 rounded shadow-lg">
-                                    <div className="flex justify-between items-center h-full px-2">
-                                      {Array.from({length: 6}).map((_, i) => (
-                                        <div key={i} className="w-1 h-8 bg-gray-700 rounded"></div>
-                                      ))}
-                                    </div>
-                                    <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-gray-500 to-gray-700 rounded-t"></div>
-                                    <div className="absolute bottom-0 left-0 w-full h-2 bg-gradient-to-r from-gray-500 to-gray-700 rounded-b"></div>
-                                  </div>
-                                </div>
-                              </div>
-                            )}
-                            {index === 3 && (
-                              // E-LINE CT: Sıcak Daldırma Galvanizli Kablo Kanalları
-                              <div className="relative w-full h-full flex items-center justify-center p-6">
-                                <div className="relative">
-                                  <div className="w-48 h-14 bg-gradient-to-r from-gray-400 to-gray-600 rounded-lg shadow-lg border-2 border-gray-700">
-                                    <div className="grid grid-cols-12 gap-1 p-2 h-full">
-                                      {Array.from({length: 36}).map((_, i) => (
-                                        <div key={i} className="w-1 h-1 bg-gray-700 rounded-full opacity-60"></div>
-                                      ))}
-                                    </div>
-                                  </div>
-                                </div>
-                              </div>
-                            )}
-                            {index === 4 && (
-                              // E-Line TLS Serisi: Paslanmaz Çelik veya Elektro Galvaniz Tel Kablo Kanalları
-                              <div className="relative w-full h-full flex items-center justify-center p-6">
-                                <div className="relative">
-                                  <div className="w-40 h-3 bg-gradient-to-r from-gray-400 to-gray-600 rounded-full shadow-lg"></div>
-                                  <div className="w-32 h-2 bg-gradient-to-r from-gray-300 to-gray-500 rounded-full mt-2 mx-auto shadow-md"></div>
-                                  <div className="w-24 h-1 bg-gradient-to-r from-gray-200 to-gray-400 rounded-full mt-2 mx-auto shadow-sm"></div>
-                                </div>
-                              </div>
-                            )}
-                            {index === 5 && (
-                              // E-Line KCA-GRP CTA-GRP Serisi: Fiberglas Takviyeli Kablo Taşıma Sistemleri
-                              <div className="relative w-full h-full flex items-center justify-center p-6">
-                                <div className="relative">
-                                  <div className="w-40 h-12 bg-gradient-to-r from-amber-300 to-amber-500 rounded shadow-lg">
-                                    {/* Fiberglas merdiven yapısı */}
-                                    <div className="flex justify-between items-center h-full px-2">
-                                      {Array.from({length: 7}).map((_, i) => (
-                                        <div key={i} className="w-1 h-8 bg-amber-700 rounded"></div>
-                                      ))}
-                                    </div>
-                                    <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-amber-400 to-amber-600 rounded-t"></div>
-                                    <div className="absolute bottom-0 left-0 w-full h-2 bg-gradient-to-r from-amber-400 to-amber-600 rounded-b"></div>
-                                  </div>
-                                </div>
-                              </div>
-                            )}
-                            {index === 6 && (
-                              // E-Line KCA OG Serisi: Ekstra Ağır Hizmet Tipi Kablo Merdiveni
-                              <div className="relative w-full h-full flex items-center justify-center p-6">
-                                <div className="relative">
-                                  <div className="w-40 h-14 bg-gradient-to-r from-gray-500 to-gray-700 rounded shadow-lg border-2 border-gray-800">
-                                    {/* Ekstra ağır hizmet merdiveni */}
-                                    <div className="flex justify-between items-center h-full px-2">
-                                      {Array.from({length: 6}).map((_, i) => (
-                                        <div key={i} className="w-2 h-10 bg-gray-800 rounded"></div>
-                                      ))}
-                                    </div>
-                                    <div className="absolute top-0 left-0 w-full h-3 bg-gradient-to-r from-gray-600 to-gray-800 rounded-t"></div>
-                                    <div className="absolute bottom-0 left-0 w-full h-3 bg-gradient-to-r from-gray-600 to-gray-800 rounded-b"></div>
-                                  </div>
-                                </div>
-                              </div>
-                            )}
-                            {index === 7 && (
-                              // E-Line A-A: Kablo Taşıma Askı Sistemleri ve Aksesuarları
-                              <div className="relative w-full h-full flex items-center justify-center p-6">
-                                <div className="relative">
-                                  <div className="flex space-x-2">
-                                    <div className="w-4 h-16 bg-gradient-to-b from-gray-400 to-gray-600 rounded transform rotate-12 shadow-lg"></div>
-                                    <div className="w-4 h-20 bg-gradient-to-b from-gray-400 to-gray-600 rounded transform -rotate-6 shadow-lg"></div>
-                                    <div className="w-4 h-18 bg-gradient-to-b from-gray-400 to-gray-600 rounded transform rotate-3 shadow-lg"></div>
-                                    <div className="w-4 h-24 bg-gradient-to-b from-gray-400 to-gray-600 rounded transform -rotate-12 shadow-lg"></div>
-                                  </div>
-                                </div>
-                              </div>
-                            )}
-                            {index === 8 && (
-                              // E-Line Binrak: Taşıyıcı Destek Sistemleri (G Profil)
-                              <div className="relative w-full h-full flex items-center justify-center p-6">
-                                <div className="relative">
-                                  <div className="w-32 h-3 bg-gradient-to-r from-gray-400 to-gray-600 rounded-full shadow-lg"></div>
-                                  <div className="w-28 h-2 bg-gradient-to-r from-gray-300 to-gray-500 rounded-full mt-1 mx-auto shadow-md"></div>
-                                </div>
-                              </div>
-                            )}
-                            {index === 9 && (
-                              // E-LINE UK: Pregalvaniz Kablo Kanalları
-                              <div className="relative w-full h-full flex items-center justify-center p-6">
-                                <div className="relative">
-                                  <div className="w-44 h-12 bg-gradient-to-r from-gray-300 to-gray-500 rounded-lg shadow-lg border border-gray-600">
-                                    <div className="grid grid-cols-10 gap-1 p-2 h-full">
-                                      {Array.from({length: 30}).map((_, i) => (
-                                        <div key={i} className="w-1 h-1 bg-gray-600 rounded-full opacity-70"></div>
-                                      ))}
-                                    </div>
-                                  </div>
-                                </div>
-                              </div>
-                            )}
-                            {index === 10 && (
-                              // E-LINE TKS: Pregalvaniz / Sıcak Daldırma Trunking Sistemleri
-                              <div className="relative w-full h-full flex items-center justify-center p-6">
-                                <div className="relative">
-                                  <div className="w-44 h-16 bg-gradient-to-r from-gray-400 to-gray-600 rounded-lg shadow-lg">
-                                    <div className="w-full h-3 bg-gradient-to-r from-gray-300 to-gray-500 rounded-t-lg"></div>
-                                    <div className="flex justify-between items-center px-3 py-2">
-                                      <div className="w-2 h-2 bg-gray-700 rounded-full"></div>
-                                      <div className="w-2 h-2 bg-gray-700 rounded-full"></div>
-                                      <div className="w-2 h-2 bg-gray-700 rounded-full"></div>
-                                      <div className="w-2 h-2 bg-gray-700 rounded-full"></div>
-                                    </div>
-                                  </div>
-                                </div>
-                              </div>
-                            )}
-                            {index >= 11 && (
-                              // Diğer ürünler için genel görsel
-                              <div className="text-gray-400">
-                                <svg className="w-12 h-12" fill="currentColor" viewBox="0 0 20 20">
-                                  <path fillRule="evenodd" d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z" clipRule="evenodd" />
-                                </svg>
-                              </div>
-                            )}
-                          </div>
+                        <img
+                          src={productImage}
+                          alt={product.name}
+                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                        />
+                      </div>
+                      {/* Product Info */}
+                      <div className="p-4">
+                        <div className="flex items-center justify-between">
+                          <h3 className="text-base font-semibold text-gray-800 group-hover:text-gray-900 transition-colors">{product.name}</h3>
+                          <ArrowRight className="w-5 h-5 text-gray-400 group-hover:text-gray-600 transition-colors" />
+                        </div>
+                        {product.category?.name && (
+                          <p className="text-sm text-gray-500 mt-1">{product.category.name}</p>
                         )}
                       </div>
-
-                      {/* Product Content */}
-                      <div className="p-4">
-                        <h3 className="font-bold text-lg text-gray-900 mb-2 group-hover:text-red-600 transition-colors line-clamp-2">
-                          {product.name}
-                        </h3>
-                        <p className="text-gray-600 text-sm leading-relaxed mb-3 line-clamp-3">
-                          {product.description || `${product.name} serisi ürünlerimiz hakkında detaylı bilgi almak için ürünü görüntüleyin.`}
-                        </p>
-                        <div className="flex items-center text-red-600 text-sm font-medium group-hover:text-red-700 transition-colors">
-                          <span>Ürünü Görüntüle</span>
-                          <ArrowRight className="h-4 w-4 ml-1 transform group-hover:translate-x-1 transition-transform" />
-                        </div>
-                      </div>
                     </Link>
-                  )})}
+                    )
+                  })}
                 </div>
               </div>
             </div>
@@ -1501,34 +1275,19 @@ const ProductsPage = ({ searchParams }: ProductsPageProps) => {
                     }}
                   >
                     {products.map((product: any, index: number) => {
-                      // Önce images dizisinden ilk resmi, yoksa imageUrl'i kullan
+                      // Önce images dizisinden ilk resmi, yoksa imageUrl, yoksa default kullan
                       const productImage = (product.images && product.images.length > 0) 
                         ? product.images[0].imageUrl 
-                        : product.imageUrl;
+                        : (product.imageUrl || '/default-urun-foto/default-urun.png');
                       
                       return (
                       <div key={product.id} className="flex-none w-80 bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden group hover:shadow-lg transition-all duration-300">
                         <div className="aspect-[4/3] bg-gray-50 relative overflow-hidden">
-                          {productImage ? (
-                            <img
-                              src={productImage}
-                              alt={product.name}
-                              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                            />
-                          ) : (
-                            <div className="w-full h-full bg-gradient-to-br from-blue-100 to-blue-200 flex items-center justify-center">
-                              <div className="relative w-full h-full flex items-center justify-center p-8">
-                                <div className="w-48 h-20 bg-gradient-to-r from-blue-500 to-blue-600 rounded-lg shadow-lg">
-                                  <div className="flex justify-between items-center px-6 py-2 h-full">
-                                    <div className="w-3 h-12 bg-blue-800 rounded"></div>
-                                    <div className="w-3 h-12 bg-blue-800 rounded"></div>
-                                    <div className="w-3 h-12 bg-blue-800 rounded"></div>
-                                    <div className="w-3 h-12 bg-blue-800 rounded"></div>
-                                  </div>
-                                </div>
-                              </div>
-                            </div>
-                          )}
+                          <img
+                            src={productImage}
+                            alt={product.name}
+                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                          />
                         </div>
                         <div className="p-6">
                           <h3 className="font-bold text-lg text-gray-900 mb-3 group-hover:text-blue-600 transition-colors line-clamp-2">
@@ -1745,7 +1504,7 @@ const ProductsPage = ({ searchParams }: ProductsPageProps) => {
                   {products.map((product: any) => {
                     const productImage = (product.images && product.images.length > 0)
                       ? product.images[0].imageUrl
-                      : (product.imageUrl || product.mainImageUrl)
+                      : (product.imageUrl || product.mainImageUrl || '/default-urun-foto/default-urun.png')
 
                     return (
                       <Link
@@ -1753,13 +1512,11 @@ const ProductsPage = ({ searchParams }: ProductsPageProps) => {
                         href={`/products/${product.id}`}
                         className="block p-4 border border-gray-200 rounded-lg hover:border-gray-300 hover:shadow-sm transition-all duration-200 text-center"
                       >
-                        {productImage && (
-                          <img
-                            src={productImage}
-                            alt={product.name}
-                            className="w-full h-32 object-contain rounded mb-3"
-                          />
-                        )}
+                        <img
+                          src={productImage}
+                          alt={product.name}
+                          className="w-full h-32 object-contain rounded mb-3"
+                        />
                         <h3 className="font-medium text-gray-900 text-sm">{product.name}</h3>
                       </Link>
                     )
@@ -1954,7 +1711,7 @@ const ProductsPage = ({ searchParams }: ProductsPageProps) => {
                   {products.map((product: any) => {
                     const productImage = (product.images && product.images.length > 0)
                       ? product.images[0].imageUrl
-                      : (product.imageUrl || product.mainImageUrl)
+                      : (product.imageUrl || product.mainImageUrl || '/default-urun-foto/default-urun.png')
 
                     return (
                       <Link
@@ -1962,13 +1719,11 @@ const ProductsPage = ({ searchParams }: ProductsPageProps) => {
                         href={`/products/${product.id}`}
                         className="block p-4 border border-gray-200 rounded-lg hover:border-gray-300 hover:shadow-sm transition-all duration-200 text-center"
                       >
-                        {productImage && (
-                          <img
-                            src={productImage}
-                            alt={product.name}
-                            className="w-full h-32 object-contain rounded mb-3"
-                          />
-                        )}
+                        <img
+                          src={productImage}
+                          alt={product.name}
+                          className="w-full h-32 object-contain rounded mb-3"
+                        />
                         <h3 className="font-medium text-gray-900 text-sm">{product.name}</h3>
                       </Link>
                     )
@@ -2818,50 +2573,109 @@ const ProductsPage = ({ searchParams }: ProductsPageProps) => {
                   {selectedCategory.name}
                 </h1>
 
-                {/* Ürünler */}
-                {products.length > 0 ? (
-                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                    {products.map((product: any) => {
-                      // Önce images dizisinden ilk resmi, yoksa imageUrl veya mainImageUrl'i kullan
-                      const productImage = (product.images && product.images.length > 0) 
-                        ? product.images[0].imageUrl 
-                        : (product.imageUrl || product.mainImageUrl);
-                      
-                      // GES ürünleri için farklı link
-                      const gesCategories = ['ges-arazi', 'ges-cati', 'solar-montaj-sistemleri'];
-                      const productLink = gesCategories.includes(category || '') 
-                        ? `/ges-products/${product.id}` 
-                        : `/products/${product.id}`;
-                      
-                      return (
-                      <Link
-                        key={product.id}
-                        href={productLink}
-                        className="block p-4 border border-gray-200 rounded-lg hover:border-gray-300 hover:shadow-sm transition-all duration-200 text-center"
-                      >
-                        {productImage && (
-                          <img
-                            src={productImage}
-                            alt={product.name}
-                            className="w-full h-32 object-contain rounded mb-3"
-                          />
-                        )}
-                        <h3 className="font-medium text-gray-900 text-sm">
-                          {product.name}
-                        </h3>
-                      </Link>
-                    )})}
+                {/* Yüzey İşleme Seçim Ekranı */}
+                {hasSurfaceTreatmentOptions && !selectedSurfaceTreatment ? (
+                  <div className="bg-white border border-gray-200 rounded-lg p-8">
+                    <h2 className="text-2xl font-bold font-neuropol text-gray-900 mb-6 text-center">
+                      Yüzey İşleme Seçiniz
+                    </h2>
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                      {getSurfaceTreatmentOptions(selectedCategory?.name).map((option) => (
+                        <button
+                          key={option}
+                          onClick={() => setSelectedSurfaceTreatment(option)}
+                          className="p-6 border-2 border-gray-300 rounded-lg hover:border-[#1a3056] hover:bg-[#1a3056]/5 transition-all duration-200 text-center group"
+                        >
+                          <div className="text-2xl font-bold font-neuropol text-gray-900 group-hover:text-[#1a3056] transition-colors mb-2">
+                            {option.charAt(0).toUpperCase() + option.slice(1)}
+                          </div>
+                          <div className="text-sm text-gray-600">
+                            {option === 'sıcak daldırma' && 'Sıcak daldırma galvaniz kaplama'}
+                            {option === 'pregalvaniz' && 'Pregalvaniz kaplama'}
+                            {option === 'boyalı' && 'Boyalı yüzey işleme'}
+                            {option === 'elektro' && 'Elektro galvaniz kaplama'}
+                          </div>
+                        </button>
+                      ))}
+                    </div>
                   </div>
                 ) : (
-                  <div className="bg-white border border-gray-200 rounded-lg p-12 text-center">
-                    <svg className="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4" />
-                    </svg>
-                    <h3 className="mt-4 text-lg font-medium text-gray-900">Bu kategoride ürün bulunamadı</h3>
-                    <p className="mt-2 text-sm text-gray-500">
-                      Bu kategoride henüz ürün eklenmemiştir.
-                    </p>
-                  </div>
+                  <>
+                    {/* Ürünler */}
+                    {filteredProducts.length > 0 ? (
+                      <>
+                        {/* Seçilen yüzey işleme bilgisi */}
+                        {selectedSurfaceTreatment && (
+                          <div className="flex items-center justify-between mb-4">
+                            <div className="flex items-center gap-3">
+                              <span className="text-gray-600">Seçilen:</span>
+                              <span className="font-semibold text-gray-900 capitalize">{selectedSurfaceTreatment}</span>
+                            </div>
+                            <button
+                              onClick={() => setSelectedSurfaceTreatment(null)}
+                              className="text-sm text-[#1a3056] hover:underline"
+                            >
+                              Seçimi Temizle
+                            </button>
+                          </div>
+                        )}
+                        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                          {filteredProducts.map((product: any) => {
+                            // Önce images dizisinden ilk resmi, yoksa imageUrl veya mainImageUrl'i kullan
+                            const productImage = (product.images && product.images.length > 0) 
+                              ? product.images[0].imageUrl 
+                              : (product.imageUrl || product.mainImageUrl || '/default-urun-foto/default-urun.png');
+                            
+                            // GES ürünleri için farklı link
+                            const gesCategories = ['ges-arazi', 'ges-cati', 'solar-montaj-sistemleri'];
+                            const productLink = gesCategories.includes(category || '') 
+                              ? `/ges-products/${product.id}` 
+                              : `/products/${product.id}`;
+                            
+                            return (
+                            <Link
+                              key={product.id}
+                              href={productLink}
+                              className="block p-4 border border-gray-200 rounded-lg hover:border-gray-300 hover:shadow-sm transition-all duration-200 text-center"
+                            >
+                              <img
+                                src={productImage}
+                                alt={product.name}
+                                className="w-full h-32 object-contain rounded mb-3"
+                              />
+                              <h3 className="font-medium text-gray-900 text-sm">
+                                {product.name}
+                              </h3>
+                            </Link>
+                          )})}
+                        </div>
+                      </>
+                    ) : (
+                      <div className="bg-white border border-gray-200 rounded-lg p-12 text-center">
+                        <svg className="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4" />
+                        </svg>
+                        <h3 className="mt-4 text-lg font-medium text-gray-900">
+                          {selectedSurfaceTreatment 
+                            ? `Seçilen yüzey işleme (${selectedSurfaceTreatment}) için ürün bulunamadı`
+                            : 'Bu kategoride ürün bulunamadı'}
+                        </h3>
+                        <p className="mt-2 text-sm text-gray-500">
+                          {selectedSurfaceTreatment 
+                            ? 'Farklı bir yüzey işleme seçeneği deneyebilirsiniz.'
+                            : 'Bu kategoride henüz ürün eklenmemiştir.'}
+                        </p>
+                        {selectedSurfaceTreatment && (
+                          <button
+                            onClick={() => setSelectedSurfaceTreatment(null)}
+                            className="mt-4 text-sm text-[#1a3056] hover:underline"
+                          >
+                            Seçimi Temizle
+                          </button>
+                        )}
+                      </div>
+                    )}
+                  </>
                 )}
 
                 {/* Kategori Açıklaması */}

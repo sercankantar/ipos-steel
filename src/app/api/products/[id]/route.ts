@@ -14,6 +14,7 @@ export async function GET(_req: NextRequest, { params }: { params: { id: string 
         series: true,
         material: true,
         coatingType: true,
+        surfaceTreatment: true,
         thickness: true,
         width: true,
         height: true,
