@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { Edit, Trash2, Plus } from 'lucide-react'
+import { Edit, Trash2, Plus, X } from 'lucide-react'
 import { toast } from 'sonner'
 
 interface CategoryItem {
@@ -28,6 +28,31 @@ export default function CategoriesManager() {
   const fileRef = useRef<HTMLInputElement | null>(null)
 
   useEffect(() => { fetchAll() }, [])
+
+  // ESC tuşu ile modal'ı kapatma ve body scroll kontrolü
+  useEffect(() => {
+    const handleEscape = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && formOpen) {
+        setFormOpen(false)
+        setEditing(null)
+        setForm({ name: '', slug: '', isActive: true })
+        setImage(null)
+        setImagePreview(null)
+      }
+    }
+
+    if (formOpen) {
+      document.addEventListener('keydown', handleEscape)
+      document.body.style.overflow = 'hidden'
+    } else {
+      document.body.style.overflow = 'unset'
+    }
+
+    return () => {
+      document.removeEventListener('keydown', handleEscape)
+      document.body.style.overflow = 'unset'
+    }
+  }, [formOpen])
 
   const fetchAll = async () => {
     try {
@@ -107,9 +132,40 @@ export default function CategoriesManager() {
         </Button>
       </div>
 
+      {/* Modal */}
       {formOpen && (
-        <div className="bg-white p-6 rounded-md border mb-6">
-          <form onSubmit={onSubmit} className="space-y-4">
+        <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4" onClick={(e) => {
+          if (e.target === e.currentTarget) {
+            setFormOpen(false)
+            setEditing(null)
+            setForm({ name: '', slug: '', isActive: true })
+            setImage(null)
+            setImagePreview(null)
+          }
+        }}>
+          <div className="bg-white rounded-lg w-full max-w-2xl max-h-[90vh] overflow-hidden flex flex-col">
+            {/* Modal Header */}
+            <div className="flex items-center justify-between p-6 border-b border-gray-200">
+              <h2 className="text-xl font-semibold">
+                {editing ? 'Kategori Düzenle' : 'Yeni Kategori Ekle'}
+              </h2>
+              <button
+                onClick={() => {
+                  setFormOpen(false)
+                  setEditing(null)
+                  setForm({ name: '', slug: '', isActive: true })
+                  setImage(null)
+                  setImagePreview(null)
+                }}
+                className="text-gray-400 hover:text-gray-600 transition-colors"
+              >
+                <X className="w-6 h-6" />
+              </button>
+            </div>
+            
+            {/* Modal Body - Scrollable */}
+            <div className="overflow-y-auto flex-1 p-6">
+              <form onSubmit={onSubmit} className="space-y-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <Label htmlFor="name">Kategori Adı</Label>
@@ -136,11 +192,13 @@ export default function CategoriesManager() {
               )}
               {imagePreview && <img src={imagePreview} alt="Önizleme" className="h-12 w-12 object-cover rounded border ml-auto" />}
             </div>
-            <div className="flex gap-3">
-              <Button type="submit">{editing ? 'Güncelle' : 'Ekle'}</Button>
-              <Button type="button" variant="outline" onClick={() => { setFormOpen(false); setEditing(null); setImage(null); setImagePreview(null) }}>İptal</Button>
+                <div className="flex gap-3 pt-4 border-t border-gray-200">
+                  <Button type="submit">{editing ? 'Güncelle' : 'Ekle'}</Button>
+                  <Button type="button" variant="outline" onClick={() => { setFormOpen(false); setEditing(null); setForm({ name: '', slug: '', isActive: true }); setImage(null); setImagePreview(null) }}>İptal</Button>
+                </div>
+              </form>
             </div>
-          </form>
+          </div>
         </div>
       )}
 

@@ -358,15 +358,24 @@ export default function UrunIslemler() {
     fetchCatalogs()
   }, [])
 
-  // ESC tuşu ile modal'ı kapatma ve body scroll kontrolü
+  // ESC tuşu ile modal'ları kapatma ve body scroll kontrolü
   useEffect(() => {
     const handleEscape = (e: KeyboardEvent) => {
-      if (e.key === 'Escape' && showForm) {
-        resetForm()
+      if (e.key === 'Escape') {
+        if (showForm) resetForm()
+        else if (showSubProductForm) resetSubProductForm()
+        else if (showChannelForm) resetChannelForm()
+        else if (showModuleForm) resetModuleForm()
+        else if (showAccessoryForm) resetAccessoryForm()
+        else if (showCoverForm) resetCoverForm()
+        else if (showGesProductForm) resetGesProductForm()
       }
     }
 
-    if (showForm) {
+    const isAnyModalOpen = showForm || showSubProductForm || showChannelForm || 
+                          showModuleForm || showAccessoryForm || showCoverForm || showGesProductForm
+
+    if (isAnyModalOpen) {
       document.addEventListener('keydown', handleEscape)
       document.body.style.overflow = 'hidden'
     } else {
@@ -377,7 +386,7 @@ export default function UrunIslemler() {
       document.removeEventListener('keydown', handleEscape)
       document.body.style.overflow = 'unset'
     }
-  }, [showForm])
+  }, [showForm, showSubProductForm, showChannelForm, showModuleForm, showAccessoryForm, showCoverForm, showGesProductForm])
 
   const fetchProducts = async () => {
     try {
@@ -481,7 +490,7 @@ export default function UrunIslemler() {
       
       const method = editingProduct ? 'PUT' : 'POST'
       
-      // Çoklu görsel yükleme
+      // Çoklu görsel yükleme - yeni seçilen dosyaları yükle
       const uploadedImages: { secure_url: string; public_id: string }[] = []
       if (images.length > 0) {
         for (const image of images) {
@@ -496,13 +505,67 @@ export default function UrunIslemler() {
         }
       }
 
-      const payload: any = {
-        ...formData,
-        images: uploadedImages.map((img, index) => ({
+      // Mevcut görselleri koru (güncelleme durumunda)
+      let finalImages: any[] = []
+      if (editingProduct) {
+        // Mevcut görselleri al (preview'dan URL'leri, yeni yüklenenlerden ise hem URL hem public_id)
+        const existingImages = editingProduct.images || []
+        const existingImageUrls = existingImages.map(img => img.imageUrl)
+        
+        // Preview'daki görselleri kontrol et - hangileri mevcut, hangileri yeni
+        const currentPreviews = imagePreviews.filter(url => existingImageUrls.includes(url))
+        const newPreviews = imagePreviews.filter(url => !existingImageUrls.includes(url))
+        
+        // Mevcut görselleri ekle (public_id'leri ile)
+        finalImages = existingImages
+          .filter(img => currentPreviews.includes(img.imageUrl))
+          .map(img => ({
+            imageUrl: img.imageUrl,
+            imagePublicId: img.imagePublicId || '',
+            order: 0 // Sıralama daha sonra düzeltilecek
+          }))
+        
+        // Yeni yüklenen görselleri ekle
+        uploadedImages.forEach((img, index) => {
+          finalImages.push({
+            imageUrl: img.secure_url,
+            imagePublicId: img.public_id,
+            order: finalImages.length + index
+          })
+        })
+        
+        // Sıralamayı düzelt (preview sırasına göre)
+        finalImages = imagePreviews.map((previewUrl, index) => {
+          const existing = existingImages.find(img => img.imageUrl === previewUrl)
+          if (existing) {
+            return {
+              imageUrl: existing.imageUrl,
+              imagePublicId: existing.imagePublicId || '',
+              order: index
+            }
+          }
+          const uploaded = uploadedImages.find(img => img.secure_url === previewUrl)
+          if (uploaded) {
+            return {
+              imageUrl: uploaded.secure_url,
+              imagePublicId: uploaded.public_id,
+              order: index
+            }
+          }
+          return null
+        }).filter((img): img is any => img !== null)
+      } else {
+        // Yeni ürün - sadece yeni yüklenen görselleri ekle
+        finalImages = uploadedImages.map((img, index) => ({
           imageUrl: img.secure_url,
           imagePublicId: img.public_id,
           order: index
         }))
+      }
+
+      const payload: any = {
+        ...formData,
+        images: finalImages.length > 0 ? finalImages : undefined
       }
 
       const response = await fetch(url, {
@@ -540,6 +603,13 @@ export default function UrunIslemler() {
       catalogId: product.catalogId || '',
       categoryId: product.categoryId
     })
+    // Mevcut görselleri preview'a yükle
+    if (product.images && product.images.length > 0) {
+      setImagePreviews(product.images.map(img => img.imageUrl))
+    } else {
+      setImagePreviews([])
+    }
+    setImages([]) // Yeni seçilen dosyaları temizle
     setShowForm(true)
   }
 
@@ -1745,18 +1815,36 @@ export default function UrunIslemler() {
       {activeTab === 'sub-products' && (
         <>
           <div className="mb-8">
-            <Button onClick={() => setShowSubProductForm(!showSubProductForm)}>
+            <Button onClick={() => setShowSubProductForm(true)}>
               <Plus className="w-4 h-4 mr-2" />
-              {showSubProductForm ? 'Formu Gizle' : 'Yeni Alt Ürün Ekle'}
+              Yeni Alt Ürün Ekle
             </Button>
           </div>
 
+          {/* Modal */}
           {showSubProductForm && (
-            <div className="mb-8 bg-white p-6 rounded-lg shadow">
-              <h2 className="text-xl font-semibold mb-4">
-                {editingSubProduct ? 'Alt Ürün Düzenle' : 'Yeni Alt Ürün Ekle'}
-              </h2>
-              <form onSubmit={handleSubProductSubmit} className="space-y-4">
+            <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4" onClick={(e) => {
+              if (e.target === e.currentTarget) {
+                resetSubProductForm()
+              }
+            }}>
+              <div className="bg-white rounded-lg w-full max-w-4xl max-h-[90vh] overflow-hidden flex flex-col">
+                {/* Modal Header */}
+                <div className="flex items-center justify-between p-6 border-b border-gray-200">
+                  <h2 className="text-xl font-semibold">
+                    {editingSubProduct ? 'Alt Ürün Düzenle' : 'Yeni Alt Ürün Ekle'}
+                  </h2>
+                  <button
+                    onClick={resetSubProductForm}
+                    className="text-gray-400 hover:text-gray-600 transition-colors"
+                  >
+                    <X className="w-6 h-6" />
+                  </button>
+                </div>
+                
+                {/* Modal Body - Scrollable */}
+                <div className="overflow-y-auto flex-1 p-6">
+                  <form onSubmit={handleSubProductSubmit} className="space-y-4">
                 <div>
                   <Label htmlFor="subProductName">Alt Ürün Adı *</Label>
                   <Input 
@@ -1853,15 +1941,17 @@ export default function UrunIslemler() {
                   )}
                 </div>
                 
-                <div className="flex space-x-4">
-                  <Button type="submit">
-                    {editingSubProduct ? 'Güncelle' : 'Ekle'}
-                  </Button>
-                  <Button type="button" variant="outline" onClick={resetSubProductForm}>
-                    İptal
-                  </Button>
+                    <div className="flex space-x-4 pt-4 border-t border-gray-200">
+                      <Button type="submit">
+                        {editingSubProduct ? 'Güncelle' : 'Ekle'}
+                      </Button>
+                      <Button type="button" variant="outline" onClick={resetSubProductForm}>
+                        İptal
+                      </Button>
+                    </div>
+                  </form>
                 </div>
-              </form>
+              </div>
             </div>
           )}
 
@@ -1935,18 +2025,36 @@ export default function UrunIslemler() {
       {activeTab === 'channels' && (
         <>
           <div className="mb-8">
-            <Button onClick={() => setShowChannelForm(!showChannelForm)}>
+            <Button onClick={() => setShowChannelForm(true)}>
               <Plus className="w-4 h-4 mr-2" />
-              {showChannelForm ? 'Formu Gizle' : 'Yeni Kanal Ekle'}
+              Yeni Kanal Ekle
             </Button>
           </div>
 
+          {/* Modal */}
           {showChannelForm && (
-            <div className="mb-8 bg-white p-6 rounded-lg shadow">
-              <h2 className="text-xl font-semibold mb-4">
-                {editingChannel ? 'Kanal Düzenle' : 'Yeni Kanal Ekle'}
-              </h2>
-              <form onSubmit={handleChannelSubmit} className="space-y-4">
+            <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4" onClick={(e) => {
+              if (e.target === e.currentTarget) {
+                resetChannelForm()
+              }
+            }}>
+              <div className="bg-white rounded-lg w-full max-w-4xl max-h-[90vh] overflow-hidden flex flex-col">
+                {/* Modal Header */}
+                <div className="flex items-center justify-between p-6 border-b border-gray-200">
+                  <h2 className="text-xl font-semibold">
+                    {editingChannel ? 'Kanal Düzenle' : 'Yeni Kanal Ekle'}
+                  </h2>
+                  <button
+                    onClick={resetChannelForm}
+                    className="text-gray-400 hover:text-gray-600 transition-colors"
+                  >
+                    <X className="w-6 h-6" />
+                  </button>
+                </div>
+                
+                {/* Modal Body - Scrollable */}
+                <div className="overflow-y-auto flex-1 p-6">
+                  <form onSubmit={handleChannelSubmit} className="space-y-4">
                 <div>
                   <Label htmlFor="channelName">Kanal Adı *</Label>
                   <Input 
@@ -2072,15 +2180,17 @@ export default function UrunIslemler() {
                   )}
                 </div>
                 
-                <div className="flex space-x-4">
-                  <Button type="submit">
-                    {editingChannel ? 'Güncelle' : 'Ekle'}
-                  </Button>
-                  <Button type="button" variant="outline" onClick={resetChannelForm}>
-                    İptal
-                  </Button>
+                    <div className="flex space-x-4 pt-4 border-t border-gray-200">
+                      <Button type="submit">
+                        {editingChannel ? 'Güncelle' : 'Ekle'}
+                      </Button>
+                      <Button type="button" variant="outline" onClick={resetChannelForm}>
+                        İptal
+                      </Button>
+                    </div>
+                  </form>
                 </div>
-              </form>
+              </div>
             </div>
           )}
 
@@ -2167,18 +2277,36 @@ export default function UrunIslemler() {
       {activeTab === 'modules' && (
         <>
           <div className="mb-8">
-            <Button onClick={() => setShowModuleForm(!showModuleForm)}>
+            <Button onClick={() => setShowModuleForm(true)}>
               <Plus className="w-4 h-4 mr-2" />
-              {showModuleForm ? 'Formu Gizle' : 'Yeni Modül Ekle'}
+              Yeni Modül Ekle
             </Button>
           </div>
 
+          {/* Modal */}
           {showModuleForm && (
-            <div className="mb-8 bg-white p-6 rounded-lg shadow">
-              <h2 className="text-xl font-semibold mb-4">
-                {editingModule ? 'Modül Düzenle' : 'Yeni Modül Ekle'}
-              </h2>
-              <form onSubmit={handleModuleSubmit} className="space-y-4">
+            <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4" onClick={(e) => {
+              if (e.target === e.currentTarget) {
+                resetModuleForm()
+              }
+            }}>
+              <div className="bg-white rounded-lg w-full max-w-4xl max-h-[90vh] overflow-hidden flex flex-col">
+                {/* Modal Header */}
+                <div className="flex items-center justify-between p-6 border-b border-gray-200">
+                  <h2 className="text-xl font-semibold">
+                    {editingModule ? 'Modül Düzenle' : 'Yeni Modül Ekle'}
+                  </h2>
+                  <button
+                    onClick={resetModuleForm}
+                    className="text-gray-400 hover:text-gray-600 transition-colors"
+                  >
+                    <X className="w-6 h-6" />
+                  </button>
+                </div>
+                
+                {/* Modal Body - Scrollable */}
+                <div className="overflow-y-auto flex-1 p-6">
+                  <form onSubmit={handleModuleSubmit} className="space-y-4">
                 <div>
                   <Label htmlFor="moduleName">Modül Adı *</Label>
                   <Input 
@@ -2304,15 +2432,17 @@ export default function UrunIslemler() {
                   )}
                 </div>
                 
-                <div className="flex space-x-4">
-                  <Button type="submit">
-                    {editingModule ? 'Güncelle' : 'Ekle'}
-                  </Button>
-                  <Button type="button" variant="outline" onClick={resetModuleForm}>
-                    İptal
-                  </Button>
+                    <div className="flex space-x-4 pt-4 border-t border-gray-200">
+                      <Button type="submit">
+                        {editingModule ? 'Güncelle' : 'Ekle'}
+                      </Button>
+                      <Button type="button" variant="outline" onClick={resetModuleForm}>
+                        İptal
+                      </Button>
+                    </div>
+                  </form>
                 </div>
-              </form>
+              </div>
             </div>
           )}
 
@@ -2399,18 +2529,36 @@ export default function UrunIslemler() {
       {activeTab === 'accessories' && (
         <>
           <div className="mb-8">
-            <Button onClick={() => setShowAccessoryForm(!showAccessoryForm)}>
+            <Button onClick={() => setShowAccessoryForm(true)}>
               <Plus className="w-4 h-4 mr-2" />
-              {showAccessoryForm ? 'Formu Gizle' : 'Yeni Aksesuar Ekle'}
+              Yeni Aksesuar Ekle
             </Button>
           </div>
 
+          {/* Modal */}
           {showAccessoryForm && (
-            <div className="mb-8 bg-white p-6 rounded-lg shadow">
-              <h2 className="text-xl font-semibold mb-4">
-                {editingAccessory ? 'Aksesuar Düzenle' : 'Yeni Aksesuar Ekle'}
-              </h2>
-              <form onSubmit={handleAccessorySubmit} className="space-y-4">
+            <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4" onClick={(e) => {
+              if (e.target === e.currentTarget) {
+                resetAccessoryForm()
+              }
+            }}>
+              <div className="bg-white rounded-lg w-full max-w-4xl max-h-[90vh] overflow-hidden flex flex-col">
+                {/* Modal Header */}
+                <div className="flex items-center justify-between p-6 border-b border-gray-200">
+                  <h2 className="text-xl font-semibold">
+                    {editingAccessory ? 'Aksesuar Düzenle' : 'Yeni Aksesuar Ekle'}
+                  </h2>
+                  <button
+                    onClick={resetAccessoryForm}
+                    className="text-gray-400 hover:text-gray-600 transition-colors"
+                  >
+                    <X className="w-6 h-6" />
+                  </button>
+                </div>
+                
+                {/* Modal Body - Scrollable */}
+                <div className="overflow-y-auto flex-1 p-6">
+                  <form onSubmit={handleAccessorySubmit} className="space-y-4">
                 <div>
                   <Label htmlFor="accessoryName">Aksesuar Adı *</Label>
                   <Input 
@@ -2536,15 +2684,17 @@ export default function UrunIslemler() {
                   )}
                 </div>
                 
-                <div className="flex space-x-4">
-                  <Button type="submit">
-                    {editingAccessory ? 'Güncelle' : 'Ekle'}
-                  </Button>
-                  <Button type="button" variant="outline" onClick={resetAccessoryForm}>
-                    İptal
-                  </Button>
+                    <div className="flex space-x-4 pt-4 border-t border-gray-200">
+                      <Button type="submit">
+                        {editingAccessory ? 'Güncelle' : 'Ekle'}
+                      </Button>
+                      <Button type="button" variant="outline" onClick={resetAccessoryForm}>
+                        İptal
+                      </Button>
+                    </div>
+                  </form>
                 </div>
-              </form>
+              </div>
             </div>
           )}
 
@@ -2631,18 +2781,36 @@ export default function UrunIslemler() {
       {activeTab === 'covers' && (
         <>
           <div className="mb-8">
-            <Button onClick={() => setShowCoverForm(!showCoverForm)}>
+            <Button onClick={() => setShowCoverForm(true)}>
               <Plus className="w-4 h-4 mr-2" />
-              {showCoverForm ? 'Formu Gizle' : 'Yeni Kapak Ekle'}
+              Yeni Kapak Ekle
             </Button>
           </div>
 
+          {/* Modal */}
           {showCoverForm && (
-            <div className="mb-8 bg-white p-6 rounded-lg shadow">
-              <h2 className="text-xl font-semibold mb-4">
-                {editingCover ? 'Kapak Düzenle' : 'Yeni Kapak Ekle'}
-              </h2>
-              <form onSubmit={handleCoverSubmit} className="space-y-4">
+            <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4" onClick={(e) => {
+              if (e.target === e.currentTarget) {
+                resetCoverForm()
+              }
+            }}>
+              <div className="bg-white rounded-lg w-full max-w-4xl max-h-[90vh] overflow-hidden flex flex-col">
+                {/* Modal Header */}
+                <div className="flex items-center justify-between p-6 border-b border-gray-200">
+                  <h2 className="text-xl font-semibold">
+                    {editingCover ? 'Kapak Düzenle' : 'Yeni Kapak Ekle'}
+                  </h2>
+                  <button
+                    onClick={resetCoverForm}
+                    className="text-gray-400 hover:text-gray-600 transition-colors"
+                  >
+                    <X className="w-6 h-6" />
+                  </button>
+                </div>
+                
+                {/* Modal Body - Scrollable */}
+                <div className="overflow-y-auto flex-1 p-6">
+                  <form onSubmit={handleCoverSubmit} className="space-y-4">
                 <div>
                   <Label htmlFor="coverName">Kapak Adı *</Label>
                   <Input 
@@ -2768,15 +2936,17 @@ export default function UrunIslemler() {
                   )}
                 </div>
                 
-                <div className="flex space-x-4">
-                  <Button type="submit">
-                    {editingCover ? 'Güncelle' : 'Ekle'}
-                  </Button>
-                  <Button type="button" variant="outline" onClick={resetCoverForm}>
-                    İptal
-                  </Button>
+                    <div className="flex space-x-4 pt-4 border-t border-gray-200">
+                      <Button type="submit">
+                        {editingCover ? 'Güncelle' : 'Ekle'}
+                      </Button>
+                      <Button type="button" variant="outline" onClick={resetCoverForm}>
+                        İptal
+                      </Button>
+                    </div>
+                  </form>
                 </div>
-              </form>
+              </div>
             </div>
           )}
 
@@ -2863,18 +3033,36 @@ export default function UrunIslemler() {
       {activeTab === 'ges-products' && (
         <>
           <div className="mb-8">
-            <Button onClick={() => setShowGesProductForm(!showGesProductForm)}>
+            <Button onClick={() => setShowGesProductForm(true)}>
               <Plus className="w-4 h-4 mr-2" />
-              {showGesProductForm ? 'Formu Gizle' : 'Yeni GES Ürünü Ekle'}
+              Yeni GES Ürünü Ekle
             </Button>
           </div>
 
+          {/* Modal */}
           {showGesProductForm && (
-            <div className="mb-8 bg-white p-6 rounded-lg shadow">
-              <h2 className="text-xl font-semibold mb-4">
-                {editingGesProduct ? 'GES Ürünü Düzenle' : 'Yeni GES Ürünü Ekle'}
-              </h2>
-              <form onSubmit={handleGesProductSubmit} className="space-y-4">
+            <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4" onClick={(e) => {
+              if (e.target === e.currentTarget) {
+                resetGesProductForm()
+              }
+            }}>
+              <div className="bg-white rounded-lg w-full max-w-4xl max-h-[90vh] overflow-hidden flex flex-col">
+                {/* Modal Header */}
+                <div className="flex items-center justify-between p-6 border-b border-gray-200">
+                  <h2 className="text-xl font-semibold">
+                    {editingGesProduct ? 'GES Ürünü Düzenle' : 'Yeni GES Ürünü Ekle'}
+                  </h2>
+                  <button
+                    onClick={resetGesProductForm}
+                    className="text-gray-400 hover:text-gray-600 transition-colors"
+                  >
+                    <X className="w-6 h-6" />
+                  </button>
+                </div>
+                
+                {/* Modal Body - Scrollable */}
+                <div className="overflow-y-auto flex-1 p-6">
+                  <form onSubmit={handleGesProductSubmit} className="space-y-4">
                 <div>
                   <Label htmlFor="gesProductName">Ürün Adı *</Label>
                   <Input 
@@ -3336,15 +3524,17 @@ export default function UrunIslemler() {
                   </div>
                 </div>
                 
-                <div className="flex space-x-4">
-                  <Button type="submit">
-                    {editingGesProduct ? 'Güncelle' : 'Ekle'}
-                  </Button>
-                  <Button type="button" variant="outline" onClick={resetGesProductForm}>
-                    İptal
-                  </Button>
+                    <div className="flex space-x-4 pt-4 border-t border-gray-200">
+                      <Button type="submit">
+                        {editingGesProduct ? 'Güncelle' : 'Ekle'}
+                      </Button>
+                      <Button type="button" variant="outline" onClick={resetGesProductForm}>
+                        İptal
+                      </Button>
+                    </div>
+                  </form>
                 </div>
-              </form>
+              </div>
             </div>
           )}
 
