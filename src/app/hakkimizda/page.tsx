@@ -31,14 +31,24 @@ export default async function HakkimizdaPage() {
   return (
     <>
       {/* Hero Section - Kurumsal */}
-      <section className="bg-white py-16 border-b border-gray-200">
-        <MaxWidthWrapper>
-          <div className="text-center max-w-4xl mx-auto">
-            <h1 className="font-neuropol text-4xl lg:text-5xl font-bold text-slate-900">
-              Hakkımızda
-            </h1>
+      <section className="relative bg-white border-b border-gray-200">
+        <div className="relative h-64 md:h-96 lg:h-[450px] overflow-hidden">
+          <img 
+            src="https://res.cloudinary.com/dgixrs3gg/image/upload/v1760807210/ipos-steel/about/yyfrzxt1ddptm8ryeiqc.jpg" 
+            alt="IPOS Steel Fabrika" 
+            className="w-full h-full object-cover"
+          />
+          <div className="absolute inset-0 bg-black bg-opacity-50"></div>
+          <div className="absolute inset-0 flex items-center justify-center">
+            <MaxWidthWrapper>
+              <div className="text-center max-w-4xl mx-auto">
+                <h1 className="font-neuropol text-4xl lg:text-6xl font-bold text-white">
+                  Hakkımızda
+                </h1>
+              </div>
+            </MaxWidthWrapper>
           </div>
-        </MaxWidthWrapper>
+        </div>
       </section>
 
       {/* Şirket Profili */}

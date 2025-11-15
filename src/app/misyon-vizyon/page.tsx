@@ -33,18 +33,28 @@ export default async function MisyonVizyonPage() {
   return (
     <>
       {/* Hero Section */}
-      <section className="bg-white py-16 border-b border-gray-200">
-        <MaxWidthWrapper>
-          <div className="text-center max-w-4xl mx-auto">
-            <h1 className="font-neuropol text-4xl lg:text-5xl font-bold mb-6 text-slate-900">
-              Misyonumuz ve Vizyonumuz
-            </h1>
-            <p className="text-lg text-gray-600 leading-relaxed">
-              Elektrik dağıtım sistemleri sektöründe güvenilir ve sürdürülebilir çözümlerle 
-              geleceği şekillendiriyoruz.
-            </p>
+      <section className="relative bg-white border-b border-gray-200">
+        <div className="relative h-64 md:h-96 lg:h-[450px] overflow-hidden">
+          <img 
+            src="https://res.cloudinary.com/dgixrs3gg/image/upload/v1760807210/ipos-steel/about/yyfrzxt1ddptm8ryeiqc.jpg" 
+            alt="IPOS Steel Fabrika" 
+            className="w-full h-full object-cover"
+          />
+          <div className="absolute inset-0 bg-black bg-opacity-50"></div>
+          <div className="absolute inset-0 flex items-center justify-center">
+            <MaxWidthWrapper>
+              <div className="text-center max-w-4xl mx-auto px-4">
+                <h1 className="font-neuropol text-4xl lg:text-6xl font-bold mb-4 lg:mb-6 text-white">
+                  Misyonumuz ve Vizyonumuz
+                </h1>
+                <p className="text-base lg:text-lg text-gray-100 leading-relaxed">
+                  Elektrik dağıtım sistemleri sektöründe güvenilir ve sürdürülebilir çözümlerle 
+                  geleceği şekillendiriyoruz.
+                </p>
+              </div>
+            </MaxWidthWrapper>
           </div>
-        </MaxWidthWrapper>
+        </div>
       </section>
 
       {/* Misyon */}
