@@ -536,7 +536,7 @@ const ProductsPage = ({ searchParams }: ProductsPageProps) => {
                         : (product.imageUrl || '/default-urun-foto/default-urun.png');
                       
                       return (
-                      <Link key={product.id} href={`/products/${product.id}`} className="flex-none w-80 bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden group hover:shadow-lg transition-all duration-300">
+                      <Link key={product.id} href={`/products/${product.slug || product.id}`} className="flex-none w-80 bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden group hover:shadow-lg transition-all duration-300">
                         {/* Product Image */}
                         <div className="aspect-[4/3] bg-gray-50 relative overflow-hidden">
                           <img
@@ -587,7 +587,7 @@ const ProductsPage = ({ searchParams }: ProductsPageProps) => {
                       : (product.imageUrl || '/default-urun-foto/default-urun.png');
                     
                     return (
-                    <Link key={product.id} href={`/products/${product.id}`} className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden group hover:shadow-lg transition-all duration-300 block">
+                    <Link key={product.id} href={`/products/${product.slug || product.id}`} className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden group hover:shadow-lg transition-all duration-300 block">
                       {/* Product Image */}
                       <div className="aspect-[4/3] bg-gray-50 relative overflow-hidden">
                         <img
@@ -2630,7 +2630,7 @@ const ProductsPage = ({ searchParams }: ProductsPageProps) => {
                             const gesCategories = ['ges-arazi', 'ges-cati', 'solar-montaj-sistemleri'];
                             const productLink = gesCategories.includes(category || '') 
                               ? `/ges-products/${product.id}` 
-                              : `/products/${product.id}`;
+                              : `/products/${product.slug || product.id}`;
                             
                             return (
                             <Link

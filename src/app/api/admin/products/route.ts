@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { isAdminAuthenticated } from '@/lib/auth'
 import { revalidatePath } from 'next/cache'
+import { generateSlug, createUniqueSlug } from '@/lib/slug'
 
 export async function GET() {
   try {
@@ -60,9 +61,19 @@ export async function POST(request: NextRequest) {
       images 
     } = await request.json()
 
+    // Slug oluştur
+    const baseSlug = generateSlug(name)
+    const existingProducts = await prisma.product.findMany({
+      where: { slug: { startsWith: baseSlug } },
+      select: { slug: true }
+    })
+    const existingSlugs = existingProducts.map(p => p.slug).filter(Boolean) as string[]
+    const uniqueSlug = createUniqueSlug(baseSlug, existingSlugs)
+
     const product = await prisma.product.create({
       data: {
         name,
+        slug: uniqueSlug,
         description: description || null,
         series: series || null,
         material: material || null,

@@ -5,11 +5,18 @@ export const dynamic = 'force-dynamic'
 export const revalidate = 0
 export async function GET(_req: NextRequest, { params }: { params: { id: string } }) {
   try {
-    const product = await prisma.product.findUnique({
-      where: { id: params.id },
+    // Slug veya ID ile ürün bul
+    const product = await prisma.product.findFirst({
+      where: {
+        OR: [
+          { slug: params.id },
+          { id: params.id }
+        ]
+      },
       select: {
         id: true,
         name: true,
+        slug: true,
         description: true,
         series: true,
         material: true,

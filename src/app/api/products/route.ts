@@ -14,7 +14,24 @@ export async function GET(req: NextRequest) {
         ...(categorySlug ? { category: { slug: categorySlug, isActive: true } } : {}),
       },
       orderBy: { createdAt: 'desc' },
-      include: { 
+      select: {
+        id: true,
+        name: true,
+        slug: true,
+        description: true,
+        series: true,
+        material: true,
+        coatingType: true,
+        surfaceTreatment: true,
+        thickness: true,
+        width: true,
+        height: true,
+        imageUrl: true,
+        generalInfo: true,
+        technicalInfo: true,
+        isActive: true,
+        createdAt: true,
+        updatedAt: true,
         category: true,
         images: {
           select: {
