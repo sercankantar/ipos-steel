@@ -1551,7 +1551,7 @@ export default function UrunIslemler() {
                 const selectedCategory = categories.find(c => c.id === formData.categoryId)
                 const categoryName = selectedCategory?.name || ''
                 
-                // Kategoriye göre seçenekleri belirle
+                // Kategoriye göre seçenekleri belirle yüzey işleme opsiyonları
                 let options: string[] = []
                 if (categoryName === 'Kablo Kanalları' || categoryName === 'Kablo Merdivenleri' || categoryName === 'Trunking Kablo Kanalları') {
                   options = ['sıcak daldırma', 'pregalvaniz', 'boyalı']
