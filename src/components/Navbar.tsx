@@ -58,22 +58,21 @@ const Navbar = () => {
                 <NavItems />
               </div>
 
-              <div className='ml-auto flex items-center gap-2'>
-                {/* Sepet İkonu - Hem mobil hem desktop */}
-                <Link 
-                  href="/istek-listesi"
-                  className="relative p-2 text-gray-600 hover:text-gray-800 transition-colors"
-                >
-                  <ShoppingCart className="w-6 h-6" />
-                  {requestCount > 0 && (
-                    <span className="absolute -top-1 -right-1 bg-red-600 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center font-semibold">
-                      {requestCount > 99 ? '99+' : requestCount}
-                    </span>
-                  )}
-                </Link>
-
-                {/* Language Switcher - Sadece desktop */}
-                <div className='hidden lg:flex lg:items-center'>
+              <div className='ml-auto flex items-center'>
+                <div className='hidden lg:flex lg:flex-1 lg:items-center lg:justify-end lg:space-x-6'>
+                  {/* Sepet İkonu */}
+                  <Link 
+                    href="/istek-listesi"
+                    className="relative p-2 text-gray-600 hover:text-gray-800 transition-colors"
+                  >
+                    <ShoppingCart className="w-6 h-6" />
+                    {requestCount > 0 && (
+                      <span className="absolute -top-1 -right-1 bg-red-600 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
+                        {requestCount > 99 ? '99+' : requestCount}
+                      </span>
+                    )}
+                  </Link>
+                  
                   <div className='ml-4 flow-root lg:ml-6'>
                     <LanguageSwitcher />
                   </div>
