@@ -165,19 +165,19 @@ export default function Home() {
           <VideoSlider
             slides={[
               {
-                src: 'https://res.cloudinary.com/dgixrs3gg/video/upload/v1759320544/Generated_File_October_01_2025_-_3_04PM_k66wrd.mp4',
+                src: 'https://res.cloudinary.com/dgixrs3gg/video/upload/v1764828802/IPOS_Steel_Tan%C4%B1t%C4%B1m_kk7sdq.mp4',
                 title: 'Yaratıcı çözümler için tasarlandı',
                 description: 'Modern ve hızlı arayüzler, kusursuz deneyimler.',
                 href: '/products',
               },
               {
-                src: 'https://res.cloudinary.com/dgixrs3gg/video/upload/v1759321153/Generated_File_October_01_2025_-_3_18PM_zltxri.mp4',
+                src: 'https://res.cloudinary.com/dgixrs3gg/video/upload/v1764828677/Yapay_Zeka_Video.1-08.21.2025_virm5c.mp4',
                 title: 'Güçlü altyapı ve ölçeklenebilir mimari',
                 description: 'Büyüyen ihtiyaçlarınız için güvenilir temel.',
                 href: '/products',
               },
               {
-                src: 'https://res.cloudinary.com/dgixrs3gg/video/upload/v1759320544/Generated_File_October_01_2025_-_3_04PM_k66wrd.mp4',
+                src: 'https://res.cloudinary.com/dgixrs3gg/video/upload/v1764828674/VID-20250802-WA0002_txwzqa.mp4',
                 title: 'Şıklık ve performans bir arada',
                 description: 'Şık tasarım, yüksek performans ile buluşuyor.',
                 href: '/products',
