@@ -53,13 +53,20 @@ export async function GET(req: NextRequest) {
     }
 
     if (query) {
-      channelWhere.AND.push({
-        OR: [
-          { name: { contains: query, mode: 'insensitive' } },
-          { code: { contains: query, mode: 'insensitive' } },
-          { coatingType: { contains: query, mode: 'insensitive' } }
-        ]
-      })
+      // Query'yi kelimelere böl ve her kelime için arama yap
+      const keywords = query.toLowerCase().split(/\s+/).filter(k => k.length > 0)
+      
+      if (keywords.length > 0) {
+        channelWhere.AND.push({
+          OR: keywords.flatMap(keyword => [
+            { name: { contains: keyword, mode: 'insensitive' } },
+            { code: { contains: keyword, mode: 'insensitive' } },
+            { coatingType: { contains: keyword, mode: 'insensitive' } },
+            { height: { contains: keyword, mode: 'insensitive' } },
+            { width: { contains: keyword, mode: 'insensitive' } }
+          ])
+        })
+      }
     }
 
     // AND array boşsa kaldır
@@ -132,13 +139,19 @@ export async function GET(req: NextRequest) {
     }
 
     if (query) {
-      moduleWhere.AND.push({
-        OR: [
-          { name: { contains: query, mode: 'insensitive' } },
-          { code: { contains: query, mode: 'insensitive' } },
-          { coatingType: { contains: query, mode: 'insensitive' } }
-        ]
-      })
+      const keywords = query.toLowerCase().split(/\s+/).filter(k => k.length > 0)
+      
+      if (keywords.length > 0) {
+        moduleWhere.AND.push({
+          OR: keywords.flatMap(keyword => [
+            { name: { contains: keyword, mode: 'insensitive' } },
+            { code: { contains: keyword, mode: 'insensitive' } },
+            { coatingType: { contains: keyword, mode: 'insensitive' } },
+            { height: { contains: keyword, mode: 'insensitive' } },
+            { width: { contains: keyword, mode: 'insensitive' } }
+          ])
+        })
+      }
     }
 
     if (moduleWhere.AND.length === 0) {
@@ -210,13 +223,19 @@ export async function GET(req: NextRequest) {
     }
 
     if (query) {
-      accessoryWhere.AND.push({
-        OR: [
-          { name: { contains: query, mode: 'insensitive' } },
-          { code: { contains: query, mode: 'insensitive' } },
-          { coatingType: { contains: query, mode: 'insensitive' } }
-        ]
-      })
+      const keywords = query.toLowerCase().split(/\s+/).filter(k => k.length > 0)
+      
+      if (keywords.length > 0) {
+        accessoryWhere.AND.push({
+          OR: keywords.flatMap(keyword => [
+            { name: { contains: keyword, mode: 'insensitive' } },
+            { code: { contains: keyword, mode: 'insensitive' } },
+            { coatingType: { contains: keyword, mode: 'insensitive' } },
+            { height: { contains: keyword, mode: 'insensitive' } },
+            { width: { contains: keyword, mode: 'insensitive' } }
+          ])
+        })
+      }
     }
 
     if (accessoryWhere.AND.length === 0) {
@@ -288,13 +307,19 @@ export async function GET(req: NextRequest) {
     }
 
     if (query) {
-      coverWhere.AND.push({
-        OR: [
-          { name: { contains: query, mode: 'insensitive' } },
-          { code: { contains: query, mode: 'insensitive' } },
-          { coatingType: { contains: query, mode: 'insensitive' } }
-        ]
-      })
+      const keywords = query.toLowerCase().split(/\s+/).filter(k => k.length > 0)
+      
+      if (keywords.length > 0) {
+        coverWhere.AND.push({
+          OR: keywords.flatMap(keyword => [
+            { name: { contains: keyword, mode: 'insensitive' } },
+            { code: { contains: keyword, mode: 'insensitive' } },
+            { coatingType: { contains: keyword, mode: 'insensitive' } },
+            { height: { contains: keyword, mode: 'insensitive' } },
+            { width: { contains: keyword, mode: 'insensitive' } }
+          ])
+        })
+      }
     }
 
     if (coverWhere.AND.length === 0) {
