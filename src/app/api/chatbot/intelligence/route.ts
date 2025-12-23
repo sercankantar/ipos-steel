@@ -128,7 +128,8 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({
       success: false,
       error: 'İşlem başarısız',
-      details: error instanceof Error ? error.message : 'Bilinmeyen hata'
+      details: error instanceof Error ? error.message : 'Bilinmeyen hata',
+      stack: error instanceof Error ? error.stack : undefined
     }, { status: 500 })
   }
 }
@@ -365,12 +366,14 @@ async function handleProductSearch(analysis: any, context: any) {
       }
     }
   } catch (error) {
+    console.error('Product search error:', error)
     return {
       success: false,
       intent: 'product_search',
-      response: 'Arama sırasında bir hata oluştu.',
+      response: `Arama sırasında bir hata oluştu: ${error instanceof Error ? error.message : 'Bilinmeyen hata'}`,
       searchResults: [],
-      requiresMoreInfo: false
+      requiresMoreInfo: false,
+      errorDetails: error instanceof Error ? error.stack : undefined
     }
   }
 }
