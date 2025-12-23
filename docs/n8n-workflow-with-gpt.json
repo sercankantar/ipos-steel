@@ -1,0 +1,333 @@
+{
+  "name": "IPOS Steel Chatbot (GPT-4o-mini)",
+  "nodes": [
+    {
+      "parameters": {
+        "updates": ["message"]
+      },
+      "name": "Telegram Trigger",
+      "type": "n8n-nodes-base.telegramTrigger",
+      "typeVersion": 1,
+      "position": [240, 400],
+      "webhookId": "WEBHOOK_ID",
+      "credentials": {
+        "telegramApi": {
+          "id": "TELEGRAM_CREDENTIAL_ID",
+          "name": "Telegram Bot"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "functionCode": "const userMessage = $input.item.json.message.text || '';\nconst chatId = $input.item.json.message.chat.id;\nconst userName = $input.item.json.message.from.first_name || 'Kullanıcı';\n\nconst cleanMessage = userMessage.toLowerCase().trim();\n\n// Komut kontrolü\nconst commands = {\n  '/start': 'start',\n  'start': 'start',\n  '/help': 'help',\n  'help': 'help',\n  '/contact': 'contact',\n  'contact': 'contact',\n  '/catalog': 'catalog',\n  'catalog': 'catalog'\n};\n\nif (commands[cleanMessage]) {\n  const commandMessages = {\n    start: `👋 Merhaba ${userName}!\\n\\n🔍 *IPOS Steel Ürün Arama Botu*\\n\\nÜrün aramak için doğal dilde yazın:\\n• \"50lik kablo kanalı neler var?\"\\n• \"pregalvanizli 60lık istiyorum\"\\n• \"sıcak daldırmalı kanallar\"\\n• \"45x60 pregal kanal\"\\n\\n🤖 Yapay zeka destekli arama!\\n\\n📌 *Komutlar:*\\n/help - Yardım\\n/contact - İletişim\\n/catalog - Katalog`,\n    help: `❓ *Nasıl Kullanılır?*\\n\\n*Doğal Dilde Sorun:*\\n• \"50lik kablo kanalı var mı?\"\\n• \"pregalvanizli 60lık lazım\"\\n• \"sıcak daldırmalı kanal\"\\n• \"45 60 boyutunda pregal\"\\n\\n*Kaplama Tipleri:*\\n• Pregalvaniz (pregal)\\n• Sıcak Daldırma\\n• Elektro\\n• Boyalı\\n\\n*Boyut Örnekleri:*\\n• \"50lik\" → 50mm\\n• \"45x60\" → 45mm x 60mm\\n• \"60 lık\" → 60mm\\n\\n🤖 Bot sizi anlayacak, endişelenmeyin!`,\n    contact: `📞 *İletişim Bilgileri*\\n\\n☎️ Telefon: +90 XXX XXX XX XX\\n✉️ Email: info@ipossteel.com\\n🌐 Website: https://ipossteel.com\\n📍 Adres: [Adresiniz]\\n\\n💬 Mesai Saatleri:\\nPazartesi - Cuma: 08:30 - 17:30`,\n    catalog: `📋 *Katalog ve Dökümanlar*\\n\\nKataloglarımızı indirmek için:\\n🔗 https://ipossteel.com/katalog\\n\\nYardıma ihtiyacınız varsa bize ulaşın!`\n  };\n  \n  return {\n    json: {\n      isCommand: true,\n      command: commands[cleanMessage],\n      chatId,\n      message: commandMessages[commands[cleanMessage]]\n    }\n  };\n}\n\nif (cleanMessage.length < 2) {\n  return {\n    json: {\n      isCommand: true,\n      command: 'error',\n      chatId,\n      message: `⚠️ Lütfen en az 2 karakter girin.\\n\\nÖrnek: \"50lik kanal\" veya \"pregalvaniz\"`\n    }\n  };\n}\n\nconst systemPrompt = `Sen IPOS Steel'in ürün arama asistanısın. Kullanıcının Türkçe sorgusunu analiz edip ürün arama parametrelerine çeviriyorsun.\\n\\n**Görevin:**\\n1. Kullanıcının ne aradığını anla\\n2. Parametreleri çıkar (boyut, kaplama tipi, ürün tipi)\\n3. Structured format'ta döndür\\n\\n**Örnekler:**\\n- \"50lik kablo kanalı neler var\" → searchQuery: \"kablo kanalı\", height: \"50\", width: \"50\"\\n- \"pregalvanizli 60lık\" → searchQuery: \"kanal\", coatingType: \"pregalvaniz\", height: \"60\", width: \"60\"\\n- \"45x60 pregal kanal\" → searchQuery: \"kablo kanalı\", height: \"45\", width: \"60\", coatingType: \"pregalvaniz\"\\n- \"sıcak daldırmalı kanallarınız var mı?\" → searchQuery: \"kanal\", coatingType: \"sıcak daldırma\"\\n\\n**Boyut Çevirileri:**\\n- \"50lik\", \"50 lik\", \"50'lik\" → \"50\"\\n- \"45x60\", \"45*60\", \"45 60\" → height: \"45\", width: \"60\"\\n\\n**Kaplama Tipleri:**\\n- \"pregal\", \"pregalvaniz\", \"pregalvanizli\" → \"pregalvaniz\"\\n- \"sıcak daldırma\", \"sıcak daldırmalı\", \"galvaniz\" → \"sıcak daldırma\"\\n- \"elektro\" → \"elektro\"\\n- \"boyalı\", \"boyali\" → \"boyalı\"\\n\\n**Ürün Tipleri:**\\n- \"kablo kanalı\", \"kanal\" → productType: \"channel\"\\n- \"modül\" → productType: \"module\"\\n- \"aksesuar\" → productType: \"accessory\"\\n- \"kapak\" → productType: \"cover\"\\n\\n**Önemli:**\\n- Sadece sayıları döndür (birim yok)\\n- Türkçe karakter normalizasyonu yap\\n- Eğer boyut tek ise hem height hem width olabilir`;\n\nreturn {\n  json: {\n    isCommand: false,\n    chatId,\n    userName,\n    userMessage: userMessage,\n    cleanMessage: cleanMessage,\n    systemPrompt: systemPrompt\n  }\n};"
+      },
+      "name": "Mesaj Ön İşleme",
+      "type": "n8n-nodes-base.function",
+      "typeVersion": 1,
+      "position": [440, 400]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "boolean": [
+            {
+              "value1": "={{$json.isCommand}}",
+              "value2": true
+            }
+          ]
+        }
+      },
+      "name": "Komut mu?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [640, 400]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.openai.com/v1/chat/completions",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({\n  model: 'gpt-4o-mini',\n  messages: [\n    {\n      role: 'system',\n      content: $json.systemPrompt\n    },\n    {\n      role: 'user',\n      content: $json.userMessage\n    }\n  ],\n  functions: [\n    {\n      name: 'extract_product_search_params',\n      description: 'Kullanıcının ürün arama sorgusundan parametreleri çıkar',\n      parameters: {\n        type: 'object',\n        properties: {\n          searchQuery: {\n            type: 'string',\n            description: 'Genel arama terimi (örn: kablo kanalı, modül, aksesuar)'\n          },\n          coatingType: {\n            type: 'string',\n            enum: ['pregalvaniz', 'sıcak daldırma', 'elektro', 'boyalı', null],\n            description: 'Kaplama tipi'\n          },\n          height: {\n            type: 'string',\n            description: 'Yükseklik (mm) - sadece sayı'\n          },\n          width: {\n            type: 'string',\n            description: 'Genişlik (mm) - sadece sayı'\n          },\n          productType: {\n            type: 'string',\n            enum: ['channel', 'module', 'accessory', 'cover', 'all'],\n            description: 'Ürün tipi'\n          },\n          intent: {\n            type: 'string',\n            enum: ['search', 'info', 'price', 'availability', 'general'],\n            description: 'Kullanıcının niyeti'\n          }\n        },\n        required: ['searchQuery', 'intent']\n      }\n    }\n  ],\n  function_call: { name: 'extract_product_search_params' },\n  temperature: 0.3\n}) }}",
+        "options": {
+          "timeout": 30000
+        }
+      },
+      "name": "GPT Mesaj Analizi",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [840, 500],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "OPENAI_CREDENTIAL_ID",
+          "name": "OpenAI API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "functionCode": "const chatId = $('Mesaj Ön İşleme').item.json.chatId;\nconst originalMessage = $('Mesaj Ön İşleme').item.json.userMessage;\nconst gptResponse = $input.item.json;\n\ntry {\n  const functionCall = gptResponse.choices[0].message.function_call;\n  const params = JSON.parse(functionCall.arguments);\n  \n  console.log('GPT Extracted Params:', params);\n  \n  const apiParams = {\n    q: params.searchQuery || '',\n    coatingType: params.coatingType || undefined,\n    height: params.height || undefined,\n    width: params.width || undefined\n  };\n  \n  Object.keys(apiParams).forEach(key => {\n    if (apiParams[key] === undefined || apiParams[key] === null || apiParams[key] === '') {\n      delete apiParams[key];\n    }\n  });\n  \n  if (Object.keys(apiParams).length === 0) {\n    return {\n      json: {\n        isError: true,\n        chatId,\n        message: `⚠️ Üzgünüm, aramanızı anlayamadım.\\n\\nLütfen daha açık bir şekilde belirtin:\\n• Ürün adı: \"kablo kanalı\"\\n• Boyut: \"50lik\" veya \"45x60\"\\n• Kaplama: \"pregalvaniz\", \"sıcak daldırma\"\\n\\nÖrnek: \"50lik pregalvaniz kablo kanalı\"`\n      }\n    };\n  }\n  \n  return {\n    json: {\n      isError: false,\n      chatId,\n      originalMessage,\n      apiParams,\n      gptParams: params,\n      intent: params.intent\n    }\n  };\n  \n} catch (error) {\n  console.error('GPT Parse Error:', error);\n  \n  return {\n    json: {\n      isError: true,\n      chatId,\n      message: `❌ Arama sırasında bir hata oluştu.\\n\\nLütfen tekrar deneyin veya daha basit bir şekilde sorun.\\n\\nÖrnek: \"50lik kablo kanalı\"`\n    }\n  };\n}"
+      },
+      "name": "GPT Çıktısını Parse Et",
+      "type": "n8n-nodes-base.function",
+      "typeVersion": 1,
+      "position": [1040, 500]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "boolean": [
+            {
+              "value1": "={{$json.isError}}",
+              "value2": true
+            }
+          ]
+        }
+      },
+      "name": "Hata Var mı?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [1240, 500]
+    },
+    {
+      "parameters": {
+        "url": "=https://YOUR-DOMAIN.com/api/search/products",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "q",
+              "value": "={{$json.apiParams.q}}"
+            },
+            {
+              "name": "coatingType",
+              "value": "={{$json.apiParams.coatingType}}"
+            },
+            {
+              "name": "height",
+              "value": "={{$json.apiParams.height}}"
+            },
+            {
+              "name": "width",
+              "value": "={{$json.apiParams.width}}"
+            }
+          ]
+        },
+        "options": {
+          "timeout": 30000
+        }
+      },
+      "name": "API Ürün Arama",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [1440, 600]
+    },
+    {
+      "parameters": {
+        "functionCode": "const chatId = $('GPT Çıktısını Parse Et').item.json.chatId;\nconst originalMessage = $('GPT Çıktısını Parse Et').item.json.originalMessage;\nconst apiResponse = $input.item.json;\n\nif (!apiResponse.success) {\n  return {\n    json: {\n      chatId,\n      message: `❌ Arama sırasında bir hata oluştu.\\n\\nLütfen tekrar deneyin veya bize ulaşın:\\n☎️ +90 XXX XXX XX XX`,\n      replyMarkup: {\n        inline_keyboard: [\n          [\n            { text: '🔍 Yeni Arama', callback_data: 'new_search' },\n            { text: '☎️ İletişim', callback_data: 'contact' }\n          ]\n        ]\n      }\n    }\n  };\n}\n\nconst results = apiResponse.results || [];\nconst totalResults = apiResponse.totalResults || 0;\nconst query = apiResponse.query;\n\nif (totalResults === 0) {\n  return {\n    json: {\n      chatId,\n      message: `🔍 *Arama: \"${originalMessage}\"*\\n\\n❌ Üzgünüm, aradığınız kriterlerde ürün bulamadım.\\n\\n💡 *Öneriler:*\\n• Farklı boyutlar deneyin\\n• Sadece \"kablo kanalı\" yazın\\n• Kaplama tipini değiştirin\\n\\n📞 Özel talepleriniz için:\\n☎️ +90 XXX XXX XX XX\\n✉️ info@ipossteel.com`,\n      replyMarkup: {\n        inline_keyboard: [\n          [\n            { text: '🔍 Yeni Arama', callback_data: 'new_search' }\n          ],\n          [\n            { text: '☎️ İletişim', callback_data: 'contact' },\n            { text: '📋 Katalog', url: 'https://ipossteel.com/katalog' }\n          ]\n        ]\n      }\n    }\n  };\n}\n\nlet message = `🔍 *Sorgunuz: \"${originalMessage}\"*\\n\\n`;\nmessage += `✅ *${totalResults} ürün bulundu!*\\n\\n`;\nmessage += `━━━━━━━━━━━━━━━\\n\\n`;\n\nresults.slice(0, 5).forEach((product, index) => {\n  message += `*${index + 1}. ${product.name}*\\n`;\n  \n  if (product.code) {\n    message += `🏷️ Kod: \\`${product.code}\\`\\n`;\n  }\n  \n  if (product.typeName) {\n    message += `📦 Tip: ${product.typeName}\\n`;\n  }\n  \n  if (product.height && product.width) {\n    message += `📏 Boyut: ${product.height}×${product.width} mm\\n`;\n  }\n  \n  if (product.coatingType) {\n    message += `🎨 Kaplama: ${product.coatingType}\\n`;\n  }\n  \n  if (product.sheetThickness) {\n    message += `📐 Sac: ${product.sheetThickness} mm\\n`;\n  }\n  \n  if (product.categoryName) {\n    message += `📂 ${product.categoryName}\\n`;\n  }\n  \n  message += `\\n`;\n});\n\nif (totalResults > 5) {\n  message += `━━━━━━━━━━━━━━━\\n`;\n  message += `_...ve ${totalResults - 5} ürün daha_\\n\\n`;\n}\n\nmessage += `\\n📞 *Detaylı Bilgi ve Teklif:*\\n`;\nmessage += `☎️ +90 XXX XXX XX XX\\n`;\nmessage += `✉️ info@ipossteel.com\\n`;\nmessage += `🌐 ipossteel.com`;\n\nreturn {\n  json: {\n    chatId,\n    message,\n    results: results.slice(0, 5),\n    replyMarkup: {\n      inline_keyboard: [\n        [\n          { text: '🔍 Yeni Arama', callback_data: 'new_search' },\n          { text: '☎️ Teklif İste', callback_data: 'request_quote' }\n        ],\n        [\n          { text: '📖 Katalog', url: 'https://ipossteel.com/katalog' }\n        ]\n      ]\n    }\n  }\n};"
+      },
+      "name": "Yanıt Formatlama",
+      "type": "n8n-nodes-base.function",
+      "typeVersion": 1,
+      "position": [1640, 600]
+    },
+    {
+      "parameters": {
+        "chatId": "={{$json.chatId}}",
+        "text": "={{$json.message}}",
+        "additionalFields": {
+          "parse_mode": "Markdown",
+          "disable_web_page_preview": true,
+          "reply_markup": "={{JSON.stringify($json.replyMarkup)}}"
+        }
+      },
+      "name": "Telegram Cevap (Sonuç)",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1,
+      "position": [1840, 600],
+      "credentials": {
+        "telegramApi": {
+          "id": "TELEGRAM_CREDENTIAL_ID",
+          "name": "Telegram Bot"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{$json.chatId}}",
+        "text": "={{$json.message}}",
+        "additionalFields": {
+          "parse_mode": "Markdown",
+          "disable_web_page_preview": true
+        }
+      },
+      "name": "Telegram Cevap (Komut)",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1,
+      "position": [840, 300],
+      "credentials": {
+        "telegramApi": {
+          "id": "TELEGRAM_CREDENTIAL_ID",
+          "name": "Telegram Bot"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{$json.chatId}}",
+        "text": "={{$json.message}}",
+        "additionalFields": {
+          "parse_mode": "Markdown",
+          "disable_web_page_preview": true
+        }
+      },
+      "name": "Telegram Cevap (Hata)",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1,
+      "position": [1440, 400],
+      "credentials": {
+        "telegramApi": {
+          "id": "TELEGRAM_CREDENTIAL_ID",
+          "name": "Telegram Bot"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Telegram Trigger": {
+      "main": [
+        [
+          {
+            "node": "Mesaj Ön İşleme",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Mesaj Ön İşleme": {
+      "main": [
+        [
+          {
+            "node": "Komut mu?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Komut mu?": {
+      "main": [
+        [
+          {
+            "node": "Telegram Cevap (Komut)",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "GPT Mesaj Analizi",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "GPT Mesaj Analizi": {
+      "main": [
+        [
+          {
+            "node": "GPT Çıktısını Parse Et",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "GPT Çıktısını Parse Et": {
+      "main": [
+        [
+          {
+            "node": "Hata Var mı?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Hata Var mı?": {
+      "main": [
+        [
+          {
+            "node": "Telegram Cevap (Hata)",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "API Ürün Arama",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "API Ürün Arama": {
+      "main": [
+        [
+          {
+            "node": "Yanıt Formatlama",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Yanıt Formatlama": {
+      "main": [
+        [
+          {
+            "node": "Telegram Cevap (Sonuç)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "tags": [
+    {
+      "createdAt": "2024-01-01T00:00:00.000Z",
+      "updatedAt": "2024-01-01T00:00:00.000Z",
+      "id": "1",
+      "name": "chatbot"
+    },
+    {
+      "createdAt": "2024-01-01T00:00:00.000Z",
+      "updatedAt": "2024-01-01T00:00:00.000Z",
+      "id": "2",
+      "name": "gpt-powered"
+    }
+  ],
+  "triggerCount": 0,
+  "updatedAt": "2024-01-01T00:00:00.000Z",
+  "versionId": "2"
+}
+

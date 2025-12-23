@@ -1,0 +1,187 @@
+# IPOS Steel - Product Search API Test Examples
+# VS Code REST Client Extension veya Postman ile kullanabilirsiniz
+
+### ===================================
+### 1. BASİT ARAMA TESTLERİ
+### ===================================
+
+### Test 1.1: Genel ürün arama
+GET http://localhost:3000/api/search/products?q=kablo kanalı
+Content-Type: application/json
+
+### Test 1.2: Tek kelime arama
+GET http://localhost:3000/api/search/products?q=kanal
+Content-Type: application/json
+
+### Test 1.3: Modül arama
+GET http://localhost:3000/api/search/products?q=modül
+Content-Type: application/json
+
+### ===================================
+### 2. KAPLAMA TİPİ FİLTRELERİ
+### ===================================
+
+### Test 2.1: Pregalvaniz arama
+GET http://localhost:3000/api/search/products?q=kanal&coatingType=pregalvaniz
+Content-Type: application/json
+
+### Test 2.2: Sıcak daldırma arama
+GET http://localhost:3000/api/search/products?q=kanal&coatingType=sıcak daldırma
+Content-Type: application/json
+
+### Test 2.3: Boyalı ürünler
+GET http://localhost:3000/api/search/products?q=kanal&coatingType=boyalı
+Content-Type: application/json
+
+### Test 2.4: Elektro kaplama
+GET http://localhost:3000/api/search/products?q=kanal&coatingType=elektro
+Content-Type: application/json
+
+### ===================================
+### 3. BOYUT FİLTRELERİ
+### ===================================
+
+### Test 3.1: 45mm yükseklik
+GET http://localhost:3000/api/search/products?height=45
+Content-Type: application/json
+
+### Test 3.2: 60mm genişlik
+GET http://localhost:3000/api/search/products?width=60
+Content-Type: application/json
+
+### Test 3.3: 45x60 boyut (her ikisi)
+GET http://localhost:3000/api/search/products?height=45&width=60
+Content-Type: application/json
+
+### Test 3.4: Boyut + genel arama
+GET http://localhost:3000/api/search/products?q=kanal&height=45&width=60
+Content-Type: application/json
+
+### ===================================
+### 4. KOMBİNE ARAMALAR (EN YAYGIN)
+### ===================================
+
+### Test 4.1: Pregalvaniz + Boyut
+GET http://localhost:3000/api/search/products?q=kablo kanalı&coatingType=pregalvaniz&height=45&width=60
+Content-Type: application/json
+
+### Test 4.2: URL encoded (gerçek kullanım)
+GET http://localhost:3000/api/search/products?q=pregalvaniz+kablo+kanal%C4%B1&height=45&width=60
+Content-Type: application/json
+
+### Test 4.3: Aksesuar arama
+GET http://localhost:3000/api/search/products?q=aksesuar&coatingType=pregalvaniz
+Content-Type: application/json
+
+### Test 4.4: Kapak arama
+GET http://localhost:3000/api/search/products?q=kapak
+Content-Type: application/json
+
+### ===================================
+### 5. ÖZEL SENARYOLAR
+### ===================================
+
+### Test 5.1: Kod ile arama
+GET http://localhost:3000/api/search/products?q=SK-4560
+Content-Type: application/json
+
+### Test 5.2: Kategori filtresi
+GET http://localhost:3000/api/search/products?q=kanal&category=kablo-kanallari
+Content-Type: application/json
+
+### Test 5.3: Çok genel arama (çok sonuç)
+GET http://localhost:3000/api/search/products?q=çelik
+Content-Type: application/json
+
+### ===================================
+### 6. HATA DURUMLARI
+### ===================================
+
+### Test 6.1: Parametre yok (400 hatası beklenir)
+GET http://localhost:3000/api/search/products
+Content-Type: application/json
+
+### Test 6.2: Bulunmayan ürün
+GET http://localhost:3000/api/search/products?q=bulunmayan-urun-xyz123
+Content-Type: application/json
+
+### Test 6.3: Çok spesifik arama (sonuç yok olabilir)
+GET http://localhost:3000/api/search/products?q=altın+kaplama&height=999&width=999
+Content-Type: application/json
+
+### ===================================
+### 7. PERFORMANS TESTLERİ
+### ===================================
+
+### Test 7.1: Tüm tipler (channel, module, accessory, cover)
+GET http://localhost:3000/api/search/products?q=45&height=45
+Content-Type: application/json
+
+### Test 7.2: Çok kısa sorgu
+GET http://localhost:3000/api/search/products?q=45
+Content-Type: application/json
+
+### ===================================
+### 8. GERÇEK KULLANICI SENARYOLARİ
+### ===================================
+
+### Senaryo 1: Müşteri pregalvaniz kablo kanalı istiyor
+GET http://localhost:3000/api/search/products?q=pregalvaniz+kablo+kanalı
+Content-Type: application/json
+
+### Senaryo 2: Müşteri boyut veriyor
+GET http://localhost:3000/api/search/products?q=45x60
+Content-Type: application/json
+
+### Senaryo 3: Tam spesifikasyon
+GET http://localhost:3000/api/search/products?q=pregalvaniz+kablo+kanalı+45x60
+Content-Type: application/json
+
+### Senaryo 4: Sadece kaplama tipi
+GET http://localhost:3000/api/search/products?coatingType=pregalvaniz
+Content-Type: application/json
+
+### Senaryo 5: Modül ve aksesuar kombinasyonu
+GET http://localhost:3000/api/search/products?q=solar
+Content-Type: application/json
+
+### ===================================
+### NOTLAR
+### ===================================
+
+# 1. Tüm Türkçe karakterler URL encode edilmeli:
+#    ı → %C4%B1
+#    ş → %C5%9F
+#    ğ → %C4%9F
+#    ü → %C3%BC
+#    ö → %C3%B6
+#    ç → %C3%A7
+
+# 2. Boşluklar "+" veya "%20" olabilir
+
+# 3. Beklenen Response Format:
+# {
+#   "success": true,
+#   "query": "...",
+#   "filters": {...},
+#   "totalResults": 10,
+#   "results": [...]
+# }
+
+# 4. Her sonuç şunları içerir:
+# - id, type, typeName
+# - name, code
+# - height, width
+# - coatingType, sheetThickness
+# - imageUrl
+# - productName, categoryName
+# - path (frontend link)
+# - fullDescription
+
+# 5. En fazla 20 sonuç döner (API'de limit var)
+
+# 6. Skorlama sistemi:
+# - Tam eşleşme: en yüksek puan
+# - Kısmi eşleşme: orta puan
+# - İlişkili eşleşme: düşük puan
+

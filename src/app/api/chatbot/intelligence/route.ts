@@ -337,7 +337,11 @@ async function handleProductSearch(analysis: any, context: any) {
   if (analysis.height) params.append('height', analysis.height)
   if (analysis.width) params.append('width', analysis.width)
 
-  const searchUrl = `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000'}/api/search/products?${params.toString()}`
+  // Production'da Vercel URL'i, local'de localhost kullan
+  const baseUrl = process.env.VERCEL_URL 
+    ? `https://${process.env.VERCEL_URL}` 
+    : 'http://localhost:3000'
+  const searchUrl = `${baseUrl}/api/search/products?${params.toString()}`
   
   try {
     const response = await fetch(searchUrl)
@@ -420,7 +424,11 @@ async function handleProductAccessories(analysis: any, context: any) {
   const params = new URLSearchParams()
   params.append('q', 'aksesuar')
   
-  const searchUrl = `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000'}/api/search/products?${params.toString()}`
+  // Production'da Vercel URL'i, local'de localhost kullan
+  const baseUrl = process.env.VERCEL_URL 
+    ? `https://${process.env.VERCEL_URL}` 
+    : 'http://localhost:3000'
+  const searchUrl = `${baseUrl}/api/search/products?${params.toString()}`
   
   try {
     const response = await fetch(searchUrl)

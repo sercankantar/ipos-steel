@@ -1,0 +1,467 @@
+{
+  "name": "IPOS Steel Smart Chatbot v2.0",
+  "nodes": [
+    {
+      "parameters": {
+        "updates": ["message"]
+      },
+      "name": "Telegram Trigger",
+      "type": "n8n-nodes-base.telegramTrigger",
+      "typeVersion": 1,
+      "position": [240, 500],
+      "webhookId": "WEBHOOK_ID",
+      "credentials": {
+        "telegramApi": {
+          "id": "TELEGRAM_CREDENTIAL_ID",
+          "name": "Telegram Bot"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "functionCode": "const userMessage = $input.item.json.message.text || '';\nconst chatId = $input.item.json.message.chat.id;\nconst userName = $input.item.json.message.from.first_name || 'Kullanıcı';\nconst userId = `telegram_${chatId}`;\n\nconst cleanMessage = userMessage.toLowerCase().trim();\n\nif (cleanMessage === '/start' || cleanMessage === 'start') {\n  return {\n    json: {\n      isCommand: true,\n      command: 'start',\n      chatId,\n      message: `👋 Merhaba ${userName}!\\n\\n🧠 *IPOS Steel Akıllı Asistan v2.0*\\n\\n✨ Artık daha akıllıyım!\\n• Konuşmalarımızı hatırlıyorum\\n• Eksik bilgi varsa size soruyorum\\n• Önceki aramalarınızı güncelleyebiliyorum\\n\\n*Örnekler:*\\n• \"kablo kanalı\" → Size soru sorarım\\n• \"50lik pregal\" → Direkt buluyorum\\n• \"40lıkları göster\" → Öncekini hatırlıyorum\\n• \"bunun aksesuarları\" → Son ürünü biliyorum\\n• \"hakkınızda\" → Şirket bilgisi\\n• \"iletişim\" → İletişim bilgileri\\n\\n📌 Komutlar:\\n/start - Hoş geldin\\n/clear - Konuşmayı temizle\\n/help - Yardım`\n    }\n  };\n}\n\nif (cleanMessage === '/clear' || cleanMessage === 'clear' || cleanMessage === 'temizle') {\n  return {\n    json: {\n      isCommand: true,\n      command: 'clear',\n      chatId,\n      userId,\n      message: '🗑️ Konuşma geçmişi temizlendi!\\n\\nYeni bir arama başlatabilirsiniz.'\n    }\n  };\n}\n\nif (cleanMessage === '/help' || cleanMessage === 'help' || cleanMessage === 'yardım') {\n  return {\n    json: {\n      isCommand: true,\n      command: 'help',\n      chatId,\n      message: `❓ *Nasıl Kullanılır?*\\n\\n*🧠 Akıllı Özellikler:*\\n• Konuşmaları hatırlıyorum!\\n• \"40lıkları getir\" dediğinizde önceki aramayı biliyorum\\n• \"bunun aksesuarları\" dediğinizde son ürünü anlıyorum\\n\\n*💬 Doğal Dilde Konuşun:*\\n• \"kablo kanalı\" → Size boyut sorarım\\n• \"50lik pregal\" → Direkt bulurum\\n• \"pregalvaniz olanları\" → Önceki aramayı güncellerim\\n• \"bunun modülleri\" → İlgili ürünleri gösteririm\\n\\n*🏢 Şirket Bilgileri:*\\n• \"hakkınızda\"\\n• \"misyonunuz nedir\"\\n• \"iletişim\"\\n• \"telefon numarası\"\\n\\n*🔧 Komutlar:*\\n/start - Başla\\n/clear - Konuşmayı temizle\\n/help - Bu yardım`\n    }\n  };\n}\n\nreturn {\n  json: {\n    isCommand: false,\n    chatId,\n    userId,\n    userName,\n    userMessage,\n    cleanMessage\n  }\n};"
+      },
+      "name": "Prepare Context",
+      "type": "n8n-nodes-base.function",
+      "typeVersion": 1,
+      "position": [440, 500]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "boolean": [
+            {
+              "value1": "={{$json.isCommand}}",
+              "value2": true
+            }
+          ]
+        }
+      },
+      "name": "Is Command?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [640, 500]
+    },
+    {
+      "parameters": {
+        "functionCode": "const command = $input.item.json.command;\nconst userId = $input.item.json.userId;\nconst chatId = $input.item.json.chatId;\n\nif (command === 'clear') {\n  return {\n    json: {\n      shouldClearConversation: true,\n      userId,\n      chatId,\n      message: $input.item.json.message\n    }\n  };\n}\n\nreturn {\n  json: {\n    shouldClearConversation: false,\n    chatId,\n    message: $input.item.json.message\n  }\n};"
+      },
+      "name": "Handle Command",
+      "type": "n8n-nodes-base.function",
+      "typeVersion": 1,
+      "position": [840, 300]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "boolean": [
+            {
+              "value1": "={{$json.shouldClearConversation}}",
+              "value2": true
+            }
+          ]
+        }
+      },
+      "name": "Should Clear?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [1040, 300]
+    },
+    {
+      "parameters": {
+        "method": "DELETE",
+        "url": "=https://YOUR-DOMAIN.com/api/chatbot/conversation?userId={{$json.userId}}",
+        "options": {
+          "timeout": 10000
+        }
+      },
+      "name": "Clear Conversation API",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [1240, 200]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://YOUR-DOMAIN.com/api/chatbot/intelligence",
+        "authentication": "none",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({\n  userId: $json.userId,\n  message: $json.userMessage,\n  openaiKey: $credentials.openAiApi?.apiKey || null\n}) }}",
+        "options": {
+          "timeout": 30000
+        }
+      },
+      "name": "Intelligence API",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [840, 600],
+      "credentials": {
+        "openAiApi": {
+          "id": "OPENAI_CREDENTIAL_ID",
+          "name": "OpenAI"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "rules",
+        "rules": {
+          "rules": [
+            {
+              "operation": "equal",
+              "value1": "={{$json.intent}}",
+              "value2": "product_search"
+            },
+            {
+              "operation": "equal",
+              "value1": "={{$json.intent}}",
+              "value2": "incomplete_search"
+            },
+            {
+              "operation": "equal",
+              "value1": "={{$json.intent}}",
+              "value2": "follow_up_search"
+            },
+            {
+              "operation": "equal",
+              "value1": "={{$json.intent}}",
+              "value2": "company_info"
+            },
+            {
+              "operation": "equal",
+              "value1": "={{$json.intent}}",
+              "value2": "contact_info"
+            },
+            {
+              "operation": "equal",
+              "value1": "={{$json.intent}}",
+              "value2": "product_accessories"
+            },
+            {
+              "operation": "equal",
+              "value1": "={{$json.intent}}",
+              "value2": "product_details"
+            }
+          ]
+        },
+        "fallbackOutput": "extra"
+      },
+      "name": "Route by Intent",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 2,
+      "position": [1040, 600]
+    },
+    {
+      "parameters": {
+        "functionCode": "const response = $input.item.json;\nconst chatId = $('Prepare Context').item.json.chatId;\n\nif (!response.success || !response.searchResults) {\n  return {\n    json: {\n      chatId,\n      message: response.response || 'Bir hata oluştu.',\n      replyMarkup: {\n        inline_keyboard: [\n          [\n            { text: '🔍 Yeni Arama', callback_data: 'new_search' },\n            { text: '☎️ İletişim', callback_data: 'contact' }\n          ]\n        ]\n      }\n    }\n  };\n}\n\nconst results = response.searchResults;\nconst totalResults = results.length;\n\nif (totalResults === 0) {\n  return {\n    json: {\n      chatId,\n      message: response.response,\n      replyMarkup: {\n        inline_keyboard: [\n          [\n            { text: '🔍 Yeni Arama', callback_data: 'new_search' },\n            { text: '☎️ İletişim', callback_data: 'contact' }\n          ],\n          [\n            { text: '📋 Katalog', url: 'https://ipossteel.com/katalog' }\n          ]\n        ]\n      }\n    }\n  };\n}\n\nlet message = `${response.response}\\n\\n`;\nmessage += `━━━━━━━━━━━━━━━\\n\\n`;\n\nresults.slice(0, 5).forEach((product, index) => {\n  message += `*${index + 1}. ${product.name}*\\n`;\n  \n  if (product.code) {\n    message += `🏷️ Kod: \\`${product.code}\\`\\n`;\n  }\n  \n  if (product.typeName) {\n    message += `📦 Tip: ${product.typeName}\\n`;\n  }\n  \n  if (product.height && product.width) {\n    message += `📏 Boyut: ${product.height}×${product.width} mm\\n`;\n  }\n  \n  if (product.coatingType) {\n    message += `🎨 Kaplama: ${product.coatingType}\\n`;\n  }\n  \n  if (product.sheetThickness) {\n    message += `📐 Sac: ${product.sheetThickness} mm\\n`;\n  }\n  \n  message += `\\n`;\n});\n\nif (totalResults > 5) {\n  message += `━━━━━━━━━━━━━━━\\n`;\n  message += `_...ve ${totalResults - 5} ürün daha_\\n\\n`;\n}\n\nif (response.context?.hasLastSearch) {\n  message += `\\n💡 *İpucu:* \"40lıkları göster\" veya \"pregalvaniz olanları\" diyerek filtreleyebilirsiniz.`;\n}\n\nmessage += `\\n\\n📞 Teklif: +90 XXX XXX XX XX`;\n\nreturn {\n  json: {\n    chatId,\n    message,\n    replyMarkup: {\n      inline_keyboard: [\n        [\n          { text: '🔍 Yeni Arama', callback_data: 'new_search' },\n          { text: '📋 Filtrele', callback_data: 'filter' }\n        ],\n        [\n          { text: '🗑️ Geçmişi Temizle', callback_data: '/clear' },\n          { text: '📖 Katalog', url: 'https://ipossteel.com/katalog' }\n        ]\n      ]\n    }\n  }\n};"
+      },
+      "name": "Format Search Results",
+      "type": "n8n-nodes-base.function",
+      "typeVersion": 1,
+      "position": [1240, 500]
+    },
+    {
+      "parameters": {
+        "functionCode": "const response = $input.item.json;\nconst chatId = $('Prepare Context').item.json.chatId;\n\nlet message = response.response;\n\nconst buttons = [];\n\nif (response.missingParams?.includes('height') || response.missingParams?.includes('width')) {\n  buttons.push([\n    { text: '40mm', callback_data: 'size_40' },\n    { text: '45mm', callback_data: 'size_45' },\n    { text: '50mm', callback_data: 'size_50' }\n  ]);\n  buttons.push([\n    { text: '60mm', callback_data: 'size_60' },\n    { text: '80mm', callback_data: 'size_80' },\n    { text: '100mm', callback_data: 'size_100' }\n  ]);\n}\n\nif (response.missingParams?.includes('coatingType')) {\n  buttons.push([\n    { text: 'Pregalvaniz', callback_data: 'coating_pregalvaniz' },\n    { text: 'Sıcak Daldırma', callback_data: 'coating_sicak' }\n  ]);\n  buttons.push([\n    { text: 'Elektro', callback_data: 'coating_elektro' },\n    { text: 'Boyalı', callback_data: 'coating_boyali' }\n  ]);\n}\n\nbuttons.push([\n  { text: '❌ İptal', callback_data: 'cancel' }\n]);\n\nreturn {\n  json: {\n    chatId,\n    message,\n    replyMarkup: {\n      inline_keyboard: buttons\n    }\n  }\n};"
+      },
+      "name": "Format Question",
+      "type": "n8n-nodes-base.function",
+      "typeVersion": 1,
+      "position": [1240, 600]
+    },
+    {
+      "parameters": {
+        "functionCode": "const response = $input.item.json;\nconst chatId = $('Prepare Context').item.json.chatId;\n\nreturn {\n  json: {\n    chatId,\n    message: response.response,\n    replyMarkup: {\n      inline_keyboard: [\n        [\n          { text: '📞 İletişim', callback_data: 'iletişim' },\n          { text: '📋 Katalog', url: 'https://ipossteel.com/katalog' }\n        ],\n        [\n          { text: '🔍 Ürün Ara', callback_data: 'search' }\n        ]\n      ]\n    }\n  }\n};"
+      },
+      "name": "Format Info",
+      "type": "n8n-nodes-base.function",
+      "typeVersion": 1,
+      "position": [1240, 700]
+    },
+    {
+      "parameters": {
+        "chatId": "={{$json.chatId}}",
+        "text": "={{$json.message}}",
+        "additionalFields": {
+          "parse_mode": "Markdown",
+          "disable_web_page_preview": true,
+          "reply_markup": "={{JSON.stringify($json.replyMarkup || {})}}"
+        }
+      },
+      "name": "Telegram Reply",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1,
+      "position": [1440, 500],
+      "credentials": {
+        "telegramApi": {
+          "id": "TELEGRAM_CREDENTIAL_ID",
+          "name": "Telegram Bot"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{$json.chatId}}",
+        "text": "={{$json.message}}",
+        "additionalFields": {
+          "parse_mode": "Markdown",
+          "disable_web_page_preview": true
+        }
+      },
+      "name": "Telegram Reply (Command)",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1,
+      "position": [1240, 400],
+      "credentials": {
+        "telegramApi": {
+          "id": "TELEGRAM_CREDENTIAL_ID",
+          "name": "Telegram Bot"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "functionCode": "const response = $input.item.json;\nconst chatId = $('Prepare Context').item.json.chatId;\n\nreturn {\n  json: {\n    chatId,\n    message: response.response || '🤖 Üzgünüm, şu anda bu konuda yardımcı olamıyorum.\\n\\n*Yapabileceklerim:*\\n• Ürün arama\\n• Şirket bilgileri\\n• İletişim bilgileri\\n\\nÖrnek: \"50lik pregal kanal\" veya \"hakkınızda\"',\n    replyMarkup: {\n      inline_keyboard: [\n        [\n          { text: '🔍 Ürün Ara', callback_data: 'search' },\n          { text: 'ℹ️ Hakkımızda', callback_data: 'hakkımızda' }\n        ],\n        [\n          { text: '📞 İletişim', callback_data: 'iletişim' },\n          { text: '❓ Yardım', callback_data: '/help' }\n        ]\n      ]\n    }\n  }\n};"
+      },
+      "name": "Format General",
+      "type": "n8n-nodes-base.function",
+      "typeVersion": 1,
+      "position": [1240, 800]
+    }
+  ],
+  "connections": {
+    "Telegram Trigger": {
+      "main": [
+        [
+          {
+            "node": "Prepare Context",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Prepare Context": {
+      "main": [
+        [
+          {
+            "node": "Is Command?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Is Command?": {
+      "main": [
+        [
+          {
+            "node": "Handle Command",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Intelligence API",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Handle Command": {
+      "main": [
+        [
+          {
+            "node": "Should Clear?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Should Clear?": {
+      "main": [
+        [
+          {
+            "node": "Clear Conversation API",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Telegram Reply (Command)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Clear Conversation API": {
+      "main": [
+        [
+          {
+            "node": "Telegram Reply (Command)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Intelligence API": {
+      "main": [
+        [
+          {
+            "node": "Route by Intent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Route by Intent": {
+      "main": [
+        [
+          {
+            "node": "Format Search Results",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Format Question",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Format Search Results",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Format Info",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Format Info",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Format Search Results",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Format Search Results",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Format General",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Format Search Results": {
+      "main": [
+        [
+          {
+            "node": "Telegram Reply",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Format Question": {
+      "main": [
+        [
+          {
+            "node": "Telegram Reply",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Format Info": {
+      "main": [
+        [
+          {
+            "node": "Telegram Reply",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Format General": {
+      "main": [
+        [
+          {
+            "node": "Telegram Reply",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "tags": [
+    {
+      "createdAt": "2024-01-01T00:00:00.000Z",
+      "updatedAt": "2024-01-01T00:00:00.000Z",
+      "id": "1",
+      "name": "chatbot"
+    },
+    {
+      "createdAt": "2024-01-01T00:00:00.000Z",
+      "updatedAt": "2024-01-01T00:00:00.000Z",
+      "id": "2",
+      "name": "smart-v2"
+    },
+    {
+      "createdAt": "2024-01-01T00:00:00.000Z",
+      "updatedAt": "2024-01-01T00:00:00.000Z",
+      "id": "3",
+      "name": "context-aware"
+    }
+  ],
+  "triggerCount": 0,
+  "updatedAt": "2024-12-23T00:00:00.000Z",
+  "versionId": "2"
+}
+
