@@ -146,26 +146,26 @@ ${context.lastProductId ? `Son ürün ID: ${context.lastProductId}` : ''}
 **Intent Tipleri:**
 1. company_info - Şirket hakkında bilgi ("hakkınızda", "kimsiniz", "ne yapıyorsunuz")
 2. contact_info - İletişim bilgisi ("iletişim", "telefon", "adres", "nasıl ulaşabilirim")
-3. product_search - Tam ürün arama (tüm parametreler var)
+3. product_search - Ürün arama (her zaman searchQuery doldur!)
 4. incomplete_search - Eksik parametreli arama (kullanıcıya soru sor)
 5. follow_up_search - Önceki aramayı güncelleyen arama ("40lıkları getir", "pregalvaniz olanları")
 6. product_details - Ürün detayı ("bu ürünün özellikleri", "daha fazla bilgi")
 7. product_accessories - İlişkili ürünler ("bunun aksesuarları", "modülleri neler")
 8. general - Genel sohbet
 
-**Önemli:**
-- Eğer kullanıcı "40lıkları", "pregalvaniz olanları" derse → follow_up_search (context'teki son aramayı güncelle)
-- Eğer "bunun", "bu ürünün" derse → context'teki lastProductId'yi kullan
-- Eksik parametre varsa → incomplete_search ve neyin eksik olduğunu belirt
+**ÇOK ÖNEMLİ - Arama Parametreleri:**
+- searchQuery: MUTLAKA kullanıcının yazdığı tam metni koy! Örnek: "50lik kablo kanalı" → searchQuery="50lik kablo kanalı"
+- height/width: SADECE kullanıcı spesifik mm değer verirse (örn: "50mm", "60mm yükseklik")
+- "50lik", "40lık" gibi ifadeler → searchQuery'ye at, height/width BOŞLUK
+- coatingType: "pregalvaniz", "sıcak daldırma", "boyalı", "elektro" varsa
 
 **Örnekler:**
-- "50lik kablo kanalı" → product_search (tam arama)
-- "kablo kanalı" → incomplete_search (boyut eksik, sor!)
-- "40lıkları getir" (context'te son arama var) → follow_up_search
-- "pregalvaniz olanları göster" (context'te son arama var) → follow_up_search
-- "bunun aksesuarları" (context'te son ürün var) → product_accessories
-- "hakkınızda" → company_info
-- "iletişim" → contact_info`
+- "50lik kablo kanalı" → product_search, searchQuery="50lik kablo kanalı", height=null, width=null
+- "kablo kanalı 60mm yükseklik" → product_search, searchQuery="kablo kanalı", height="60mm"
+- "pregalvaniz 50lik kanal" → product_search, searchQuery="pregalvaniz 50lik kanal", coatingType="pregalvaniz"
+- "kanal" → incomplete_search (çok belirsiz)
+- "40lıkları getir" (context var) → follow_up_search
+- "hakkınızda" → company_info`
 
   try {
     // Basit regex tabanlı analiz (OpenAI key yoksa)
@@ -194,15 +194,25 @@ ${context.lastProductId ? `Son ürün ID: ${context.lastProductId}` : ''}
             properties: {
               intent: {
                 type: 'string',
-                enum: ['company_info', 'contact_info', 'product_search', 'incomplete_search', 'follow_up_search', 'product_details', 'product_accessories', 'general']
+                enum: ['company_info', 'contact_info', 'product_search', 'incomplete_search', 'follow_up_search', 'product_details', 'product_accessories', 'general'],
+                description: 'Mesajın amacı'
               },
               searchQuery: {
                 type: 'string',
-                description: 'Arama terimi'
+                description: 'Arama terimi - kullanıcının yazdığı tam ifade (örn: "50lik kablo kanalı"). MUTLAKA doldur!'
               },
-              coatingType: { type: 'string' },
-              height: { type: 'string' },
-              width: { type: 'string' },
+              coatingType: { 
+                type: 'string',
+                description: 'Kaplama tipi - SADECE açıkça belirtilmişse (pregalvaniz, sıcak daldırma, boyalı, elektro)'
+              },
+              height: { 
+                type: 'string',
+                description: 'Yükseklik - SADECE mm cinsinden açıkça belirtilmişse (örn: "60mm"). "50lik" gibi ifadeler searchQuery\'de kalmalı!' 
+              },
+              width: { 
+                type: 'string',
+                description: 'Genişlik - SADECE mm cinsinden açıkça belirtilmişse (örn: "100mm"). "50lik" gibi ifadeler searchQuery\'de kalmalı!'
+              },
               missingParams: {
                 type: 'array',
                 items: { type: 'string' },
@@ -249,7 +259,7 @@ function simpleAnalysis(message: string, context: any): any {
 
   // Follow-up search (context varsa)
   if (context.lastSearchQuery && (
-    lower.match(/\d+\s*lik/i) ||
+    lower.match(/\d+\s*l[ıi]k/i) ||
     lower.includes('pregal') ||
     lower.includes('sıcak daldırma') ||
     lower.includes('olanları') ||
@@ -257,7 +267,9 @@ function simpleAnalysis(message: string, context: any): any {
   )) {
     return {
       intent: 'follow_up_search',
-      searchQuery: context.lastSearchQuery.q
+      searchQuery: message,
+      coatingType: lower.includes('pregal') ? 'pregalvaniz' : 
+                   lower.includes('sıcak') ? 'sıcak daldırma' : undefined
     }
   }
 
@@ -267,7 +279,7 @@ function simpleAnalysis(message: string, context: any): any {
     return { intent: 'product_accessories' }
   }
 
-  // Product search
+  // Product search - TÜM MESAJI searchQuery'ye at
   return {
     intent: 'product_search',
     searchQuery: message
@@ -344,16 +356,30 @@ async function handleProductSearch(analysis: any, context: any) {
     : 'http://localhost:3000'
   const searchUrl = `${baseUrl}/api/search/products?${params.toString()}`
   
+  console.log('🔍 Search URL:', searchUrl)
+  console.log('📊 Analysis params:', { 
+    searchQuery: analysis.searchQuery,
+    coatingType: analysis.coatingType,
+    height: analysis.height,
+    width: analysis.width
+  })
+  
   try {
     const response = await fetch(searchUrl)
     const data = await response.json()
 
-    if (data.success && data.results.length > 0) {
+    console.log('📦 Search results:', { 
+      success: data.success, 
+      totalResults: data.totalResults,
+      query: data.query 
+    })
+
+    if (data.success && data.results && data.results.length > 0) {
       return {
         success: true,
         intent: 'product_search',
         response: `✅ ${data.totalResults} ürün bulundu!`,
-        searchResults: data.results,
+        searchResults: data.results.slice(0, 20),
         requiresMoreInfo: false
       }
     } else {
