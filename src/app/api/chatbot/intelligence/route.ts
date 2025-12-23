@@ -136,38 +136,39 @@ export async function POST(req: NextRequest) {
 
 // GPT ile mesaj analizi
 async function analyzeMessage(message: string, context: any, openaiKey?: string): Promise<any> {
-  const systemPrompt = `Sen IPOS Steel'in akıllı chatbot asistanısın. Kullanıcının mesajını analiz edip intent ve parametreleri çıkarıyorsun.
+  const systemPrompt = `Sen IPOS Steel'in akıllı chatbot asistanısın. Türk müşteriler için ürün arama yapıyorsun.
 
-**Context Bilgisi:**
+**Context:**
 ${context.lastSearchQuery ? `Son arama: ${JSON.stringify(context.lastSearchQuery)}` : 'İlk mesaj'}
 ${context.lastSearchResults ? `Son sonuçlar: ${context.lastSearchResults.length} ürün` : ''}
-${context.lastProductId ? `Son ürün ID: ${context.lastProductId}` : ''}
 
-**Intent Tipleri:**
-1. company_info - Şirket hakkında bilgi ("hakkınızda", "kimsiniz", "ne yapıyorsunuz")
-2. contact_info - İletişim bilgisi ("iletişim", "telefon", "adres", "nasıl ulaşabilirim")
-3. product_search - Ürün arama (her zaman searchQuery doldur!)
-4. incomplete_search - Eksik parametreli arama (kullanıcıya soru sor)
-5. follow_up_search - Önceki aramayı güncelleyen arama ("40lıkları getir", "pregalvaniz olanları")
-6. product_details - Ürün detayı ("bu ürünün özellikleri", "daha fazla bilgi")
-7. product_accessories - İlişkili ürünler ("bunun aksesuarları", "modülleri neler")
-8. general - Genel sohbet
+**GOREVİN:**
+Kullanıcının mesajını analiz et ve searchQuery'yi NORMALIZE ET!
 
-**ÇOK ÖNEMLİ - Arama Parametreleri:**
-- searchQuery: Kullanıcının mesajını normalize et! 
-  * "50lik" → "50" (Türkçe ek kaldır)
-  * "40lık" → "40"
-  * "60lıkları" → "60"
-  * "pregalvaniz" → "pregal" veya "pregalvaniz" (ikisi de OK)
-- height/width: SADECE kullanıcı "50mm yükseklik" gibi spesifik mm değer verirse
-- coatingType: "pregalvaniz", "sıcak daldırma", "boyalı", "elektro" varsa doldur
+**TÜRKçE NORMALİZASYON (ÇOK ÖNEMLİ!):**
+- "50lik" → "50" (sadece sayıyı al)
+- "40lık" → "40"  
+- "60lıkları" → "60"
+- "pregalvaniz" → "pregal" (kısa versiyonu kullan)
+- "sıcak daldırma galvaniz" → "sıcak daldırma"
 
-**Örnekler:**
-- "50lik kablo kanalı" → product_search, searchQuery="50 kablo kanalı"
-- "pregalvaniz 40lık kanal" → product_search, searchQuery="pregal 40 kanal", coatingType="pregalvaniz"
-- "60lıkları göster" → product_search, searchQuery="60"
-- "kanal" → incomplete_search (çok belirsiz, kullanıcıya sor!)
-- "hakkınızda" → company_info`
+**ÖRNEKLER:**
+Kullanıcı: "50lik kablo kanalı"
+→ intent: "product_search", searchQuery: "50 kablo kanal"
+
+Kullanıcı: "pregalvaniz 40lık kanal"
+→ intent: "product_search", searchQuery: "pregal 40 kanal", coatingType: "pregalvaniz"
+
+Kullanıcı: "60lıkları göster"
+→ intent: "product_search", searchQuery: "60"
+
+Kullanıcı: "hakkınızda"
+→ intent: "company_info"
+
+Kullanıcı: "iletişim"
+→ intent: "contact_info"
+
+**searchQuery HER ZAMAN DOLDUR! Türkçe ekleri temizle, sadece sayı ve anahtar kelime bırak!**`
 
   try {
     // Basit regex tabanlı analiz (OpenAI key yoksa)
@@ -190,42 +191,39 @@ ${context.lastProductId ? `Son ürün ID: ${context.lastProductId}` : ''}
         ],
         functions: [{
           name: 'analyze_intent',
-          description: 'Kullanıcının mesajını analiz et',
+          description: 'Kullanıcı mesajını analiz et ve Türkçe ekleri normalize et',
           parameters: {
             type: 'object',
             properties: {
               intent: {
                 type: 'string',
-                enum: ['company_info', 'contact_info', 'product_search', 'incomplete_search', 'follow_up_search', 'product_details', 'product_accessories', 'general'],
-                description: 'Mesajın amacı'
+                enum: ['company_info', 'contact_info', 'product_search', 'incomplete_search', 'follow_up_search', 'product_details', 'product_accessories', 'general']
               },
               searchQuery: {
                 type: 'string',
-                description: 'Arama terimi - kullanıcının yazdığı tam ifade (örn: "50lik kablo kanalı"). MUTLAKA doldur!'
+                description: 'NORMALIZE EDİLMİŞ arama terimi. "50lik" → "50", "pregalvaniz" → "pregal". Örnek: Kullanıcı "50lik kablo kanalı" derse, sen "50 kablo kanal" yaz. MUTLAKA DOLDUR!'
               },
               coatingType: { 
                 type: 'string',
-                description: 'Kaplama tipi - SADECE açıkça belirtilmişse (pregalvaniz, sıcak daldırma, boyalı, elektro)'
+                description: 'Sadece varsa: pregalvaniz, sıcak daldırma, boyalı, elektro'
               },
               height: { 
                 type: 'string',
-                description: 'Yükseklik - SADECE mm cinsinden açıkça belirtilmişse (örn: "60mm"). "50lik" gibi ifadeler searchQuery\'de kalmalı!' 
+                description: 'Sadece mm değeri açıkça belirtilmişse'
               },
               width: { 
                 type: 'string',
-                description: 'Genişlik - SADECE mm cinsinden açıkça belirtilmişse (örn: "100mm"). "50lik" gibi ifadeler searchQuery\'de kalmalı!'
+                description: 'Sadece mm değeri açıkça belirtilmişse'
               },
               missingParams: {
                 type: 'array',
-                items: { type: 'string' },
-                description: 'Eksik parametreler'
+                items: { type: 'string' }
               },
               clarificationNeeded: {
-                type: 'string',
-                description: 'Kullanıcıya sorulacak soru'
+                type: 'string'
               }
             },
-            required: ['intent']
+            required: ['intent', 'searchQuery']
           }
         }],
         function_call: { name: 'analyze_intent' },
@@ -234,7 +232,20 @@ ${context.lastProductId ? `Son ürün ID: ${context.lastProductId}` : ''}
     })
 
     const data = await response.json()
+    
+    if (!data.choices || !data.choices[0]?.message?.function_call) {
+      console.error('❌ GPT response invalid:', JSON.stringify(data))
+      return simpleAnalysis(message, context)
+    }
+    
     const result = JSON.parse(data.choices[0].message.function_call.arguments)
+    
+    console.log('🤖 GPT Analysis:', {
+      userMessage: message,
+      intent: result.intent,
+      searchQuery: result.searchQuery,
+      coatingType: result.coatingType
+    })
     
     return result
 
@@ -281,11 +292,13 @@ function simpleAnalysis(message: string, context: any): any {
     return { intent: 'product_accessories' }
   }
 
-  // Product search - Türkçe normalize et
+  // Product search - Türkçe normalize et (fallback)
   let searchQuery = message
-    .replace(/(\d+)\s*l[ıi]k/gi, '$1')  // "50lik" → "50"
-    .replace(/(\d+)\s*l[ıi]klar[ıi]/gi, '$1')  // "50lıkları" → "50"
+    .replace(/(\d+)\s*l[ıi]k(lar[ıi])?/gi, '$1')  // "50lik", "50lıkları" → "50"
+    .replace(/pregalvaniz/gi, 'pregal')  // "pregalvaniz" → "pregal"
     .trim()
+  
+  console.log('🔄 Fallback Analysis:', { original: message, normalized: searchQuery })
   
   return {
     intent: 'product_search',
