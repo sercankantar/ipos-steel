@@ -17,8 +17,7 @@ export async function POST(req: NextRequest) {
     const { 
       userId, 
       message, 
-      conversationHistory = [],
-      openaiKey 
+      conversationHistory = []
     } = await req.json()
 
     if (!userId || !message) {
@@ -27,6 +26,9 @@ export async function POST(req: NextRequest) {
         error: 'userId ve message gerekli'
       }, { status: 400 })
     }
+
+    // OpenAI key'i environment variable'dan al
+    const openaiKey = process.env.OPENAI_API_KEY || undefined
 
     // Context'i al veya oluştur
     let context = contextStore.get(userId) || {
