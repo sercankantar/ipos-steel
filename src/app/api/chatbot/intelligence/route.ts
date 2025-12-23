@@ -154,17 +154,19 @@ ${context.lastProductId ? `Son ürün ID: ${context.lastProductId}` : ''}
 8. general - Genel sohbet
 
 **ÇOK ÖNEMLİ - Arama Parametreleri:**
-- searchQuery: MUTLAKA kullanıcının yazdığı tam metni koy! Örnek: "50lik kablo kanalı" → searchQuery="50lik kablo kanalı"
-- height/width: SADECE kullanıcı spesifik mm değer verirse (örn: "50mm", "60mm yükseklik")
-- "50lik", "40lık" gibi ifadeler → searchQuery'ye at, height/width BOŞLUK
-- coatingType: "pregalvaniz", "sıcak daldırma", "boyalı", "elektro" varsa
+- searchQuery: Kullanıcının mesajını normalize et! 
+  * "50lik" → "50" (Türkçe ek kaldır)
+  * "40lık" → "40"
+  * "60lıkları" → "60"
+  * "pregalvaniz" → "pregal" veya "pregalvaniz" (ikisi de OK)
+- height/width: SADECE kullanıcı "50mm yükseklik" gibi spesifik mm değer verirse
+- coatingType: "pregalvaniz", "sıcak daldırma", "boyalı", "elektro" varsa doldur
 
 **Örnekler:**
-- "50lik kablo kanalı" → product_search, searchQuery="50lik kablo kanalı", height=null, width=null
-- "kablo kanalı 60mm yükseklik" → product_search, searchQuery="kablo kanalı", height="60mm"
-- "pregalvaniz 50lik kanal" → product_search, searchQuery="pregalvaniz 50lik kanal", coatingType="pregalvaniz"
-- "kanal" → incomplete_search (çok belirsiz)
-- "40lıkları getir" (context var) → follow_up_search
+- "50lik kablo kanalı" → product_search, searchQuery="50 kablo kanalı"
+- "pregalvaniz 40lık kanal" → product_search, searchQuery="pregal 40 kanal", coatingType="pregalvaniz"
+- "60lıkları göster" → product_search, searchQuery="60"
+- "kanal" → incomplete_search (çok belirsiz, kullanıcıya sor!)
 - "hakkınızda" → company_info`
 
   try {
@@ -279,10 +281,15 @@ function simpleAnalysis(message: string, context: any): any {
     return { intent: 'product_accessories' }
   }
 
-  // Product search - TÜM MESAJI searchQuery'ye at
+  // Product search - Türkçe normalize et
+  let searchQuery = message
+    .replace(/(\d+)\s*l[ıi]k/gi, '$1')  // "50lik" → "50"
+    .replace(/(\d+)\s*l[ıi]klar[ıi]/gi, '$1')  // "50lıkları" → "50"
+    .trim()
+  
   return {
     intent: 'product_search',
-    searchQuery: message
+    searchQuery: searchQuery
   }
 }
 
