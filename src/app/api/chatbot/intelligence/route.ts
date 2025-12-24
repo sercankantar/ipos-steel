@@ -392,16 +392,30 @@ async function handleCompanyInfo(analysis: any) {
     let response = '🏢 *IPOS Steel Hakkında*\n\n'
     
     if (about) {
-      response += `${about.title}\n\n`
-      response += `${about.description}\n\n`
+      response += `*${about.title}*\n\n`
+      
+      // Description'ı kısalt (max 800 karakter)
+      const description = about.description.length > 800 
+        ? about.description.substring(0, 800) + '...' 
+        : about.description
+      response += `${description}\n\n`
     }
 
     if (missionVision) {
-      response += `🎯 *Misyonumuz:*\n${missionVision.mission}\n\n`
-      response += `👁️ *Vizyonumuz:*\n${missionVision.vision}\n\n`
+      // Misyon - max 300 karakter
+      const mission = missionVision.mission.length > 300
+        ? missionVision.mission.substring(0, 300) + '...'
+        : missionVision.mission
+      response += `🎯 *Misyonumuz:*\n${mission}\n\n`
+      
+      // Vizyon - max 300 karakter
+      const vision = missionVision.vision.length > 300
+        ? missionVision.vision.substring(0, 300) + '...'
+        : missionVision.vision
+      response += `👁️ *Vizyonumuz:*\n${vision}\n\n`
     }
 
-    response += `📞 Daha fazla bilgi için: /iletisim`
+    response += `📞 Detaylı bilgi: /iletisim\n🌐 Web: https://ipossteel.com`
 
     return {
       success: true,
@@ -413,7 +427,7 @@ async function handleCompanyInfo(analysis: any) {
     return {
       success: true,
       intent: 'company_info',
-      response: '🏢 IPOS Steel, çelik konstrüksiyon ve kablo kanalı sistemleri alanında öncü bir şirkettir.\n\n📞 Detaylı bilgi için: +90 XXX XXX XX XX',
+      response: '🏢 *IPOS Steel*\n\nÇelik konstrüksiyon ve kablo kanalı sistemleri alanında öncü şirketiz.\n\n📦 Ürünlerimiz: Kablo kanalları, modüller, aksesuarlar\n🏭 Üretim: Yüksek kalite standartları\n\n📞 İletişim: /iletisim',
       requiresMoreInfo: false
     }
   }
