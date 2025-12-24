@@ -244,6 +244,36 @@ export const PRODUCT_CATALOG = {
           thicknesses: ['1.0mm', '1.2mm', '1.5mm', '2.0mm']
         },
         {
+          type: 'Orta Redüksiyon',
+          heights: ['40mm', '50mm', '60mm', '80mm', '100mm'],
+          widths: ['105mm', '205mm', '305mm', '405mm', '505mm', '605mm'],
+          thicknesses: ['1.0mm', '1.2mm', '1.5mm', '2.0mm']
+        },
+        {
+          type: 'Sağ Redüksiyon',
+          heights: ['40mm', '50mm', '60mm', '80mm', '100mm'],
+          widths: ['105mm', '205mm', '305mm', '405mm', '505mm', '605mm'],
+          thicknesses: ['1.0mm', '1.2mm', '1.5mm', '2.0mm']
+        },
+        {
+          type: 'Sol Redüksiyon',
+          heights: ['40mm', '50mm', '60mm', '80mm', '100mm'],
+          widths: ['105mm', '205mm', '305mm', '405mm', '505mm', '605mm'],
+          thicknesses: ['1.0mm', '1.2mm', '1.5mm', '2.0mm']
+        },
+        {
+          type: 'Z Orta Redüksiyon',
+          heights: ['40mm', '50mm', '60mm', '80mm', '100mm'],
+          widths: ['25mm', '50mm', '75mm', '100mm', '125mm', '150mm', '175mm', '200mm'],
+          thicknesses: ['1.0mm', '1.2mm', '1.5mm', '2.0mm']
+        },
+        {
+          type: 'Z Sağ-Sol Redüksiyon',
+          heights: ['40mm', '50mm', '60mm', '80mm', '100mm'],
+          widths: ['25mm', '50mm', '75mm', '100mm', '125mm', '150mm', '175mm', '200mm'],
+          thicknesses: ['1.0mm', '1.2mm', '1.5mm', '2.0mm']
+        },
+        {
           type: 'Seperatör',
           heights: ['40mm', '50mm', '60mm', '80mm', '100mm'],
           widths: ['30mm'],
@@ -289,6 +319,54 @@ export const PRODUCT_CATALOG = {
           type: '90° Dönüş',
           heights: ['40mm', '50mm', '60mm', '80mm', '100mm'],
           widths: ['54mm', '104mm', '154mm', '205mm', '255mm', '305mm', '405mm', '506mm', '606mm'],
+          thicknesses: ['1.0mm', '1.2mm', '1.5mm', '2.0mm']
+        },
+        {
+          type: 'Dış Bükey Dönüş',
+          heights: ['40mm', '50mm', '60mm', '80mm', '100mm'],
+          widths: ['54mm', '104mm', '154mm', '205mm', '255mm', '305mm', '405mm', '506mm', '606mm'],
+          thicknesses: ['1.0mm', '1.2mm', '1.5mm', '2.0mm']
+        },
+        {
+          type: 'Dörtlü Dönüş',
+          heights: ['40mm', '50mm', '60mm', '80mm', '100mm'],
+          widths: ['54mm', '104mm', '154mm', '205mm', '255mm', '305mm', '405mm', '506mm', '606mm'],
+          thicknesses: ['1.0mm', '1.2mm', '1.5mm', '2.0mm']
+        },
+        {
+          type: 'İç Bükey Dönüş',
+          heights: ['40mm', '50mm', '60mm', '80mm', '100mm'],
+          widths: ['54mm', '104mm', '154mm', '205mm', '255mm', '305mm', '405mm', '506mm', '606mm'],
+          thicknesses: ['1.0mm', '1.2mm', '1.5mm', '2.0mm']
+        },
+        {
+          type: 'Orta Redüksiyon',
+          heights: ['40mm', '50mm', '60mm', '80mm', '100mm'],
+          widths: ['105mm', '205mm', '305mm', '405mm', '505mm', '605mm'],
+          thicknesses: ['1.0mm', '1.2mm', '1.5mm', '2.0mm']
+        },
+        {
+          type: 'Sağ Redüksiyon',
+          heights: ['40mm', '50mm', '60mm', '80mm', '100mm'],
+          widths: ['105mm', '205mm', '305mm', '405mm', '505mm', '605mm'],
+          thicknesses: ['1.0mm', '1.2mm', '1.5mm', '2.0mm']
+        },
+        {
+          type: 'Sol Redüksiyon',
+          heights: ['40mm', '50mm', '60mm', '80mm', '100mm'],
+          widths: ['105mm', '205mm', '305mm', '405mm', '505mm', '605mm'],
+          thicknesses: ['1.0mm', '1.2mm', '1.5mm', '2.0mm']
+        },
+        {
+          type: 'Z Orta Redüksiyon',
+          heights: ['40mm', '50mm', '60mm', '80mm', '100mm'],
+          widths: ['25mm', '50mm', '75mm', '100mm', '125mm', '150mm', '175mm', '200mm'],
+          thicknesses: ['1.0mm', '1.2mm', '1.5mm', '2.0mm']
+        },
+        {
+          type: 'Z Sağ-Sol Redüksiyon',
+          heights: ['40mm', '50mm', '60mm', '80mm', '100mm'],
+          widths: ['25mm', '50mm', '75mm', '100mm', '125mm', '150mm', '175mm', '200mm'],
           thicknesses: ['1.0mm', '1.2mm', '1.5mm', '2.0mm']
         },
         {
@@ -338,6 +416,60 @@ export const PRODUCT_CATALOG = {
           heights: ['40mm', '50mm', '60mm', '80mm', '100mm'],
           widths: ['54mm', '104mm', '154mm', '205mm', '255mm', '305mm', '405mm', '506mm', '606mm'],
           thicknesses: ['1.0mm', '1.2mm', '1.5mm', '2.0mm']
+        },
+        {
+          type: 'Dış Bükey Dönüş',
+          heights: ['40mm', '50mm', '60mm', '80mm', '100mm'],
+          widths: ['54mm', '104mm', '154mm', '205mm', '255mm', '305mm', '405mm', '506mm', '606mm'],
+          thicknesses: ['1.0mm', '1.2mm', '1.5mm', '2.0mm']
+        },
+        {
+          type: 'Dörtlü Dönüş',
+          heights: ['40mm', '50mm', '60mm', '80mm', '100mm'],
+          widths: ['54mm', '104mm', '154mm', '205mm', '255mm', '305mm', '405mm', '506mm', '606mm'],
+          thicknesses: ['1.0mm', '1.2mm', '1.5mm', '2.0mm']
+        },
+        {
+          type: 'İç Bükey Dönüş',
+          heights: ['40mm', '50mm', '60mm', '80mm', '100mm'],
+          widths: ['54mm', '104mm', '154mm', '205mm', '255mm', '305mm', '405mm', '506mm', '606mm'],
+          thicknesses: ['1.0mm', '1.2mm', '1.5mm', '2.0mm']
+        },
+        {
+          type: 'Orta Redüksiyon',
+          heights: ['40mm', '50mm', '60mm', '80mm', '100mm'],
+          widths: ['105mm', '205mm', '305mm', '405mm', '505mm', '605mm'],
+          thicknesses: ['1.0mm', '1.2mm', '1.5mm', '2.0mm']
+        },
+        {
+          type: 'Sağ Redüksiyon',
+          heights: ['40mm', '50mm', '60mm', '80mm', '100mm'],
+          widths: ['105mm', '205mm', '305mm', '405mm', '505mm', '605mm'],
+          thicknesses: ['1.0mm', '1.2mm', '1.5mm', '2.0mm']
+        },
+        {
+          type: 'Sol Redüksiyon',
+          heights: ['40mm', '50mm', '60mm', '80mm', '100mm'],
+          widths: ['105mm', '205mm', '305mm', '405mm', '505mm', '605mm'],
+          thicknesses: ['1.0mm', '1.2mm', '1.5mm', '2.0mm']
+        },
+        {
+          type: 'Z Orta Redüksiyon',
+          heights: ['40mm', '50mm', '60mm', '80mm', '100mm'],
+          widths: ['25mm', '50mm', '75mm', '100mm', '125mm', '150mm', '175mm', '200mm'],
+          thicknesses: ['1.0mm', '1.2mm', '1.5mm', '2.0mm']
+        },
+        {
+          type: 'Z Sağ-Sol Redüksiyon',
+          heights: ['40mm', '50mm', '60mm', '80mm', '100mm'],
+          widths: ['25mm', '50mm', '75mm', '100mm', '125mm', '150mm', '175mm', '200mm'],
+          thicknesses: ['1.0mm', '1.2mm', '1.5mm', '2.0mm']
+        },
+        {
+          type: 'Seperatör',
+          heights: ['40mm', '50mm', '60mm', '80mm', '100mm'],
+          widths: ['30mm'],
+          thicknesses: ['1.0mm', '1.2mm', '1.5mm', '2.0mm']
         }
       ],
       covers: {
@@ -382,9 +514,57 @@ export const PRODUCT_CATALOG = {
           thicknesses: ['1.0mm', '1.2mm', '1.5mm', '2.0mm']
         },
         {
+          type: 'Dış Bükey Dönüş',
+          heights: ['40mm', '50mm', '60mm', '80mm', '100mm'],
+          widths: ['54mm', '104mm', '154mm', '205mm', '255mm', '305mm', '405mm', '506mm', '606mm'],
+          thicknesses: ['1.0mm', '1.2mm', '1.5mm', '2.0mm']
+        },
+        {
           type: 'Dörtlü Dönüş',
           heights: ['40mm', '50mm', '60mm', '80mm', '100mm'],
           widths: ['54mm', '104mm', '154mm', '205mm', '255mm', '305mm', '405mm', '506mm', '606mm'],
+          thicknesses: ['1.0mm', '1.2mm', '1.5mm', '2.0mm']
+        },
+        {
+          type: 'İç Bükey Dönüş',
+          heights: ['40mm', '50mm', '60mm', '80mm', '100mm'],
+          widths: ['54mm', '104mm', '154mm', '205mm', '255mm', '305mm', '405mm', '506mm', '606mm'],
+          thicknesses: ['1.0mm', '1.2mm', '1.5mm', '2.0mm']
+        },
+        {
+          type: 'Orta Redüksiyon',
+          heights: ['40mm', '50mm', '60mm', '80mm', '100mm'],
+          widths: ['105mm', '205mm', '305mm', '405mm', '505mm', '605mm'],
+          thicknesses: ['1.0mm', '1.2mm', '1.5mm', '2.0mm']
+        },
+        {
+          type: 'Sağ Redüksiyon',
+          heights: ['40mm', '50mm', '60mm', '80mm', '100mm'],
+          widths: ['105mm', '205mm', '305mm', '405mm', '505mm', '605mm'],
+          thicknesses: ['1.0mm', '1.2mm', '1.5mm', '2.0mm']
+        },
+        {
+          type: 'Sol Redüksiyon',
+          heights: ['40mm', '50mm', '60mm', '80mm', '100mm'],
+          widths: ['105mm', '205mm', '305mm', '405mm', '505mm', '605mm'],
+          thicknesses: ['1.0mm', '1.2mm', '1.5mm', '2.0mm']
+        },
+        {
+          type: 'Z Orta Redüksiyon',
+          heights: ['40mm', '50mm', '60mm', '80mm', '100mm'],
+          widths: ['25mm', '50mm', '75mm', '100mm', '125mm', '150mm', '175mm', '200mm'],
+          thicknesses: ['1.0mm', '1.2mm', '1.5mm', '2.0mm']
+        },
+        {
+          type: 'Z Sağ-Sol Redüksiyon',
+          heights: ['40mm', '50mm', '60mm', '80mm', '100mm'],
+          widths: ['25mm', '50mm', '75mm', '100mm', '125mm', '150mm', '175mm', '200mm'],
+          thicknesses: ['1.0mm', '1.2mm', '1.5mm', '2.0mm']
+        },
+        {
+          type: 'Seperatör',
+          heights: ['40mm', '50mm', '60mm', '80mm', '100mm'],
+          widths: ['30mm'],
           thicknesses: ['1.0mm', '1.2mm', '1.5mm', '2.0mm']
         }
       ],
@@ -427,6 +607,60 @@ export const PRODUCT_CATALOG = {
           type: '90° Dönüş',
           heights: ['50mm', '60mm', '80mm', '100mm', '150mm'],
           widths: ['54mm', '104mm', '154mm', '205mm', '255mm', '305mm', '405mm', '506mm', '606mm'],
+          thicknesses: ['1.0mm', '1.2mm', '1.5mm', '2.0mm']
+        },
+        {
+          type: 'Dış Bükey Dönüş',
+          heights: ['50mm', '60mm', '80mm', '100mm', '150mm'],
+          widths: ['54mm', '104mm', '154mm', '205mm', '255mm', '305mm', '405mm', '506mm', '606mm'],
+          thicknesses: ['1.0mm', '1.2mm', '1.5mm', '2.0mm']
+        },
+        {
+          type: 'Dörtlü Dönüş',
+          heights: ['50mm', '60mm', '80mm', '100mm', '150mm'],
+          widths: ['54mm', '104mm', '154mm', '205mm', '255mm', '305mm', '405mm', '506mm', '606mm'],
+          thicknesses: ['1.0mm', '1.2mm', '1.5mm', '2.0mm']
+        },
+        {
+          type: 'İç Bükey Dönüş',
+          heights: ['50mm', '60mm', '80mm', '100mm', '150mm'],
+          widths: ['54mm', '104mm', '154mm', '205mm', '255mm', '305mm', '405mm', '506mm', '606mm'],
+          thicknesses: ['1.0mm', '1.2mm', '1.5mm', '2.0mm']
+        },
+        {
+          type: 'Orta Redüksiyon',
+          heights: ['50mm', '60mm', '80mm', '100mm', '150mm'],
+          widths: ['105mm', '205mm', '305mm', '405mm', '505mm', '605mm'],
+          thicknesses: ['1.0mm', '1.2mm', '1.5mm', '2.0mm']
+        },
+        {
+          type: 'Sağ Redüksiyon',
+          heights: ['50mm', '60mm', '80mm', '100mm', '150mm'],
+          widths: ['105mm', '205mm', '305mm', '405mm', '505mm', '605mm'],
+          thicknesses: ['1.0mm', '1.2mm', '1.5mm', '2.0mm']
+        },
+        {
+          type: 'Sol Redüksiyon',
+          heights: ['50mm', '60mm', '80mm', '100mm', '150mm'],
+          widths: ['105mm', '205mm', '305mm', '405mm', '505mm', '605mm'],
+          thicknesses: ['1.0mm', '1.2mm', '1.5mm', '2.0mm']
+        },
+        {
+          type: 'Z Orta Redüksiyon',
+          heights: ['50mm', '60mm', '80mm', '100mm', '150mm'],
+          widths: ['25mm', '50mm', '75mm', '100mm', '125mm', '150mm', '175mm', '200mm'],
+          thicknesses: ['1.0mm', '1.2mm', '1.5mm', '2.0mm']
+        },
+        {
+          type: 'Z Sağ-Sol Redüksiyon',
+          heights: ['50mm', '60mm', '80mm', '100mm', '150mm'],
+          widths: ['25mm', '50mm', '75mm', '100mm', '125mm', '150mm', '175mm', '200mm'],
+          thicknesses: ['1.0mm', '1.2mm', '1.5mm', '2.0mm']
+        },
+        {
+          type: 'Seperatör',
+          heights: ['50mm', '60mm', '80mm', '100mm', '150mm'],
+          widths: ['30mm'],
           thicknesses: ['1.0mm', '1.2mm', '1.5mm', '2.0mm']
         }
       ],
