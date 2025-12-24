@@ -80,15 +80,25 @@ export async function POST(req: NextRequest) {
       case 'company_info':
         response = await handleCompanyInfo(analysis)
         break
-      
+
       case 'contact_info':
         response = await handleContactInfo(analysis)
         break
-      
+
       case 'product_search':
-        response = await handleProductSearch(analysis, context)
+        // Context'te productFilters varsa structured search kullan
+        if (context.productFilters && context.productFilters.productType && context.productFilters.size) {
+          response = await handleProductSearchStructured({
+            productType: context.productFilters.productType,
+            size: context.productFilters.size,
+            coatingType: context.productFilters.coatingType
+          }, context)
+        } else {
+          // Fallback to fuzzy search
+          response = await handleProductSearch(analysis, context)
+        }
         break
-      
+
       case 'incomplete_search':
         response = await handleIncompleteSearch(analysis, context)
         break
