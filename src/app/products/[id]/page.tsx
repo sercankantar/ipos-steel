@@ -159,6 +159,13 @@ export default function ProductDetail({ params }: { params: { id: string } }) {
       )
     }
 
+    // Ürünleri yüksekliğe göre küçükten büyüğe sırala
+    filtered = filtered.sort((a, b) => {
+      const heightA = parseFloat(a.height || '0')
+      const heightB = parseFloat(b.height || '0')
+      return heightA - heightB
+    })
+
     setFilteredSubProducts(filtered)
   }, [subProducts, filters])
 

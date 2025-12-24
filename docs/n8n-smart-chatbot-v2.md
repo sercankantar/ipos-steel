@@ -745,3 +745,4 @@ Artık botunuz **gerçekten akıllı!** 🧠
 
 **Başarılar!** 🎉
 
+
