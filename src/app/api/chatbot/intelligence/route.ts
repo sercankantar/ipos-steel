@@ -500,78 +500,46 @@ async function handleProductSearchStructured(filters: {
   coatingType?: string | null
 }, context: any) {
   try {
-    console.log('🎯 Structured Search:', filters)
+    console.log('🎯 Structured Search via API:', filters)
 
-    // Direkt Prisma WHERE koşulları ile arama yap
-    const { productType, size, coatingType } = filters
+    // Search API'yi çağır (structured parametrelerle)
+    const params = new URLSearchParams()
+    params.append('productType', filters.productType)
+    params.append('size', filters.size)
+    if (filters.coatingType) {
+      params.append('coatingType', filters.coatingType)
+    }
 
-    // Product name'de productType code'u arıyoruz (SCT, CT, TRU, CL, vb.)
-    const productTypeUpper = productType.toUpperCase()
-    
-    // SubProduct name'de boyut arıyoruz (50H, 60H, vb.)
-    const sizePattern = `${size}H` // "50" → "50H"
+    const baseUrl = process.env.NODE_ENV === 'production'
+      ? 'https://ipos-steel.vercel.app'
+      : 'http://localhost:3000'
+    const searchUrl = `${baseUrl}/api/search/products?${params.toString()}`
 
-    const channels = await prisma.channel.findMany({
-      where: {
-        isActive: true,
-        subProduct: {
-          product: {
-            name: { contains: productTypeUpper, mode: 'insensitive' }
-          },
-          name: { contains: sizePattern, mode: 'insensitive' }
-        },
-        ...(coatingType && {
-          coatingType: { contains: coatingType, mode: 'insensitive' }
-        })
-      },
-      include: {
-        subProduct: {
-          include: {
-            product: {
-              include: {
-                category: true
-              }
-            }
-          }
-        }
-      },
-      take: 50
+    console.log('🔗 Search URL:', searchUrl)
+
+    const response = await fetch(searchUrl)
+    const data = await response.json()
+
+    console.log('📦 Search API Response:', {
+      success: data.success,
+      totalResults: data.totalResults
     })
 
-    if (channels.length > 0) {
-      const results = channels.map(ch => ({
-        id: ch.id,
-        type: 'channel',
-        typeName: 'Kanal',
-        name: ch.name,
-        code: ch.code,
-        height: ch.height,
-        width: ch.width,
-        coatingType: ch.coatingType,
-        sheetThickness: ch.sheetThickness,
-        imageUrl: ch.imageUrl,
-        productName: ch.subProduct.product.name,
-        categoryName: ch.subProduct.product.category.name,
-        categorySlug: ch.subProduct.product.category.slug,
-        subProductName: ch.subProduct.name,
-        subProductId: ch.subProduct.id,
-        productId: ch.subProduct.product.id,
-        path: `/products/${ch.subProduct.product.id}`,
-        fullDescription: `${ch.name} ${ch.code ? `(${ch.code})` : ''} - ${ch.coatingType || ''} ${ch.height && ch.width ? `${ch.height}x${ch.width}` : ''} - ${ch.subProduct.product.category.name}`.trim()
-      }))
-
+    if (data.success && data.results && data.results.length > 0) {
+      const productTypeUpper = filters.productType.toUpperCase()
       return {
         success: true,
         intent: 'product_search',
-        response: `✅ ${results.length} adet ${productTypeUpper} ${size}mm${coatingType ? ' ' + coatingType : ''} kanal bulundu!`,
-        searchResults: results.slice(0, 20),
+        response: `✅ ${data.totalResults} adet ${productTypeUpper} ${filters.size}mm${filters.coatingType ? ' ' + filters.coatingType : ''} ürün bulundu!`,
+        searchResults: data.results.slice(0, 20),
         requiresMoreInfo: false
       }
     } else {
+      const productTypeUpper = filters.productType.toUpperCase()
       return {
         success: true,
         intent: 'product_search',
-        response: `❌ ${productTypeUpper} ${size}mm${coatingType ? ' ' + coatingType : ''} kanal bulunamadı.\n\n💡 Farklı seçenekler deneyin.`,
+        response: `❌ ${productTypeUpper} ${filters.size}mm${filters.coatingType ? ' ' + filters.coatingType : ''} ürün bulunamadı.\n\n💡 Farklı boyut veya kaplama tipleri deneyin.`,
         searchResults: [],
         requiresMoreInfo: false
       }
@@ -584,7 +552,8 @@ async function handleProductSearchStructured(filters: {
       intent: 'product_search',
       response: 'Arama sırasında hata oluştu.',
       searchResults: [],
-      requiresMoreInfo: false
+      requiresMoreInfo: false,
+      errorDetails: error instanceof Error ? error.message : undefined
     }
   }
 }

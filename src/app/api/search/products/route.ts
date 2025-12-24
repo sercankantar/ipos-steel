@@ -16,8 +16,10 @@ export async function GET(req: NextRequest) {
     const category = searchParams.get('category')?.toLowerCase().trim()
     const subProductId = searchParams.get('subProductId')?.trim() // SubProduct'a özel arama
     const type = searchParams.get('type')?.toLowerCase().trim() // channel, module, accessory, cover
+    const productType = searchParams.get('productType')?.toLowerCase().trim() // SCT, CT, TRU, vb.
+    const size = searchParams.get('size')?.trim() // 40, 50, 60, vb.
 
-    if (!query && !coatingType && !height && !width && !subProductId) {
+    if (!query && !coatingType && !height && !width && !subProductId && !productType && !size) {
       return NextResponse.json({
         success: false,
         message: 'En az bir arama kriteri gerekli',
@@ -83,6 +85,27 @@ export async function GET(req: NextRequest) {
     const channelWhere: any = {
       isActive: true,
       AND: []
+    }
+
+    // ProductType filtresi (Product.name'de arıyoruz)
+    if (productType) {
+      channelWhere.AND.push({
+        subProduct: {
+          product: {
+            name: { contains: productType, mode: 'insensitive' }
+          }
+        }
+      })
+    }
+
+    // Size filtresi (SubProduct.name'de "50H" gibi arıyoruz)
+    if (size) {
+      const sizePattern = `${size}H` // "50" → "50H"
+      channelWhere.AND.push({
+        subProduct: {
+          name: { contains: sizePattern, mode: 'insensitive' }
+        }
+      })
     }
 
     if (coatingType) {
@@ -171,6 +194,25 @@ export async function GET(req: NextRequest) {
       AND: []
     }
 
+    if (productType) {
+      moduleWhere.AND.push({
+        subProduct: {
+          product: {
+            name: { contains: productType, mode: 'insensitive' }
+          }
+        }
+      })
+    }
+
+    if (size) {
+      const sizePattern = `${size}H`
+      moduleWhere.AND.push({
+        subProduct: {
+          name: { contains: sizePattern, mode: 'insensitive' }
+        }
+      })
+    }
+
     if (coatingType) {
       moduleWhere.AND.push({
         coatingType: {
@@ -255,6 +297,25 @@ export async function GET(req: NextRequest) {
       AND: []
     }
 
+    if (productType) {
+      accessoryWhere.AND.push({
+        subProduct: {
+          product: {
+            name: { contains: productType, mode: 'insensitive' }
+          }
+        }
+      })
+    }
+
+    if (size) {
+      const sizePattern = `${size}H`
+      accessoryWhere.AND.push({
+        subProduct: {
+          name: { contains: sizePattern, mode: 'insensitive' }
+        }
+      })
+    }
+
     if (coatingType) {
       accessoryWhere.AND.push({
         coatingType: {
@@ -337,6 +398,25 @@ export async function GET(req: NextRequest) {
     const coverWhere: any = {
       isActive: true,
       AND: []
+    }
+
+    if (productType) {
+      coverWhere.AND.push({
+        subProduct: {
+          product: {
+            name: { contains: productType, mode: 'insensitive' }
+          }
+        }
+      })
+    }
+
+    if (size) {
+      const sizePattern = `${size}H`
+      coverWhere.AND.push({
+        subProduct: {
+          name: { contains: sizePattern, mode: 'insensitive' }
+        }
+      })
     }
 
     if (coatingType) {
