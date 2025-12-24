@@ -136,39 +136,58 @@ export async function POST(req: NextRequest) {
 
 // GPT ile mesaj analizi
 async function analyzeMessage(message: string, context: any, openaiKey?: string): Promise<any> {
-  const systemPrompt = `Sen IPOS Steel'in chatbot asistanısın. Kullanıcı intent'ini DOĞRU BELİRLE!
+  const systemPrompt = `Sen IPOS Steel'in akıllı chatbot asistanısın. Müşteriler sana günlük konuşma diliyle yazacak, sen onları anlamalısın!
 
 **CONTEXT:**
 ${context.lastSearchQuery ? `Son arama: ${JSON.stringify(context.lastSearchQuery)}` : 'İlk mesaj'}
 ${context.lastSearchResults ? `${context.lastSearchResults.length} ürün bulunmuştu` : ''}
 
-**İNTENT KURALLARI (DİKKAT!):**
+**GÖREVIN:**
+1. Kullanıcının ne istediğini anla (intent)
+2. Ürün araması ise → searchQuery'yi TEMİZ ve ARANACAK FORMATTA hazırla
+3. Türkçe günlük konuşmayı → veritabanı arama sorgusuna çevir
 
-1. **company_info**: "hakkınızda", "kimsiniz", "ipos steel nedir", "firmamız"
-2. **contact_info**: "iletişim", "telefon", "adres", "nerede", "nasıl ulaşabilirim"  
-3. **follow_up_search**: Context var + "80mm olanları", "pregalvaniz olanları", "40lıkları getir"
-4. **product_search**: Ürün araması
+**İNTENT TİPLERİ:**
+- **company_info**: Şirket hakkında soru (hakkınızda, kimsiniz, ne yapıyorsunuz)
+- **contact_info**: İletişim bilgisi (iletişim, telefon, adres, nerede, nasıl ulaşabilirim)
+- **product_search**: Ürün arama
+- **follow_up_search**: Önceki aramanın filtrelenmesi (context varsa)
+- **incomplete_search**: Bilgi eksik, soru sor
+- **product_accessories**: Ürünün aksesuarları
+- **general**: Diğer
 
-**ÖNEMLİ:** "iletişim" = contact_info (product_search DEĞİL!)
+**ARAMA QUERY HAZıRLAMA (ÇOK ÖNEMLİ!):**
+
+Kullanıcı günlük dilde yazar, sen temizle:
+- "pregalvaniz 40lık kablo kanallarını getir" → searchQuery: "pregal 40 kablo kanal"
+- "50lik kanal lazım" → searchQuery: "50 kanal"
+- "sıcak daldırma galvanizli 60mm yükseklikte" → searchQuery: "sicak daldirma 60"
+
+**KURALLAR:**
+1. Türkçe karakterleri normalize et (ş→s, ğ→g, ı→i, ü→u, ö→o, ç→c)
+2. "lik" eklerini kaldır ("40lık" → "40")
+3. Gereksiz kelimeleri at ("getir", "lazım", "istiyorum", "var mı")
+4. Kısa ve net arama terimi oluştur
+5. Kaplama tipi varsa coatingType parametresini doldur
 
 **ÖRNEKLER:**
 
-Kullanıcı: "iletişim"
+Kullanıcı: "iletişim bilgileri"
 → {"intent": "contact_info"}
 
-Kullanıcı: "ipos steel nerede"  
-→ {"intent": "contact_info"}
+Kullanıcı: "pregalvaniz 40lık kablo kanallarını getir"
+→ {"intent": "product_search", "searchQuery": "pregal 40 kablo kanal", "coatingType": "pregalvaniz"}
 
-Kullanıcı: "hakkınızda"
-→ {"intent": "company_info"}
+Kullanıcı: "50lik standart tip kanal var mı?"
+→ {"intent": "product_search", "searchQuery": "50 standart kanal"}
 
-Kullanıcı: "50lik kablo kanalı"
-→ {"intent": "product_search", "searchQuery": "50 kablo kanal"}
-
-Kullanıcı: "80mm olanları getir" (context var)
+Kullanıcı: "80mm yükseklikte olanları göster" (context var)
 → {"intent": "follow_up_search", "searchQuery": "80"}
 
-**Türkçe normalize et:** "50lik" → "50", "pregalvaniz" → "pregal"`
+Kullanıcı: "sıcak daldırma galvanizli kanallar"
+→ {"intent": "product_search", "searchQuery": "sicak daldirma kanal", "coatingType": "sıcak daldırma"}
+
+**SEN BİR ÇEVİRİCİSİN: Günlük Türkçe → Arama Query'si**`
 
   try {
     // Basit regex tabanlı analiz (OpenAI key yoksa)
@@ -194,43 +213,47 @@ Kullanıcı: "80mm olanları getir" (context var)
         ],
         functions: [{
           name: 'analyze_intent',
-          description: 'Kullanıcı mesajını analiz et ve Türkçe ekleri normalize et',
+          description: 'Kullanıcı mesajını analiz et, günlük Türkçeyi arama query\'sine çevir',
           parameters: {
             type: 'object',
             properties: {
               intent: {
                 type: 'string',
-                enum: ['company_info', 'contact_info', 'product_search', 'incomplete_search', 'follow_up_search', 'product_details', 'product_accessories', 'general']
+                enum: ['company_info', 'contact_info', 'product_search', 'incomplete_search', 'follow_up_search', 'product_details', 'product_accessories', 'general'],
+                description: 'Kullanıcının niyeti'
               },
               searchQuery: {
                 type: 'string',
-                description: 'NORMALIZE EDİLMİŞ arama terimi. "50lik" → "50", "pregalvaniz" → "pregal". Örnek: Kullanıcı "50lik kablo kanalı" derse, sen "50 kablo kanal" yaz. MUTLAKA DOLDUR!'
+                description: 'TEMİZ ve NORMALIZE EDİLMİŞ arama terimi. Türkçe karakter yok, gereksiz kelime yok, sadece anahtar kelimeler. Örnek: "pregalvaniz 40lık kablo kanallarını getir" → "pregal 40 kablo kanal"'
               },
               coatingType: { 
                 type: 'string',
-                description: 'Sadece varsa: pregalvaniz, sıcak daldırma, boyalı, elektro'
+                enum: ['pregalvaniz', 'sıcak daldırma', 'boyalı', 'elektro'],
+                description: 'Kaplama tipi - sadece mesajda açıkça belirtilmişse'
               },
               height: { 
                 type: 'string',
-                description: 'Sadece mm değeri açıkça belirtilmişse'
+                description: 'Yükseklik (mm) - sadece açıkça belirtilmişse (örn: "60mm yükseklik")'
               },
               width: { 
                 type: 'string',
-                description: 'Sadece mm değeri açıkça belirtilmişse'
+                description: 'Genişlik (mm) - sadece açıkça belirtilmişse'
               },
               missingParams: {
                 type: 'array',
-                items: { type: 'string' }
+                items: { type: 'string' },
+                description: 'Eksik parametreler listesi'
               },
               clarificationNeeded: {
-                type: 'string'
+                type: 'string',
+                description: 'Kullanıcıya sorulacak açıklayıcı soru'
               }
             },
-            required: ['intent', 'searchQuery']
+            required: ['intent']
           }
         }],
         function_call: { name: 'analyze_intent' },
-        temperature: 0.1
+        temperature: 0
       })
     })
 
@@ -243,11 +266,13 @@ Kullanıcı: "80mm olanları getir" (context var)
     
     const result = JSON.parse(data.choices[0].message.function_call.arguments)
     
-    console.log('🤖 GPT Analysis:', {
-      userMessage: message,
+    console.log('✅ GPT Analysis SUCCESS:', {
+      original: message,
       intent: result.intent,
       searchQuery: result.searchQuery,
-      coatingType: result.coatingType
+      coatingType: result.coatingType,
+      height: result.height,
+      width: result.width
     })
     
     return result
@@ -408,7 +433,7 @@ async function handleContactInfo(analysis: any) {
 
 // Ürün arama
 async function handleProductSearch(analysis: any, context: any) {
-  // API'yi çağır (mevcut search API)
+  // GPT'nin hazırladığı parametreleri AYNEN kullan
   const params = new URLSearchParams()
   if (analysis.searchQuery) params.append('q', analysis.searchQuery)
   if (analysis.coatingType) params.append('coatingType', analysis.coatingType)
@@ -421,13 +446,10 @@ async function handleProductSearch(analysis: any, context: any) {
     : 'http://localhost:3000'
   const searchUrl = `${baseUrl}/api/search/products?${params.toString()}`
   
-  console.log('🔍 Search URL:', searchUrl)
-  console.log('📊 Analysis params:', { 
-    searchQuery: analysis.searchQuery,
-    coatingType: analysis.coatingType,
-    height: analysis.height,
-    width: analysis.width
-  })
+  console.log('🔍 Search Starting...')
+  console.log('   URL:', searchUrl)
+  console.log('   GPT Query:', analysis.searchQuery)
+  console.log('   Coating:', analysis.coatingType || 'none')
   
   try {
     const response = await fetch(searchUrl)
