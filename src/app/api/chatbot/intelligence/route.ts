@@ -266,13 +266,20 @@ function simpleAnalysis(message: string, context: any): any {
   console.log('🔄 Fallback Analysis:', { message: lower, hasContext: !!context.lastSearchQuery })
 
   // Company info - ÖNCE KONTROL ET!
-  if (lower.match(/hakkı(nda|nız)|kimsin|ne yapıyor|şirket|ipos\s+steel|firmamız|biz kimiz/i)) {
+  if (lower.includes('hakkın') || lower.includes('hakkım') ||
+      lower.includes('kimsin') || lower.includes('ne yapıyor') ||
+      lower.includes('şirket') || lower.includes('firma') ||
+      lower.includes('ipos steel') || lower.includes('biz kimiz')) {
     console.log('✅ Intent: company_info')
     return { intent: 'company_info' }
   }
 
   // Contact info - İKİNCİ KONTROL
-  if (lower.match(/iletişim|ileti�?im|telefon|tel|adres|nerede|nasıl ulaş|mail|email|irtibat|iletisim/i)) {
+  if (lower.includes('iletisim') || lower.includes('iletişim') || 
+      lower.includes('telefon') || lower.includes('tel') || 
+      lower.includes('adres') || lower.includes('nerede') || 
+      lower.includes('mail') || lower.includes('email') ||
+      lower.includes('ulaş') || lower.includes('irtibat')) {
     console.log('✅ Intent: contact_info')
     return { intent: 'contact_info' }
   }
