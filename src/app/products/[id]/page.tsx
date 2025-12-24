@@ -429,8 +429,16 @@ export default function ProductDetail({ params }: { params: { id: string } }) {
   }
 
   // Benzersiz yükseklik ve genişlik değerlerini al
-  const uniqueHeights = Array.from(new Set(subProducts.map(sp => sp.height).filter(Boolean))).sort()
-  const uniqueWidths = Array.from(new Set(subProducts.map(sp => sp.width).filter(Boolean))).sort()
+  const uniqueHeights = Array.from(new Set(subProducts.map(sp => sp.height).filter(Boolean))).sort((a, b) => {
+    const numA = parseFloat(a)
+    const numB = parseFloat(b)
+    return numA - numB
+  })
+  const uniqueWidths = Array.from(new Set(subProducts.map(sp => sp.width).filter(Boolean))).sort((a, b) => {
+    const numA = parseFloat(a)
+    const numB = parseFloat(b)
+    return numA - numB
+  })
 
   // Modal fonksiyonları
   const openChannelsModal = async (subProduct: any) => {
