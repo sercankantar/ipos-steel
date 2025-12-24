@@ -533,6 +533,24 @@ export async function GET(req: NextRequest) {
       if (item.code?.toLowerCase() === searchLower) score += 180
       
       // Parametreli filtreler (ek puan)
+      // ProductType ve Size EN YÜKSEK PUAN! (Structured search için)
+      if (productType) {
+        const productTypeLower = productType.toLowerCase()
+        // Product name'de TAM MATCH (örn: "CT" keyword "CT - Ağır Hizmet" içinde)
+        if (item.productName.toLowerCase().includes(productTypeLower)) {
+          // TAM kelime eşleşmesi mi?
+          const productWords = item.productName.toLowerCase().split(/\s+/)
+          if (productWords.includes(productTypeLower)) score += 1000 // TAM EŞLEŞİRSE 1000 PUAN!
+          else score += 500 // Kısmi eşleşme
+        }
+      }
+      
+      if (size) {
+        const sizePattern = size + 'h'
+        // SubProduct name'de boyut tam eşleşme (örn: "50H CT")
+        if (item.subProductName?.toLowerCase().includes(sizePattern)) score += 800
+      }
+      
       if (coatingType && item.coatingType?.toLowerCase().includes(coatingType)) score += 100
       if (height && item.height === height) score += 90
       if (width && item.width === width) score += 90
