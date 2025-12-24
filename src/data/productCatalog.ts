@@ -789,7 +789,7 @@ export function formatProductCatalogForGPT(): string {
     text += `   \n`
     text += `   🔧 AKSESUARLAR (${product.accessories.length} tip):\n`
     product.accessories.forEach(acc => {
-      text += `      • ${acc.type}: Genişlikler: ${acc.widths.join(', ')}\n`
+      text += `      • ${acc.type}: Genişlikler: ${acc.widths.join(', ')} | Kalınlıklar: ${acc.thicknesses.join(', ')}\n`
     })
     text += `   \n`
     text += `   📌 KAPAK: ${product.covers.name}\n`
