@@ -1,5 +1,5 @@
-// IPOS Steel Ürün Kataloğu
-// Dijital satış danışmanı için ana ürün bilgileri
+// IPOS Steel Ürün Kataloğu - Gerçek Hiyerarşi ile
+// Dijital satış danışmanı için DETAYLI ürün bilgileri
 
 export const PRODUCT_CATALOG = {
   products: [
@@ -7,137 +7,487 @@ export const PRODUCT_CATALOG = {
       code: 'SCT',
       name: 'Standart Tip Kablo Kanalı',
       fullName: 'SCT - Standart Tip Kablo Kanalı',
-      sizes: ['40H', '50H', '60H', '80H', '100H'],
-      coatings: ['Pregalvaniz', 'Sıcak Daldırma', 'Boyalı', 'Elektro'],
-      description: 'Genel amaçlı kullanım için tasarlanmış ekonomik kablo kanalı sistemi',
-      useCases: ['İç mekan uygulamaları', 'Ofis binaları', 'Ticari alanlar', 'Konut projeleri'],
-      features: [
-        'Ekonomik çözüm',
-        'Kolay montaj',
-        'Geniş aksesuar desteği',
-        'Standart kablo kapasitesi'
+      coatings: ['Pregalvaniz', 'Sıcak Daldırma', 'Boyalı'],
+      dimensions: {
+        heights: ['40mm', '50mm', '60mm', '80mm', '100mm'],
+        widths: ['50mm', '100mm', '150mm', '200mm', '250mm', '300mm', '400mm', '500mm', '600mm'],
+        thicknesses: ['0.8mm', '1.0mm', '1.2mm', '1.5mm', '2.0mm']
+      },
+      modules: {
+        name: 'Ek Eleman',
+        heights: ['40mm', '50mm', '60mm', '80mm', '100mm'],
+        widths: ['23mm'],
+        thicknesses: ['1.5mm', '2.0mm'],
+        rule: 'Kanalın yüksekliğine göre eşleşir'
+      },
+      accessories: [
+        {
+          type: 'T Dönüş',
+          heights: ['40mm', '50mm', '60mm', '80mm', '100mm'],
+          widths: ['54mm', '104mm', '154mm', '205mm', '255mm', '305mm', '405mm', '506mm', '606mm'],
+          thicknesses: ['1.0mm', '1.2mm', '1.5mm', '2.0mm']
+        },
+        {
+          type: '90° Dönüş',
+          heights: ['40mm', '50mm', '60mm', '80mm', '100mm'],
+          widths: ['54mm', '104mm', '154mm', '205mm', '255mm', '305mm', '405mm', '506mm', '606mm'],
+          thicknesses: ['1.0mm', '1.2mm', '1.5mm', '2.0mm']
+        },
+        {
+          type: 'Dış Bükey Dönüş',
+          heights: ['40mm', '50mm', '60mm', '80mm', '100mm'],
+          widths: ['54mm', '104mm', '154mm', '205mm', '255mm', '305mm', '405mm', '506mm', '606mm'],
+          thicknesses: ['1.0mm', '1.2mm', '1.5mm', '2.0mm']
+        },
+        {
+          type: 'Dörtlü Dönüş',
+          heights: ['40mm', '50mm', '60mm', '80mm', '100mm'],
+          widths: ['54mm', '104mm', '154mm', '205mm', '255mm', '305mm', '405mm', '506mm', '606mm'],
+          thicknesses: ['1.0mm', '1.2mm', '1.5mm', '2.0mm']
+        },
+        {
+          type: 'İç Bükey Dönüş',
+          heights: ['40mm', '50mm', '60mm', '80mm', '100mm'],
+          widths: ['54mm', '104mm', '154mm', '205mm', '255mm', '305mm', '405mm', '506mm', '606mm'],
+          thicknesses: ['1.0mm', '1.2mm', '1.5mm', '2.0mm']
+        },
+        {
+          type: 'Orta Redüksiyon',
+          heights: ['40mm', '50mm', '60mm', '80mm', '100mm'],
+          widths: ['105mm', '205mm', '305mm', '405mm', '505mm', '605mm'],
+          thicknesses: ['1.0mm', '1.2mm', '1.5mm', '2.0mm']
+        },
+        {
+          type: 'Sağ Redüksiyon',
+          heights: ['40mm', '50mm', '60mm', '80mm', '100mm'],
+          widths: ['105mm', '205mm', '305mm', '405mm', '505mm', '605mm'],
+          thicknesses: ['1.0mm', '1.2mm', '1.5mm', '2.0mm']
+        },
+        {
+          type: 'Sol Redüksiyon',
+          heights: ['40mm', '50mm', '60mm', '80mm', '100mm'],
+          widths: ['105mm', '205mm', '305mm', '405mm', '505mm', '605mm'],
+          thicknesses: ['1.0mm', '1.2mm', '1.5mm', '2.0mm']
+        },
+        {
+          type: 'Z Orta Redüksiyon',
+          heights: ['40mm', '50mm', '60mm', '80mm', '100mm'],
+          widths: ['25mm', '50mm', '75mm', '100mm', '125mm', '150mm', '175mm', '200mm'],
+          thicknesses: ['1.0mm', '1.2mm', '1.5mm', '2.0mm']
+        },
+        {
+          type: 'Z Sağ-Sol Redüksiyon',
+          heights: ['40mm', '50mm', '60mm', '80mm', '100mm'],
+          widths: ['25mm', '50mm', '75mm', '100mm', '125mm', '150mm', '175mm', '200mm'],
+          thicknesses: ['1.0mm', '1.2mm', '1.5mm', '2.0mm']
+        },
+        {
+          type: 'Seperatör',
+          heights: ['40mm', '50mm', '60mm', '80mm', '100mm'],
+          widths: ['30mm'],
+          thicknesses: ['1.0mm', '1.2mm', '1.5mm', '2.0mm']
+        }
       ],
-      accessories: ['L Köşe', 'T Köşe', 'X Köşe', 'Kapak (Tam/Yarım)', 'Askı Sistemleri', 'Kenar Profili'],
-      recommendation: 'Ofis ve iç mekan projeleri için ideal seçim'
+      covers: {
+        name: 'Kapak',
+        heights: ['11mm'],
+        widths: ['50mm', '100mm', '150mm', '200mm', '250mm', '300mm', '400mm', '500mm', '600mm'],
+        thicknesses: ['0.8mm'],
+        rule: 'Kanalın genişliğine göre eşleşir'
+      },
+      description: 'Elektrik tesisatlarında düzenli ve güvenli hat yönetimi sağlayan standart tip kablo kanalları, dayanıklı yapısı ve kolay montaj özellikleriyle yaygın kullanım sunar. Farklı boyut ve kalınlık seçenekleri sayesinde hem endüstriyel hem de ticari uygulamalarda ideal çözüm oluşturur.',
+      useCases: ['İç mekan uygulamaları', 'Ofis binaları', 'Ticari alanlar', 'Konut projeleri'],
+      recommendation: 'Ekonomik ve kolay montajlı çözüm arayan ofis ve ticari projeler için ideal'
     },
     {
       code: 'CT',
       name: 'Ağır Hizmet Tipi Kablo Kanalı',
       fullName: 'CT - Ağır Hizmet Tipi Kablo Kanalı',
-      sizes: ['40H', '50H', '60H', '80H', '100H'],
       coatings: ['Pregalvaniz', 'Sıcak Daldırma', 'Boyalı', 'Elektro'],
-      description: 'Endüstriyel tesisler ve ağır hizmet şartları için yüksek dayanıklı kanal sistemi',
-      useCases: ['Endüstriyel tesisler', 'Fabrikalar', 'Ağır sanayi', 'Yüksek mekanik dayanım gereken alanlar'],
-      features: [
-        'Kalın sac yapısı',
-        'Yüksek mekanik dayanım',
-        'Ağır yük taşıma kapasitesi',
-        'Profesyonel uygulamalar için'
+      dimensions: {
+        heights: ['40mm', '50mm', '60mm', '80mm', '100mm'],
+        widths: ['50mm', '100mm', '150mm', '200mm', '250mm', '300mm', '400mm', '500mm', '600mm'],
+        thicknesses: ['0.8mm', '1.0mm', '1.2mm', '1.5mm', '2.0mm']
+      },
+      modules: {
+        name: 'Ek Eleman',
+        heights: ['40mm', '50mm', '60mm', '80mm', '100mm'],
+        widths: ['23mm'],
+        thicknesses: ['1.5mm', '2.0mm'],
+        rule: 'Kanalın yüksekliğine göre eşleşir'
+      },
+      accessories: [
+        {
+          type: 'T Dönüş',
+          heights: ['40mm', '50mm', '60mm', '80mm', '100mm'],
+          widths: ['54mm', '104mm', '154mm', '205mm', '255mm', '305mm', '405mm', '506mm', '606mm'],
+          thicknesses: ['1.0mm', '1.2mm', '1.5mm', '2.0mm']
+        },
+        {
+          type: '90° Dönüş',
+          heights: ['40mm', '50mm', '60mm', '80mm', '100mm'],
+          widths: ['54mm', '104mm', '154mm', '205mm', '255mm', '305mm', '405mm', '506mm', '606mm'],
+          thicknesses: ['1.0mm', '1.2mm', '1.5mm', '2.0mm']
+        },
+        {
+          type: 'Dış Bükey Dönüş',
+          heights: ['40mm', '50mm', '60mm', '80mm', '100mm'],
+          widths: ['54mm', '104mm', '154mm', '205mm', '255mm', '305mm', '405mm', '506mm', '606mm'],
+          thicknesses: ['1.0mm', '1.2mm', '1.5mm', '2.0mm']
+        },
+        {
+          type: 'Dörtlü Dönüş',
+          heights: ['40mm', '50mm', '60mm', '80mm', '100mm'],
+          widths: ['54mm', '104mm', '154mm', '205mm', '255mm', '305mm', '405mm', '506mm', '606mm'],
+          thicknesses: ['1.0mm', '1.2mm', '1.5mm', '2.0mm']
+        },
+        {
+          type: 'İç Bükey Dönüş',
+          heights: ['40mm', '50mm', '60mm', '80mm', '100mm'],
+          widths: ['54mm', '104mm', '154mm', '205mm', '255mm', '305mm', '405mm', '506mm', '606mm'],
+          thicknesses: ['1.0mm', '1.2mm', '1.5mm', '2.0mm']
+        },
+        {
+          type: 'Orta Redüksiyon',
+          heights: ['40mm', '50mm', '60mm', '80mm', '100mm'],
+          widths: ['105mm', '205mm', '305mm', '405mm', '505mm', '605mm'],
+          thicknesses: ['1.0mm', '1.2mm', '1.5mm', '2.0mm']
+        },
+        {
+          type: 'Sağ Redüksiyon',
+          heights: ['40mm', '50mm', '60mm', '80mm', '100mm'],
+          widths: ['105mm', '205mm', '305mm', '405mm', '505mm', '605mm'],
+          thicknesses: ['1.0mm', '1.2mm', '1.5mm', '2.0mm']
+        },
+        {
+          type: 'Sol Redüksiyon',
+          heights: ['40mm', '50mm', '60mm', '80mm', '100mm'],
+          widths: ['105mm', '205mm', '305mm', '405mm', '505mm', '605mm'],
+          thicknesses: ['1.0mm', '1.2mm', '1.5mm', '2.0mm']
+        },
+        {
+          type: 'Z Orta Redüksiyon',
+          heights: ['40mm', '50mm', '60mm', '80mm', '100mm'],
+          widths: ['25mm', '50mm', '75mm', '100mm', '125mm', '150mm', '175mm', '200mm'],
+          thicknesses: ['1.0mm', '1.2mm', '1.5mm', '2.0mm']
+        },
+        {
+          type: 'Z Sağ-Sol Redüksiyon',
+          heights: ['40mm', '50mm', '60mm', '80mm', '100mm'],
+          widths: ['25mm', '50mm', '75mm', '100mm', '125mm', '150mm', '175mm', '200mm'],
+          thicknesses: ['1.0mm', '1.2mm', '1.5mm', '2.0mm']
+        },
+        {
+          type: 'Seperatör',
+          heights: ['40mm', '50mm', '60mm', '80mm', '100mm'],
+          widths: ['30mm'],
+          thicknesses: ['1.0mm', '1.2mm', '1.5mm', '2.0mm']
+        }
       ],
-      accessories: ['L Köşe', 'T Köşe', 'X Köşe', 'Redüksiyon', 'Kapak Sistemleri', 'Endüstriyel Askılar'],
-      recommendation: 'Fabrika ve endüstriyel tesis projelerinde tercih edilir'
+      covers: {
+        name: 'Kapak',
+        heights: ['11mm'],
+        widths: ['50mm', '100mm', '150mm', '200mm', '250mm', '300mm', '400mm', '500mm', '600mm'],
+        thicknesses: ['0.8mm'],
+        rule: 'Kanalın genişliğine göre eşleşir'
+      },
+      description: 'Yüksek mekanik dayanım gerektiren ortamlarda kullanılmak üzere tasarlanan ağır hizmet kablo kanalları, kalın sac yapılarıyla uzun ömürlü ve güvenli bir kablo taşıma sistemi sunar. Fabrika, enerji santrali ve zorlu saha koşullarında maksimum stabilite sağlar.',
+      useCases: ['Endüstriyel tesisler', 'Fabrikalar', 'Enerji santralleri', 'Ağır sanayi'],
+      recommendation: 'Fabrika ve endüstriyel tesislerde yüksek mekanik dayanım gereken projeler için'
     },
     {
       code: 'SUCT',
       name: 'Deliksiz Standart Tip Kablo Kanalı',
       fullName: 'SUCT - Deliksiz Standart Tip Kablo Kanalı',
-      sizes: ['40H', '50H', '60H'],
       coatings: ['Pregalvaniz', 'Sıcak Daldırma', 'Boyalı'],
-      description: 'Deliksiz yüzey yapısı ile estetik ve pratik kullanım sunan kanal sistemi',
-      useCases: ['Görünür montajlar', 'Estetik öncelikli projeler', 'Modern binalar', 'Showroom alanları'],
-      features: [
-        'Deliksiz estetik yüzey',
-        'Kolay temizlenebilir',
-        'Modern görünüm',
-        'Standart dayanıklılık'
+      dimensions: {
+        heights: ['40mm', '50mm', '60mm', '80mm', '100mm'],
+        widths: ['50mm', '100mm', '150mm', '200mm', '250mm', '300mm', '400mm', '500mm', '600mm'],
+        thicknesses: ['0.8mm', '1.0mm', '1.2mm', '1.5mm', '2.0mm']
+      },
+      modules: {
+        name: 'Ek Eleman',
+        heights: ['40mm', '50mm', '60mm', '80mm', '100mm'],
+        widths: ['23mm'],
+        thicknesses: ['1.5mm', '2.0mm'],
+        rule: 'Kanalın yüksekliğine göre eşleşir'
+      },
+      accessories: [
+        {
+          type: 'T Dönüş',
+          heights: ['40mm', '50mm', '60mm', '80mm', '100mm'],
+          widths: ['54mm', '104mm', '154mm', '205mm', '255mm', '305mm', '405mm', '506mm', '606mm'],
+          thicknesses: ['1.0mm', '1.2mm', '1.5mm', '2.0mm']
+        },
+        {
+          type: '90° Dönüş',
+          heights: ['40mm', '50mm', '60mm', '80mm', '100mm'],
+          widths: ['54mm', '104mm', '154mm', '205mm', '255mm', '305mm', '405mm', '506mm', '606mm'],
+          thicknesses: ['1.0mm', '1.2mm', '1.5mm', '2.0mm']
+        },
+        {
+          type: 'Dış Bükey Dönüş',
+          heights: ['40mm', '50mm', '60mm', '80mm', '100mm'],
+          widths: ['54mm', '104mm', '154mm', '205mm', '255mm', '305mm', '405mm', '506mm', '606mm'],
+          thicknesses: ['1.0mm', '1.2mm', '1.5mm', '2.0mm']
+        },
+        {
+          type: 'Dörtlü Dönüş',
+          heights: ['40mm', '50mm', '60mm', '80mm', '100mm'],
+          widths: ['54mm', '104mm', '154mm', '205mm', '255mm', '305mm', '405mm', '506mm', '606mm'],
+          thicknesses: ['1.0mm', '1.2mm', '1.5mm', '2.0mm']
+        },
+        {
+          type: 'İç Bükey Dönüş',
+          heights: ['40mm', '50mm', '60mm', '80mm', '100mm'],
+          widths: ['54mm', '104mm', '154mm', '205mm', '255mm', '305mm', '405mm', '506mm', '606mm'],
+          thicknesses: ['1.0mm', '1.2mm', '1.5mm', '2.0mm']
+        },
+        {
+          type: 'Seperatör',
+          heights: ['40mm', '50mm', '60mm', '80mm', '100mm'],
+          widths: ['30mm'],
+          thicknesses: ['1.0mm', '1.2mm', '1.5mm', '2.0mm']
+        }
       ],
-      accessories: ['Özel Köşe Elemanları', 'Estetik Kapaklar', 'Görünür Montaj Askıları'],
-      recommendation: 'Estetik görünümün önemli olduğu projelerde önerilir'
+      covers: {
+        name: 'Kapak',
+        heights: ['11mm'],
+        widths: ['50mm', '100mm', '150mm', '200mm', '250mm', '300mm', '400mm', '500mm', '600mm'],
+        thicknesses: ['0.8mm'],
+        rule: 'Kanalın genişliğine göre eşleşir'
+      },
+      description: 'Toz, nem ve dış etkenlere karşı ek koruma sağlamak amacıyla deliksiz üretilen bu kanallar; hassas kablolama uygulamalarında tertip ve güvenilirlik sağlar. İç yüzey yapısı sayesinde kabloların zarar görmeden yönlendirilmesine olanak tanır.',
+      useCases: ['Hassas kablolama', 'Görünür montajlar', 'Estetik projeler', 'Toz/nem koruması gereken alanlar'],
+      recommendation: 'Deliksiz yüzey ile toz ve nem koruması gereken estetik projelerde'
     },
     {
       code: 'HUCT',
       name: 'Deliksiz Ağır Hizmet Tipi Kablo Kanalı',
       fullName: 'HUCT - Deliksiz Ağır Hizmet Tipi Kablo Kanalı',
-      sizes: ['50H', '60H', '80H'],
       coatings: ['Pregalvaniz', 'Sıcak Daldırma', 'Boyalı'],
-      description: 'Ağır hizmet dayanıklılığı ile deliksiz estetik yüzeyi birleştiren premium kanal',
-      useCases: ['Endüstriyel görünür montajlar', 'Premium projeler', 'Yüksek dayanım + estetik', 'Özel tesisler'],
-      features: [
-        'Deliksiz premium yüzey',
-        'Ağır hizmet dayanımı',
-        'Estetik + güç birlikteliği',
-        'Yüksek kalite standartları'
+      dimensions: {
+        heights: ['40mm', '50mm', '60mm', '80mm', '100mm'],
+        widths: ['50mm', '100mm', '150mm', '200mm', '250mm', '300mm', '400mm', '500mm', '600mm'],
+        thicknesses: ['0.8mm', '1.0mm', '1.2mm', '1.5mm', '2.0mm']
+      },
+      modules: {
+        name: 'Ek Eleman',
+        heights: ['40mm', '50mm', '60mm', '80mm', '100mm'],
+        widths: ['23mm'],
+        thicknesses: ['1.5mm', '2.0mm'],
+        rule: 'Kanalın yüksekliğine göre eşleşir'
+      },
+      accessories: [
+        {
+          type: 'T Dönüş',
+          heights: ['40mm', '50mm', '60mm', '80mm', '100mm'],
+          widths: ['54mm', '104mm', '154mm', '205mm', '255mm', '305mm', '405mm', '506mm', '606mm'],
+          thicknesses: ['1.0mm', '1.2mm', '1.5mm', '2.0mm']
+        },
+        {
+          type: '90° Dönüş',
+          heights: ['40mm', '50mm', '60mm', '80mm', '100mm'],
+          widths: ['54mm', '104mm', '154mm', '205mm', '255mm', '305mm', '405mm', '506mm', '606mm'],
+          thicknesses: ['1.0mm', '1.2mm', '1.5mm', '2.0mm']
+        },
+        {
+          type: 'Seperatör',
+          heights: ['40mm', '50mm', '60mm', '80mm', '100mm'],
+          widths: ['30mm'],
+          thicknesses: ['1.0mm', '1.2mm', '1.5mm', '2.0mm']
+        }
       ],
-      accessories: ['Premium Köşe Sistemleri', 'Deliksiz Kapaklar', 'Özel Montaj Elemanları'],
-      recommendation: 'Hem dayanıklılık hem estetik arayan projeler için mükemmel'
+      covers: {
+        name: 'Kapak',
+        heights: ['11mm'],
+        widths: ['50mm', '100mm', '150mm', '200mm', '250mm', '300mm', '400mm', '500mm', '600mm'],
+        thicknesses: ['0.8mm'],
+        rule: 'Kanalın genişliğine göre eşleşir'
+      },
+      description: 'Endüstriyel tesislerde yoğun yük altında çalışan kablolama sistemleri için geliştirilen deliksiz ağır hizmet kanalları, dış ortam etkilerine karşı ekstra koruma sağlar. Güçlü konstrüksiyonu sayesinde titreşimli ve ağır koşullarda güvenilir performans sunar.',
+      useCases: ['Endüstriyel tesisler', 'Premium projeler', 'Ağır yük + estetik', 'Titreşimli ortamlar'],
+      recommendation: 'Hem yüksek dayanıklılık hem de estetik görünüm gereken endüstriyel projelerde'
     },
     {
       code: 'ICT',
-      name: 'Formlu/Geçmeli Tip Kablo Kanalı',
-      fullName: 'ICT - Formlu/Geçmeli Tip Kablo Kanalı',
-      sizes: ['40H', '50H', '60H'],
+      name: 'Formlu/Geçmeli Tip Kablo Kanalları',
+      fullName: 'ICT - Formlu/Geçmeli Tip Kablo Kanalları',
       coatings: ['Pregalvaniz', 'Sıcak Daldırma', 'Boyalı'],
-      description: 'Özel form yapısı ve geçmeli montaj sistemi ile hızlı kurulum sağlayan kanal',
-      useCases: ['Hızlı montaj projeleri', 'Modüler sistemler', 'Esnek konfigürasyonlar', 'Retrofit uygulamaları'],
-      features: [
-        'Hızlı geçmeli montaj',
-        'Özel form tasarımı',
-        'Esnek konfigürasyon',
-        'Kolay değişiklik yapılabilir'
+      dimensions: {
+        heights: ['40mm', '50mm', '60mm', '80mm', '100mm'],
+        widths: ['50mm', '100mm', '150mm', '200mm', '250mm', '300mm', '400mm', '500mm', '600mm'],
+        thicknesses: ['0.8mm', '1.0mm', '1.2mm', '1.5mm', '2.0mm']
+      },
+      modules: {
+        name: 'Ek Eleman',
+        heights: ['40mm', '50mm', '60mm', '80mm', '100mm'],
+        widths: ['23mm'],
+        thicknesses: ['1.5mm', '2.0mm'],
+        rule: 'Kanalın yüksekliğine göre eşleşir'
+      },
+      accessories: [
+        {
+          type: 'T Dönüş',
+          heights: ['40mm', '50mm', '60mm', '80mm', '100mm'],
+          widths: ['54mm', '104mm', '154mm', '205mm', '255mm', '305mm', '405mm', '506mm', '606mm'],
+          thicknesses: ['1.0mm', '1.2mm', '1.5mm', '2.0mm']
+        },
+        {
+          type: '90° Dönüş',
+          heights: ['40mm', '50mm', '60mm', '80mm', '100mm'],
+          widths: ['54mm', '104mm', '154mm', '205mm', '255mm', '305mm', '405mm', '506mm', '606mm'],
+          thicknesses: ['1.0mm', '1.2mm', '1.5mm', '2.0mm']
+        }
       ],
-      accessories: ['Geçmeli Köşeler', 'Hızlı Montaj Elemanları', 'Modüler Kapaklar'],
-      recommendation: 'Hızlı montaj ve esneklik gereken projelerde avantajlı'
-    },
-    {
-      code: 'TRU',
-      name: 'Trunking Kablo Kanalı',
-      fullName: 'TRU - Trunking Kablo Kanalı (Büyük Kanal Sistemi)',
-      sizes: ['80H', '100H', '120H', '150H'],
-      coatings: ['Pregalvaniz', 'Sıcak Daldırma'],
-      description: 'Yüksek kablo kapasiteli ana kablo hatları için büyük boyutlu kanal sistemi',
-      useCases: ['Ana kablo hatları', 'Büyük tesisler', 'Yüksek kablo yoğunluğu', 'Omurga sistemleri'],
-      features: [
-        'Yüksek kablo kapasitesi',
-        'Büyük boyutlar (80-150mm)',
-        'Ağır yük taşıma',
-        'Ana hat uygulamaları'
-      ],
-      accessories: ['Büyük Köşe Sistemleri', 'Trunking Kapakları', 'Özel Askı Sistemleri', 'Bölme Elemanları'],
-      recommendation: 'Büyük tesislerde ana kablo dağıtım hatları için ideal'
+      covers: {
+        name: 'Kapak',
+        heights: ['11mm'],
+        widths: ['50mm', '100mm', '150mm', '200mm', '250mm', '300mm', '400mm', '500mm', '600mm'],
+        thicknesses: ['0.8mm'],
+        rule: 'Kanalın genişliğine göre eşleşir'
+      },
+      description: 'Modüler yapısı ve geçmeli tasarımı sayesinde hızlı montaj imkânı sunan formlu kablo kanalları, estetik ve düzenli bir kablo yönetimi sağlar. Bağlantı noktalarında kullanılan geçmeli mekanizma, sistemin sağlam ve sürekli bir bütün olarak çalışmasına olanak tanır.',
+      useCases: ['Hızlı montaj projeleri', 'Modüler sistemler', 'Retrofit uygulamaları', 'Esnek konfigürasyonlar'],
+      recommendation: 'Hızlı kurulum ve modüler yapı gereken projelerde tercih edilir'
     },
     {
       code: 'CL',
-      name: 'Kablo Merdiveni',
-      fullName: 'CL - Kablo Merdiveni Sistemleri',
-      sizes: ['Çeşitli genişlik ve yükseklikler'],
-      coatings: ['Pregalvaniz', 'Sıcak Daldırma'],
-      description: 'Açık tip kablo taşıma sistemi, kolay bakım ve yüksek havalandırma',
-      useCases: ['Endüstriyel tesisler', 'Veri merkezleri', 'Yüksek kablo trafiği', 'Kolay erişim gereken alanlar'],
-      features: [
-        'Açık sistem (kolay erişim)',
-        'Mükemmel havalandırma',
-        'Esnek konfigürasyon',
-        'Kolay kablo ekleme/çıkarma'
+      name: 'Kablo Merdivenleri',
+      fullName: 'CL - Kablo Merdivenleri',
+      coatings: ['Pregalvaniz', 'Sıcak Daldırma', 'Boyalı'],
+      dimensions: {
+        heights: ['40mm', '50mm', '60mm', '80mm', '100mm'],
+        widths: ['50mm', '100mm', '150mm', '200mm', '250mm', '300mm', '400mm', '500mm', '600mm'],
+        thicknesses: ['0.8mm', '1.0mm', '1.2mm', '1.5mm', '2.0mm']
+      },
+      modules: {
+        name: 'Ek Eleman',
+        heights: ['40mm', '50mm', '60mm', '80mm', '100mm'],
+        widths: ['23mm'],
+        thicknesses: ['1.5mm', '2.0mm'],
+        rule: 'Kanalın yüksekliğine göre eşleşir'
+      },
+      accessories: [
+        {
+          type: 'T Dönüş',
+          heights: ['40mm', '50mm', '60mm', '80mm', '100mm'],
+          widths: ['54mm', '104mm', '154mm', '205mm', '255mm', '305mm', '405mm', '506mm', '606mm'],
+          thicknesses: ['1.0mm', '1.2mm', '1.5mm', '2.0mm']
+        },
+        {
+          type: '90° Dönüş',
+          heights: ['40mm', '50mm', '60mm', '80mm', '100mm'],
+          widths: ['54mm', '104mm', '154mm', '205mm', '255mm', '305mm', '405mm', '506mm', '606mm'],
+          thicknesses: ['1.0mm', '1.2mm', '1.5mm', '2.0mm']
+        },
+        {
+          type: 'Dörtlü Dönüş',
+          heights: ['40mm', '50mm', '60mm', '80mm', '100mm'],
+          widths: ['54mm', '104mm', '154mm', '205mm', '255mm', '305mm', '405mm', '506mm', '606mm'],
+          thicknesses: ['1.0mm', '1.2mm', '1.5mm', '2.0mm']
+        }
       ],
-      accessories: ['Merdiven Köşeleri', 'Askı Sistemleri', 'Bağlantı Elemanları', 'Kapaklar (opsiyonel)'],
-      recommendation: 'Veri merkezi ve yüksek kablo yoğunluklu projelerde tercih edilir'
+      covers: {
+        name: 'Kapak (Opsiyonel)',
+        heights: ['11mm'],
+        widths: ['50mm', '100mm', '150mm', '200mm', '250mm', '300mm', '400mm', '500mm', '600mm'],
+        thicknesses: ['0.8mm'],
+        rule: 'Kanalın genişliğine göre eşleşir'
+      },
+      description: 'Uzun mesafeli kablo taşımalarında yüksek taşıma kapasitesi sunan kablo merdivenleri, açık yapısı sayesinde kablo havalandırmasını ve hızlı müdahaleyi kolaylaştırır. Endüstriyel tesislerde ağır kablo grupları için tercih edilen bir çözümdür.',
+      useCases: ['Endüstriyel tesisler', 'Veri merkezleri', 'Ağır kablo grupları', 'Uzun mesafe taşıma'],
+      recommendation: 'Açık sistem, yüksek havalandırma ve kolay erişim gereken büyük projelerde'
     },
     {
-      code: 'GES',
-      name: 'Geçiş Sistemleri',
-      fullName: 'GES - Elektrik Geçiş Sistemleri',
-      sizes: ['Özel boyutlar'],
-      coatings: ['Çeşitli'],
-      description: 'Elektrik panolarına ve cihazlara kablo geçişi için özel sistemler',
-      useCases: ['Pano girişleri', 'Cihaz bağlantıları', 'Yangın duvarı geçişleri', 'Su yalıtımlı geçişler'],
-      features: [
-        'Özel geçiş çözümleri',
-        'Yalıtımlı sistemler',
-        'IP korumalı versiyonlar',
-        'Yangın durdurucu seçenekler'
+      code: 'TRU',
+      name: 'Trunking Kablo Kanalları',
+      fullName: 'TRU - Trunking Kablo Kanalları',
+      coatings: ['Pregalvaniz', 'Sıcak Daldırma', 'Boyalı'],
+      dimensions: {
+        heights: ['50mm', '60mm', '80mm', '100mm', '150mm'],
+        widths: ['50mm', '100mm', '150mm', '200mm', '250mm', '300mm', '400mm', '500mm', '600mm'],
+        thicknesses: ['0.8mm', '1.0mm', '1.2mm', '1.5mm', '2.0mm']
+      },
+      modules: {
+        name: 'Ek Eleman',
+        heights: ['40mm', '50mm', '60mm', '80mm', '100mm'],
+        widths: ['23mm'],
+        thicknesses: ['1.5mm', '2.0mm'],
+        rule: 'Kanalın yüksekliğine göre eşleşir'
+      },
+      accessories: [
+        {
+          type: 'T Dönüş',
+          heights: ['50mm', '60mm', '80mm', '100mm', '150mm'],
+          widths: ['54mm', '104mm', '154mm', '205mm', '255mm', '305mm', '405mm', '506mm', '606mm'],
+          thicknesses: ['1.0mm', '1.2mm', '1.5mm', '2.0mm']
+        },
+        {
+          type: '90° Dönüş',
+          heights: ['50mm', '60mm', '80mm', '100mm', '150mm'],
+          widths: ['54mm', '104mm', '154mm', '205mm', '255mm', '305mm', '405mm', '506mm', '606mm'],
+          thicknesses: ['1.0mm', '1.2mm', '1.5mm', '2.0mm']
+        }
       ],
-      accessories: ['Geçiş Flanşları', 'Yalıtım Elemanları', 'Conta Sistemleri'],
-      recommendation: 'Pano ve cihaz bağlantılarında profesyonel geçiş çözümü'
+      covers: {
+        name: 'Set halinde satılır (kapak dahil)',
+        heights: ['Kanal ile birlikte'],
+        widths: ['Kanal ile birlikte'],
+        thicknesses: ['Kanal ile birlikte'],
+        rule: 'Set halinde gelir'
+      },
+      description: 'Geniş kablo gruplarını tek hat üzerinde güvenli şekilde taşımak için tasarlanan trunking kanallar, yüksek hacimli kablolama uygulamalarında düzen, güvenlik ve profesyonel görünüm sağlar. Kolay erişim özelliği sayesinde bakım süreçleri hızlanır.',
+      useCases: ['Ana kablo hatları', 'Büyük tesisler', 'Yüksek kablo yoğunluğu', 'Omurga sistemleri'],
+      recommendation: 'Büyük tesislerde ana kablo dağıtım hatları için ideal, set halinde gelir'
+    },
+    {
+      code: 'WCT',
+      name: 'Tel Örgü Kablo Kanalları',
+      fullName: 'WCT - Tel Örgü Kablo Kanalları',
+      coatings: ['Elektro', 'Sıcak Daldırma', 'Boyalı'],
+      dimensions: {
+        heights: ['35mm', '55mm', '85mm', '105mm'],
+        widths: ['50mm', '100mm', '150mm', '200mm', '250mm', '300mm', '400mm', '500mm', '600mm'],
+        thicknesses: ['3.8mm', '4.0mm', '4.5mm', '5.0mm']
+      },
+      modules: {
+        name: 'Ek Eleman',
+        heights: ['35mm', '55mm', '85mm', '105mm'],
+        widths: ['-'],
+        thicknesses: ['2mm', '3mm'],
+        rule: 'Kanalın yüksekliğine göre eşleşir'
+      },
+      accessories: [
+        {
+          type: 'T Dönüş',
+          heights: ['35mm', '55mm', '85mm', '105mm'],
+          widths: ['54mm', '104mm', '154mm', '205mm', '255mm', '305mm', '405mm', '506mm', '606mm'],
+          thicknesses: ['3.8mm', '4.0mm', '4.5mm', '5.0mm']
+        },
+        {
+          type: '90° Dönüş',
+          heights: ['35mm', '55mm', '85mm', '105mm'],
+          widths: ['54mm', '104mm', '154mm', '205mm', '255mm', '305mm', '405mm', '506mm', '606mm'],
+          thicknesses: ['3.8mm', '4.0mm', '4.5mm', '5.0mm']
+        },
+        {
+          type: 'Dörtlü Dönüş',
+          heights: ['35mm', '55mm', '85mm', '105mm'],
+          widths: ['54mm', '104mm', '154mm', '205mm', '255mm', '305mm', '405mm', '506mm', '606mm'],
+          thicknesses: ['3.8mm', '4.0mm', '4.5mm', '5.0mm']
+        }
+      ],
+      covers: {
+        name: 'Kapak Yok',
+        heights: [],
+        widths: [],
+        thicknesses: [],
+        rule: 'Tel örgü sistemlerde kapak kullanılmaz'
+      },
+      description: 'Havalandırma gerektiren kablolama çözümleri için ideal olan tel örgü kanallar, hafif yapısı ve geniş açıklıkları sayesinde kablo ısınmasını önler. Veri merkezleri, IT altyapıları ve düşük gerilim hatlarında esnek ve modern bir çözüm oluşturur.',
+      useCases: ['Veri merkezleri', 'IT altyapıları', 'Havalandırma gereken alanlar', 'Düşük gerilim hatları'],
+      recommendation: 'Kablo havalandırması kritik olan veri merkezi ve IT projelerinde'
     }
   ],
 
@@ -145,42 +495,36 @@ export const PRODUCT_CATALOG = {
     'Pregalvaniz': {
       description: 'Ekonomik ve dayanıklı çinko kaplama',
       bestFor: ['İç mekan uygulamaları', 'Normal nem koşulları', 'Bütçe dostu projeler'],
-      features: ['Ekonomik', 'İç mekan için yeterli koruma', 'Hızlı teslimat']
+      features: ['Ekonomik', 'İç mekan için yeterli koruma', 'Hızlı teslimat'],
+      technicalNote: 'Seçilen tipte kanalın aynı tipte modülü, aksesuarı ve kapağı olur'
     },
     'Sıcak Daldırma': {
       description: 'Yüksek korozyon direnci, dış mekan uyumlu',
       bestFor: ['Dış mekan uygulamaları', 'Yüksek nem ortamları', 'Uzun ömür beklentisi', 'Sahil bölgeleri'],
-      features: ['20+ yıl dayanım', 'Maksimum korozyon koruması', 'Dış mekan standartı']
+      features: ['20+ yıl dayanım', 'Maksimum korozyon koruması', 'Dış mekan standartı'],
+      technicalNote: 'Seçilen tipte kanalın aynı tipte modülü, aksesuarı ve kapağı olur'
     },
     'Boyalı': {
       description: 'Estetik görünüm, özel renk seçenekleri',
       bestFor: ['Görünür montajlar', 'Estetik öncelikli projeler', 'Özel renk talebi', 'Modern binalar'],
-      features: ['RAL renk seçenekleri', 'Estetik görünüm', 'Dekoratif uygulamalar']
+      features: ['RAL renk seçenekleri', 'Estetik görünüm', 'Dekoratif uygulamalar'],
+      technicalNote: 'Seçilen tipte kanalın aynı tipte modülü, aksesuarı ve kapağı olur'
     },
     'Elektro': {
       description: 'Elektro galvaniz, hafif koruma',
       bestFor: ['Kontrollü iç ortamlar', 'Düşük bütçeli projeler', 'Kısa vadeli kullanım'],
-      features: ['En ekonomik seçenek', 'Hafif koruma', 'İç mekan']
+      features: ['En ekonomik seçenek', 'Hafif koruma', 'İç mekan'],
+      technicalNote: 'Sadece CT ve WCT ürünlerinde mevcut'
     }
   },
 
-  usageRecommendations: {
-    'iç mekan': 'İç mekan kullanımı için Pregalvaniz kaplama ekonomik ve yeterli koruma sağlar. SCT serisi ideal.',
-    'dış mekan': 'Dış mekan kullanımı için mutlaka Sıcak Daldırma kaplama önerilir. 20+ yıl korozyon koruması.',
-    'endüstriyel': 'Endüstriyel tesislerde CT (Ağır Hizmet) veya HUCT serisi yüksek mekanik dayanım sağlar.',
-    'estetik': 'Görünür montajlarda Boyalı kaplama veya SUCT/HUCT deliksiz seriler estetik görünüm sunar.',
-    'ekonomik': 'Bütçe dostu projeler için SCT Pregalvaniz serisi en ekonomik çözümdür.',
-    'büyük kapasite': 'Yüksek kablo sayısı için TRU (Trunking) veya CL (Merdiven) sistemleri uygundur.',
-    'hızlı montaj': 'Hızlı kurulum için ICT (Geçmeli) serisi avantajlıdır.',
-    'kolay bakım': 'Kolay erişim ve bakım için CL (Kablo Merdiveni) sistemleri idealdir.'
-  },
-
-  accessories: {
-    corners: ['L Köşe (90°)', 'T Köşe', 'X Köşe (Çapraz)', 'Y Köşe', 'İç/Dış Köşe'],
-    covers: ['Tam Kapak', 'Yarım Kapak', 'Delikli Kapak', 'Transparan Kapak'],
-    mounting: ['Tavan Askısı', 'Duvar Bağlantısı', 'Zemin Montaj Elemanı', 'U Profil Askı'],
-    connections: ['Redüksiyon', 'Genişletme', 'Bölme Elemanı', 'Kenar Profili', 'Son Kapak'],
-    special: ['Yangın Bariyeri', 'Su Yalıtım', 'IP Korumalı Sistemler']
+  matchingRules: {
+    coating: 'Seçilen tipte kanalın aynı tipte modülü, aksesuarı ve kapağı olur (Pregalvaniz kanal → Pregalvaniz aksesuar)',
+    modules: 'Modüller ve aksesuarlar seçilen kanalın YÜKSEKLİĞİNE göre eşleşir',
+    covers: 'Kapaklar seçilen kanalın GENİŞLİĞİNE göre eşleşir',
+    length: 'Ürün boyları standart olarak 3 metre üretilir',
+    customization: 'İsteğe bağlı farklı ölçü ve malzemede üretim yapılabilir',
+    tolerance: 'Malzeme ağırlıkları ±%10 tolerans gösterebilir'
   },
 
   contactInfo: {
@@ -192,36 +536,68 @@ export const PRODUCT_CATALOG = {
   }
 }
 
-// Ürün önerisi için yardımcı fonksiyon
-export function getProductRecommendation(criteria: {
-  location?: 'indoor' | 'outdoor',
-  budget?: 'economy' | 'standard' | 'premium',
-  capacity?: 'small' | 'medium' | 'large',
-  aesthetic?: boolean,
-  industrial?: boolean
-}): string[] {
-  const recommendations: string[] = []
+// Helper: Format product catalog for GPT (özet versiyon)
+export function formatProductCatalogForGPT(): string {
+  let text = '📦 IPOS STEEL ÜRÜN KATALOĞU (DETAYLI HİYERARŞİ)\n\n'
+  
+  PRODUCT_CATALOG.products.forEach((product, index) => {
+    text += `${index + 1}. ${product.fullName}\n`
+    text += `   Kaplamaları: ${product.coatings.join(', ')}\n`
+    text += `   Yükseklikler: ${product.dimensions.heights.join(', ')}\n`
+    text += `   Genişlikler: ${product.dimensions.widths.join(', ')}\n`
+    text += `   Kalınlıklar: ${product.dimensions.thicknesses.join(', ')}\n`
+    text += `   \n`
+    text += `   📦 MODÜLLER (${product.modules.name}):\n`
+    text += `      - Yükseklikler: ${product.modules.heights.join(', ')}\n`
+    text += `      - Genişlikler: ${product.modules.widths.join(', ')}\n`
+    text += `      - Kalınlıklar: ${product.modules.thicknesses.join(', ')}\n`
+    text += `      - Kural: ${product.modules.rule}\n`
+    text += `   \n`
+    text += `   🔧 AKSESUARLAR (${product.accessories.length} tip):\n`
+    product.accessories.slice(0, 5).forEach(acc => {
+      text += `      • ${acc.type}\n`
+    })
+    if (product.accessories.length > 5) {
+      text += `      ... ve ${product.accessories.length - 5} tip daha\n`
+    }
+    text += `   \n`
+    text += `   📌 KAPAK: ${product.covers.name}\n`
+    text += `      - Kural: ${product.covers.rule}\n`
+    text += `   \n`
+    text += `   ℹ️  ${product.description}\n`
+    text += `   💡 Öneri: ${product.recommendation}\n\n`
+  })
 
-  if (criteria.location === 'outdoor') {
-    recommendations.push('TRU', 'CT', 'CL')
-  }
+  text += '\n🎨 KAPLAMA KURALLARI:\n'
+  text += `• ${PRODUCT_CATALOG.matchingRules.coating}\n`
+  text += `• ${PRODUCT_CATALOG.matchingRules.modules}\n`
+  text += `• ${PRODUCT_CATALOG.matchingRules.covers}\n`
+  text += `• ${PRODUCT_CATALOG.matchingRules.length}\n`
+  text += `• ${PRODUCT_CATALOG.matchingRules.customization}\n`
+  text += `• ${PRODUCT_CATALOG.matchingRules.tolerance}\n`
   
-  if (criteria.budget === 'economy') {
-    recommendations.push('SCT')
-  }
-  
-  if (criteria.capacity === 'large') {
-    recommendations.push('TRU', 'CL')
-  }
-  
-  if (criteria.aesthetic) {
-    recommendations.push('SUCT', 'HUCT')
-  }
-  
-  if (criteria.industrial) {
-    recommendations.push('CT', 'HUCT', 'TRU')
-  }
-
-  return recommendations.length > 0 ? recommendations : ['SCT', 'CT']
+  return text
 }
 
+// Helper: Get accessories for specific product and dimensions
+export function getAccessoriesForProduct(
+  productCode: string, 
+  height: string, 
+  coating: string
+): any[] {
+  const product = PRODUCT_CATALOG.products.find(p => p.code === productCode)
+  if (!product) return []
+  
+  // Filter accessories by height
+  return product.accessories.filter(acc => 
+    acc.heights.includes(height)
+  )
+}
+
+// Helper: Get cover for specific width
+export function getCoverForWidth(productCode: string, width: string): any | null {
+  const product = PRODUCT_CATALOG.products.find(p => p.code === productCode)
+  if (!product || !product.covers.widths.includes(width)) return null
+  
+  return product.covers
+}
