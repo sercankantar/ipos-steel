@@ -54,14 +54,17 @@ export async function POST(req: NextRequest) {
     const analysis = await analyzeMessage(message, context, openaiKey)
 
     // Analiz sonuçlarını context'e kaydet (conversational filtering için)
-    if (analysis.productType || analysis.size || analysis.coatingType) {
-      context.productFilters = {
-        ...context.productFilters,
-        ...(analysis.productType && { productType: analysis.productType }),
-        ...(analysis.size && { size: analysis.size }),
-        ...(analysis.coatingType && { coatingType: analysis.coatingType })
-      }
+    // Mevcut filtreleri koru, yeni gelen bilgileri ekle
+    const existingFilters = context.productFilters || {}
+    context.productFilters = {
+      productType: analysis.productType || existingFilters.productType,
+      size: analysis.size || existingFilters.size,
+      coatingType: analysis.coatingType || existingFilters.coatingType,
+      height: analysis.height || existingFilters.height,
+      width: analysis.width || existingFilters.width
     }
+    
+    console.log('💾 Context Filters Updated:', context.productFilters)
 
     let response: any = {
       success: true,
@@ -155,10 +158,15 @@ export async function POST(req: NextRequest) {
 async function analyzeMessage(message: string, context: any, openaiKey?: string): Promise<any> {
   const systemPrompt = `Sen IPOS Steel'in akıllı chatbot asistanısın. ÜRÜN YAPISINI BİLİYORSUN!
 
-**CONTEXT:**
+**CONTEXT (ÇOK ÖNEMLİ!):**
 ${context.lastSearchQuery ? `Son arama: ${JSON.stringify(context.lastSearchQuery)}` : 'İlk mesaj'}
 ${context.lastSearchResults ? `${context.lastSearchResults.length} ürün bulunmuştu` : ''}
-${context.productFilters ? `Mevcut filtreler: ${JSON.stringify(context.productFilters)}` : 'Henüz filtre yok'}
+${context.productFilters ? `
+🎯 MEV CUT FİLTRELER (Kullanıcı bunları daha önce seçti):
+   - productType: ${context.productFilters.productType || 'yok'}
+   - size: ${context.productFilters.size || 'yok'}
+   - coatingType: ${context.productFilters.coatingType || 'yok'}
+` : 'Henüz filtre yok - ilk soru sor!'}
 
 **ÜRÜN HİYERARŞİSİ (ÖNEMLİ!):**
 Kablo Kanalları
@@ -186,12 +194,16 @@ Kablo Kanalları
 
 Kullanıcı eksik bilgi verdiyse → **incomplete_search** döndür!
 
-**CONVERSATIONAL FLOW:**
+**CONVERSATIONAL FLOW (Context'i KULLAN!):**
 
 1. "kablo kanalı" → incomplete_search (productType null)
-2. "sct" (context'te tip sorulmuştu) → incomplete_search (productType:"sct", size null)
-3. "50mm" (context'te boyut sorulmuştu) → incomplete_search (size:"50", coating null)
-4. "pregalvaniz" → product_search (TAMAM, arama yap!)
+2. "sct" (context yok) → incomplete_search (productType:"sct", size null)
+3. "50mm" (context: productType="sct") → incomplete_search (productType:"sct", size:"50", coating null)
+4. "pregalvaniz" (context: productType="sct", size="50") → product_search (productType:"sct", size:"50", coatingType:"pregalvaniz")
+
+**ÖNEMLİ:** Context'te MEVCUT filtreler varsa, bunları function response'a DA EKLE!
+Örnek: Context'te productType="ct", size="50" var. Kullanıcı "pregalvaniz" dedi.
+→ {"intent": "product_search", "productType": "ct", "size": "50", "coatingType": "pregalvaniz"}
 
 **ÖRNEKLER:**
 
@@ -639,21 +651,14 @@ async function handleProductSearch(analysis: any, context: any) {
 
 // Eksik parametreli arama - KONUŞARAK FİLTRELE
 async function handleIncompleteSearch(analysis: any, context: any) {
-  // Context'ten mevcut filtreleri al
-  const existingFilters = context.productFilters || {}
-  const newFilters = {
-    productType: analysis.productType || existingFilters.productType,
-    size: analysis.size || existingFilters.size,
-    coatingType: analysis.coatingType || existingFilters.coatingType,
-    height: analysis.height || existingFilters.height,
-    width: analysis.width || existingFilters.width
-  }
-
-  // Context'i güncelle
-  context.productFilters = newFilters
+  // Context'ten mevcut filtreleri al (zaten POST handler'da güncellenmiş olmalı)
+  const currentFilters = context.productFilters || {}
+  
+  console.log('🔍 Incomplete Search - Current Filters:', currentFilters)
+  console.log('🔍 GPT Analysis:', { productType: analysis.productType, size: analysis.size, coatingType: analysis.coatingType })
 
   // Hangi bilgi eksik?
-  if (!newFilters.productType) {
+  if (!currentFilters.productType) {
     return {
       success: true,
       intent: 'incomplete_search',
@@ -668,33 +673,33 @@ async function handleIncompleteSearch(analysis: any, context: any) {
                 '💬 Örnek: "sct" veya "standart tip"',
       requiresMoreInfo: true,
       missingParams: ['productType'],
-      currentFilters: newFilters
+      currentFilters: currentFilters
     }
   }
 
-  if (!newFilters.size) {
+  if (!currentFilters.size) {
     return {
       success: true,
       intent: 'incomplete_search',
-      response: `📏 *${newFilters.productType.toUpperCase()} için hangi boyut?*\n\n` +
+      response: `📏 *${currentFilters.productType.toUpperCase()} için hangi boyut?*\n\n` +
                 '▪️ **40mm** (40H)\n' +
                 '▪️ **50mm** (50H)\n' +
                 '▪️ **60mm** (60H)\n' +
                 '▪️ **80mm** (80H)\n' +
                 '▪️ **100mm** (100H)\n' +
-                (newFilters.productType === 'tru' ? '▪️ **120mm** (120H)\n▪️ **150mm** (150H)\n' : '') +
+                (currentFilters.productType === 'tru' ? '▪️ **120mm** (120H)\n▪️ **150mm** (150H)\n' : '') +
                 '\n💬 Örnek: "50mm" veya "50lik"',
       requiresMoreInfo: true,
       missingParams: ['size'],
-      currentFilters: newFilters
+      currentFilters: currentFilters
     }
   }
 
-  if (!newFilters.coatingType) {
+  if (!currentFilters.coatingType) {
     return {
       success: true,
       intent: 'incomplete_search',
-      response: `🎨 *${newFilters.size}mm ${newFilters.productType.toUpperCase()} için kaplama tipi?*\n\n` +
+      response: `🎨 *${currentFilters.size}mm ${currentFilters.productType.toUpperCase()} için kaplama tipi?*\n\n` +
                 '▪️ **Pregalvaniz** (PG)\n' +
                 '▪️ **Sıcak Daldırma** (HG)\n' +
                 '▪️ **Boyalı** (SP)\n' +
@@ -703,15 +708,16 @@ async function handleIncompleteSearch(analysis: any, context: any) {
                 '💬 Örnek: "pregalvaniz" veya "hepsi"',
       requiresMoreInfo: true,
       missingParams: ['coatingType'],
-      currentFilters: newFilters
+      currentFilters: currentFilters
     }
   }
 
   // Tüm filtreler tamamsa, STRUCTURED SEARCH yap (searchQuery değil!)
+  console.log('✅ Tüm filtreler tamam! Arama yapılıyor:', currentFilters)
   return await handleProductSearchStructured({
-    productType: newFilters.productType,
-    size: newFilters.size,
-    coatingType: newFilters.coatingType === 'hepsi' ? null : newFilters.coatingType
+    productType: currentFilters.productType,
+    size: currentFilters.size,
+    coatingType: currentFilters.coatingType === 'hepsi' ? null : currentFilters.coatingType
   }, context)
 }
 
