@@ -136,45 +136,48 @@ export async function POST(req: NextRequest) {
 
 // GPT ile mesaj analizi
 async function analyzeMessage(message: string, context: any, openaiKey?: string): Promise<any> {
-  const systemPrompt = `Sen IPOS Steel'in akıllı chatbot asistanısın. Türk müşteriler için ürün arama yapıyorsun.
+  const systemPrompt = `Sen IPOS Steel'in chatbot asistanısın. Kullanıcı intent'ini DOĞRU BELİRLE!
 
-**Context:**
+**CONTEXT:**
 ${context.lastSearchQuery ? `Son arama: ${JSON.stringify(context.lastSearchQuery)}` : 'İlk mesaj'}
-${context.lastSearchResults ? `Son sonuçlar: ${context.lastSearchResults.length} ürün` : ''}
+${context.lastSearchResults ? `${context.lastSearchResults.length} ürün bulunmuştu` : ''}
 
-**GOREVİN:**
-Kullanıcının mesajını analiz et ve searchQuery'yi NORMALIZE ET!
+**İNTENT KURALLARI (DİKKAT!):**
 
-**TÜRKçE NORMALİZASYON (ÇOK ÖNEMLİ!):**
-- "50lik" → "50" (sadece sayıyı al)
-- "40lık" → "40"  
-- "60lıkları" → "60"
-- "pregalvaniz" → "pregal" (kısa versiyonu kullan)
-- "sıcak daldırma galvaniz" → "sıcak daldırma"
+1. **company_info**: "hakkınızda", "kimsiniz", "ipos steel nedir", "firmamız"
+2. **contact_info**: "iletişim", "telefon", "adres", "nerede", "nasıl ulaşabilirim"  
+3. **follow_up_search**: Context var + "80mm olanları", "pregalvaniz olanları", "40lıkları getir"
+4. **product_search**: Ürün araması
+
+**ÖNEMLİ:** "iletişim" = contact_info (product_search DEĞİL!)
 
 **ÖRNEKLER:**
-Kullanıcı: "50lik kablo kanalı"
-→ intent: "product_search", searchQuery: "50 kablo kanal"
-
-Kullanıcı: "pregalvaniz 40lık kanal"
-→ intent: "product_search", searchQuery: "pregal 40 kanal", coatingType: "pregalvaniz"
-
-Kullanıcı: "60lıkları göster"
-→ intent: "product_search", searchQuery: "60"
-
-Kullanıcı: "hakkınızda"
-→ intent: "company_info"
 
 Kullanıcı: "iletişim"
-→ intent: "contact_info"
+→ {"intent": "contact_info"}
 
-**searchQuery HER ZAMAN DOLDUR! Türkçe ekleri temizle, sadece sayı ve anahtar kelime bırak!**`
+Kullanıcı: "ipos steel nerede"  
+→ {"intent": "contact_info"}
+
+Kullanıcı: "hakkınızda"
+→ {"intent": "company_info"}
+
+Kullanıcı: "50lik kablo kanalı"
+→ {"intent": "product_search", "searchQuery": "50 kablo kanal"}
+
+Kullanıcı: "80mm olanları getir" (context var)
+→ {"intent": "follow_up_search", "searchQuery": "80"}
+
+**Türkçe normalize et:** "50lik" → "50", "pregalvaniz" → "pregal"`
 
   try {
     // Basit regex tabanlı analiz (OpenAI key yoksa)
     if (!openaiKey) {
+      console.log('⚠️ OpenAI key yok, fallback kullanılıyor')
       return simpleAnalysis(message, context)
     }
+    
+    console.log('🤖 GPT analizi başlıyor:', { message, hasContext: !!context.lastSearchQuery })
 
     // OpenAI ile gelişmiş analiz
     const response = await fetch('https://api.openai.com/v1/chat/completions', {
@@ -227,7 +230,7 @@ Kullanıcı: "iletişim"
           }
         }],
         function_call: { name: 'analyze_intent' },
-        temperature: 0.3
+        temperature: 0.1
       })
     })
 
@@ -258,48 +261,65 @@ Kullanıcı: "iletişim"
 
 // Basit analiz (fallback)
 function simpleAnalysis(message: string, context: any): any {
-  const lower = message.toLowerCase()
+  const lower = message.toLowerCase().trim()
+  
+  console.log('🔄 Fallback Analysis:', { message: lower, hasContext: !!context.lastSearchQuery })
 
-  // Company info
-  if (lower.includes('hakkın') || lower.includes('kimsin') || lower.includes('ne yapıyor')) {
+  // Company info - ÖNCE KONTROL ET!
+  if (lower.match(/hakkı(nda|nız)|kimsin|ne yapıyor|şirket|ipos\s+steel|firmamız|biz kimiz/i)) {
+    console.log('✅ Intent: company_info')
     return { intent: 'company_info' }
   }
 
-  // Contact info
-  if (lower.includes('iletişim') || lower.includes('telefon') || lower.includes('adres') || lower.includes('ulaş')) {
+  // Contact info - İKİNCİ KONTROL
+  if (lower.match(/iletişim|ileti�?im|telefon|tel|adres|nerede|nasıl ulaş|mail|email|irtibat|iletisim/i)) {
+    console.log('✅ Intent: contact_info')
     return { intent: 'contact_info' }
   }
 
-  // Follow-up search (context varsa)
-  if (context.lastSearchQuery && (
-    lower.match(/\d+\s*l[ıi]k/i) ||
-    lower.includes('pregal') ||
-    lower.includes('sıcak daldırma') ||
-    lower.includes('olanları') ||
-    lower.includes('getir')
-  )) {
-    return {
-      intent: 'follow_up_search',
-      searchQuery: message,
-      coatingType: lower.includes('pregal') ? 'pregalvaniz' : 
-                   lower.includes('sıcak') ? 'sıcak daldırma' : undefined
+  // Follow-up search - CONTEXT VARSA
+  if (context.lastSearchQuery) {
+    // "80mm olanları", "pregalvaniz olanları", "40lıkları getir"
+    if (lower.match(/(\d+\s*mm|l[ıi]k).*olan|olan.*(\d+)|getir|göster|filtrele|bunları/i) ||
+        lower.match(/pregal|sıcak|boyalı|elektro.*olan/i)) {
+      
+      let searchQuery = message.replace(/(\d+)\s*l[ıi]k(lar[ıi])?/gi, '$1').trim()
+      let coatingType = lower.includes('pregal') ? 'pregalvaniz' : 
+                       lower.includes('sıcak') ? 'sıcak daldırma' :
+                       lower.includes('boyalı') ? 'boyalı' : undefined
+      
+      console.log('✅ Intent: follow_up_search', { searchQuery, coatingType })
+      return {
+        intent: 'follow_up_search',
+        searchQuery: searchQuery,
+        coatingType: coatingType
+      }
     }
   }
 
   // Product accessories
   if ((lower.includes('bunun') || lower.includes('bu ürün')) && 
       (lower.includes('aksesuar') || lower.includes('modül') || lower.includes('kapak'))) {
+    console.log('✅ Intent: product_accessories')
     return { intent: 'product_accessories' }
   }
 
-  // Product search - Türkçe normalize et (fallback)
+  // Incomplete search - çok kısa ve belirsiz
+  if (lower.length < 5 || lower === 'kanal' || lower === 'ürün') {
+    console.log('✅ Intent: incomplete_search (too vague)')
+    return { 
+      intent: 'incomplete_search',
+      clarificationNeeded: '🤔 Hangi ürünü arıyorsunuz?\n\nÖrnek: "50lik pregalvaniz kablo kanalı"'
+    }
+  }
+
+  // Product search - Türkçe normalize et
   let searchQuery = message
-    .replace(/(\d+)\s*l[ıi]k(lar[ıi])?/gi, '$1')  // "50lik", "50lıkları" → "50"
-    .replace(/pregalvaniz/gi, 'pregal')  // "pregalvaniz" → "pregal"
+    .replace(/(\d+)\s*l[ıi]k(lar[ıi])?/gi, '$1')  // "50lik" → "50"
+    .replace(/pregalvaniz/gi, 'pregal')
     .trim()
   
-  console.log('🔄 Fallback Analysis:', { original: message, normalized: searchQuery })
-  
+  console.log('✅ Intent: product_search', { searchQuery })
   return {
     intent: 'product_search',
     searchQuery: searchQuery
