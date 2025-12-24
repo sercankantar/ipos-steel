@@ -417,32 +417,55 @@ export async function GET(req: NextRequest) {
       fullDescription: `${cov.name} ${cov.code ? `(${cov.code})` : ''} - ${cov.coatingType || ''} ${cov.height && cov.width ? `${cov.height}x${cov.width}` : ''} - ${cov.subProduct.product.category.name}`.trim()
     })))
 
-    // Skorlama ve sıralama
+    // Skorlama ve sıralama - KELİME BAZLI AKILLI SKORLAMA
     const scoredResults = searchResults.map(item => {
       let score = 0
       const searchLower = query.toLowerCase()
+      const searchKeywords = searchLower.split(/\s+/).filter(k => k.length > 0)
       
-      // Tam eşleşmeler en yüksek puan
-      if (item.name.toLowerCase() === searchLower) score += 100
-      if (item.code?.toLowerCase() === searchLower) score += 90
+      // Her kelime için skorlama
+      searchKeywords.forEach(keyword => {
+        // ÜRÜN TİPİ KODLARI (SCT, CT, TRU, SUCT, HUCT, ICT) - ÇOK YÜKSEK PUAN!
+        const productTypeCodes = ['sct', 'ct', 'tru', 'suct', 'huct', 'ict']
+        if (productTypeCodes.includes(keyword)) {
+          // ProductName veya code'da bu kod var mı?
+          if (item.productName.toLowerCase().includes(keyword)) score += 200
+          if (item.code?.toLowerCase().includes(keyword)) score += 180
+          if (item.name.toLowerCase().includes(keyword)) score += 150
+        }
+        
+        // BOYUT (40, 50, 60, 80, 100, 120, 150)
+        if (keyword.match(/^\d+$/)) {
+          // SubProductName'de boyut var mı? (örn: "50H SCT")
+          if (item.subProductName?.includes(keyword + 'h') || item.subProductName?.includes(keyword + 'H')) score += 100
+          // Height/Width tam eşleşme
+          if (item.height?.startsWith(keyword)) score += 80
+          if (item.width?.startsWith(keyword)) score += 80
+          // Name'de boyut
+          if (item.name.toLowerCase().includes(keyword)) score += 50
+        }
+        
+        // KAPLAMA (pregal, sicak, boyali, elektro)
+        const coatingKeywords = ['pregal', 'sicak', 'boyali', 'elektro']
+        if (coatingKeywords.some(c => keyword.includes(c))) {
+          if (item.coatingType?.toLowerCase().includes(keyword)) score += 90
+        }
+        
+        // Genel kelime eşleşmeleri
+        if (item.name.toLowerCase().includes(keyword)) score += 30
+        if (item.code?.toLowerCase().includes(keyword)) score += 25
+        if (item.categoryName.toLowerCase().includes(keyword)) score += 15
+      })
       
-      // İçeren eşleşmeler
-      if (item.name.toLowerCase().includes(searchLower)) score += 50
-      if (item.code?.toLowerCase().includes(searchLower)) score += 40
-      if (item.coatingType?.toLowerCase().includes(searchLower)) score += 30
-      if (item.categoryName.toLowerCase().includes(searchLower)) score += 20
-      if (item.productName.toLowerCase().includes(searchLower)) score += 15
+      // Tam cümle eşleşmeleri (bonus)
+      if (item.name.toLowerCase() === searchLower) score += 200
+      if (item.code?.toLowerCase() === searchLower) score += 180
       
-      // Kaplama tipi tam eşleşmesi
-      if (coatingType && item.coatingType?.toLowerCase() === coatingType) score += 80
-      if (coatingType && item.coatingType?.toLowerCase().includes(coatingType)) score += 40
-      
-      // Boyut tam eşleşmesi
-      if (height && item.height === height) score += 70
-      if (width && item.width === width) score += 70
-      
-      // Kategori eşleşmesi
-      if (category && item.categorySlug === category) score += 60
+      // Parametreli filtreler (ek puan)
+      if (coatingType && item.coatingType?.toLowerCase().includes(coatingType)) score += 100
+      if (height && item.height === height) score += 90
+      if (width && item.width === width) score += 90
+      if (category && item.categorySlug === category) score += 80
       
       return { ...item, score }
     })
