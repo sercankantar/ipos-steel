@@ -86,7 +86,7 @@ export async function POST(req: NextRequest) {
         break
       
       default:
-        response.response = 'Üzgünüm, tam olarak anlayamadım. Şunları sorabilirsiniz:\n• Ürün arama: "50lik pregal kanal"\n• Şirket bilgisi: "hakkınızda"\n• İletişim: "nasıl ulaşabilirim"'
+        response.response = 'Üzgünüm, tam olarak anlayamadım. Şunları sorabilirsiniz:\n• Ürün arama: "50lik kablo kanallari"\n• Şirket bilgisi: "hakkınızda"\n• İletişim: "nasıl ulaşabilirim"'
     }
 
     // Context'i güncelle ve kaydet
@@ -136,58 +136,59 @@ export async function POST(req: NextRequest) {
 
 // GPT ile mesaj analizi
 async function analyzeMessage(message: string, context: any, openaiKey?: string): Promise<any> {
-  const systemPrompt = `Sen IPOS Steel'in akıllı chatbot asistanısın. Müşteriler sana günlük konuşma diliyle yazacak, sen onları anlamalısın!
+  const systemPrompt = `Sen IPOS Steel'in akıllı chatbot asistanısın. ÜRÜN YAPISINI BİLİYORSUN!
 
 **CONTEXT:**
 ${context.lastSearchQuery ? `Son arama: ${JSON.stringify(context.lastSearchQuery)}` : 'İlk mesaj'}
 ${context.lastSearchResults ? `${context.lastSearchResults.length} ürün bulunmuştu` : ''}
 
-**GÖREVIN:**
-1. Kullanıcının ne istediğini anla (intent)
-2. Ürün araması ise → searchQuery'yi TEMİZ ve ARANACAK FORMATTA hazırla
-3. Türkçe günlük konuşmayı → veritabanı arama sorgusuna çevir
+**ÜRÜN HİYERARŞİSİ (ÖNEMLİ!):**
+Kablo Kanalları
+  ├─ SCT (Standart Tip) → 40H, 50H, 60H, 80H, 100H
+  ├─ CT (Ağır Hizmet) → 40H, 50H, 60H, 80H, 100H
+  ├─ SUCT (Deliksiz Standart) → 40H, 50H, 60H
+  ├─ HUCT (Deliksiz Ağır Hizmet) → 50H, 60H, 80H
+  ├─ ICT (Formlu/Geçmeli) → 40H, 50H, 60H
+  ├─ TRU (Trunking) → 80H, 100H, 120H, 150H
+  └─ Her ürünün KENDİ aksesuarları var!
 
 **İNTENT TİPLERİ:**
-- **company_info**: Şirket hakkında soru (hakkınızda, kimsiniz, ne yapıyorsunuz)
-- **contact_info**: İletişim bilgisi (iletişim, telefon, adres, nerede, nasıl ulaşabilirim)
-- **product_search**: Ürün arama
-- **follow_up_search**: Önceki aramanın filtrelenmesi (context varsa)
-- **incomplete_search**: Bilgi eksik, soru sor
-- **product_accessories**: Ürünün aksesuarları
+- **product_search**: Ürün/kanal arama
+- **product_accessories**: "aksesuarları", "aksesuarları neler", "bunun aksesuarları"
+- **contact_info**: İletişim
+- **company_info**: Hakkımızda
+- **follow_up_search**: Filtre (context varsa)
+- **incomplete_search**: Bilgi eksik
 - **general**: Diğer
 
-**ARAMA QUERY HAZıRLAMA (ÇOK ÖNEMLİ!):**
+**QUERY HAZıRLAMA KURALLARI:**
 
-Kullanıcı günlük dilde yazar, sen temizle:
-- "pregalvaniz 40lık kablo kanallarını getir" → searchQuery: "pregal 40 kablo kanal"
-- "50lik kanal lazım" → searchQuery: "50 kanal"
-- "sıcak daldırma galvanizli 60mm yükseklikte" → searchQuery: "sicak daldirma 60"
+1. **ÜRÜN TİPİ + BOYUT + KELİMELER:**
+   - "50lik sct kanal" → searchQuery: "sct 50", productType: "sct"
+   - "pregalvaniz 40lık standart tip" → searchQuery: "sct 40 pregal", productType: "sct"
+   - "60mm trunking kablo kanalı" → searchQuery: "tru 60", productType: "tru"
 
-**KURALLAR:**
-1. Türkçe karakterleri normalize et (ş→s, ğ→g, ı→i, ü→u, ö→o, ç→c)
-2. "lik" eklerini kaldır ("40lık" → "40")
-3. Gereksiz kelimeleri at ("getir", "lazım", "istiyorum", "var mı")
-4. Kısa ve net arama terimi oluştur
-5. Kaplama tipi varsa coatingType parametresini doldur
+2. **AKSESUAR SORGUSU:**
+   - "50lik sct kanalının aksesuarları" → intent: "product_accessories", searchQuery: "sct 50", productType: "sct"
+   - "bu ürünün aksesuarları" → intent: "product_accessories" (context kullan)
+
+3. **NORMALİZE:**
+   - Türkçe karakter yok (ş→s, ğ→g)
+   - "lik" ekini kaldır
+   - Gereksiz kelime yok
 
 **ÖRNEKLER:**
 
-Kullanıcı: "iletişim bilgileri"
-→ {"intent": "contact_info"}
+"50lik pregalvaniz sct kablo kanallarının aksesuarları neler"
+→ {"intent": "product_accessories", "searchQuery": "sct 50 pregal", "productType": "sct", "size": "50"}
 
-Kullanıcı: "pregalvaniz 40lık kablo kanallarını getir"
-→ {"intent": "product_search", "searchQuery": "pregal 40 kablo kanal", "coatingType": "pregalvaniz"}
+"40lık standart tip kanal"
+→ {"intent": "product_search", "searchQuery": "sct 40", "productType": "sct", "size": "40"}
 
-Kullanıcı: "50lik standart tip kanal var mı?"
-→ {"intent": "product_search", "searchQuery": "50 standart kanal"}
+"trunking kablo kanalları 80mm"
+→ {"intent": "product_search", "searchQuery": "tru 80", "productType": "tru", "size": "80"}
 
-Kullanıcı: "80mm yükseklikte olanları göster" (context var)
-→ {"intent": "follow_up_search", "searchQuery": "80"}
-
-Kullanıcı: "sıcak daldırma galvanizli kanallar"
-→ {"intent": "product_search", "searchQuery": "sicak daldirma kanal", "coatingType": "sıcak daldırma"}
-
-**SEN BİR ÇEVİRİCİSİN: Günlük Türkçe → Arama Query'si**`
+**ÜRÜN TİPLERİNİ MUTLAKA ÇIKAR: sct, ct, suct, huct, ict, tru**`
 
   try {
     // Basit regex tabanlı analiz (OpenAI key yoksa)
@@ -224,7 +225,16 @@ Kullanıcı: "sıcak daldırma galvanizli kanallar"
               },
               searchQuery: {
                 type: 'string',
-                description: 'TEMİZ ve NORMALIZE EDİLMİŞ arama terimi. Türkçe karakter yok, gereksiz kelime yok, sadece anahtar kelimeler. Örnek: "pregalvaniz 40lık kablo kanallarını getir" → "pregal 40 kablo kanal"'
+                description: 'TEMİZ arama terimi. MUTLAKA ürün tipini içersin! Örnek: "50lik sct kanal" → "sct 50", "trunking 80mm" → "tru 80"'
+              },
+              productType: {
+                type: 'string',
+                enum: ['sct', 'ct', 'suct', 'huct', 'ict', 'tru', 'other'],
+                description: 'Ürün tipi kodu: sct (standart), ct (ağır hizmet), suct (deliksiz standart), huct (deliksiz ağır), ict (formlu), tru (trunking)'
+              },
+              size: {
+                type: 'string',
+                description: 'Boyut (40, 50, 60, 80, 100, vb.) - sadece sayı'
               },
               coatingType: { 
                 type: 'string',
@@ -435,7 +445,7 @@ async function handleCompanyInfo(analysis: any) {
 
 // İletişim bilgisi
 async function handleContactInfo(analysis: any) {
-  const response = `📞 *İletişim Bilgileri*\n\n☎️ Telefon: +90 XXX XXX XX XX\n✉️ Email: info@ipossteel.com\n🌐 Website: https://ipossteel.com\n📍 Adres: [Şirket Adresi]\n\n💬 Mesai Saatleri:\nPazartesi - Cuma: 08:30 - 17:30\n\n📋 Katalog indirmek için: /catalog`
+  const response = `📞 *İletişim Bilgileri*\n\n☎️ Telefon: +90 (262) 674 47 67\n✉️ Email: info@ipos-steel.com\n🌐 Website: https://ipossteel.com\n📍 Adres: Köseler, Kocaeli Kafe OSB, 1. Cd. No:22, 41420 Dilovası/Kocaeli\n\n💬 Mesai Saatleri:\nPazartesi - Cuma: 08:30 - 17:30\n\n📋 Katalog indirmek için: /catalog`
 
   return {
     success: true,
@@ -539,43 +549,94 @@ async function handleFollowUpSearch(analysis: any, context: any) {
   return await handleProductSearch({ searchQuery: updatedQuery.q, ...updatedQuery }, context)
 }
 
-// Ürün aksesuarları
+// Ürün aksesuarları - SubProduct bazlı!
 async function handleProductAccessories(analysis: any, context: any) {
-  if (!context.lastProductId) {
+  // Aksesuarları bulmak için ürün bilgisi lazım
+  const productQuery = analysis.searchQuery || context.lastSearchQuery?.q
+  
+  if (!productQuery) {
     return {
       success: true,
       intent: 'product_accessories',
-      response: 'Hangi ürünün aksesuarlarını merak ediyorsunuz? Lütfen önce bir ürün arayın.',
+      response: '❓ Hangi ürünün aksesuarlarını merak ediyorsunuz?\n\nÖrnek: "50lik sct kanalının aksesuarları"',
       requiresMoreInfo: true
     }
   }
 
-  // Aksesuar ara (API'den)
-  const params = new URLSearchParams()
-  params.append('q', 'aksesuar')
-  
-  // Production'da domain kullan, local'de localhost
-  const baseUrl = process.env.NODE_ENV === 'production'
-    ? 'https://ipos-steel.vercel.app'
-    : 'http://localhost:3000'
-  const searchUrl = `${baseUrl}/api/search/products?${params.toString()}`
-  
   try {
-    const response = await fetch(searchUrl)
-    const data = await response.json()
+    console.log('🔧 Aksesuar arama:', { productQuery, productType: analysis.productType, size: analysis.size })
+    
+    // 1. Önce ana ürünü/kanalı bul
+    const params = new URLSearchParams()
+    params.append('q', productQuery)
+    if (analysis.productType) params.append('productType', analysis.productType)
+    if (analysis.size) params.append('size', analysis.size)
+    
+    const baseUrl = process.env.NODE_ENV === 'production'
+      ? 'https://ipos-steel.vercel.app'
+      : 'http://localhost:3000'
+    const searchUrl = `${baseUrl}/api/search/products?${params.toString()}`
+    
+    const productResponse = await fetch(searchUrl)
+    const productData = await productResponse.json()
 
-    return {
-      success: true,
-      intent: 'product_accessories',
-      response: `📦 İlgili aksesuarlar:`,
-      searchResults: data.results.filter((r: any) => r.type === 'accessory'),
-      requiresMoreInfo: false
+    if (!productData.success || productData.results.length === 0) {
+      return {
+        success: true,
+        intent: 'product_accessories',
+        response: '❌ Ürün bulunamadı. Lütfen ürün adını kontrol edin.',
+        requiresMoreInfo: true
+      }
     }
+
+    // 2. İlk ürünün SubProduct ID'sini al
+    const firstProduct = productData.results[0]
+    const subProductId = firstProduct.subProductId
+
+    if (!subProductId) {
+      return {
+        success: true,
+        intent: 'product_accessories',
+        response: '⚠️ Bu ürün için SubProduct bilgisi bulunamadı.',
+        requiresMoreInfo: false
+      }
+    }
+
+    // 3. Bu SubProduct'ın aksesuarlarını getir
+    const accessoryParams = new URLSearchParams()
+    accessoryParams.append('subProductId', subProductId)
+    accessoryParams.append('type', 'accessory')
+    
+    const accessoryUrl = `${baseUrl}/api/search/products?${accessoryParams.toString()}`
+    const accessoryResponse = await fetch(accessoryUrl)
+    const accessoryData = await accessoryResponse.json()
+
+    if (accessoryData.success && accessoryData.results.length > 0) {
+      const accessories = accessoryData.results.filter((r: any) => r.type === 'accessory')
+      
+      return {
+        success: true,
+        intent: 'product_accessories',
+        response: `🔧 *${firstProduct.name}* için ${accessories.length} aksesuar bulundu:`,
+        searchResults: accessories,
+        requiresMoreInfo: false
+      }
+    } else {
+      return {
+        success: true,
+        intent: 'product_accessories',
+        response: `ℹ️ *${firstProduct.name}* için tanımlı aksesuar bulunamadı.`,
+        searchResults: [],
+        requiresMoreInfo: false
+      }
+    }
+
   } catch (error) {
+    console.error('Aksesuar arama hatası:', error)
     return {
       success: false,
       intent: 'product_accessories',
-      response: 'Aksesuar bilgisi alınamadı.',
+      response: 'Aksesuar bilgisi alınırken hata oluştu.',
       requiresMoreInfo: false
     }
   }

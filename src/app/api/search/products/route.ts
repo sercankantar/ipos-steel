@@ -14,8 +14,10 @@ export async function GET(req: NextRequest) {
     const height = searchParams.get('height')?.trim()
     const width = searchParams.get('width')?.trim()
     const category = searchParams.get('category')?.toLowerCase().trim()
+    const subProductId = searchParams.get('subProductId')?.trim() // SubProduct'a özel arama
+    const type = searchParams.get('type')?.toLowerCase().trim() // channel, module, accessory, cover
 
-    if (!query && !coatingType && !height && !width) {
+    if (!query && !coatingType && !height && !width && !subProductId) {
       return NextResponse.json({
         success: false,
         message: 'En az bir arama kriteri gerekli',
@@ -24,6 +26,58 @@ export async function GET(req: NextRequest) {
     }
 
     const searchResults: any[] = []
+
+    // Eğer subProductId ve type belirtilmişse, sadece o SubProduct'ın o tipini getir
+    if (subProductId && type) {
+      if (type === 'accessory') {
+        const accessories = await prisma.accessory.findMany({
+          where: {
+            isActive: true,
+            subProductId: subProductId
+          },
+          include: {
+            subProduct: {
+              include: {
+                product: {
+                  include: {
+                    category: true
+                  }
+                }
+              }
+            }
+          }
+        })
+
+        searchResults.push(...accessories.map(acc => ({
+          id: acc.id,
+          type: 'accessory',
+          typeName: 'Aksesuar',
+          name: acc.name,
+          code: acc.code,
+          height: acc.height,
+          width: acc.width,
+          coatingType: acc.coatingType,
+          sheetThickness: acc.sheetThickness,
+          imageUrl: acc.imageUrl,
+          productName: acc.subProduct.product.name,
+          categoryName: acc.subProduct.product.category.name,
+          categorySlug: acc.subProduct.product.category.slug,
+          subProductName: acc.subProduct.name,
+          subProductId: acc.subProduct.id,
+          productId: acc.subProduct.product.id,
+          path: `/products/${acc.subProduct.product.id}`,
+          fullDescription: `${acc.name} ${acc.code ? `(${acc.code})` : ''} - ${acc.coatingType || ''} ${acc.height && acc.width ? `${acc.height}x${acc.width}` : ''} - ${acc.subProduct.product.category.name}`.trim()
+        })))
+      }
+      // Diğer tipler için de eklenebilir (channel, module, cover)
+      
+      return NextResponse.json({
+        success: true,
+        query: `SubProduct: ${subProductId}, Type: ${type}`,
+        totalResults: searchResults.length,
+        results: searchResults
+      })
+    }
 
     // 1. CHANNELS ARAMA
     const channelWhere: any = {
