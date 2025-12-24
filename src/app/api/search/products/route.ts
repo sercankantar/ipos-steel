@@ -87,25 +87,22 @@ export async function GET(req: NextRequest) {
       AND: []
     }
 
-    // ProductType filtresi (Product.name'de arıyoruz)
-    if (productType) {
-      channelWhere.AND.push({
-        subProduct: {
-          product: {
-            name: { contains: productType, mode: 'insensitive' }
-          }
+    // ProductType ve Size filtreleri (SubProduct'a tek nested filter olarak)
+    if (productType || size) {
+      const subProductFilter: any = {}
+      
+      if (productType) {
+        subProductFilter.product = {
+          name: { contains: productType, mode: 'insensitive' }
         }
-      })
-    }
-
-    // Size filtresi (SubProduct.name'de "50H" gibi arıyoruz)
-    if (size) {
-      const sizePattern = `${size}H` // "50" → "50H"
-      channelWhere.AND.push({
-        subProduct: {
-          name: { contains: sizePattern, mode: 'insensitive' }
-        }
-      })
+      }
+      
+      if (size) {
+        const sizePattern = `${size}H` // "50" → "50H"
+        subProductFilter.name = { contains: sizePattern, mode: 'insensitive' }
+      }
+      
+      channelWhere.AND.push({ subProduct: subProductFilter })
     }
 
     if (coatingType) {
@@ -194,23 +191,21 @@ export async function GET(req: NextRequest) {
       AND: []
     }
 
-    if (productType) {
-      moduleWhere.AND.push({
-        subProduct: {
-          product: {
-            name: { contains: productType, mode: 'insensitive' }
-          }
+    if (productType || size) {
+      const subProductFilter: any = {}
+      
+      if (productType) {
+        subProductFilter.product = {
+          name: { contains: productType, mode: 'insensitive' }
         }
-      })
-    }
-
-    if (size) {
-      const sizePattern = `${size}H`
-      moduleWhere.AND.push({
-        subProduct: {
-          name: { contains: sizePattern, mode: 'insensitive' }
-        }
-      })
+      }
+      
+      if (size) {
+        const sizePattern = `${size}H`
+        subProductFilter.name = { contains: sizePattern, mode: 'insensitive' }
+      }
+      
+      moduleWhere.AND.push({ subProduct: subProductFilter })
     }
 
     if (coatingType) {
@@ -297,23 +292,21 @@ export async function GET(req: NextRequest) {
       AND: []
     }
 
-    if (productType) {
-      accessoryWhere.AND.push({
-        subProduct: {
-          product: {
-            name: { contains: productType, mode: 'insensitive' }
-          }
+    if (productType || size) {
+      const subProductFilter: any = {}
+      
+      if (productType) {
+        subProductFilter.product = {
+          name: { contains: productType, mode: 'insensitive' }
         }
-      })
-    }
-
-    if (size) {
-      const sizePattern = `${size}H`
-      accessoryWhere.AND.push({
-        subProduct: {
-          name: { contains: sizePattern, mode: 'insensitive' }
-        }
-      })
+      }
+      
+      if (size) {
+        const sizePattern = `${size}H`
+        subProductFilter.name = { contains: sizePattern, mode: 'insensitive' }
+      }
+      
+      accessoryWhere.AND.push({ subProduct: subProductFilter })
     }
 
     if (coatingType) {
@@ -400,23 +393,21 @@ export async function GET(req: NextRequest) {
       AND: []
     }
 
-    if (productType) {
-      coverWhere.AND.push({
-        subProduct: {
-          product: {
-            name: { contains: productType, mode: 'insensitive' }
-          }
+    if (productType || size) {
+      const subProductFilter: any = {}
+      
+      if (productType) {
+        subProductFilter.product = {
+          name: { contains: productType, mode: 'insensitive' }
         }
-      })
-    }
-
-    if (size) {
-      const sizePattern = `${size}H`
-      coverWhere.AND.push({
-        subProduct: {
-          name: { contains: sizePattern, mode: 'insensitive' }
-        }
-      })
+      }
+      
+      if (size) {
+        const sizePattern = `${size}H`
+        subProductFilter.name = { contains: sizePattern, mode: 'insensitive' }
+      }
+      
+      coverWhere.AND.push({ subProduct: subProductFilter })
     }
 
     if (coatingType) {
@@ -560,6 +551,8 @@ export async function GET(req: NextRequest) {
       success: true,
       query: query || 'Filtrelenmiş arama',
       filters: {
+        productType,
+        size,
         coatingType,
         height,
         width,
