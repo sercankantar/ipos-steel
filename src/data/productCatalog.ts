@@ -788,14 +788,12 @@ export function formatProductCatalogForGPT(): string {
     text += `      - Kural: ${product.modules.rule}\n`
     text += `   \n`
     text += `   🔧 AKSESUARLAR (${product.accessories.length} tip):\n`
-    product.accessories.slice(0, 5).forEach(acc => {
-      text += `      • ${acc.type}\n`
+    product.accessories.forEach(acc => {
+      text += `      • ${acc.type}: Genişlikler: ${acc.widths.join(', ')}\n`
     })
-    if (product.accessories.length > 5) {
-      text += `      ... ve ${product.accessories.length - 5} tip daha\n`
-    }
     text += `   \n`
     text += `   📌 KAPAK: ${product.covers.name}\n`
+    text += `      - Genişlikler: ${product.covers.widths.join(', ')}\n`
     text += `      - Kural: ${product.covers.rule}\n`
     text += `   \n`
     text += `   ℹ️  ${product.description}\n`
