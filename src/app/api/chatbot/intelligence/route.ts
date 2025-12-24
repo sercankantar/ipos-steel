@@ -9,7 +9,14 @@ const contextStore = new Map<string, {
   lastSearchQuery?: any,
   lastSearchResults?: any[],
   lastProductId?: string,
-  conversationHistory?: any[]
+  conversationHistory?: any[],
+  productFilters?: {
+    productType?: string,
+    size?: string,
+    coatingType?: string,
+    height?: string,
+    width?: string
+  }
 }>()
 
 export async function POST(req: NextRequest) {
@@ -45,6 +52,16 @@ export async function POST(req: NextRequest) {
 
     // Intent ve parametreleri analiz et (GPT ile)
     const analysis = await analyzeMessage(message, context, openaiKey)
+
+    // Analiz sonuçlarını context'e kaydet (conversational filtering için)
+    if (analysis.productType || analysis.size || analysis.coatingType) {
+      context.productFilters = {
+        ...context.productFilters,
+        ...(analysis.productType && { productType: analysis.productType }),
+        ...(analysis.size && { size: analysis.size }),
+        ...(analysis.coatingType && { coatingType: analysis.coatingType })
+      }
+    }
 
     let response: any = {
       success: true,
