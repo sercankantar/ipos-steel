@@ -259,27 +259,45 @@ Kullanıcı: "80mm olanları getir" (context var)
   }
 }
 
+// Türkçe karakter normalize
+function normalizeTurkish(text: string): string {
+  return text
+    .replace(/İ/g, 'i')
+    .replace(/ı/g, 'i')
+    .replace(/ş/g, 's')
+    .replace(/Ş/g, 's')
+    .replace(/ğ/g, 'g')
+    .replace(/Ğ/g, 'g')
+    .replace(/ü/g, 'u')
+    .replace(/Ü/g, 'u')
+    .replace(/ö/g, 'o')
+    .replace(/Ö/g, 'o')
+    .replace(/ç/g, 'c')
+    .replace(/Ç/g, 'c')
+}
+
 // Basit analiz (fallback)
 function simpleAnalysis(message: string, context: any): any {
   const lower = message.toLowerCase().trim()
+  const normalized = normalizeTurkish(lower)
   
-  console.log('🔄 Fallback Analysis:', { message: lower, hasContext: !!context.lastSearchQuery })
+  console.log('🔄 Fallback Analysis:', { message: lower, normalized, hasContext: !!context.lastSearchQuery })
 
   // Company info - ÖNCE KONTROL ET!
-  if (lower.includes('hakkın') || lower.includes('hakkım') ||
-      lower.includes('kimsin') || lower.includes('ne yapıyor') ||
-      lower.includes('şirket') || lower.includes('firma') ||
-      lower.includes('ipos steel') || lower.includes('biz kimiz')) {
+  if (normalized.includes('hakkin') || normalized.includes('hakkim') ||
+      normalized.includes('kimsin') || normalized.includes('ne yapiyor') ||
+      normalized.includes('sirket') || normalized.includes('firma') ||
+      normalized.includes('ipos steel') || normalized.includes('biz kimiz')) {
     console.log('✅ Intent: company_info')
     return { intent: 'company_info' }
   }
 
   // Contact info - İKİNCİ KONTROL
-  if (lower.includes('iletisim') || lower.includes('iletişim') || 
-      lower.includes('telefon') || lower.includes('tel') || 
-      lower.includes('adres') || lower.includes('nerede') || 
-      lower.includes('mail') || lower.includes('email') ||
-      lower.includes('ulaş') || lower.includes('irtibat')) {
+  if (normalized.includes('iletisim') || 
+      normalized.includes('telefon') || normalized.includes('tel') || 
+      normalized.includes('adres') || normalized.includes('nerede') || 
+      normalized.includes('mail') || normalized.includes('email') ||
+      normalized.includes('ulas') || normalized.includes('irtibat')) {
     console.log('✅ Intent: contact_info')
     return { intent: 'contact_info' }
   }
@@ -287,13 +305,13 @@ function simpleAnalysis(message: string, context: any): any {
   // Follow-up search - CONTEXT VARSA
   if (context.lastSearchQuery) {
     // "80mm olanları", "pregalvaniz olanları", "40lıkları getir"
-    if (lower.match(/(\d+\s*mm|l[ıi]k).*olan|olan.*(\d+)|getir|göster|filtrele|bunları/i) ||
-        lower.match(/pregal|sıcak|boyalı|elektro.*olan/i)) {
+    if (normalized.match(/(\d+\s*mm|lik).*olan|olan.*(\d+)|getir|goster|filtrele|bunlari/i) ||
+        normalized.match(/pregal|sicak|boyali|elektro.*olan/i)) {
       
       let searchQuery = message.replace(/(\d+)\s*l[ıi]k(lar[ıi])?/gi, '$1').trim()
-      let coatingType = lower.includes('pregal') ? 'pregalvaniz' : 
-                       lower.includes('sıcak') ? 'sıcak daldırma' :
-                       lower.includes('boyalı') ? 'boyalı' : undefined
+      let coatingType = normalized.includes('pregal') ? 'pregalvaniz' : 
+                       normalized.includes('sicak') ? 'sıcak daldırma' :
+                       normalized.includes('boyali') ? 'boyalı' : undefined
       
       console.log('✅ Intent: follow_up_search', { searchQuery, coatingType })
       return {
@@ -305,14 +323,14 @@ function simpleAnalysis(message: string, context: any): any {
   }
 
   // Product accessories
-  if ((lower.includes('bunun') || lower.includes('bu ürün')) && 
-      (lower.includes('aksesuar') || lower.includes('modül') || lower.includes('kapak'))) {
+  if ((normalized.includes('bunun') || normalized.includes('bu urun')) && 
+      (normalized.includes('aksesuar') || normalized.includes('modul') || normalized.includes('kapak'))) {
     console.log('✅ Intent: product_accessories')
     return { intent: 'product_accessories' }
   }
 
   // Incomplete search - çok kısa ve belirsiz
-  if (lower.length < 5 || lower === 'kanal' || lower === 'ürün') {
+  if (normalized.length < 5 || normalized === 'kanal' || normalized === 'urun') {
     console.log('✅ Intent: incomplete_search (too vague)')
     return { 
       intent: 'incomplete_search',
