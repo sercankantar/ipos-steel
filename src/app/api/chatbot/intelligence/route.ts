@@ -481,7 +481,103 @@ async function handleContactInfo(analysis: any) {
   }
 }
 
-// Ürün arama
+// Yapılandırılmış ürün arama - CONVERSATIONAL FILTERING için!
+async function handleProductSearchStructured(filters: {
+  productType: string,
+  size: string,
+  coatingType?: string | null
+}, context: any) {
+  try {
+    console.log('🎯 Structured Search:', filters)
+
+    // Direkt Prisma WHERE koşulları ile arama yap
+    const { productType, size, coatingType } = filters
+
+    // Product name'de productType code'u arıyoruz (SCT, CT, TRU, CL, vb.)
+    const productTypeUpper = productType.toUpperCase()
+    
+    // SubProduct name'de boyut arıyoruz (50H, 60H, vb.)
+    const sizePattern = `${size}H` // "50" → "50H"
+
+    const channels = await prisma.channel.findMany({
+      where: {
+        isActive: true,
+        subProduct: {
+          product: {
+            name: { contains: productTypeUpper, mode: 'insensitive' }
+          },
+          name: { contains: sizePattern, mode: 'insensitive' }
+        },
+        ...(coatingType && {
+          coatingType: { contains: coatingType, mode: 'insensitive' }
+        })
+      },
+      include: {
+        subProduct: {
+          include: {
+            product: {
+              include: {
+                category: true
+              }
+            }
+          }
+        }
+      },
+      take: 50
+    })
+
+    if (channels.length > 0) {
+      const results = channels.map(ch => ({
+        id: ch.id,
+        type: 'channel',
+        typeName: 'Kanal',
+        name: ch.name,
+        code: ch.code,
+        height: ch.height,
+        width: ch.width,
+        coatingType: ch.coatingType,
+        sheetThickness: ch.sheetThickness,
+        imageUrl: ch.imageUrl,
+        productName: ch.subProduct.product.name,
+        categoryName: ch.subProduct.product.category.name,
+        categorySlug: ch.subProduct.product.category.slug,
+        subProductName: ch.subProduct.name,
+        subProductId: ch.subProduct.id,
+        productId: ch.subProduct.product.id,
+        path: `/products/${ch.subProduct.product.id}`,
+        fullDescription: `${ch.name} ${ch.code ? `(${ch.code})` : ''} - ${ch.coatingType || ''} ${ch.height && ch.width ? `${ch.height}x${ch.width}` : ''} - ${ch.subProduct.product.category.name}`.trim()
+      }))
+
+      return {
+        success: true,
+        intent: 'product_search',
+        response: `✅ ${results.length} adet ${productTypeUpper} ${size}mm${coatingType ? ' ' + coatingType : ''} kanal bulundu!`,
+        searchResults: results.slice(0, 20),
+        requiresMoreInfo: false
+      }
+    } else {
+      return {
+        success: true,
+        intent: 'product_search',
+        response: `❌ ${productTypeUpper} ${size}mm${coatingType ? ' ' + coatingType : ''} kanal bulunamadı.\n\n💡 Farklı seçenekler deneyin.`,
+        searchResults: [],
+        requiresMoreInfo: false
+      }
+    }
+
+  } catch (error) {
+    console.error('Structured search error:', error)
+    return {
+      success: false,
+      intent: 'product_search',
+      response: 'Arama sırasında hata oluştu.',
+      searchResults: [],
+      requiresMoreInfo: false
+    }
+  }
+}
+
+// Ürün arama (fallback - fuzzy search)
 async function handleProductSearch(analysis: any, context: any) {
   // GPT'nin hazırladığı parametreleri AYNEN kullan
   const params = new URLSearchParams()
@@ -611,12 +707,11 @@ async function handleIncompleteSearch(analysis: any, context: any) {
     }
   }
 
-  // Tüm filtreler tamamsa, arama yap
-  return await handleProductSearch({
+  // Tüm filtreler tamamsa, STRUCTURED SEARCH yap (searchQuery değil!)
+  return await handleProductSearchStructured({
     productType: newFilters.productType,
     size: newFilters.size,
-    coatingType: newFilters.coatingType === 'hepsi' ? null : newFilters.coatingType,
-    searchQuery: `${newFilters.productType} ${newFilters.size}${newFilters.coatingType && newFilters.coatingType !== 'hepsi' ? ' ' + newFilters.coatingType : ''}`
+    coatingType: newFilters.coatingType === 'hepsi' ? null : newFilters.coatingType
   }, context)
 }
 
