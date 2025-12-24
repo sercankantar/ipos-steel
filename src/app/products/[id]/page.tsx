@@ -31,7 +31,7 @@ export default function ProductDetail({ params }: { params: { id: string } }) {
   const [filteredSubProducts, setFilteredSubProducts] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
   const [selectedImageIndex, setSelectedImageIndex] = useState(0)
-  const [activeTab, setActiveTab] = useState('genel')
+  const [activeTab, setActiveTab] = useState('urunler')
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [isQuoteModalOpen, setIsQuoteModalOpen] = useState(false)
   const [isChannelsModalOpen, setIsChannelsModalOpen] = useState(false)
@@ -130,8 +130,14 @@ export default function ProductDetail({ params }: { params: { id: string } }) {
         
         if (subProductsResponse.ok) {
           const subProductsData = await subProductsResponse.json()
-          setSubProducts(subProductsData)
-          setFilteredSubProducts(subProductsData)
+          // Ürünleri yüksekliğe göre küçükten büyüğe sırala
+          const sortedData = subProductsData.sort((a: any, b: any) => {
+            const heightA = parseFloat(a.height || '0')
+            const heightB = parseFloat(b.height || '0')
+            return heightA - heightB
+          })
+          setSubProducts(sortedData)
+          setFilteredSubProducts(sortedData)
         }
       } catch (error) {
         console.error('Veri yüklenirken hata:', error)
@@ -265,6 +271,16 @@ export default function ProductDetail({ params }: { params: { id: string } }) {
         accessory.sheetThickness && accessoryFilters.sheetThicknesses.includes(accessory.sheetThickness)
       )
     }
+
+    // Seperatörü en alta al, diğerlerini normal sırala
+    filtered = filtered.sort((a, b) => {
+      const aIsSeperator = a.name.toLowerCase().includes('seperatör') || a.name.toLowerCase().includes('separatör')
+      const bIsSeperator = b.name.toLowerCase().includes('seperatör') || b.name.toLowerCase().includes('separatör')
+      
+      if (aIsSeperator && !bIsSeperator) return 1
+      if (!aIsSeperator && bIsSeperator) return -1
+      return 0
+    })
 
     setFilteredAccessories(filtered)
   }, [accessories, accessoryFilters])
@@ -513,8 +529,17 @@ export default function ProductDetail({ params }: { params: { id: string } }) {
       })
       if (response.ok) {
         const data = await response.json()
-        setAccessories(data)
-        setFilteredAccessories(data)
+        // Seperatörü en alta al
+        const sortedData = data.sort((a: any, b: any) => {
+          const aIsSeperator = a.name.toLowerCase().includes('seperatör') || a.name.toLowerCase().includes('separatör')
+          const bIsSeperator = b.name.toLowerCase().includes('seperatör') || b.name.toLowerCase().includes('separatör')
+          
+          if (aIsSeperator && !bIsSeperator) return 1
+          if (!aIsSeperator && bIsSeperator) return -1
+          return 0
+        })
+        setAccessories(sortedData)
+        setFilteredAccessories(sortedData)
       }
     } catch (error) {
       console.error('Aksesuarlar yüklenirken hata:', error)
@@ -705,7 +730,11 @@ export default function ProductDetail({ params }: { params: { id: string } }) {
 
   // Benzersiz filtre değerlerini al
   const getUniqueValues = (items: any[], field: string) => {
-    return Array.from(new Set(items.map(item => item[field]).filter(Boolean))).sort()
+    return Array.from(new Set(items.map(item => item[field]).filter(Boolean))).sort((a, b) => {
+      const numA = parseFloat(a)
+      const numB = parseFloat(b)
+      return numA - numB
+    })
   }
 
   // İstek listesi yönetimi
