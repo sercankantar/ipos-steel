@@ -140,6 +140,15 @@ export async function POST(req: NextRequest) {
         hasLastSearch: !!context.lastSearchQuery,
         hasLastProduct: !!context.lastProductId,
         messageCount: context.conversationHistory.length
+      },
+      debug: {
+        productFilters: context.productFilters,
+        analysisIntent: analysis.intent,
+        analysisParams: {
+          productType: analysis.productType,
+          size: analysis.size,
+          coatingType: analysis.coatingType
+        }
       }
     })
 
