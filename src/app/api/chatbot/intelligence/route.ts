@@ -141,6 +141,7 @@ async function analyzeMessage(message: string, context: any, openaiKey?: string)
 **CONTEXT:**
 ${context.lastSearchQuery ? `Son arama: ${JSON.stringify(context.lastSearchQuery)}` : 'İlk mesaj'}
 ${context.lastSearchResults ? `${context.lastSearchResults.length} ürün bulunmuştu` : ''}
+${context.productFilters ? `Mevcut filtreler: ${JSON.stringify(context.productFilters)}` : 'Henüz filtre yok'}
 
 **ÜRÜN HİYERARŞİSİ (ÖNEMLİ!):**
 Kablo Kanalları
@@ -150,45 +151,53 @@ Kablo Kanalları
   ├─ HUCT (Deliksiz Ağır Hizmet) → 50H, 60H, 80H
   ├─ ICT (Formlu/Geçmeli) → 40H, 50H, 60H
   ├─ TRU (Trunking) → 80H, 100H, 120H, 150H
+  ├─ CL (Kablo Merdiveni) → Çeşitli boyutlar
   └─ Her ürünün KENDİ aksesuarları var!
 
 **İNTENT TİPLERİ:**
-- **product_search**: Ürün/kanal arama
+- **incomplete_search**: Bilgi EKSIK - kullanıcıya soru sor! (En önemli intent!)
+- **product_search**: Tüm bilgiler TAM - direkt arama yap
 - **product_accessories**: "aksesuarları", "aksesuarları neler", "bunun aksesuarları"
+- **follow_up_search**: Önceki filtreye ekleme yap
 - **contact_info**: İletişim
 - **company_info**: Hakkımızda
-- **follow_up_search**: Filtre (context varsa)
-- **incomplete_search**: Bilgi eksik
 - **general**: Diğer
 
-**QUERY HAZıRLAMA KURALLARI:**
+**ÖNEMLİ:** Eğer productType, size veya coatingType EKSİKSE → **incomplete_search**!
 
-1. **ÜRÜN TİPİ + BOYUT + KELİMELER:**
-   - "50lik sct kanal" → searchQuery: "sct 50", productType: "sct"
-   - "pregalvaniz 40lık standart tip" → searchQuery: "sct 40 pregal", productType: "sct"
-   - "60mm trunking kablo kanalı" → searchQuery: "tru 60", productType: "tru"
+**KONUŞARAK FİLTRELEME (ÇOK ÖNEMLİ!):**
 
-2. **AKSESUAR SORGUSU:**
-   - "50lik sct kanalının aksesuarları" → intent: "product_accessories", searchQuery: "sct 50", productType: "sct"
-   - "bu ürünün aksesuarları" → intent: "product_accessories" (context kullan)
+Kullanıcı eksik bilgi verdiyse → **incomplete_search** döndür!
 
-3. **NORMALİZE:**
-   - Türkçe karakter yok (ş→s, ğ→g)
-   - "lik" ekini kaldır
-   - Gereksiz kelime yok
+**CONVERSATIONAL FLOW:**
+
+1. "kablo kanalı" → incomplete_search (productType null)
+2. "sct" (context'te tip sorulmuştu) → incomplete_search (productType:"sct", size null)
+3. "50mm" (context'te boyut sorulmuştu) → incomplete_search (size:"50", coating null)
+4. "pregalvaniz" → product_search (TAMAM, arama yap!)
 
 **ÖRNEKLER:**
 
-"50lik pregalvaniz sct kablo kanallarının aksesuarları neler"
-→ {"intent": "product_accessories", "searchQuery": "sct 50 pregal", "productType": "sct", "size": "50"}
+▪️ "kablo kanalı istiyorum"
+→ {"intent": "incomplete_search", "productType": null, "size": null}
 
-"40lık standart tip kanal"
-→ {"intent": "product_search", "searchQuery": "sct 40", "productType": "sct", "size": "40"}
+▪️ "sct" (context'te productType yoktu)
+→ {"intent": "incomplete_search", "productType": "sct", "size": null}
 
-"trunking kablo kanalları 80mm"
-→ {"intent": "product_search", "searchQuery": "tru 80", "productType": "tru", "size": "80"}
+▪️ "50mm" (context'te size yoktu)
+→ {"intent": "incomplete_search", "productType": "sct", "size": "50", "coatingType": null}
 
-**ÜRÜN TİPLERİNİ MUTLAKA ÇIKAR: sct, ct, suct, huct, ict, tru**`
+▪️ "pregalvaniz" (TÜM BİLGİLER TAM!)
+→ {"intent": "product_search", "productType": "sct", "size": "50", "coatingType": "pregalvaniz"}
+
+▪️ "50lik pregalvaniz sct kanal" (tek seferde TAM)
+→ {"intent": "product_search", "productType": "sct", "size": "50", "coatingType": "pregalvaniz"}
+
+▪️ "50lik sct aksesuarları"
+→ {"intent": "product_accessories", "productType": "sct", "size": "50"}
+
+**EKSİK VAR → incomplete_search! TAM BİLGİ → product_search!**
+**ÜRÜN TİPLERİ: sct, ct, suct, huct, ict, tru, cl**`
 
   try {
     // Basit regex tabanlı analiz (OpenAI key yoksa)
@@ -229,8 +238,8 @@ Kablo Kanalları
               },
               productType: {
                 type: 'string',
-                enum: ['sct', 'ct', 'suct', 'huct', 'ict', 'tru', 'other'],
-                description: 'Ürün tipi kodu: sct (standart), ct (ağır hizmet), suct (deliksiz standart), huct (deliksiz ağır), ict (formlu), tru (trunking)'
+                enum: ['sct', 'ct', 'suct', 'huct', 'ict', 'tru', 'cl', 'other'],
+                description: 'Ürün tipi kodu: sct (standart), ct (ağır hizmet), suct (deliksiz standart), huct (deliksiz ağır), ict (formlu), tru (trunking), cl (kablo merdiveni)'
               },
               size: {
                 type: 'string',
@@ -515,15 +524,83 @@ async function handleProductSearch(analysis: any, context: any) {
   }
 }
 
-// Eksik parametreli arama
+// Eksik parametreli arama - KONUŞARAK FİLTRELE
 async function handleIncompleteSearch(analysis: any, context: any) {
-  return {
-    success: true,
-    intent: 'incomplete_search',
-    response: analysis.clarificationNeeded || '🤔 Aradığınız ürünü daha iyi anlayabilmem için:\n\n• Boyut belirtin (örn: 50lik, 45x60)\n• Kaplama tipi (pregalvaniz, sıcak daldırma)\n• Ürün tipi (kanal, modül, aksesuar)\n\nÖrnek: "50lik pregalvaniz kablo kanalı"',
-    requiresMoreInfo: true,
-    missingParams: analysis.missingParams
+  // Context'ten mevcut filtreleri al
+  const existingFilters = context.productFilters || {}
+  const newFilters = {
+    productType: analysis.productType || existingFilters.productType,
+    size: analysis.size || existingFilters.size,
+    coatingType: analysis.coatingType || existingFilters.coatingType,
+    height: analysis.height || existingFilters.height,
+    width: analysis.width || existingFilters.width
   }
+
+  // Context'i güncelle
+  context.productFilters = newFilters
+
+  // Hangi bilgi eksik?
+  if (!newFilters.productType) {
+    return {
+      success: true,
+      intent: 'incomplete_search',
+      response: '🏭 *Hangi tip ürün arıyorsunuz?*\n\n' +
+                '▪️ **SCT** - Standart Tip Kablo Kanalı\n' +
+                '▪️ **CT** - Ağır Hizmet Tipi Kablo Kanalı\n' +
+                '▪️ **SUCT** - Deliksiz Standart Tip\n' +
+                '▪️ **HUCT** - Deliksiz Ağır Hizmet\n' +
+                '▪️ **ICT** - Formlu/Geçmeli Tip\n' +
+                '▪️ **TRU** - Trunking Kablo Kanalı\n' +
+                '▪️ **CL** - Kablo Merdiveni\n\n' +
+                '💬 Örnek: "sct" veya "standart tip"',
+      requiresMoreInfo: true,
+      missingParams: ['productType'],
+      currentFilters: newFilters
+    }
+  }
+
+  if (!newFilters.size) {
+    return {
+      success: true,
+      intent: 'incomplete_search',
+      response: `📏 *${newFilters.productType.toUpperCase()} için hangi boyut?*\n\n` +
+                '▪️ **40mm** (40H)\n' +
+                '▪️ **50mm** (50H)\n' +
+                '▪️ **60mm** (60H)\n' +
+                '▪️ **80mm** (80H)\n' +
+                '▪️ **100mm** (100H)\n' +
+                (newFilters.productType === 'tru' ? '▪️ **120mm** (120H)\n▪️ **150mm** (150H)\n' : '') +
+                '\n💬 Örnek: "50mm" veya "50lik"',
+      requiresMoreInfo: true,
+      missingParams: ['size'],
+      currentFilters: newFilters
+    }
+  }
+
+  if (!newFilters.coatingType) {
+    return {
+      success: true,
+      intent: 'incomplete_search',
+      response: `🎨 *${newFilters.size}mm ${newFilters.productType.toUpperCase()} için kaplama tipi?*\n\n` +
+                '▪️ **Pregalvaniz** (PG)\n' +
+                '▪️ **Sıcak Daldırma** (HG)\n' +
+                '▪️ **Boyalı** (SP)\n' +
+                '▪️ **Elektro** (EG)\n' +
+                '▪️ **Hepsi** (tüm kaplama tipleri)\n\n' +
+                '💬 Örnek: "pregalvaniz" veya "hepsi"',
+      requiresMoreInfo: true,
+      missingParams: ['coatingType'],
+      currentFilters: newFilters
+    }
+  }
+
+  // Tüm filtreler tamamsa, arama yap
+  return await handleProductSearch({
+    productType: newFilters.productType,
+    size: newFilters.size,
+    coatingType: newFilters.coatingType === 'hepsi' ? null : newFilters.coatingType,
+    searchQuery: `${newFilters.productType} ${newFilters.size}${newFilters.coatingType && newFilters.coatingType !== 'hepsi' ? ' ' + newFilters.coatingType : ''}`
+  }, context)
 }
 
 // Follow-up arama (önceki aramayı güncelle)
