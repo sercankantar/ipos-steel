@@ -1,0 +1,115 @@
+{
+  "name": "IPOS Steel Natural Chatbot (Telegram)",
+  "nodes": [
+    {
+      "parameters": {
+        "authentication": "botToken",
+        "updates": [
+          "message"
+        ]
+      },
+      "id": "telegram-trigger",
+      "name": "Telegram Trigger",
+      "type": "n8n-nodes-base.telegramTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        240,
+        300
+      ],
+      "webhookId": "your-webhook-id",
+      "credentials": {
+        "telegramApi": {
+          "id": "telegram-credentials-id",
+          "name": "Telegram Bot"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://ipos-steel.vercel.app/api/chatbot/intelligence",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "httpHeaderAuth",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "userId",
+              "value": "={{ $json.message.from.id }}"
+            },
+            {
+              "name": "message",
+              "value": "={{ $json.message.text }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "call-intelligence-api",
+      "name": "Call Intelligence API",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [
+        460,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Telegram Trigger').item.json.message.chat.id }}",
+        "text": "={{ $json.response }}",
+        "additionalFields": {
+          "parse_mode": "Markdown"
+        }
+      },
+      "id": "send-telegram-response",
+      "name": "Send Telegram Response",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.1,
+      "position": [
+        680,
+        300
+      ],
+      "credentials": {
+        "telegramApi": {
+          "id": "telegram-credentials-id",
+          "name": "Telegram Bot"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Telegram Trigger": {
+      "main": [
+        [
+          {
+            "node": "Call Intelligence API",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Call Intelligence API": {
+      "main": [
+        [
+          {
+            "node": "Send Telegram Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "pinData": {},
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "tags": [],
+  "triggerCount": 1,
+  "updatedAt": "2024-12-24T00:00:00.000Z",
+  "versionId": "natural-v3.0"
+}
+
